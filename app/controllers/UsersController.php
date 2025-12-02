@@ -197,6 +197,12 @@ class UsersController extends Controller {
     }
     
     public function create() {
+        // Check authentication first
+        if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['owner', 'admin', 'company_owner'])) {
+            header('Location: /ergon-site/login');
+            exit;
+        }
+        
         $this->ensureDepartmentsTable();
         
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -241,8 +247,15 @@ class UsersController extends Controller {
                 // Handle department - get department ID from form
                 $departmentId = !empty($_POST['department_id']) ? intval($_POST['department_id']) : null;
                 
-                // Ensure users table has department_id column
+                // Ensure users table has all required columns
                 $this->ensureUserColumns($db);
+                
+                // Validate role
+                $allowedRoles = ['user', 'admin', 'owner', 'company_owner', 'system_admin'];
+                $role = $_POST['role'] ?? 'user';
+                if (!in_array($role, $allowedRoles)) {
+                    $role = 'user';
+                }
                 
                 $stmt = $db->prepare("INSERT INTO users (employee_id, name, email, password, phone, role, status, department_id, designation, joining_date, salary, date_of_birth, gender, address, emergency_contact, created_at) VALUES (?, ?, ?, ?, ?, ?, 'active', ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
                 $result = $stmt->execute([
@@ -251,7 +264,7 @@ class UsersController extends Controller {
                     trim($_POST['email'] ?? ''),
                     $hashedPassword,
                     trim($_POST['phone'] ?? ''),
-                    $_POST['role'] ?? 'user',
+                    $role,
                     $departmentId,
                     trim($_POST['designation'] ?? ''),
                     !empty($_POST['joining_date']) ? $_POST['joining_date'] : null,
@@ -263,9 +276,18 @@ class UsersController extends Controller {
                 ]);
                 
                 error_log('User creation data: ' . json_encode($_POST));
+                error_log('SQL Parameters: ' . json_encode([
+                    $employeeId, trim($_POST['name'] ?? ''), trim($_POST['email'] ?? ''),
+                    'password_hash', trim($_POST['phone'] ?? ''), $role, $departmentId,
+                    trim($_POST['designation'] ?? ''), $_POST['joining_date'] ?? null,
+                    $_POST['salary'] ?? null, $_POST['date_of_birth'] ?? null,
+                    $_POST['gender'] ?? null, trim($_POST['address'] ?? ''),
+                    trim($_POST['emergency_contact'] ?? '')
+                ]));
                 
                 if ($result) {
                     $userId = $db->lastInsertId();
+                    error_log('User created successfully with ID: ' . $userId);
                     
                     // Handle document uploads
                     $this->handleDocumentUploads($userId);
@@ -278,8 +300,12 @@ class UsersController extends Controller {
                     header('Location: /ergon-site/users?success=User created successfully');
                     exit;
                 } else {
+                    $errorInfo = $stmt->errorInfo();
+                    error_log('User creation failed. Error info: ' . json_encode($errorInfo));
+                    error_log('PDO Error: ' . print_r($stmt->errorInfo(), true));
+                    
                     $_SESSION['old_data'] = $_POST;
-                    header('Location: /ergon-site/users/create?error=Failed to create user');
+                    header('Location: /ergon-site/users/create?error=Failed to create user: ' . ($errorInfo[2] ?? 'Unknown error'));
                     exit;
                 }
             } catch (Exception $e) {
@@ -754,6 +780,14 @@ class UsersController extends Controller {
                 error_log("Updated status column to support new values");
             } catch (Exception $e) {
                 error_log('Status column update error: ' . $e->getMessage());
+            }
+            
+            // Update role column to support all roles including company_owner
+            try {
+                $db->exec("ALTER TABLE users MODIFY COLUMN role ENUM('user', 'admin', 'owner', 'company_owner', 'system_admin') DEFAULT 'user'");
+                error_log("Updated role column to support company_owner");
+            } catch (Exception $e) {
+                error_log('Role column update error: ' . $e->getMessage());
             }
             
             // Generate employee IDs for existing users without them
