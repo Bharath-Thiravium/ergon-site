@@ -9,9 +9,9 @@ class UnifiedWorkflowController extends Controller {
     public function dailyPlanner($date = null) {
         AuthMiddleware::requireAuth();
         
-        // Check if tasks module is enabled
+        // Check if daily_planner module is enabled
         require_once __DIR__ . '/../middlewares/ModuleMiddleware.php';
-        ModuleMiddleware::requireModule('tasks');
+        ModuleMiddleware::requireModule('daily_planner');
         
         $date = $date ?? date('Y-m-d');
         

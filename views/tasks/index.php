@@ -26,17 +26,17 @@ $highPriorityTasks = count(array_filter($tasks, fn($t) => ($t['priority'] ?? '')
     </div>
     <div class="page-actions">
         <div class="view-options">
-            <a href="/ergon/tasks" class="view-btn view-btn--active" data-view="list">
+            <a href="/ergon-site/tasks" class="view-btn view-btn--active" data-view="list">
                 <span>📋</span> List
             </a>
-            <a href="/ergon/tasks/kanban" class="view-btn" data-view="kanban">
+            <a href="/ergon-site/tasks/kanban" class="view-btn" data-view="kanban">
                 <span>📏</span> Kanban
             </a>
-            <a href="/ergon/tasks/calendar" class="view-btn" data-view="calendar">
+            <a href="/ergon-site/tasks/calendar" class="view-btn" data-view="calendar">
                 <span>📆</span> Calendar
             </a>
         </div>
-        <a href="/ergon/tasks/create" class="btn btn--primary">
+        <a href="/ergon-site/tasks/create" class="btn btn--primary">
             <span>➕</span> Create Task
         </a>
     </div>
@@ -170,10 +170,10 @@ $highPriorityTasks = count(array_filter($tasks, fn($t) => ($t['priority'] ?? '')
                                     </svg>
                                 </a>
                                 <?php 
-                                // Show full actions only for tasks assigned to or created by current user
-                                $canEdit = (($_SESSION['role'] ?? 'user') !== 'user') || 
-                                          (($task['assigned_to'] ?? 0) == ($_SESSION['user_id'] ?? 0)) || 
-                                          (($task['assigned_by'] ?? 0) == ($_SESSION['user_id'] ?? 0));
+                                // Show actions for assigned tasks or admin/owner roles
+                                $canEdit = (($_SESSION['role'] ?? 'user') === 'admin') || 
+                                          (($_SESSION['role'] ?? 'user') === 'owner') || 
+                                          (($task['assigned_to'] ?? 0) == ($_SESSION['user_id'] ?? 0));
                                 if ($canEdit): 
                                 ?>
                                     <?php if ($task['status'] !== 'completed'): ?>
@@ -184,6 +184,12 @@ $highPriorityTasks = count(array_filter($tasks, fn($t) => ($t['priority'] ?? '')
                                         </svg>
                                     </button>
                                     <?php endif; ?>
+                                    <button class="ab-btn history-btn" onclick="showProgressHistory(<?= $task['id'] ?>)" title="View Progress History">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                            <circle cx="12" cy="12" r="10"/>
+                                            <polyline points="12,6 12,12 16,14"/>
+                                        </svg>
+                                    </button>
                                     <a class="ab-btn ab-btn--edit" data-action="edit" data-module="tasks" data-id="<?= $task['id'] ?>" title="Edit Task">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                             <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
@@ -211,88 +217,47 @@ $highPriorityTasks = count(array_filter($tasks, fn($t) => ($t['priority'] ?? '')
     </div>
 </div>
 
-<div id="progressDialog" class="dialog" style="display: none;">
-    <div class="dialog-content">
-        <h4>Update Progress</h4>
-        <p>Progress: <span id="progressValue">0</span>%</p>
-        <input type="range" id="progressSlider" min="0" max="100" value="0">
-        <div class="dialog-buttons">
-            <button onclick="closeDialog()">Cancel</button>
-            <button onclick="saveProgress()">Save</button>
+<!-- Enhanced Progress Update Modal -->
+<div id="progressDialog" class="progress-dialog" style="display: none;">
+    <div class="progress-modal">
+        <h3>📊 Update Task Progress</h3>
+        
+        <div class="progress-form-group">
+            <label for="progressSlider">Progress Level</label>
+            <div class="progress-slider-container">
+                <input type="range" id="progressSlider" class="progress-slider" min="0" max="100" value="0">
+                <span id="progressValue" class="progress-value">0%</span>
+            </div>
+        </div>
+        
+        <div class="progress-form-group">
+            <label for="progressDescription">Progress Description *</label>
+            <textarea id="progressDescription" class="progress-description" 
+                      placeholder="Describe what you've accomplished, current status, or next steps..." 
+                      required></textarea>
+        </div>
+        
+        <div class="progress-actions">
+            <button type="button" class="progress-btn progress-btn-secondary" onclick="closeDialog()">Cancel</button>
+            <button type="button" class="progress-btn progress-btn-primary" onclick="saveProgress()">Update Progress</button>
         </div>
     </div>
 </div>
 
-<style>
-.dialog {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 9999;
-    align-items: center;
-    justify-content: center;
-}
+<!-- Progress History Modal -->
+<div id="progressHistoryDialog" class="progress-dialog" style="display: none;">
+    <div class="progress-modal">
+        <h3>📈 Progress History</h3>
+        <div id="progressHistoryContent">
+            <!-- History content will be loaded here -->
+        </div>
+        <div class="progress-actions">
+            <button type="button" class="progress-btn progress-btn-secondary" onclick="closeDialog()">Close</button>
+        </div>
+    </div>
+</div>
 
-.dialog-content {
-    background: var(--bg-primary);
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    min-width: 300px;
-    max-width: 400px;
-    border: 1px solid var(--border-color);
-}
-
-.dialog-content h4 {
-    margin: 0 0 1rem 0;
-    color: var(--text-primary);
-}
-
-.dialog-content p {
-    margin: 0 0 1rem 0;
-    font-weight: 500;
-    color: var(--text-primary);
-}
-
-#progressSlider {
-    width: 100%;
-    margin: 1rem 0;
-}
-
-.dialog-buttons {
-    display: flex;
-    gap: 0.5rem;
-    justify-content: flex-end;
-    margin-top: 1.5rem;
-}
-
-.dialog-buttons button {
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.875rem;
-}
-
-.dialog-buttons button:first-child {
-    background: var(--bg-secondary);
-    color: var(--text-secondary);
-    border: 1px solid var(--border-color);
-}
-
-.dialog-buttons button:last-child {
-    background: var(--primary);
-    color: white;
-    border: 1px solid var(--primary);
-}
-
-.dialog-buttons button:hover {
-    opacity: 0.9;
-}
-</style>
+<link rel="stylesheet" href="/ergon-site/assets/css/task-progress-enhanced.css">
 
 <script>
 document.addEventListener('click', function(e) {
@@ -303,12 +268,12 @@ document.addEventListener('click', function(e) {
     const id = btn.dataset.id;
     const name = btn.dataset.name;
     if (action === 'view' && module && id) {
-        window.location.href = `/ergon/${module}/view/${id}`;
+        window.location.href = `/ergon-site/${module}/view/${id}`;
     } else if (action === 'edit' && module && id) {
-        window.location.href = `/ergon/${module}/edit/${id}`;
+        window.location.href = `/ergon-site/${module}/edit/${id}`;
     } else if (action === 'delete' && module && id && name) {
         if (confirm('Are you sure you want to delete "' + name + '"?')) {
-            fetch(`/ergon/${module}/delete/${id}`, { method: 'POST' })
+            fetch(`/ergon-site/${module}/delete/${id}`, { method: 'POST' })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
@@ -322,47 +287,7 @@ document.addEventListener('click', function(e) {
         }
     }
 });
-var currentTaskId;
-function openProgressModal(taskId, progress, status) {
-    currentTaskId = taskId;
-    var container = document.querySelector('[data-task-id="' + taskId + '"]');
-    var currentProgress = container ? container.querySelector('.progress-percentage').textContent.replace('%', '') : progress;
-    document.getElementById('progressSlider').value = currentProgress;
-    document.getElementById('progressValue').textContent = currentProgress;
-    document.getElementById('progressDialog').style.display = 'flex';
-}
-function closeDialog() {
-    document.getElementById('progressDialog').style.display = 'none';
-}
-function saveProgress() {
-    var progress = document.getElementById('progressSlider').value;
-    var status = progress >= 100 ? 'completed' : progress > 0 ? 'in_progress' : 'assigned';
-    fetch('/ergon/tasks/update-status', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ task_id: currentTaskId, progress: progress, status: status })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            var container = document.querySelector('[data-task-id="' + currentTaskId + '"]');
-            if (container) {
-                var fill = container.querySelector('.progress-fill');
-                var percentage = container.querySelector('.progress-percentage');
-                var statusEl = container.querySelector('.progress-status');
-                fill.style.width = progress + '%';
-                fill.style.background = progress >= 100 ? '#10b981' : (progress >= 75 ? '#8b5cf6' : (progress >= 50 ? '#3b82f6' : (progress >= 25 ? '#f59e0b' : '#e2e8f0')));
-                percentage.textContent = progress + '%';
-                var icon = status === 'completed' ? '✅' : status === 'in_progress' ? '⚡' : '📋';
-                statusEl.textContent = icon + ' ' + status.replace('_', ' ');
-            }
-            closeDialog();
-        } else {
-            alert('Error updating task');
-        }
-    })
-    .catch(() => alert('Error updating task'));
-}
+
 // Check for URL parameters and show messages
 function checkUrlMessages() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -380,14 +305,12 @@ function checkUrlMessages() {
 
 document.addEventListener('DOMContentLoaded', function() {
     checkUrlMessages();
-    
-    var slider = document.getElementById('progressSlider');
-    if (slider) {
-        slider.oninput = function() {
-            document.getElementById('progressValue').textContent = this.value;
-        }
-    }
 });
+
+// Load enhanced progress functionality
+const script = document.createElement('script');
+script.src = '/ergon-site/assets/js/task-progress-enhanced.js';
+document.head.appendChild(script);
 </script>
 
 

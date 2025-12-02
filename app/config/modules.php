@@ -15,6 +15,7 @@ return [
     
     'premium_modules' => [
         'tasks',
+        'daily_planner',
         'projects',
         'reports',
         'users',
@@ -27,6 +28,13 @@ return [
         'system_admin'
     ],
     
+    'role_modules' => [
+        'company_owner' => [
+            'dashboard',
+            'finance'
+        ]
+    ],
+    
     'module_labels' => [
         'attendance' => 'Attendance Management',
         'leaves' => 'Leave Management',
@@ -34,6 +42,7 @@ return [
         'expenses' => 'Expense Management',
         'dashboard' => 'Dashboard',
         'tasks' => 'Task Management',
+        'daily_planner' => 'Daily Planner',
         'projects' => 'Project Management',
         'reports' => 'Reports & Analytics',
         'users' => 'User Management',
@@ -44,5 +53,9 @@ return [
         'gamification' => 'Gamification',
         'analytics' => 'Advanced Analytics',
         'system_admin' => 'System Administration'
+    ],
+    
+    'role_labels' => [
+        'company_owner' => 'Company Owner'
     ]
 ];

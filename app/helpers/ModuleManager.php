@@ -10,6 +10,11 @@ class ModuleManager {
     public static function isModuleEnabled($module) {
         $config = require __DIR__ . '/../config/modules.php';
         
+        // Check role-based restrictions first
+        if (isset($_SESSION['role']) && isset($config['role_modules'][$_SESSION['role']])) {
+            return in_array($module, $config['role_modules'][$_SESSION['role']]);
+        }
+        
         // Basic modules are always enabled
         if (in_array($module, $config['basic_modules'])) {
             return true;
@@ -22,6 +27,14 @@ class ModuleManager {
     
     public static function getEnabledModules() {
         if (self::$enabledModules === null) {
+            $config = require __DIR__ . '/../config/modules.php';
+            
+            // Check role-based restrictions first
+            if (isset($_SESSION['role']) && isset($config['role_modules'][$_SESSION['role']])) {
+                self::$enabledModules = $config['role_modules'][$_SESSION['role']];
+                return self::$enabledModules;
+            }
+            
             try {
                 require_once __DIR__ . '/../config/database.php';
                 $db = Database::connect();
@@ -29,11 +42,9 @@ class ModuleManager {
                 $stmt = $db->query("SELECT module_name FROM enabled_modules WHERE status = 'active'");
                 $result = $stmt->fetchAll(PDO::FETCH_COLUMN);
                 
-                $config = require __DIR__ . '/../config/modules.php';
                 self::$enabledModules = array_merge($config['basic_modules'], $result);
             } catch (Exception $e) {
                 // Fallback to basic modules only
-                $config = require __DIR__ . '/../config/modules.php';
                 self::$enabledModules = $config['basic_modules'];
             }
         }

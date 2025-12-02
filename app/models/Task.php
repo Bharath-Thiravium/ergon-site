@@ -52,26 +52,53 @@ class Task {
         return $stmt->fetchAll();
     }
     
-    public function updateProgress($taskId, $userId, $progress, $comment = null, $attachment = null) {
+    public function updateProgress($taskId, $userId, $progress, $description = null) {
         $this->conn->beginTransaction();
         
         try {
-            $query = "UPDATE tasks SET progress = ?, status = ?, updated_at = NOW() WHERE id = ?";
-            $status = $progress >= 100 ? 'completed' : ($progress > 0 ? 'in_progress' : 'assigned');
+            // Get current progress and status for history
+            $query = "SELECT progress, status FROM tasks WHERE id = ?";
             $stmt = $this->conn->prepare($query);
-            $stmt->execute([$progress, $status, $taskId]);
+            $stmt->execute([$taskId]);
+            $current = $stmt->fetch();
             
-            $query = "INSERT INTO task_updates (task_id, user_id, progress, comment, attachments) 
-                      VALUES (?, ?, ?, ?, ?)";
+            if (!$current) {
+                throw new Exception('Task not found');
+            }
+            
+            $oldProgress = $current['progress'];
+            $oldStatus = $current['status'];
+            $newStatus = $progress >= 100 ? 'completed' : ($progress > 0 ? 'in_progress' : 'assigned');
+            
+            // Update task progress and description
+            $query = "UPDATE tasks SET progress = ?, status = ?, progress_description = ?, updated_at = NOW() WHERE id = ?";
             $stmt = $this->conn->prepare($query);
-            $stmt->execute([$taskId, $userId, $progress, $comment, $attachment]);
+            $stmt->execute([$progress, $newStatus, $description, $taskId]);
+            
+            // Insert progress history record
+            $query = "INSERT INTO task_progress_history (task_id, user_id, progress_from, progress_to, description, status_from, status_to) 
+                      VALUES (?, ?, ?, ?, ?, ?, ?)";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute([$taskId, $userId, $oldProgress, $progress, $description, $oldStatus, $newStatus]);
             
             $this->conn->commit();
             return true;
         } catch (Exception $e) {
             $this->conn->rollback();
+            error_log('Progress update error: ' . $e->getMessage());
             return false;
         }
+    }
+    
+    public function getProgressHistory($taskId) {
+        $query = "SELECT h.*, u.name as user_name 
+                  FROM task_progress_history h 
+                  LEFT JOIN users u ON h.user_id = u.id 
+                  WHERE h.task_id = ? 
+                  ORDER BY h.created_at DESC";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute([$taskId]);
+        return $stmt->fetchAll();
     }
     
     public function getTaskById($taskId) {

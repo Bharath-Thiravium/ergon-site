@@ -92,6 +92,7 @@ $router->get('/tasks/edit/{id}', 'TasksController', 'edit');
 $router->post('/tasks/edit/{id}', 'TasksController', 'edit');
 $router->get('/tasks/view/{id}', 'TasksController', 'viewDetails');
 $router->get('/tasks/history/{id}', 'TasksController', 'getTaskHistory');
+$router->get('/tasks/progress-history/{id}', 'TasksController', 'getProgressHistory');
 $router->post('/tasks/delete/{id}', 'TasksController', 'delete');
 $router->post('/tasks/update-status', 'TasksController', 'updateStatus');
 $router->get('/tasks/kanban', 'TasksController', 'kanban');

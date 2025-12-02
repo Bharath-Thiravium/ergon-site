@@ -7,6 +7,7 @@ require_once __DIR__ . '/../../app/helpers/ModuleManager.php';
 
 // Check module status once at the top
 $tasksDisabled = false;
+$dailyPlannerDisabled = false;
 $followupsDisabled = false;
 $systemAdminDisabled = false;
 $usersDisabled = false;
@@ -18,6 +19,7 @@ $analyticsDisabled = false;
 
 try {
     $tasksDisabled = ModuleManager::isModuleDisabled('tasks');
+    $dailyPlannerDisabled = ModuleManager::isModuleDisabled('daily_planner');
     $followupsDisabled = ModuleManager::isModuleDisabled('followups');
     $systemAdminDisabled = ModuleManager::isModuleDisabled('system_admin');
     $usersDisabled = ModuleManager::isModuleDisabled('users');
@@ -217,6 +219,9 @@ ob_end_clean();
     <link href="/ergon-site/assets/css/premium-navigation.css?v=1.0" rel="stylesheet">
     <?php if (isset($active_page) && $active_page === 'dashboard' && isset($_SESSION['role']) && $_SESSION['role'] === 'owner'): ?>
     <link href="/ergon-site/assets/css/dashboard-owner.css?v=1.0" rel="stylesheet">
+    <?php endif; ?>
+    <?php if (isset($additional_css)): ?>
+    <?= $additional_css ?>
     <?php endif; ?>
 
     <script src="/ergon-site/assets/js/theme-switcher.js?v=1.0" defer></script>
@@ -475,10 +480,10 @@ ob_end_clean();
                                 Overall Tasks
                                 <?php if ($tasksDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                             </a>
-                            <a href="/ergon-site/workflow/daily-planner" class="nav-dropdown-item <?= ($active_page ?? '') === 'daily-planner' ? 'nav-dropdown-item--active' : '' ?> <?= $tasksDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
+                            <a href="/ergon-site/workflow/daily-planner" class="nav-dropdown-item <?= ($active_page ?? '') === 'daily-planner' ? 'nav-dropdown-item--active' : '' ?> <?= $dailyPlannerDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
                                 <span class="nav-icon">🌅</span>
                                 Daily Planner
-                                <?php if ($tasksDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
+                                <?php if ($dailyPlannerDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                             </a>
                             <a href="/ergon-site/contacts/followups" class="nav-dropdown-item <?= ($active_page ?? '') === 'contact_followups' ? 'nav-dropdown-item--active' : '' ?> <?= $followupsDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
                                 <span class="nav-icon">📞</span>
@@ -551,10 +556,10 @@ ob_end_clean();
                                 Tasks
                                 <?php if ($tasksDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                             </a>
-                            <a href="/ergon-site/workflow/daily-planner" class="nav-dropdown-item <?= ($active_page ?? '') === 'daily-planner' ? 'nav-dropdown-item--active' : '' ?> <?= $tasksDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
+                            <a href="/ergon-site/workflow/daily-planner" class="nav-dropdown-item <?= ($active_page ?? '') === 'daily-planner' ? 'nav-dropdown-item--active' : '' ?> <?= $dailyPlannerDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
                                 <span class="nav-icon">📅</span>
                                 Daily Planner
-                                <?php if ($tasksDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
+                                <?php if ($dailyPlannerDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                             </a>
                             <a href="/ergon-site/contacts/followups" class="nav-dropdown-item <?= ($active_page ?? '') === 'contact_followups' ? 'nav-dropdown-item--active' : '' ?> <?= $followupsDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
                                 <span class="nav-icon">📞</span>
@@ -709,10 +714,10 @@ ob_end_clean();
                     Overall Tasks
                     <?php if ($tasksDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                 </a>
-                <a href="/ergon-site/workflow/daily-planner" class="sidebar__link <?= ($active_page ?? '') === 'daily-planner' ? 'sidebar__link--active' : '' ?> <?= $tasksDisabled ? 'sidebar__link--disabled' : '' ?>">
+                <a href="/ergon-site/workflow/daily-planner" class="sidebar__link <?= ($active_page ?? '') === 'daily-planner' ? 'sidebar__link--active' : '' ?> <?= $dailyPlannerDisabled ? 'sidebar__link--disabled' : '' ?>">
                     <span class="sidebar__icon">🌅</span>
                     Daily Planner
-                    <?php if ($tasksDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
+                    <?php if ($dailyPlannerDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                 </a>
                 <a href="/ergon-site/contacts/followups" class="sidebar__link <?= ($active_page ?? '') === 'contact_followups' ? 'sidebar__link--active' : '' ?> <?= $followupsDisabled ? 'sidebar__link--disabled' : '' ?>">
                     <span class="sidebar__icon">📞</span>
@@ -763,10 +768,10 @@ ob_end_clean();
                     Tasks
                     <?php if ($tasksDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                 </a>
-                <a href="/ergon-site/workflow/daily-planner" class="sidebar__link <?= ($active_page ?? '') === 'daily-planner' ? 'sidebar__link--active' : '' ?> <?= $tasksDisabled ? 'sidebar__link--disabled' : '' ?>">
+                <a href="/ergon-site/workflow/daily-planner" class="sidebar__link <?= ($active_page ?? '') === 'daily-planner' ? 'sidebar__link--active' : '' ?> <?= $dailyPlannerDisabled ? 'sidebar__link--disabled' : '' ?>">
                     <span class="sidebar__icon">📅</span>
                     Daily Planner
-                    <?php if ($tasksDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
+                    <?php if ($dailyPlannerDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                 </a>
                 <a href="/ergon-site/contacts/followups" class="sidebar__link <?= ($active_page ?? '') === 'contact_followups' ? 'sidebar__link--active' : '' ?> <?= $followupsDisabled ? 'sidebar__link--disabled' : '' ?>">
                     <span class="sidebar__icon">📞</span>

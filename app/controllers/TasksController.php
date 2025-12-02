@@ -632,9 +632,8 @@ class TasksController extends Controller {
         
         $input = json_decode(file_get_contents('php://input'), true);
         $taskId = intval($input['task_id'] ?? 0);
-        $status = $input['status'] ?? 'assigned';
         $progress = intval($input['progress'] ?? 0);
-        $reason = trim($input['reason'] ?? '');
+        $description = trim($input['description'] ?? '');
         
         if (!$taskId) {
             echo json_encode(['success' => false, 'message' => 'Invalid task ID']);
@@ -647,59 +646,91 @@ class TasksController extends Controller {
             exit;
         }
         
+        // Description is required for progress updates
+        if (empty($description)) {
+            echo json_encode(['success' => false, 'message' => 'Progress description is required']);
+            exit;
+        }
+        
         try {
-            require_once __DIR__ . '/../config/database.php';
-            $db = Database::connect();
-            $this->ensureTasksTable($db);
+            $this->ensureProgressHistoryTable();
             
-            // Get current task data for history
-            $stmt = $db->prepare("SELECT status, progress FROM tasks WHERE id = ?");
-            $stmt->execute([$taskId]);
-            $currentData = $stmt->fetch(PDO::FETCH_ASSOC);
-            
-            if (!$currentData) {
-                echo json_encode(['success' => false, 'message' => 'Task not found']);
-                exit;
-            }
-            
-            $oldStatus = $currentData['status'];
-            $oldProgress = $currentData['progress'];
-            
-            // Update both status and progress
-            $stmt = $db->prepare("UPDATE tasks SET status = ?, progress = ?, updated_at = NOW() WHERE id = ?");
-            $result = $stmt->execute([$status, $progress, $taskId]);
+            $result = $this->taskModel->updateProgress($taskId, $_SESSION['user_id'], $progress, $description);
             
             if ($result) {
-                // Log to task history if status or progress changed
-                if ($oldStatus !== $status) {
-                    $this->logTaskHistory($db, $taskId, 'status_changed', $oldStatus, $status, $reason);
-                }
-                if ($oldProgress != $progress) {
-                    $this->logTaskHistory($db, $taskId, 'progress_updated', $oldProgress . '%', $progress . '%', $reason);
-                }
-                
-                // Update linked followups if task status changed
-                if ($oldStatus !== $status) {
-                    require_once __DIR__ . '/ContactFollowupController.php';
-                    ContactFollowupController::updateLinkedFollowupStatus($taskId, $status);
-                }
-                
                 // Sync with daily_tasks table if exists
                 try {
+                    require_once __DIR__ . '/../config/database.php';
+                    $db = Database::connect();
+                    $status = $progress >= 100 ? 'completed' : ($progress > 0 ? 'in_progress' : 'assigned');
                     $stmt = $db->prepare("UPDATE daily_tasks SET status = ?, completed_percentage = ? WHERE original_task_id = ? OR task_id = ?");
                     $stmt->execute([$status, $progress, $taskId, $taskId]);
                 } catch (Exception $e) {
                     error_log('Daily tasks sync error: ' . $e->getMessage());
                 }
                 
-                echo json_encode(['success' => true, 'message' => 'Task updated successfully']);
+                echo json_encode(['success' => true, 'message' => 'Progress updated successfully']);
             } else {
-                echo json_encode(['success' => false, 'message' => 'Failed to update task']);
+                echo json_encode(['success' => false, 'message' => 'Failed to update progress']);
             }
         } catch (Exception $e) {
             echo json_encode(['success' => false, 'message' => 'Update failed: ' . $e->getMessage()]);
         }
         exit;
+    }
+    
+    public function getProgressHistory($id) {
+        header('Content-Type: application/json');
+        AuthMiddleware::requireAuth();
+        
+        try {
+            $history = $this->taskModel->getProgressHistory($id);
+            
+            $html = empty($history) ? '<p>No progress history available.</p>' : $this->renderProgressHistory($history);
+            echo json_encode(['success' => true, 'html' => $html]);
+        } catch (Exception $e) {
+            error_log('Progress history error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        }
+        exit;
+    }
+    
+    private function renderProgressHistory($history) {
+        if (empty($history)) {
+            return '<div class="no-history"><p>📊 No progress history available.</p></div>';
+        }
+        
+        $html = '<div class="progress-timeline">';
+        foreach ($history as $entry) {
+            $progressChange = $entry['progress_to'] - $entry['progress_from'];
+            $changeIcon = $progressChange > 0 ? '📈' : ($progressChange < 0 ? '📉' : '📊');
+            $changeColor = $progressChange > 0 ? '#10b981' : ($progressChange < 0 ? '#ef4444' : '#6b7280');
+            
+            $html .= '<div class="progress-entry" style="border-left-color: ' . $changeColor . ';">';
+            $html .= '<div class="progress-icon" style="background-color: ' . $changeColor . ';">' . $changeIcon . '</div>';
+            $html .= '<div class="progress-content">';
+            $html .= '<div class="progress-header">';
+            $html .= '<span class="progress-change">Progress: ' . $entry['progress_from'] . '% → ' . $entry['progress_to'] . '%</span>';
+            $html .= '<span class="progress-time">' . $this->formatTimeAgo($entry['created_at']) . '</span>';
+            $html .= '</div>';
+            
+            if ($entry['status_from'] !== $entry['status_to']) {
+                $html .= '<div class="status-change">';
+                $html .= '<span class="status-from">Status: ' . htmlspecialchars($entry['status_from']) . '</span>';
+                $html .= '<span class="status-arrow">→</span>';
+                $html .= '<span class="status-to">' . htmlspecialchars($entry['status_to']) . '</span>';
+                $html .= '</div>';
+            }
+            
+            if ($entry['description']) {
+                $html .= '<div class="progress-description">💬 ' . htmlspecialchars($entry['description']) . '</div>';
+            }
+            
+            $html .= '<div class="progress-user">👤 ' . htmlspecialchars($entry['user_name'] ?? 'System') . '</div>';
+            $html .= '</div></div>';
+        }
+        $html .= '</div>';
+        return $html;
     }
     
     public function getTaskHistory($id) {
@@ -1116,6 +1147,39 @@ class TasksController extends Controller {
         } catch (Exception $e) {
             error_log('Task history log error: ' . $e->getMessage());
             return false;
+        }
+    }
+    
+    private function ensureProgressHistoryTable() {
+        try {
+            require_once __DIR__ . '/../config/database.php';
+            $db = Database::connect();
+            
+            // Create progress history table
+            $db->exec("CREATE TABLE IF NOT EXISTS task_progress_history (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                task_id INT NOT NULL,
+                user_id INT NOT NULL,
+                progress_from INT NOT NULL DEFAULT 0,
+                progress_to INT NOT NULL,
+                description TEXT,
+                status_from VARCHAR(50),
+                status_to VARCHAR(50),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                INDEX idx_task_id (task_id),
+                INDEX idx_user_id (user_id),
+                INDEX idx_created_at (created_at)
+            )");
+            
+            // Add progress_description column to tasks table if not exists
+            $stmt = $db->prepare("SHOW COLUMNS FROM tasks LIKE 'progress_description'");
+            $stmt->execute();
+            if ($stmt->rowCount() == 0) {
+                $db->exec("ALTER TABLE tasks ADD COLUMN progress_description TEXT");
+                error_log('Added progress_description column to tasks table');
+            }
+        } catch (Exception $e) {
+            error_log('ensureProgressHistoryTable error: ' . $e->getMessage());
         }
     }
     
