@@ -19,26 +19,10 @@ class Router {
         error_log("Router Debug - Method: " . $method);
         error_log("Router Debug - Parsed Path: " . $path);
         
-        // Determine base path based on environment
-        $isProduction = strpos($_SERVER['HTTP_HOST'] ?? '', 'athenas.co.in') !== false;
-        $isLocalhost = strpos($_SERVER['HTTP_HOST'] ?? '', 'localhost') !== false;
-        
-        if ($isLocalhost) {
-            // For localhost, remove /ergon-site prefix
-            $basePath = '/ergon-site';
-            if (strpos($path, $basePath) === 0) {
-                $path = substr($path, strlen($basePath));
-            }
-        } else {
-            // For production, handle both base and public URLs
-            $basePath = '/ergon';
-            $publicBasePath = $basePath . '/public';
-            
-            if (strpos($path, $publicBasePath) === 0) {
-                $path = substr($path, strlen($publicBasePath));
-            } elseif (strpos($path, $basePath) === 0) {
-                $path = substr($path, strlen($basePath));
-            }
+        // Remove /ergon-site prefix for both development and production
+        $basePath = '/ergon-site';
+        if (strpos($path, $basePath) === 0) {
+            $path = substr($path, strlen($basePath));
         }
         
         if (empty($path) || $path[0] !== '/') {
@@ -135,9 +119,11 @@ class Router {
             echo "<!DOCTYPE html><html><head><title>404 - Page Not Found</title></head>";
             echo "<body><h1>404 - Page Not Found</h1>";
             echo "<p>The requested page could not be found.</p>";
-            $isProduction = strpos($_SERVER['HTTP_HOST'] ?? '', 'athenas.co.in') !== false;
-            $basePath = '/ergon-site';
-            echo "<a href='/ergon-site/login'>Return to Login</a></body></html>";
+            
+            // Use Environment class to get correct base URL
+            require_once __DIR__ . '/../config/environment.php';
+            $baseUrl = Environment::getBaseUrl();
+            echo "<a href='{$baseUrl}/login'>Return to Login</a></body></html>";
         }
     }
     
