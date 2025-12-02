@@ -39,10 +39,20 @@ class AuthController extends Controller {
         $password = $_POST['password'] ?? '';
         $clientIp = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
         
+        // Check if this is an AJAX request
+        $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && 
+                  strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest' ||
+                  (isset($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false);
+        
         if (empty($email) || empty($password)) {
-            header('Content-Type: application/json');
-            http_response_code(400);
-            echo json_encode(['error' => 'Email and password are required']);
+            if ($isAjax) {
+                header('Content-Type: application/json');
+                http_response_code(400);
+                echo json_encode(['error' => 'Email and password are required']);
+            } else {
+                $_SESSION['login_error'] = 'Email and password are required';
+                header('Location: /ergon-site/login');
+            }
             exit;
         }
         
@@ -51,18 +61,28 @@ class AuthController extends Controller {
         
         // Check rate limiting
         if (!$securityService->checkRateLimit($clientIp, 'login')) {
-            header('Content-Type: application/json');
-            http_response_code(429);
-            echo json_encode(['error' => 'Too many login attempts. Please try again later.']);
+            if ($isAjax) {
+                header('Content-Type: application/json');
+                http_response_code(429);
+                echo json_encode(['error' => 'Too many login attempts. Please try again later.']);
+            } else {
+                $_SESSION['login_error'] = 'Too many login attempts. Please try again later.';
+                header('Location: /ergon-site/login');
+            }
             exit;
         }
         
         // Check account lockout
         $lockoutStatus = $securityService->checkAccountLockout($email);
         if ($lockoutStatus['locked']) {
-            header('Content-Type: application/json');
-            http_response_code(423);
-            echo json_encode(['error' => $lockoutStatus['message']]);
+            if ($isAjax) {
+                header('Content-Type: application/json');
+                http_response_code(423);
+                echo json_encode(['error' => $lockoutStatus['message']]);
+            } else {
+                $_SESSION['login_error'] = $lockoutStatus['message'];
+                header('Location: /ergon-site/login');
+            }
             exit;
         }
         
@@ -92,19 +112,24 @@ class AuthController extends Controller {
                 
                 $redirectUrl = $this->getRedirectUrl($user['role']);
                 
-                header('Content-Type: application/json');
-                http_response_code(200);
-                echo json_encode([
-                    'success' => true,
-                    'message' => 'Login successful',
-                    'user' => [
-                        'id' => $user['id'],
-                        'name' => $user['name'],
-                        'email' => $user['email'],
-                        'role' => $user['role']
-                    ],
-                    'redirect' => $redirectUrl
-                ]);
+                if ($isAjax) {
+                    header('Content-Type: application/json');
+                    http_response_code(200);
+                    echo json_encode([
+                        'success' => true,
+                        'message' => 'Login successful',
+                        'user' => [
+                            'id' => $user['id'],
+                            'name' => $user['name'],
+                            'email' => $user['email'],
+                            'role' => $user['role']
+                        ],
+                        'redirect' => $redirectUrl
+                    ]);
+                } else {
+                    // Regular form submission - redirect directly
+                    header('Location: ' . $redirectUrl);
+                }
                 exit;
             } else {
                 // Record failed login
@@ -117,17 +142,29 @@ class AuthController extends Controller {
                     $message .= ". {$remainingAttempts} attempts remaining before account lockout.";
                 }
                 
-                header('Content-Type: application/json');
-                http_response_code(401);
-                echo json_encode(['error' => $message]);
+                if ($isAjax) {
+                    header('Content-Type: application/json');
+                    http_response_code(401);
+                    echo json_encode(['error' => $message]);
+                } else {
+                    // Regular form submission - redirect back to login with error
+                    $_SESSION['login_error'] = $message;
+                    header('Location: /ergon-site/login');
+                }
                 exit;
             }
         } catch (Exception $e) {
             error_log('Login error: ' . $e->getMessage());
             $securityService->logAttempt($clientIp, 'login', false);
-            header('Content-Type: application/json');
-            http_response_code(500);
-            echo json_encode(['error' => 'Login failed. Please try again.']);
+            
+            if ($isAjax) {
+                header('Content-Type: application/json');
+                http_response_code(500);
+                echo json_encode(['error' => 'Login failed. Please try again.']);
+            } else {
+                $_SESSION['login_error'] = 'Login failed. Please try again.';
+                header('Location: /ergon-site/login');
+            }
             exit;
         }
     }
@@ -152,7 +189,9 @@ class AuthController extends Controller {
         header('Pragma: no-cache');
         header('Expires: Thu, 01 Jan 1970 00:00:00 GMT');
         
-        header('Location: /ergon-site/login');
+        require_once __DIR__ . '/../config/environment.php';
+        $baseUrl = Environment::getBaseUrl();
+        header('Location: ' . $baseUrl . '/login');
         exit;
     }
     
@@ -255,15 +294,18 @@ class AuthController extends Controller {
     }
     
     private function getRedirectUrl($role) {
+        require_once __DIR__ . '/../config/environment.php';
+        $baseUrl = Environment::getBaseUrl();
+        
         switch ($role) {
             case ROLE_OWNER:
-                return '/ergon-site/owner/dashboard';
+                return $baseUrl . '/owner/dashboard';
             case ROLE_ADMIN:
-                return '/ergon-site/admin/dashboard';
+                return $baseUrl . '/admin/dashboard';
             case ROLE_USER:
-                return '/ergon-site/user/dashboard';
+                return $baseUrl . '/user/dashboard';
             default:
-                return '/ergon-site/dashboard';
+                return $baseUrl . '/dashboard';
         }
     }
 }

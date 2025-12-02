@@ -363,7 +363,13 @@
                 </div>
                 <?php unset($_SESSION['logout_message']); endif; ?>
                 
-                <form id="loginForm" action="/ergon-site/simple_login.php" method="POST">
+                <?php if (isset($_SESSION['login_error'])): ?>
+                <div class="alert alert-error">
+                    ⚠ <?= htmlspecialchars($_SESSION['login_error']) ?>
+                </div>
+                <?php unset($_SESSION['login_error']); endif; ?>
+                
+                <form id="loginForm" action="/ergon-site/login" method="POST">
                     <div class="form-group">
                         <label for="email" class="form-label">Email Address</label>
                         <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
