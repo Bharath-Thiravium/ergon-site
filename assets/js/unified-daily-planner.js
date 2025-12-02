@@ -13,7 +13,7 @@ window.pauseTask = function(taskId) {
     
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
     
-    fetch('/ergon/api/daily_planner_workflow.php?action=pause', {
+    fetch('/ergon-site/api/daily_planner_workflow.php?action=pause', {
         method: 'POST',
         headers: { 
             'Content-Type': 'application/json',
@@ -48,7 +48,7 @@ window.resumeTask = function(taskId) {
     
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
     
-    fetch('/ergon/api/daily_planner_workflow.php?action=resume', {
+    fetch('/ergon-site/api/daily_planner_workflow.php?action=resume', {
         method: 'POST',
         headers: { 
             'Content-Type': 'application/json',
@@ -77,7 +77,7 @@ window.startTask = function(taskId) {
     const taskCard = document.querySelector(`[data-task-id="${taskId}"]`);
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
     
-    fetch('/ergon/api/daily_planner_workflow.php?action=start', {
+    fetch('/ergon-site/api/daily_planner_workflow.php?action=start', {
         method: 'POST',
         headers: { 
             'Content-Type': 'application/json',
@@ -278,7 +278,7 @@ window.updateTaskProgress = function(taskId) {
     document.querySelector('.modal-overlay')?.remove();
     
     // Send update to server using the same endpoint as Task module with original task ID
-    fetch('/ergon/tasks/update-status', {
+    fetch('/ergon-site/tasks/update-status', {
         method: 'POST',
         headers: { 
             'Content-Type': 'application/json',
@@ -344,7 +344,7 @@ window.postponeTask = function(taskId) {
     
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
     
-    fetch('/ergon/api/daily_planner_workflow.php?action=postpone', {
+    fetch('/ergon-site/api/daily_planner_workflow.php?action=postpone', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -439,7 +439,7 @@ window.forceSLARefresh = function() {
     const selectedDate = plannerGrid ? plannerGrid.dataset.selectedDate : new Date().toISOString().split('T')[0];
     
     // Fetch updated SLA data
-    fetch(`/ergon/api/sla_dashboard.php?date=${selectedDate}`)
+    fetch(`/ergon-site/api/sla_dashboard.php?date=${selectedDate}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);

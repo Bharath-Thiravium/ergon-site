@@ -10,10 +10,10 @@ ob_start();
         <p>Real-time GPS-based attendance tracking with analytics</p>
     </div>
     <div class="page-actions">
-        <a href="/ergon/attendance/clock" class="btn btn--primary">
+        <a href="/ergon-site/attendance/clock" class="btn btn--primary">
             <span>🕰️</span> Clock In/Out
         </a>
-        <a href="/ergon/attendance" class="btn btn--secondary">
+        <a href="/ergon-site/attendance" class="btn btn--secondary">
             <span>📍</span> Standard View
         </a>
     </div>
@@ -95,7 +95,7 @@ function loadDashboardData() {
 }
 
 function loadAttendanceTable() {
-    fetch('/ergon/attendance')
+    fetch('/ergon-site/attendance')
         .then(response => response.text())
         .then(html => {
             // Extract table content from response

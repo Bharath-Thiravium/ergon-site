@@ -3,7 +3,7 @@ session_start();
 require_once __DIR__ . '/../../app/config/database.php';
 
 if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['owner', 'admin'])) {
-    header('Location: /ergon/login.php');
+    header('Location: /ergon-site/login.php');
     exit;
 }
 
@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
         const formData = new FormData(this);
         
-        fetch('/ergon/api/manual_attendance_simple.php', {
+        fetch('/ergon-site/api/manual_attendance_simple.php', {
             method: 'POST',
             body: formData
         })
@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function loadEntries() {
-    fetch('/ergon/api/manual_attendance_simple.php')
+    fetch('/ergon-site/api/manual_attendance_simple.php')
     .then(response => response.json())
     .then(data => {
         const container = document.getElementById('entries');

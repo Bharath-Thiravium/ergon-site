@@ -120,7 +120,7 @@ function toggleModule(module, action) {
         return;
     }
     
-    const basePath = window.location.hostname === 'localhost' ? '/ergon-site' : '/ergon';
+    const basePath = window.location.hostname === 'localhost' ? '/ergon-site' : '/ergon-site';
     fetch(basePath + '/modules/toggle', {
         method: 'POST',
         headers: {

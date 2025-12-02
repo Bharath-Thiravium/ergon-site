@@ -424,7 +424,7 @@ ob_start();
             <h3>Create System Admin</h3>
             <button class="modal-close" onclick="closeModal('createAdminModal')">&times;</button>
         </div>
-        <form method="POST" action="/ergon/system-admin/create" id="createAdminForm">
+        <form method="POST" action="/ergon-site/system-admin/create" id="createAdminForm">
             <div class="modal-body">
                 <div class="form-group">
                     <label class="form-label">Full Name</label>
@@ -516,7 +516,7 @@ function changePassword(userId, userName) {
         formData.append('password', newPassword);
         formData.append('confirm_password', newPassword);
         
-        fetch('/ergon/system-admin/change-password', {
+        fetch('/ergon-site/system-admin/change-password', {
             method: 'POST',
             body: formData
         })
@@ -541,7 +541,7 @@ function suspendAdmin(adminId, adminName) {
         const formData = new FormData();
         formData.append('admin_id', adminId);
         
-        fetch('/ergon/system-admin/suspend-admin', {
+        fetch('/ergon-site/system-admin/suspend-admin', {
             method: 'POST',
             body: formData
         })
@@ -575,7 +575,7 @@ function toggleStatus(adminId, adminName, isActive, currentStatus) {
     if (confirm(message)) {
         const form = document.createElement('form');
         form.method = 'POST';
-        form.action = '/ergon/system-admin/toggle-status';
+        form.action = '/ergon-site/system-admin/toggle-status';
         
         const adminIdInput = document.createElement('input');
         adminIdInput.type = 'hidden';
@@ -598,7 +598,7 @@ function toggleStatus(adminId, adminName, isActive, currentStatus) {
 }
 
 function exportAdmins() {
-    window.location.href = '/ergon/system-admin/export';
+    window.location.href = '/ergon-site/system-admin/export';
 }
 
 // Ensure form submission works

@@ -51,7 +51,7 @@ class UnifiedAttendanceController extends Controller {
             http_response_code(500);
             echo "<h1>Attendance Error</h1><p>Unable to load attendance data. Please check the database connection.</p>";
             echo "<p>Error: " . htmlspecialchars($e->getMessage()) . "</p>";
-            echo "<a href='/ergon/dashboard'>Return to Dashboard</a>";
+            echo "<a href='/ergon-site/dashboard'>Return to Dashboard</a>";
         }
     }
     

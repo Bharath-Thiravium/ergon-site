@@ -79,5 +79,5 @@ foreach ($yesterdayTasks as $task) {
 }
 
 echo "<hr>";
-echo "<p><a href='/ergon/workflow/daily-planner/{$yesterday}'>View Yesterday's Tasks in Daily Planner</a></p>";
+echo "<p><a href='/ergon-site/workflow/daily-planner/{$yesterday}'>View Yesterday's Tasks in Daily Planner</a></p>";
 ?>

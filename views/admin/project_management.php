@@ -192,7 +192,7 @@ function deleteProject(id, name) {
         const formData = new FormData();
         formData.append('project_id', id);
         
-        fetch('/ergon/project-management/delete', {
+        fetch('/ergon-site/project-management/delete', {
             method: 'POST',
             body: formData
         })
@@ -215,7 +215,7 @@ document.getElementById('projectForm').addEventListener('submit', function(e) {
     e.preventDefault();
     
     const formData = new FormData(this);
-    const url = isEditing ? '/ergon/project-management/update' : '/ergon/project-management/create';
+    const url = isEditing ? '/ergon-site/project-management/update' : '/ergon-site/project-management/create';
     
     console.log('Submitting to URL:', url);
     console.log('Form data:', Object.fromEntries(formData));

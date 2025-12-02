@@ -55,7 +55,7 @@ try {
 }
 
 // Test API endpoints
-$baseUrl = 'http://' . $_SERVER['HTTP_HOST'] . '/ergon/finance';
+$baseUrl = 'http://' . $_SERVER['HTTP_HOST'] . '/ergon-site/finance';
 $endpoints = [
     'dashboard-stats',
     'tables',

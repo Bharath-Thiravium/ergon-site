@@ -124,13 +124,13 @@ class TasksController extends Controller {
         error_log('Task store data: ' . json_encode($taskData));
         
         if (empty($taskData['title']) || $taskData['assigned_to'] <= 0) {
-            header('Location: /ergon/tasks/create?error=Title and assigned user are required');
+            header('Location: /ergon-site/tasks/create?error=Title and assigned user are required');
             exit;
         }
         
         // Validate progress range
         if ($taskData['progress'] < 0 || $taskData['progress'] > 100) {
-            header('Location: /ergon/tasks/create?error=Progress must be between 0 and 100');
+            header('Location: /ergon-site/tasks/create?error=Progress must be between 0 and 100');
             exit;
         }
         
@@ -194,14 +194,14 @@ class TasksController extends Controller {
                 }
                 
                 error_log('Task created with ID: ' . $taskId . ', type: ' . $taskData['task_type'] . ', progress: ' . $taskData['progress'] . '%, planned_date: ' . ($taskData['planned_date'] ?? 'null'));
-                header('Location: /ergon/tasks?success=Task created successfully');
+                header('Location: /ergon-site/tasks?success=Task created successfully');
             } else {
                 error_log('Task creation failed: ' . implode(', ', $stmt->errorInfo()));
-                header('Location: /ergon/tasks/create?error=Failed to create task');
+                header('Location: /ergon-site/tasks/create?error=Failed to create task');
             }
         } catch (Exception $e) {
             error_log('Task creation exception: ' . $e->getMessage());
-            header('Location: /ergon/tasks/create?error=Task creation failed');
+            header('Location: /ergon-site/tasks/create?error=Task creation failed');
         }
         exit;
     }
@@ -228,13 +228,13 @@ class TasksController extends Controller {
             ];
             
             if (empty($taskData['title']) || $taskData['assigned_to'] <= 0) {
-                header('Location: /ergon/tasks/edit/' . $id . '?error=Title and assigned user are required');
+                header('Location: /ergon-site/tasks/edit/' . $id . '?error=Title and assigned user are required');
                 exit;
             }
             
             // Validate progress range
             if ($taskData['progress'] < 0 || $taskData['progress'] > 100) {
-                header('Location: /ergon/tasks/edit/' . $id . '?error=Progress must be between 0 and 100');
+                header('Location: /ergon-site/tasks/edit/' . $id . '?error=Progress must be between 0 and 100');
                 exit;
             }
             
@@ -284,14 +284,14 @@ class TasksController extends Controller {
                     }
                     
                     error_log('Task updated with ID: ' . $id . ', progress: ' . $taskData['progress'] . '%, planned_date: ' . ($taskData['planned_date'] ?? 'null'));
-                    header('Location: /ergon/tasks?success=Task updated successfully');
+                    header('Location: /ergon-site/tasks?success=Task updated successfully');
                 } else {
                     error_log('Task update failed: ' . implode(', ', $stmt->errorInfo()));
-                    header('Location: /ergon/tasks/edit/' . $id . '?error=Failed to update task');
+                    header('Location: /ergon-site/tasks/edit/' . $id . '?error=Failed to update task');
                 }
             } catch (Exception $e) {
                 error_log('Task update exception: ' . $e->getMessage());
-                header('Location: /ergon/tasks/edit/' . $id . '?error=Update failed');
+                header('Location: /ergon-site/tasks/edit/' . $id . '?error=Update failed');
             }
             exit;
         }
@@ -341,7 +341,7 @@ class TasksController extends Controller {
             }
             
             if (!$task) {
-                header('Location: /ergon/tasks?error=Task not found');
+                header('Location: /ergon-site/tasks?error=Task not found');
                 exit;
             }
             
@@ -360,7 +360,7 @@ class TasksController extends Controller {
             $this->view('tasks/edit', $data);
         } catch (Exception $e) {
             error_log('Task edit load error: ' . $e->getMessage());
-            header('Location: /ergon/tasks?error=Failed to load task');
+            header('Location: /ergon-site/tasks?error=Failed to load task');
             exit;
         }
     }
@@ -379,7 +379,7 @@ class TasksController extends Controller {
             
             $result = $this->taskModel->updateProgress($taskId, $_SESSION['user_id'], $progress, $comment);
             if ($result) {
-                header('Location: /ergon/tasks?success=updated');
+                header('Location: /ergon-site/tasks?success=updated');
                 exit;
             }
         }
@@ -589,7 +589,7 @@ class TasksController extends Controller {
             $task = $stmt->fetch(PDO::FETCH_ASSOC);
             
             if (!$task) {
-                header('Location: /ergon/tasks?error=not_found');
+                header('Location: /ergon-site/tasks?error=not_found');
                 exit;
             }
             
@@ -616,7 +616,7 @@ class TasksController extends Controller {
             $this->view('tasks/view', $data);
         } catch (Exception $e) {
             error_log('Task view error: ' . $e->getMessage());
-            header('Location: /ergon/tasks?error=view_failed');
+            header('Location: /ergon-site/tasks?error=view_failed');
             exit;
         }
     }

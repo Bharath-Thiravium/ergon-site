@@ -9,7 +9,7 @@ ob_start();
         <p>Manage all your follow-up communications</p>
     </div>
     <div class="page-actions">
-        <a href="/ergon/followups/create" class="btn btn--primary">
+        <a href="/ergon-site/followups/create" class="btn btn--primary">
             <span>➕</span> New Follow-up
         </a>
     </div>
@@ -121,7 +121,7 @@ ob_start();
                 <div class="empty-icon">📞</div>
                 <h3>No Follow-ups Yet</h3>
                 <p>Create your first follow-up to get started</p>
-                <a href="/ergon/followups/create" class="btn btn--primary">
+                <a href="/ergon-site/followups/create" class="btn btn--primary">
                     Create Follow-up
                 </a>
             </div>
@@ -333,7 +333,7 @@ ob_start();
 <script>
 function completeFollowup(id) {
     if (confirm('Mark this follow-up as completed?')) {
-        fetch(`/ergon/contacts/followups/complete/${id}`, {
+        fetch(`/ergon-site/contacts/followups/complete/${id}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -364,7 +364,7 @@ function rescheduleFollowup(id) {
         formData.append('new_date', newDate);
         formData.append('reason', reason);
         
-        fetch(`/ergon/contacts/followups/reschedule/${id}`, {
+        fetch(`/ergon-site/contacts/followups/reschedule/${id}`, {
             method: 'POST',
             body: formData,
             headers: {
@@ -394,7 +394,7 @@ function cancelFollowup(id) {
         const formData = new FormData();
         formData.append('reason', reason.trim());
         
-        fetch(`/ergon/contacts/followups/cancel/${id}`, {
+        fetch(`/ergon-site/contacts/followups/cancel/${id}`, {
             method: 'POST',
             body: formData,
             headers: {
@@ -419,7 +419,7 @@ function cancelFollowup(id) {
 
 function deleteFollowup(id) {
     if (confirm('Are you sure you want to delete this follow-up? This action cannot be undone.')) {
-        fetch(`/ergon/followups/delete/${id}`, {
+        fetch(`/ergon-site/followups/delete/${id}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

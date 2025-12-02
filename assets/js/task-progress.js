@@ -13,7 +13,7 @@ function closeDialog() {
 function saveProgress() {
     var progress = document.getElementById('progressSlider').value;
     var status = progress >= 100 ? 'completed' : progress > 0 ? 'in_progress' : 'assigned';
-    fetch('/ergon/tasks/update-status', {
+    fetch('/ergon-site/tasks/update-status', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ task_id: currentTaskId, progress: progress, status: status })

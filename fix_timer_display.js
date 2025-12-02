@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
     window.startTask = function(taskId) {
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
         
-        fetch('/ergon/api/daily_planner_workflow.php?action=start', {
+        fetch('/ergon-site/api/daily_planner_workflow.php?action=start', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function() {
             clearInterval(window.taskTimers[taskId]);
         }
         
-        fetch('/ergon/api/daily_planner_workflow.php?action=pause', {
+        fetch('/ergon-site/api/daily_planner_workflow.php?action=pause', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function() {
             clearInterval(window.taskTimers[taskId]);
         }
         
-        fetch('/ergon/api/daily_planner_workflow.php?action=resume', {
+        fetch('/ergon-site/api/daily_planner_workflow.php?action=resume', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
@@ -212,7 +212,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function savePauseDuration(taskId, totalPauseDuration) {
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
         
-        fetch('/ergon/api/daily_planner_workflow.php?action=update-pause-duration', {
+        fetch('/ergon-site/api/daily_planner_workflow.php?action=update-pause-duration', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
@@ -296,7 +296,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Fetch existing pause data from server
     function fetchTaskPauseData(taskId) {
-        return fetch(`/ergon/api/daily_planner_workflow.php?action=timer&task_id=${taskId}`)
+        return fetch(`/ergon-site/api/daily_planner_workflow.php?action=timer&task_id=${taskId}`)
             .then(response => response.json())
             .then(data => {
                 if (data.success) {

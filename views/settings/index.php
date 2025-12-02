@@ -24,7 +24,7 @@ ob_start();
             </h2>
         </div>
         <div class="card__body">
-            <form id="settingsForm" method="POST" action="/ergon/settings">
+            <form id="settingsForm" method="POST" action="/ergon-site/settings">
                 <div class="form-group">
                     <label class="form-label">Company Name</label>
                     <input type="text" class="form-control" name="company_name" value="<?= htmlspecialchars($settings['company_name'] ?? 'ERGON Company') ?>">
@@ -41,7 +41,7 @@ ob_start();
                         <button type="button" class="btn-location-small" onclick="getCurrentLocation()" title="Use Current Location">
                             📍
                         </button>
-                        <a href="/ergon/settings/map-picker" class="btn btn--secondary">
+                        <a href="/ergon-site/settings/map-picker" class="btn btn--secondary">
                             <span>🗺️</span> Open Map Picker
                         </a>
                     </div>
@@ -249,7 +249,7 @@ function showMapError() {
     }
 }
 
-// Form will submit normally to POST /ergon/settings
+// Form will submit normally to POST /ergon-site/settings
 </script>
 
 <style>

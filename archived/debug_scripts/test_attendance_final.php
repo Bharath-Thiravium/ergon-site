@@ -81,9 +81,9 @@ try {
     // 5. Test which endpoint is being used
     echo "<h3>5. Endpoint Detection</h3>";
     echo "Check browser network tab when you clock in/out to see which URL is called:<br>";
-    echo "- If it's /ergon/attendance/clock → AttendanceController<br>";
-    echo "- If it's /ergon/api/simple_attendance.php → Simple API<br>";
-    echo "- If it's /ergon/public/api_attendance.php → Public API (uses Attendance model)<br>";
+    echo "- If it's /ergon-site/attendance/clock → AttendanceController<br>";
+    echo "- If it's /ergon-site/api/simple_attendance.php → Simple API<br>";
+    echo "- If it's /ergon-site/public/api_attendance.php → Public API (uses Attendance model)<br>";
     
     // 6. Force a test with current time
     echo "<h3>6. Live Test</h3>";

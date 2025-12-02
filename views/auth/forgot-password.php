@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forgot Password - ergon</title>
-    <link rel="stylesheet" href="/ergon/assets/css/ergon.css">
+    <link rel="stylesheet" href="/ergon-site/assets/css/ergon.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
@@ -29,7 +29,7 @@
                     </button>
                     
                     <div style="text-align: center;">
-                        <a href="/ergon/login" class="btn btn--secondary" style="width: 100%;">
+                        <a href="/ergon-site/login" class="btn btn--secondary" style="width: 100%;">
                             <i class="fas fa-arrow-left"></i> Back to Login
                         </a>
                     </div>
@@ -53,7 +53,7 @@
         const formData = new FormData(this);
         const messageDiv = document.getElementById('message');
         
-        fetch('/ergon/auth/forgot-password', {
+        fetch('/ergon-site/auth/forgot-password', {
             method: 'POST',
             body: formData
         })

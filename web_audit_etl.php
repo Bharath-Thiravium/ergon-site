@@ -1,7 +1,7 @@
 <?php
 /**
  * Web ETL Deployment Audit
- * Access: https://athenas.co.in/ergon/web_audit_etl.php
+ * Access: https://athenas.co.in/ergon-site/web_audit_etl.php
  */
 ?>
 <!DOCTYPE html>
@@ -25,7 +25,7 @@
 <body>
     <div class="container">
         <h1>🔍 ETL Deployment Audit</h1>
-        <p><strong>Target:</strong> https://athenas.co.in/ergon/finance</p>
+        <p><strong>Target:</strong> https://athenas.co.in/ergon-site/finance</p>
         
         <?php
         $auditResults = [];
@@ -143,7 +143,7 @@
                 
                 echo "<div class='checklist'>";
                 echo "<h4>🚀 Ready for Production Use:</h4>";
-                echo "<p>✅ Visit: <a href='/ergon/finance' target='_blank'>https://athenas.co.in/ergon/finance</a></p>";
+                echo "<p>✅ Visit: <a href='/ergon-site/finance' target='_blank'>https://athenas.co.in/ergon-site/finance</a></p>";
                 echo "<p>✅ Click 'Sync Data' to run ETL process</p>";
                 echo "<p>✅ Analytics served from SQL tables (fast!)</p>";
                 echo "<p>✅ Cron job ready: <code>0 * * * * php /path/to/cron/finance_sync.php</code></p>";

@@ -19,9 +19,9 @@ ob_start();
         <p><?= $is_system_admin ? 'Complete system management and oversight' : 'Department team management and coordination' ?></p>
     </div>
     <div class="page-actions">
-        <a href="/ergon/tasks/create" class="btn btn--primary">✅ Create Task</a>
+        <a href="/ergon-site/tasks/create" class="btn btn--primary">✅ Create Task</a>
         <?php if (($management_options['create_users'] ?? false)): ?>
-        <a href="/ergon/admin/create-user" class="btn btn--secondary">👤 Create User</a>
+        <a href="/ergon-site/admin/create-user" class="btn btn--secondary">👤 Create User</a>
         <?php endif; ?>
     </div>
 </div>
@@ -319,7 +319,7 @@ function closeModal() {
 function submitApproval() {
     const formData = new FormData(document.getElementById('approvalForm'));
     
-    fetch('/ergon/admin/approve-request', {
+    fetch('/ergon-site/admin/approve-request', {
         method: 'POST',
         body: formData
     })

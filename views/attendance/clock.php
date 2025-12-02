@@ -11,7 +11,7 @@ ob_start();
         <p>Track your attendance with GPS location</p>
     </div>
     <div class="page-actions">
-        <a href="/ergon/attendance" class="btn btn--secondary">
+        <a href="/ergon-site/attendance" class="btn btn--secondary">
             <span>📍</span> Back to Attendance
         </a>
     </div>
@@ -176,7 +176,7 @@ function clockAction(type) {
     formData.append('latitude', currentPosition.coords.latitude);
     formData.append('longitude', currentPosition.coords.longitude);
     
-    fetch('/ergon/attendance/clock', {
+    fetch('/ergon-site/attendance/clock', {
         method: 'POST',
         body: formData
     })
@@ -213,7 +213,7 @@ function clockAction(type) {
             } else {
                 showSuccessAlert(`Clocked ${type} successfully!`);
             }
-            setTimeout(() => window.location.href = '/ergon/attendance', 1500);
+            setTimeout(() => window.location.href = '/ergon-site/attendance', 1500);
         } else {
             if (typeof showMessage === 'function') {
                 showMessage(data.error || 'An error occurred', 'error');

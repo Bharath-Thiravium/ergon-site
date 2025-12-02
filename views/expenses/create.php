@@ -10,7 +10,7 @@ ob_start();
         <p>Submit your expense claim for reimbursement</p>
     </div>
     <div class="page-actions">
-        <a href="/ergon/expenses" class="btn btn--secondary">
+        <a href="/ergon-site/expenses" class="btn btn--secondary">
             <span>←</span> Back to Expenses
         </a>
     </div>
@@ -79,7 +79,7 @@ ob_start();
                 <button type="submit" class="btn btn--primary" id="submitBtn">
                     💸 Submit Expense Claim
                 </button>
-                <a href="/ergon/expenses" class="btn btn--secondary">❌ Cancel</a>
+                <a href="/ergon-site/expenses" class="btn btn--secondary">❌ Cancel</a>
             </div>
         </form>
     </div>
@@ -161,7 +161,7 @@ document.getElementById('expenseForm').addEventListener('submit', function(e) {
     
     const formData = new FormData(this);
     
-    fetch('/ergon/expenses/create', {
+    fetch('/ergon-site/expenses/create', {
         method: 'POST',
         body: formData
     })
@@ -181,7 +181,7 @@ document.getElementById('expenseForm').addEventListener('submit', function(e) {
     .then(data => {
         if (data.success) {
             alert('Expense claim submitted successfully!');
-            window.location.href = data.redirect || '/ergon/expenses';
+            window.location.href = data.redirect || '/ergon-site/expenses';
         } else {
             alert('Error: ' + data.error);
         }

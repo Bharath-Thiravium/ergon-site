@@ -82,12 +82,12 @@ try {
     
     echo "<h3>Sample notifications:</h3>";
     foreach ($samples as $sample) {
-        $url = "/ergon/{$sample['module_name']}s/view/{$sample['reference_id']}";
-        if ($sample['module_name'] === 'advance') $url = "/ergon/advances/view/{$sample['reference_id']}";
+        $url = "/ergon-site/{$sample['module_name']}s/view/{$sample['reference_id']}";
+        if ($sample['module_name'] === 'advance') $url = "/ergon-site/advances/view/{$sample['reference_id']}";
         echo "<p>• {$sample['message']} → <a href='{$url}'>{$url}</a></p>";
     }
     
-    echo "<p><a href='/ergon/notifications'>View Notifications</a></p>";
+    echo "<p><a href='/ergon-site/notifications'>View Notifications</a></p>";
     
 } catch (Exception $e) {
     echo "<p>❌ Error: " . $e->getMessage() . "</p>";

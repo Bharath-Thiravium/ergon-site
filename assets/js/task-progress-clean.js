@@ -30,8 +30,8 @@ function saveProgress() {
     
     // Determine API endpoint based on source
     var apiUrl = currentTaskSource === 'daily' ? 
-        '/ergon/api/daily_planner_workflow.php?action=update-progress' : 
-        '/ergon/tasks/update-status';
+        '/ergon-site/api/daily_planner_workflow.php?action=update-progress' : 
+        '/ergon-site/tasks/update-status';
     
     var requestBody = currentTaskSource === 'daily' ? 
         { 

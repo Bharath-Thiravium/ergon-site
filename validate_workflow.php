@@ -55,7 +55,7 @@ try {
     echo "   ✅ Progress → Updates completion %, maintains status\n";
     echo "   ✅ Postpone → Creates future task, marks current postponed\n\n";
     
-    echo "🎯 Run full test: http://localhost/ergon/test_complete_workflow.php\n";
+    echo "🎯 Run full test: http://localhost/ergon-site/test_complete_workflow.php\n";
     
 } catch (Exception $e) {
     echo "❌ Validation failed: " . $e->getMessage() . "\n";

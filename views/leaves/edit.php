@@ -10,7 +10,7 @@ ob_start();
         <p>Update your leave application details</p>
     </div>
     <div class="page-actions">
-        <a href="/ergon/leaves" class="btn btn--secondary">
+        <a href="/ergon-site/leaves" class="btn btn--secondary">
             <span>←</span> Back to Leaves
         </a>
     </div>
@@ -23,7 +23,7 @@ ob_start();
         </h2>
     </div>
     <div class="card__body">
-        <form method="POST" action="/ergon/leaves/edit/<?= $leave['id'] ?>" class="form">
+        <form method="POST" action="/ergon-site/leaves/edit/<?= $leave['id'] ?>" class="form">
             <div class="form-row">
                 <div class="form-group">
                     <label for="type" class="form-label">Leave Type *</label>
@@ -68,7 +68,7 @@ ob_start();
                 <button type="submit" class="btn btn--primary">
                     📤 Update Leave Request
                 </button>
-                <a href="/ergon/leaves" class="btn btn--secondary">❌ Cancel</a>
+                <a href="/ergon-site/leaves" class="btn btn--secondary">❌ Cancel</a>
             </div>
         </form>
     </div>

@@ -10,7 +10,7 @@ ob_start();
         <p>Manage organizational departments and structure</p>
     </div>
     <div class="page-actions">
-        <a href="/ergon/departments/create" class="btn btn--primary">
+        <a href="/ergon-site/departments/create" class="btn btn--primary">
             <span>➕</span> Create Department
         </a>
     </div>
@@ -126,9 +126,9 @@ document.addEventListener('click', function(e) {
     const name = btn.dataset.name;
     
     if (action === 'view' && module && id) {
-        window.location.href = `/ergon/${module}/view/${id}`;
+        window.location.href = `/ergon-site/${module}/view/${id}`;
     } else if (action === 'edit' && module && id) {
-        window.location.href = `/ergon/${module}/edit/${id}`;
+        window.location.href = `/ergon-site/${module}/edit/${id}`;
     } else if (action === 'delete' && module && id && name) {
         deleteRecord(module, id, name);
     }

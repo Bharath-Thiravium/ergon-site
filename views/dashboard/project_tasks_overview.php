@@ -10,7 +10,7 @@ ob_start();
         <p>View all tasks organized by project</p>
     </div>
     <div class="page-actions">
-        <a href="/ergon/dashboard" class="btn btn--secondary">
+        <a href="/ergon-site/dashboard" class="btn btn--secondary">
             <span>←</span> Back to Dashboard
         </a>
     </div>
@@ -23,7 +23,7 @@ ob_start();
             <div class="empty-icon">📁</div>
             <h3>No Projects Found</h3>
             <p>No active projects with tasks available.</p>
-            <a href="/ergon/project-management" class="btn btn--primary">Create Project</a>
+            <a href="/ergon-site/project-management" class="btn btn--primary">Create Project</a>
         </div>
     </div>
 </div>
@@ -112,7 +112,7 @@ ob_start();
                             <?php endif; ?>
                         </td>
                         <td>
-                            <a href="/ergon/tasks/view/<?= $task['id'] ?>" class="btn btn--sm btn--primary">View</a>
+                            <a href="/ergon-site/tasks/view/<?= $task['id'] ?>" class="btn btn--sm btn--primary">View</a>
                         </td>
                     </tr>
                     <?php endforeach; ?>

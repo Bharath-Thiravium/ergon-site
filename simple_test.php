@@ -29,7 +29,7 @@ try {
     
     echo "\n🎯 Next Steps:\n";
     echo "1. Run: SOURCE database/finance_etl_tables.sql\n";
-    echo "2. Visit: /ergon/finance\n";
+    echo "2. Visit: /ergon-site/finance\n";
     echo "3. Click 'Sync Data'\n";
     
 } catch (Exception $e) {

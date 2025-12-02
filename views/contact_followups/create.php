@@ -9,7 +9,7 @@ ob_start();
         <p>Create a new follow-up for contact communication</p>
     </div>
     <div class="page-actions">
-        <a href="/ergon/contacts/followups" class="btn btn--secondary">
+        <a href="/ergon-site/contacts/followups" class="btn btn--secondary">
             <span>←</span> Back to Contacts
         </a>
     </div>
@@ -24,7 +24,7 @@ ob_start();
         <h2 class="card__title">Follow-up Details</h2>
     </div>
     <div class="card__body">
-        <form method="POST" action="/ergon/contacts/followups/create" id="followupForm">
+        <form method="POST" action="/ergon-site/contacts/followups/create" id="followupForm">
             <div class="form-group">
                 <label class="form-label" for="followup_type">Follow-up Type *</label>
                 <select name="followup_type" id="followup_type" class="form-control" required onchange="toggleTaskSelection()">
@@ -95,7 +95,7 @@ ob_start();
                 <button type="submit" class="btn btn--primary">
                     <span>💾</span> Create Follow-up
                 </button>
-                <a href="/ergon/contacts/followups" class="btn btn--secondary">Cancel</a>
+                <a href="/ergon-site/contacts/followups" class="btn btn--secondary">Cancel</a>
             </div>
         </form>
     </div>
@@ -216,11 +216,11 @@ function toggleTaskSelection() {
     if (followupType === 'task') {
         taskSelection.style.display = 'block';
         taskSelect.required = true;
-        form.action = '/ergon/contacts/followups/create-task';
+        form.action = '/ergon-site/contacts/followups/create-task';
     } else {
         taskSelection.style.display = 'none';
         taskSelect.required = false;
-        form.action = '/ergon/contacts/followups/create';
+        form.action = '/ergon-site/contacts/followups/create';
     }
 }
 
@@ -236,7 +236,7 @@ function createQuickContact() {
     }
     
     // Create contact via API (you'll need to implement this endpoint)
-    fetch('/ergon/api/contacts/create', {
+    fetch('/ergon-site/api/contacts/create', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

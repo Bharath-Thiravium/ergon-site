@@ -69,7 +69,7 @@ try {
     
     // Test API endpoint
     echo "<h3>API Test:</h3>";
-    $apiUrl = '/ergon/api/notifications.php';
+    $apiUrl = '/ergon-site/api/notifications.php';
     echo "<p>Testing API endpoint: <a href='{$apiUrl}' target='_blank'>{$apiUrl}</a></p>";
     
     // Simulate API call
@@ -111,7 +111,7 @@ try {
 // Test JavaScript notification loading
 console.log('Testing notification loading...');
 
-fetch('/ergon/api/notifications.php?t=' + Date.now(), {
+fetch('/ergon-site/api/notifications.php?t=' + Date.now(), {
     method: 'GET',
     headers: {
         'Cache-Control': 'no-cache, no-store, must-revalidate',

@@ -6,7 +6,7 @@ require_once __DIR__ . '/app/models/Notification.php';
 Session::init();
 
 if (!isset($_SESSION['user_id'])) {
-    header('Location: /ergon/login');
+    header('Location: /ergon-site/login');
     exit;
 }
 
@@ -25,13 +25,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ]);
     
     if ($created) {
-        header('Location: /ergon/notifications?created=1');
+        header('Location: /ergon-site/notifications?created=1');
     } else {
-        header('Location: /ergon/notifications?error=1');
+        header('Location: /ergon-site/notifications?error=1');
     }
     exit;
 }
 
-header('Location: /ergon/dashboard');
+header('Location: /ergon-site/dashboard');
 exit;
 ?>

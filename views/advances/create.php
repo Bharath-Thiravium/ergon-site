@@ -5,7 +5,7 @@ ob_start();
 ?>
 
 <div class="header-actions" style="margin-bottom: var(--space-6);">
-    <a href="/ergon/advances" class="btn btn--secondary">Back to Advances</a>
+    <a href="/ergon-site/advances" class="btn btn--secondary">Back to Advances</a>
 </div>
 
 <div class="card">
@@ -13,7 +13,7 @@ ob_start();
         <h2 class="card__title">Request Advance</h2>
     </div>
     <div class="card__body">
-        <form method="POST" action="/ergon/advances/create" class="form">
+        <form method="POST" action="/ergon-site/advances/create" class="form">
             <div class="form-group">
                 <label class="form-label">Advance Type</label>
                 <select name="type" class="form-control" required>
@@ -42,7 +42,7 @@ ob_start();
             
             <div class="form-actions">
                 <button type="submit" class="btn btn--primary">Submit Advance Request</button>
-                <a href="/ergon/advances" class="btn btn--secondary">Cancel</a>
+                <a href="/ergon-site/advances" class="btn btn--secondary">Cancel</a>
             </div>
         </form>
     </div>

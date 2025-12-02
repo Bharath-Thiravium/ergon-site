@@ -10,7 +10,7 @@ ob_start();
         <p>Manage employee leave requests and approvals</p>
     </div>
     <div class="page-actions">
-        <a href="/ergon/leaves/create" class="btn btn--primary">
+        <a href="/ergon-site/leaves/create" class="btn btn--primary">
             <span>➕</span> Request Leave
         </a>
     </div>
@@ -110,7 +110,7 @@ ob_start();
                 </div>
                 <div class="card__footer">
                     <button type="submit" class="btn btn--primary">Apply Filters</button>
-                    <a href="/ergon/leaves" class="btn btn--secondary">Clear</a>
+                    <a href="/ergon-site/leaves" class="btn btn--secondary">Clear</a>
                 </div>
             </form>
         </div>
@@ -293,7 +293,7 @@ function toggleLeaveFilters() {
 }
 
 function showRejectModal(leaveId) {
-    document.getElementById('rejectForm').action = '/ergon/leaves/reject/' + leaveId;
+    document.getElementById('rejectForm').action = '/ergon-site/leaves/reject/' + leaveId;
     document.getElementById('rejectModal').style.display = 'flex';
 }
 
@@ -314,7 +314,7 @@ window.onclick = function(event) {
 <script>
 function deleteLeave(id) {
     if (confirm('Are you sure you want to delete this leave request? This action cannot be undone.')) {
-        fetch(`/ergon/leaves/delete/${id}`, {
+        fetch(`/ergon-site/leaves/delete/${id}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -345,11 +345,11 @@ document.addEventListener('click', function(e) {
     const id = btn.dataset.id;
     
     if (action === 'view' && module && id) {
-        window.location.href = `/ergon/${module}/view/${id}`;
+        window.location.href = `/ergon-site/${module}/view/${id}`;
     } else if (action === 'edit' && module && id) {
-        window.location.href = `/ergon/${module}/edit/${id}`;
+        window.location.href = `/ergon-site/${module}/edit/${id}`;
     } else if (action === 'approve' && module && id) {
-        window.location.href = `/ergon/${module}/approve/${id}`;
+        window.location.href = `/ergon-site/${module}/approve/${id}`;
     }
 });
 </script>

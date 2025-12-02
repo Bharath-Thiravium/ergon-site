@@ -140,6 +140,6 @@ foreach ($tasksToCreate as $taskData) {
 }
 
 echo "<hr>";
-echo "<p><a href='/ergon/workflow/daily-planner/{$yesterday}'>View Yesterday's Tasks</a></p>";
-echo "<p><a href='/ergon/workflow/daily-planner/{$today}'>View Today's Tasks</a></p>";
+echo "<p><a href='/ergon-site/workflow/daily-planner/{$yesterday}'>View Yesterday's Tasks</a></p>";
+echo "<p><a href='/ergon-site/workflow/daily-planner/{$today}'>View Today's Tasks</a></p>";
 ?>

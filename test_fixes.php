@@ -64,5 +64,5 @@ echo "<li><strong>User Management Duplicate Data:</strong> Fixed by removing dup
 echo "<li><strong>Daily Planner Progress Update:</strong> Fixed by implementing proper API communication and enhanced UI</li>";
 echo "</ol>";
 
-echo "<p><a href='/ergon/users'>Test User Management</a> | <a href='/ergon/workflow/daily-planner'>Test Daily Planner</a></p>";
+echo "<p><a href='/ergon-site/users'>Test User Management</a> | <a href='/ergon-site/workflow/daily-planner'>Test Daily Planner</a></p>";
 ?>

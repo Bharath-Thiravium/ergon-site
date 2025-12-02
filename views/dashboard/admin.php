@@ -8,19 +8,19 @@ ob_start();
             
             <!-- Header Actions -->
             <div class="header-actions">
-                <a href="/ergon/tasks/create" class="btn btn--primary">
+                <a href="/ergon-site/tasks/create" class="btn btn--primary">
                     <i class="fas fa-plus"></i>
                     Create Task
                 </a>
-                <a href="/ergon/users" class="btn btn--secondary">
+                <a href="/ergon-site/users" class="btn btn--secondary">
                     <i class="fas fa-users"></i>
                     Manage Users
                 </a>
-                <a href="/ergon/attendance" class="btn btn--secondary">
+                <a href="/ergon-site/attendance" class="btn btn--secondary">
                     <i class="fas fa-clock"></i>
                     Attendance
                 </a>
-                <a href="/ergon/reports" class="btn btn--secondary">
+                <a href="/ergon-site/reports" class="btn btn--secondary">
                     <i class="fas fa-download"></i>
                     Reports
                 </a>
@@ -151,7 +151,7 @@ ob_start();
                                     <td><span class="alert alert--warning alert--badge">High</span></td>
                                     <td>
                                         <div class="btn-group">
-                                            <a href="/ergon/leaves/view/1" class="btn btn--sm btn--primary" title="View Details">
+                                            <a href="/ergon-site/leaves/view/1" class="btn btn--sm btn--primary" title="View Details">
                                                 <span>👁️</span> View
                                             </a>
                                             <button onclick="deleteRecord('leaves', 1, 'Leave Request')" class="btn btn--sm btn--danger" title="Delete Request">
@@ -168,7 +168,7 @@ ob_start();
                                     <td><span class="alert alert--success alert--badge">Medium</span></td>
                                     <td>
                                         <div class="btn-group">
-                                            <a href="/ergon/expenses/view/1" class="btn btn--sm btn--primary" title="View Details">
+                                            <a href="/ergon-site/expenses/view/1" class="btn btn--sm btn--primary" title="View Details">
                                                 <span>👁️</span> View
                                             </a>
                                             <button onclick="deleteRecord('expenses', 1, 'Expense Claim')" class="btn btn--sm btn--danger" title="Delete Claim">

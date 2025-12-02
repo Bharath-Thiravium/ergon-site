@@ -12,7 +12,7 @@ ob_start();
     <div class="page-actions">
         <?php if (in_array($user_role ?? '', ['owner', 'admin'])): ?>
         <input type="date" id="dateFilter" value="<?= $selected_date ?? date('Y-m-d') ?>" onchange="filterByDate(this.value)" class="form-input">
-        <a href="/ergon/views/attendance/manual_entry_simple.php" class="btn btn--secondary">
+        <a href="/ergon-site/views/attendance/manual_entry_simple.php" class="btn btn--secondary">
             <span>✏️</span> Manual Entry
         </a>
         <?php endif; ?>
@@ -21,7 +21,7 @@ ob_start();
             <option value="week" <?= ($current_filter ?? '') === 'week' ? 'selected' : '' ?>>This Week</option>
             <option value="month" <?= ($current_filter ?? '') === 'month' ? 'selected' : '' ?>>This Month</option>
         </select>
-        <a href="/ergon/attendance/clock" class="btn btn--primary">
+        <a href="/ergon-site/attendance/clock" class="btn btn--primary">
             <span>🕰️</span> Clock In/Out
         </a>
     </div>
@@ -102,7 +102,7 @@ ob_start();
                                 <h3>No Attendance Records</h3>
                                 <p>No attendance records found for the selected period.</p>
                                 <?php if (in_array($user_role ?? '', ['owner', 'admin'])): ?>
-                                <a href="/ergon/views/attendance/manual_entry_simple.php" class="btn btn--primary">
+                                <a href="/ergon-site/views/attendance/manual_entry_simple.php" class="btn btn--primary">
                                     Add Manual Entry
                                 </a>
                                 <?php endif; ?>
@@ -272,12 +272,12 @@ ob_start();
 // Attendance-specific action functions
 function viewAttendanceDetails(id, userName) {
     // Open modal or navigate to details page
-    window.open(`/ergon/attendance/details/${id}`, '_blank');
+    window.open(`/ergon-site/attendance/details/${id}`, '_blank');
 }
 
 function clockInUser(userId) {
     if (confirm('Clock in this user?')) {
-        fetch('/ergon/api/attendance_admin.php', {
+        fetch('/ergon-site/api/attendance_admin.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ action: 'clock_in', user_id: userId })
@@ -296,7 +296,7 @@ function clockInUser(userId) {
 
 function clockOutUser(userId) {
     if (confirm('Clock out this user?')) {
-        fetch('/ergon/api/attendance_admin.php', {
+        fetch('/ergon-site/api/attendance_admin.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ action: 'clock_out', user_id: userId })
@@ -314,7 +314,7 @@ function clockOutUser(userId) {
 }
 
 function editAttendance(id, userId) {
-    window.location.href = `/ergon/attendance/edit?id=${id}&user_id=${userId}`;
+    window.location.href = `/ergon-site/attendance/edit?id=${id}&user_id=${userId}`;
 }
 
 function generateUserReport(userId, userName) {
@@ -322,13 +322,13 @@ function generateUserReport(userId, userName) {
     const dateTo = prompt('Report to date (YYYY-MM-DD):', '<?= date('Y-m-d') ?>');
     
     if (dateFrom && dateTo) {
-        window.open(`/ergon/attendance/report?user_id=${userId}&from=${dateFrom}&to=${dateTo}`, '_blank');
+        window.open(`/ergon-site/attendance/report?user_id=${userId}&from=${dateFrom}&to=${dateTo}`, '_blank');
     }
 }
 
 function deleteAttendance(id, userName) {
     if (confirm(`Delete attendance record for ${userName}?`)) {
-        fetch('/ergon/api/attendance_admin.php', {
+        fetch('/ergon-site/api/attendance_admin.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ action: 'delete', id: id })
@@ -348,24 +348,24 @@ function deleteAttendance(id, userName) {
 function exportAttendance() {
     const format = prompt('Export format (csv/excel):', 'csv');
     if (format) {
-        window.location.href = `/ergon/attendance/export?format=${format}&date=<?= $selected_date ?? date('Y-m-d') ?>`;
+        window.location.href = `/ergon-site/attendance/export?format=${format}&date=<?= $selected_date ?? date('Y-m-d') ?>`;
     }
 }
 
 function generateReport() {
-    window.open('/ergon/attendance/report', '_blank');
+    window.open('/ergon-site/attendance/report', '_blank');
 }
 
 function filterAttendance(filter) {
     const currentDate = document.getElementById('dateFilter')?.value || '';
-    let url = '/ergon/attendance?filter=' + filter;
+    let url = '/ergon-site/attendance?filter=' + filter;
     if (currentDate) url += '&date=' + currentDate;
     window.location.href = url;
 }
 
 function filterByDate(selectedDate) {
     const currentFilter = document.getElementById('filterSelect')?.value || 'today';
-    window.location.href = '/ergon/attendance?date=' + selectedDate + '&filter=' + currentFilter;
+    window.location.href = '/ergon-site/attendance?date=' + selectedDate + '&filter=' + currentFilter;
 }
 
 function showNotification(message, type) {

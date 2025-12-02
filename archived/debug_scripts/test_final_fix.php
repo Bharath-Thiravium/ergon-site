@@ -93,7 +93,7 @@ try {
     // Test API endpoint
     echo "<h2>Testing API Endpoint</h2>";
     
-    $apiUrl = "http://localhost/ergon/api/daily_planner_workflow.php?action=get_tasks&date={$today}&user_id={$userId}";
+    $apiUrl = "http://localhost/ergon-site/api/daily_planner_workflow.php?action=get_tasks&date={$today}&user_id={$userId}";
     
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $apiUrl);
@@ -126,7 +126,7 @@ try {
         echo "<div style='padding:20px;background:#d4edda;border:1px solid #c3e6cb;border-radius:5px;'>";
         echo "<h3 style='color:#155724;margin:0 0 10px 0;'>🎉 SUCCESS!</h3>";
         echo "<p style='margin:0;'>The Planner module is now working correctly and displaying " . count($plannedTasks) . " tasks.</p>";
-        echo "<p style='margin:10px 0 0 0;'><strong>Next step:</strong> Visit <a href='/ergon/workflow/daily-planner/{$today}' target='_blank'>Daily Planner</a> to see the results.</p>";
+        echo "<p style='margin:10px 0 0 0;'><strong>Next step:</strong> Visit <a href='/ergon-site/workflow/daily-planner/{$today}' target='_blank'>Daily Planner</a> to see the results.</p>";
         echo "</div>";
     } else {
         echo "<div style='padding:20px;background:#f8d7da;border:1px solid #f5c6cb;border-radius:5px;'>";

@@ -106,7 +106,7 @@ try {
     
     // 5. Check what the attendance page is actually showing
     echo "<h3>5. Live Page Data Check</h3>";
-    echo "<p>Go to <a href='/ergon/attendance' target='_blank'>attendance page</a> and compare times shown there with times here:</p>";
+    echo "<p>Go to <a href='/ergon-site/attendance' target='_blank'>attendance page</a> and compare times shown there with times here:</p>";
     
     foreach ($records as $record) {
         TimezoneHelper::setSystemTimezone();

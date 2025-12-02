@@ -25,7 +25,7 @@ if (isset($_SESSION['user_id'])) {
             
             echo "<p><strong>Notifications for this user:</strong> {$notificationCount}</p>";
             
-            echo "<p>The notifications at <a href='/ergon/notifications'>/ergon/notifications</a> are showing for this user.</p>";
+            echo "<p>The notifications at <a href='/ergon-site/notifications'>/ergon-site/notifications</a> are showing for this user.</p>";
             
         } else {
             echo "<p>❌ User not found in database</p>";
@@ -37,6 +37,6 @@ if (isset($_SESSION['user_id'])) {
     
 } else {
     echo "<p>❌ No user logged in</p>";
-    echo "<p><a href='/ergon/login'>Login here</a></p>";
+    echo "<p><a href='/ergon-site/login'>Login here</a></p>";
 }
 ?>

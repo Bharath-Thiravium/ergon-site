@@ -8,7 +8,7 @@ class UsersController extends Controller {
     public function index() {
         
         if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['owner', 'admin'])) {
-            header('Location: /ergon/login');
+            header('Location: /ergon-site/login');
             exit;
         }
         
@@ -57,7 +57,7 @@ class UsersController extends Controller {
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
             
             if (!$user) {
-                header('Location: /ergon/users?error=user_not_found');
+                header('Location: /ergon-site/users?error=user_not_found');
                 exit;
             }
             
@@ -77,7 +77,7 @@ class UsersController extends Controller {
             $user = $userModel->getById($id);
             
             if (!$user) {
-                header('Location: /ergon/users?error=user_not_found');
+                header('Location: /ergon-site/users?error=user_not_found');
                 exit;
             }
             
@@ -97,7 +97,7 @@ class UsersController extends Controller {
         $this->ensureDepartmentsTable();
         
         if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['owner', 'admin'])) {
-            header('Location: /ergon/login');
+            header('Location: /ergon-site/login');
             exit;
         }
         
@@ -112,7 +112,7 @@ class UsersController extends Controller {
                 $currentUser = $checkStmt->fetch(PDO::FETCH_ASSOC);
                 
                 if ($currentUser && $currentUser['status'] === 'terminated') {
-                    header('Location: /ergon/users/view/' . $id . '?error=Terminated users cannot be updated');
+                    header('Location: /ergon-site/users/view/' . $id . '?error=Terminated users cannot be updated');
                     exit;
                 }
                 
@@ -126,7 +126,7 @@ class UsersController extends Controller {
                     $age = $today->diff($dob)->y;
                     
                     if ($age < 17) {
-                        header('Location: /ergon/users/edit/' . $id . '?error=Users must be at least 17 years old');
+                        header('Location: /ergon-site/users/edit/' . $id . '?error=Users must be at least 17 years old');
                         exit;
                     }
                 }
@@ -164,14 +164,14 @@ class UsersController extends Controller {
                 
                 if ($result) {
                     $this->handleDocumentUploads($id);
-                    header('Location: /ergon/users?success=User updated successfully');
+                    header('Location: /ergon-site/users?success=User updated successfully');
                 } else {
-                    header('Location: /ergon/users?error=Failed to update user');
+                    header('Location: /ergon-site/users?error=Failed to update user');
                 }
                 exit;
             } catch (Exception $e) {
                 error_log('User edit error: ' . $e->getMessage());
-                header('Location: /ergon/users/view/' . $id . '?error=Update failed');
+                header('Location: /ergon-site/users/view/' . $id . '?error=Update failed');
                 exit;
             }
         }
@@ -179,7 +179,7 @@ class UsersController extends Controller {
         $userModel = new User();
         $user = $userModel->getById($id);
         if (!$user) {
-            header('Location: /ergon/users?error=user_not_found');
+            header('Location: /ergon-site/users?error=user_not_found');
             exit;
         }
         
@@ -229,7 +229,7 @@ class UsersController extends Controller {
                     
                     if ($age < 17) {
                         $_SESSION['old_data'] = $_POST;
-                        header('Location: /ergon/users/create?error=Users must be at least 17 years old');
+                        header('Location: /ergon-site/users/create?error=Users must be at least 17 years old');
                         exit;
                     }
                 }
@@ -275,17 +275,17 @@ class UsersController extends Controller {
                         'password' => $tempPassword,
                         'employee_id' => $employeeId
                     ];
-                    header('Location: /ergon/users?success=User created successfully');
+                    header('Location: /ergon-site/users?success=User created successfully');
                     exit;
                 } else {
                     $_SESSION['old_data'] = $_POST;
-                    header('Location: /ergon/users/create?error=Failed to create user');
+                    header('Location: /ergon-site/users/create?error=Failed to create user');
                     exit;
                 }
             } catch (Exception $e) {
                 error_log('User creation error: ' . $e->getMessage());
                 $_SESSION['old_data'] = $_POST;
-                header('Location: /ergon/users/create?error=Failed to create user');
+                header('Location: /ergon-site/users/create?error=Failed to create user');
                 exit;
             }
         }
@@ -388,7 +388,7 @@ class UsersController extends Controller {
         $credentials = $_SESSION['new_credentials'] ?? $_SESSION['reset_credentials'] ?? null;
         
         if (!$credentials) {
-            header('Location: /ergon/users');
+            header('Location: /ergon-site/users');
             exit;
         }
         
@@ -592,7 +592,7 @@ class UsersController extends Controller {
     
     public function export() {
         if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['owner', 'admin'])) {
-            header('Location: /ergon/login');
+            header('Location: /ergon-site/login');
             exit;
         }
         
@@ -626,7 +626,7 @@ class UsersController extends Controller {
             fclose($output);
             exit;
         } catch (Exception $e) {
-            header('Location: /ergon/users?error=Export failed');
+            header('Location: /ergon-site/users?error=Export failed');
             exit;
         }
     }

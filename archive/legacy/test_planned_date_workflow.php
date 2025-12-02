@@ -162,11 +162,11 @@ try {
     echo "✓ Tasks without planned date appear on creation date\n";
     
     echo "\nTo test in the UI:\n";
-    echo "1. Go to /ergon/tasks/create\n";
+    echo "1. Go to /ergon-site/tasks/create\n";
     echo "2. Create a task with tomorrow's date in 'Planned Date' field\n";
-    echo "3. Go to /ergon/workflow/daily-planner (today's date)\n";
+    echo "3. Go to /ergon-site/workflow/daily-planner (today's date)\n";
     echo "4. Verify the task does NOT appear\n";
-    echo "5. Go to /ergon/workflow/daily-planner/" . $tomorrow . "\n";
+    echo "5. Go to /ergon-site/workflow/daily-planner/" . $tomorrow . "\n";
     echo "6. Verify the task DOES appear\n";
     
     // Clean up test task

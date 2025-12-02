@@ -6,7 +6,7 @@ ob_start();
 
 <div class="page-header">
     <h1>🔒 Change Password</h1>
-    <a href="/ergon/profile" class="btn btn--secondary">Back to Profile</a>
+    <a href="/ergon-site/profile" class="btn btn--secondary">Back to Profile</a>
 </div>
 
 <?php if (isset($_GET['success'])): ?>
@@ -59,7 +59,7 @@ ob_start();
             
             <div class="form-actions">
                 <button type="submit" class="btn btn--primary" id="submitBtn">Change Password</button>
-                <a href="/ergon/profile" class="btn btn--secondary">Cancel</a>
+                <a href="/ergon-site/profile" class="btn btn--secondary">Cancel</a>
             </div>
         </form>
         
@@ -292,7 +292,7 @@ document.addEventListener('DOMContentLoaded', function() {
         submitBtn.disabled = true;
         submitBtn.textContent = 'Changing Password...';
         
-        fetch('/ergon/profile/change-password', {
+        fetch('/ergon-site/profile/change-password', {
             method: 'POST',
             body: formData
         })
@@ -307,7 +307,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 showMessage(data.message || 'Password changed successfully!', 'success');
                 form.reset();
                 setTimeout(() => {
-                    window.location.href = '/ergon/profile';
+                    window.location.href = '/ergon-site/profile';
                 }, 2000);
             } else {
                 showMessage(data.message || 'Failed to change password', 'error');

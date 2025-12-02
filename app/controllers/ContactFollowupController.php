@@ -33,7 +33,7 @@ class ContactFollowupController extends Controller {
     
     public function viewGeneric() {
         if (!isset($_SESSION['user_id'])) {
-            header('Location: /ergon/login');
+            header('Location: /ergon-site/login');
             exit;
         }
         
@@ -74,14 +74,14 @@ class ContactFollowupController extends Controller {
             ]);
         } catch (Exception $e) {
             error_log('View generic followups error: ' . $e->getMessage());
-            header('Location: /ergon/contacts/followups?error=Error loading follow-ups');
+            header('Location: /ergon-site/contacts/followups?error=Error loading follow-ups');
             exit;
         }
     }
     
     public function viewContactFollowups($contact_id) {
         if (!isset($_SESSION['user_id'])) {
-            header('Location: /ergon/login');
+            header('Location: /ergon-site/login');
             exit;
         }
         
@@ -93,7 +93,7 @@ class ContactFollowupController extends Controller {
             $contact = $stmt->fetch(PDO::FETCH_ASSOC);
             
             if (!$contact) {
-                header('Location: /ergon/contacts/followups?error=Contact not found');
+                header('Location: /ergon-site/contacts/followups?error=Contact not found');
                 exit;
             }
             
@@ -105,7 +105,7 @@ class ContactFollowupController extends Controller {
             ]);
         } catch (Exception $e) {
             error_log('View contact followups error: ' . $e->getMessage());
-            header('Location: /ergon/contacts/followups?error=Error loading contact');
+            header('Location: /ergon-site/contacts/followups?error=Error loading contact');
             exit;
         }
     }
@@ -153,7 +153,7 @@ class ContactFollowupController extends Controller {
                     echo json_encode(['success' => false, 'message' => 'Title is required']);
                     exit;
                 }
-                $redirectUrl = $task_id ? "/ergon/tasks/view/$task_id?error=Title required" : '/ergon/contacts/followups/create?error=Title required';
+                $redirectUrl = $task_id ? "/ergon-site/tasks/view/$task_id?error=Title required" : '/ergon-site/contacts/followups/create?error=Title required';
                 header("Location: $redirectUrl");
                 exit;
             }
@@ -182,7 +182,7 @@ class ContactFollowupController extends Controller {
                     exit;
                 }
                 
-                $redirectUrl = $task_id ? "/ergon/tasks/view/$task_id?success=Follow-up added" : '/ergon/contacts/followups/view?success=Follow-up created';
+                $redirectUrl = $task_id ? "/ergon-site/tasks/view/$task_id?success=Follow-up added" : '/ergon-site/contacts/followups/view?success=Follow-up created';
                 header("Location: $redirectUrl");
             } else {
                 if ($isAjax) {
@@ -190,7 +190,7 @@ class ContactFollowupController extends Controller {
                     echo json_encode(['success' => false, 'message' => 'Failed to save follow-up details']);
                     exit;
                 }
-                $redirectUrl = $task_id ? "/ergon/tasks/view/$task_id?error=Failed to add follow-up" : '/ergon/contacts/followups/create?error=Failed to create';
+                $redirectUrl = $task_id ? "/ergon-site/tasks/view/$task_id?error=Failed to add follow-up" : '/ergon-site/contacts/followups/create?error=Failed to create';
                 header("Location: $redirectUrl");
             }
         } catch (Exception $e) {
@@ -203,7 +203,7 @@ class ContactFollowupController extends Controller {
             }
             
             $task_id = !empty($_POST['task_id']) ? intval($_POST['task_id']) : null;
-            $redirectUrl = $task_id ? "/ergon/tasks/view/$task_id?error=" . urlencode($e->getMessage()) : '/ergon/contacts/followups/create?error=' . urlencode($e->getMessage());
+            $redirectUrl = $task_id ? "/ergon-site/tasks/view/$task_id?error=" . urlencode($e->getMessage()) : '/ergon-site/contacts/followups/create?error=' . urlencode($e->getMessage());
             header("Location: $redirectUrl");
         }
         exit;

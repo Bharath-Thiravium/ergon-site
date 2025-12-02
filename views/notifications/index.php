@@ -86,7 +86,7 @@ ob_start();
                                 }
                             }
                             
-                            $viewUrl = '/ergon/dashboard'; // Default fallback
+                            $viewUrl = '/ergon-site/dashboard'; // Default fallback
                             
                             // Debug: Check what we have
                             // echo "<!-- Debug: ID={$referenceId}, Type={$referenceType}, ActionURL={$actionUrl} -->"
@@ -97,32 +97,32 @@ ob_start();
                                 switch ($referenceType) {
                                     case 'task':
                                     case 'tasks':
-                                        $viewUrl = "/ergon/tasks/view/{$referenceId}";
+                                        $viewUrl = "/ergon-site/tasks/view/{$referenceId}";
                                         break;
                                     case 'leave':
                                     case 'leaves':
-                                        $viewUrl = "/ergon/leaves/view/{$referenceId}";
+                                        $viewUrl = "/ergon-site/leaves/view/{$referenceId}";
                                         break;
                                     case 'expense':
                                     case 'expenses':
-                                        $viewUrl = "/ergon/expenses/view/{$referenceId}";
+                                        $viewUrl = "/ergon-site/expenses/view/{$referenceId}";
                                         break;
                                     case 'advance':
                                     case 'advances':
-                                        $viewUrl = "/ergon/advances/view/{$referenceId}";
+                                        $viewUrl = "/ergon-site/advances/view/{$referenceId}";
                                         break;
                                     default:
                                         $pluralType = $referenceType . 's';
-                                        $viewUrl = "/ergon/{$pluralType}/view/{$referenceId}";
+                                        $viewUrl = "/ergon-site/{$pluralType}/view/{$referenceId}";
                                 }
                             } elseif ($referenceType) {
                                 $moduleUrls = [
-                                    'leave' => '/ergon/leaves',
-                                    'expense' => '/ergon/expenses', 
-                                    'advance' => '/ergon/advances',
-                                    'task' => '/ergon/tasks'
+                                    'leave' => '/ergon-site/leaves',
+                                    'expense' => '/ergon-site/expenses', 
+                                    'advance' => '/ergon-site/advances',
+                                    'task' => '/ergon-site/tasks'
                                 ];
-                                $viewUrl = $moduleUrls[$referenceType] ?? "/ergon/{$referenceType}";
+                                $viewUrl = $moduleUrls[$referenceType] ?? "/ergon-site/{$referenceType}";
                             }
                         ?>
                         <tr class="<?= $isUnread ? 'notification--unread' : '' ?>" data-notification-id="<?= (int)$notification['id'] ?>">
@@ -163,7 +163,7 @@ ob_start();
                                         </svg>
                                     </button>
                                     <?php endif; ?>
-                                    <?php if ($viewUrl && $viewUrl !== '/ergon/dashboard'): ?>
+                                    <?php if ($viewUrl && $viewUrl !== '/ergon-site/dashboard'): ?>
                                     <a href="<?= htmlspecialchars($viewUrl, ENT_QUOTES, 'UTF-8') ?>" class="ab-btn ab-btn--view" data-tooltip="View Details">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
@@ -241,7 +241,7 @@ function goBack() {
 window.goBack = goBack;
 
 function createTestNotification() {
-    fetch('/ergon/api/notifications.php', {
+    fetch('/ergon-site/api/notifications.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -264,7 +264,7 @@ function createTestNotification() {
 }
 
 function markAsRead(notificationId) {
-    fetch('/ergon/api/notifications_unified.php', {
+    fetch('/ergon-site/api/notifications_unified.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -284,7 +284,7 @@ function markAsRead(notificationId) {
 }
 
 function markAllAsRead() {
-    fetch('/ergon/api/notifications_unified.php', {
+    fetch('/ergon-site/api/notifications_unified.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -308,7 +308,7 @@ function markSelectedAsRead() {
     
     if (ids.length === 0) return;
     
-    fetch('/ergon/api/notifications_unified.php', {
+    fetch('/ergon-site/api/notifications_unified.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

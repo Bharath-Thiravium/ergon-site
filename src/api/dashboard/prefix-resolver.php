@@ -1,5 +1,5 @@
 <?php
-// /ergon/src/api/dashboard/prefix-resolver.php
+// /ergon-site/src/api/dashboard/prefix-resolver.php
 
 /**
  * Resolve a user-supplied raw prefix into a canonical company prefix from the list.

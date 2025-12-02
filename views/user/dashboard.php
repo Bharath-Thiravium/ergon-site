@@ -10,10 +10,10 @@ ob_start();
         <p>Here's what's happening with your work today</p>
     </div>
     <div class="page-actions">
-        <a href="/ergon/leaves/create" class="btn btn--primary">
+        <a href="/ergon-site/leaves/create" class="btn btn--primary">
             <span>📅</span> Request Leave
         </a>
-        <a href="/ergon/expenses/create" class="btn btn--secondary">
+        <a href="/ergon-site/expenses/create" class="btn btn--secondary">
             <span>💰</span> Submit Expense
         </a>
     </div>
@@ -84,7 +84,7 @@ ob_start();
                 <span>✅</span> Today's Tasks & Priorities
             </h2>
             <div class="card__actions">
-                <a href="/ergon/tasks" class="btn btn--primary">View All Tasks</a>
+                <a href="/ergon-site/tasks" class="btn btn--primary">View All Tasks</a>
             </div>
         </div>
         <div class="card__body">
@@ -185,16 +185,16 @@ ob_start();
         </div>
         <div class="card__body">
             <div class="quick-links">
-                <a href="/ergon/tasks" class="quick-link">
+                <a href="/ergon-site/tasks" class="quick-link">
                     <span>✅</span> My Tasks
                 </a>
-                <a href="/ergon/leaves" class="quick-link">
+                <a href="/ergon-site/leaves" class="quick-link">
                     <span>📅</span> My Leaves
                 </a>
-                <a href="/ergon/expenses" class="quick-link">
+                <a href="/ergon-site/expenses" class="quick-link">
                     <span>💰</span> My Expenses
                 </a>
-                <a href="/ergon/profile" class="quick-link">
+                <a href="/ergon-site/profile" class="quick-link">
                     <span>👤</span> My Profile
                 </a>
             </div>
@@ -257,7 +257,7 @@ function clockIn() {
             formData.append('latitude', position.coords.latitude);
             formData.append('longitude', position.coords.longitude);
             
-            fetch('/ergon/user/clock-in', {
+            fetch('/ergon-site/user/clock-in', {
                 method: 'POST',
                 body: formData
             })
@@ -288,7 +288,7 @@ function clockOut() {
             formData.append('latitude', position.coords.latitude);
             formData.append('longitude', position.coords.longitude);
             
-            fetch('/ergon/user/clock-out', {
+            fetch('/ergon-site/user/clock-out', {
                 method: 'POST',
                 body: formData
             })
@@ -321,7 +321,7 @@ function updateTaskProgress(taskId) {
         formData.append('task_id', taskId);
         formData.append('progress', progress);
         
-        fetch('/ergon/user/update-task-progress', {
+        fetch('/ergon-site/user/update-task-progress', {
             method: 'POST',
             body: formData
         })

@@ -99,7 +99,7 @@ try {
     echo "4. Testing dashboard stats refresh...\n";
     
     // Test the refresh stats endpoint
-    $response = file_get_contents('http://localhost/ergon/finance/refresh-stats');
+    $response = file_get_contents('http://localhost/ergon-site/finance/refresh-stats');
     $result = json_decode($response, true);
     
     if ($result && $result['success']) {
@@ -124,7 +124,7 @@ try {
     
     echo "\n5. Testing dashboard API response...\n";
     
-    $dashboardResponse = file_get_contents('http://localhost/ergon/finance/dashboard-stats');
+    $dashboardResponse = file_get_contents('http://localhost/ergon-site/finance/dashboard-stats');
     $dashboardData = json_decode($dashboardResponse, true);
     
     if ($dashboardData && isset($dashboardData['pendingPOValue'])) {

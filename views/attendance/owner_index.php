@@ -76,8 +76,8 @@ ob_start();
                     <li>Users table is empty</li>
                 </ul>
                 <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1rem;">
-                    <a href="/ergon/fix_no_employees.php" class="btn btn--primary">🔧 Fix & Create Users</a>
-                    <a href="/ergon/debug_attendance_users.php" class="btn btn--secondary">🔍 Debug</a>
+                    <a href="/ergon-site/fix_no_employees.php" class="btn btn--primary">🔧 Fix & Create Users</a>
+                    <a href="/ergon-site/debug_attendance_users.php" class="btn btn--secondary">🔍 Debug</a>
                 </div>
             </div>
         <?php else: ?>
@@ -195,20 +195,20 @@ function refreshAttendance() {
 }
 
 function filterByDate(date) {
-    window.location.href = '/ergon/attendance?date=' + date;
+    window.location.href = '/ergon-site/attendance?date=' + date;
 }
 
 function exportAttendance() {
     const date = document.getElementById('attendanceDate').value;
-    window.open('/ergon/reports/attendance-export?date=' + date, '_blank');
+    window.open('/ergon-site/reports/attendance-export?date=' + date, '_blank');
 }
 
 function viewStaffDetails(staffId) {
-    window.open('/ergon/users/view/' + staffId, '_blank');
+    window.open('/ergon-site/users/view/' + staffId, '_blank');
 }
 
 function viewAttendanceHistory(staffId) {
-    window.location.href = '/ergon/attendance/history/' + staffId;
+    window.location.href = '/ergon-site/attendance/history/' + staffId;
 }
 
 function markManualAttendance(employeeId) {
@@ -224,7 +224,7 @@ function markManualAttendance(employeeId) {
     formData.append('check_out', checkOut || '');
     formData.append('date', date);
     
-    fetch('/ergon/attendance/manual', {
+    fetch('/ergon-site/attendance/manual', {
         method: 'POST',
         body: formData
     })
@@ -263,7 +263,7 @@ function clockInUser(userId) {
         
         const date = document.getElementById('attendanceDate').value;
         
-        fetch('/ergon/api/simple_attendance.php', {
+        fetch('/ergon-site/api/simple_attendance.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -299,7 +299,7 @@ function clockOutUser(userId) {
         
         const date = document.getElementById('attendanceDate').value;
         
-        fetch('/ergon/api/simple_attendance.php', {
+        fetch('/ergon-site/api/simple_attendance.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -360,7 +360,7 @@ function submitReport() {
     }
     
     closeReportDialog();
-    window.open(`/ergon/attendance/export?user_id=${userId}&from=${fromDate}&to=${toDate}`, '_blank');
+    window.open(`/ergon-site/attendance/export?user_id=${userId}&from=${fromDate}&to=${toDate}`, '_blank');
 }
 
 // Auto-refresh every 60 seconds

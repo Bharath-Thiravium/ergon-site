@@ -88,10 +88,10 @@ ob_start();
                             <button class="btn btn--secondary btn--block" onclick="clockOut()">
                                 <span>⏹️</span> Clock Out
                             </button>
-                            <a href="/ergon/leaves/create" class="btn btn--secondary btn--block">
+                            <a href="/ergon-site/leaves/create" class="btn btn--secondary btn--block">
                                 <span>📅</span> Request Leave
                             </a>
-                            <a href="/ergon/expenses/create" class="btn btn--secondary btn--block">
+                            <a href="/ergon-site/expenses/create" class="btn btn--secondary btn--block">
                                 <span>💰</span> Submit Expense
                             </a>
                         </div>
@@ -169,7 +169,7 @@ new Chart(ctx, {
 function clockIn() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
-            fetch('/ergon/attendance/clock', {
+            fetch('/ergon-site/attendance/clock', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: `type=in&latitude=${position.coords.latitude}&longitude=${position.coords.longitude}`
@@ -186,7 +186,7 @@ function clockIn() {
 function clockOut() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
-            fetch('/ergon/attendance/clock', {
+            fetch('/ergon-site/attendance/clock', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: `type=out&latitude=${position.coords.latitude}&longitude=${position.coords.longitude}`

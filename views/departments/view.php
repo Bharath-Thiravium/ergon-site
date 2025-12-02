@@ -10,7 +10,7 @@ ob_start();
         <p>View department information and employees</p>
     </div>
     <div class="page-actions">
-        <a href="/ergon/departments" class="btn btn--secondary">
+        <a href="/ergon-site/departments" class="btn btn--secondary">
             <span>←</span> Back to Departments
         </a>
     </div>

@@ -82,4 +82,4 @@ try {
 }
 ?>
 
-<a href="/ergon/tasks/calendar">Go to Calendar View</a>
+<a href="/ergon-site/tasks/calendar">Go to Calendar View</a>

@@ -21,14 +21,14 @@ ob_start();
         $canApprove = $isPending && (($isOwner) || ($isAdmin && $isNotOwnExpense));
         ?>
         <?php if ($canApprove): ?>
-        <a href="/ergon/expenses/approve/<?= $expense['id'] ?>" class="btn btn--success">
+        <a href="/ergon-site/expenses/approve/<?= $expense['id'] ?>" class="btn btn--success">
             <span>✅</span> Approve
         </a>
         <button class="btn btn--danger" onclick="showRejectModal(<?= $expense['id'] ?>)">
             <span>❌</span> Reject
         </button>
         <?php endif; ?>
-        <a href="/ergon/expenses" class="btn btn--secondary">
+        <a href="/ergon-site/expenses" class="btn btn--secondary">
             <span>←</span> Back to Expenses
         </a>
     </div>
@@ -102,11 +102,11 @@ ob_start();
             <div class="detail-item">
                 <label>Receipt</label>
                 <div class="receipt-container">
-                    <img src="/ergon/storage/receipts/<?= htmlspecialchars($expense['attachment']) ?>" 
+                    <img src="/ergon-site/storage/receipts/<?= htmlspecialchars($expense['attachment']) ?>" 
                          alt="Receipt" 
                          class="receipt-image" 
-                         onclick="openReceiptModal('/ergon/storage/receipts/<?= htmlspecialchars($expense['attachment']) ?>')">
-                    <a href="/ergon/storage/receipts/<?= htmlspecialchars($expense['attachment']) ?>" 
+                         onclick="openReceiptModal('/ergon-site/storage/receipts/<?= htmlspecialchars($expense['attachment']) ?>')">
+                    <a href="/ergon-site/storage/receipts/<?= htmlspecialchars($expense['attachment']) ?>" 
                        target="_blank" 
                        class="receipt-link">View Full Size</a>
                 </div>
@@ -396,7 +396,7 @@ function closeReceiptModal() {
 }
 
 function showRejectModal(expenseId) {
-    document.getElementById('rejectForm').action = '/ergon/expenses/reject/' + expenseId;
+    document.getElementById('rejectForm').action = '/ergon-site/expenses/reject/' + expenseId;
     document.getElementById('rejectModal').style.display = 'block';
 }
 

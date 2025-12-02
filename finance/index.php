@@ -3,7 +3,7 @@
 $action = $_GET['action'] ?? '';
 $requestUri = $_SERVER['REQUEST_URI'];
 $path = parse_url($requestUri, PHP_URL_PATH);
-$path = str_replace('/ergon/finance/', '', $path);
+$path = str_replace('/ergon-site/finance/', '', $path);
 $path = trim($path, '/');
 
 // Mock data for API responses

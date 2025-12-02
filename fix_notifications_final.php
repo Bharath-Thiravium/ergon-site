@@ -52,7 +52,7 @@ try {
             'message' => "Leave request from {$user['name']} for Annual Leave (Dec 25-27)",
             'reference_type' => 'leave',
             'reference_id' => 1,
-            'action_url' => '/ergon/leaves'
+            'action_url' => '/ergon-site/leaves'
         ],
         [
             'sender_id' => $user['id'],
@@ -63,7 +63,7 @@ try {
             'message' => "Expense request from {$user['name']} - $250.00 for office supplies",
             'reference_type' => 'expense',
             'reference_id' => 1,
-            'action_url' => '/ergon/expenses'
+            'action_url' => '/ergon-site/expenses'
         ],
         [
             'sender_id' => $user['id'],
@@ -74,7 +74,7 @@ try {
             'message' => "Advance request from {$user['name']} - $500.00 for emergency",
             'reference_type' => 'advance',
             'reference_id' => 1,
-            'action_url' => '/ergon/advances'
+            'action_url' => '/ergon-site/advances'
         ],
         [
             'sender_id' => $admin['id'],
@@ -85,7 +85,7 @@ try {
             'message' => "You have been assigned: Review Monthly Financial Reports",
             'reference_type' => 'task',
             'reference_id' => 1,
-            'action_url' => '/ergon/tasks'
+            'action_url' => '/ergon-site/tasks'
         ],
         
         // Admin Panel Notifications
@@ -98,7 +98,7 @@ try {
             'message' => "Leave request from {$user['name']} for Sick Leave (2 days)",
             'reference_type' => 'leave',
             'reference_id' => 2,
-            'action_url' => '/ergon/leaves'
+            'action_url' => '/ergon-site/leaves'
         ],
         [
             'sender_id' => $user['id'],
@@ -109,7 +109,7 @@ try {
             'message' => "Expense request from {$user['name']} - $120.00 for travel",
             'reference_type' => 'expense',
             'reference_id' => 2,
-            'action_url' => '/ergon/expenses'
+            'action_url' => '/ergon-site/expenses'
         ],
         [
             'sender_id' => $owner['id'],
@@ -120,7 +120,7 @@ try {
             'message' => "You have been assigned: Prepare Team Performance Report",
             'reference_type' => 'task',
             'reference_id' => 2,
-            'action_url' => '/ergon/tasks'
+            'action_url' => '/ergon-site/tasks'
         ],
         [
             'sender_id' => $owner['id'],
@@ -131,7 +131,7 @@ try {
             'message' => "Your expense request has been approved by {$owner['name']}",
             'reference_type' => 'expense',
             'reference_id' => 3,
-            'action_url' => '/ergon/expenses'
+            'action_url' => '/ergon-site/expenses'
         ],
         
         // User Panel Notifications
@@ -144,7 +144,7 @@ try {
             'message' => "Your leave request has been approved by {$admin['name']}",
             'reference_type' => 'leave',
             'reference_id' => 1,
-            'action_url' => '/ergon/leaves'
+            'action_url' => '/ergon-site/leaves'
         ],
         [
             'sender_id' => $admin['id'],
@@ -155,7 +155,7 @@ try {
             'message' => "Your expense request has been rejected. Please review and resubmit.",
             'reference_type' => 'expense',
             'reference_id' => 2,
-            'action_url' => '/ergon/expenses'
+            'action_url' => '/ergon-site/expenses'
         ],
         [
             'sender_id' => $admin['id'],
@@ -166,7 +166,7 @@ try {
             'message' => "You have been assigned: Update Customer Database",
             'reference_type' => 'task',
             'reference_id' => 3,
-            'action_url' => '/ergon/tasks'
+            'action_url' => '/ergon-site/tasks'
         ],
         [
             'sender_id' => 1,
@@ -177,7 +177,7 @@ try {
             'message' => "Task 'Complete Documentation' is due tomorrow",
             'reference_type' => 'task',
             'reference_id' => 4,
-            'action_url' => '/ergon/tasks',
+            'action_url' => '/ergon-site/tasks',
             'priority' => 2
         ]
     ];
@@ -228,7 +228,7 @@ try {
     
     echo "<p><strong>Test the system:</strong></p>";
     echo "<ol>";
-    echo "<li><a href='/ergon/notifications' target='_blank'>Visit Notifications Page</a></li>";
+    echo "<li><a href='/ergon-site/notifications' target='_blank'>Visit Notifications Page</a></li>";
     echo "<li>Click the notification bell icon in the header</li>";
     echo "<li>Login as different users to see role-specific notifications</li>";
     echo "</ol>";

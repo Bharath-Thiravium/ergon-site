@@ -1,6 +1,6 @@
 <?php
 /**
- * ETL Deployment Audit for https://athenas.co.in/ergon/finance
+ * ETL Deployment Audit for https://athenas.co.in/ergon-site/finance
  * Checks if all ETL implementations are properly deployed
  */
 
@@ -8,7 +8,7 @@ require_once __DIR__ . '/app/config/database.php';
 
 echo "🔍 ETL DEPLOYMENT AUDIT\n";
 echo "======================\n";
-echo "Target: https://athenas.co.in/ergon/finance\n\n";
+echo "Target: https://athenas.co.in/ergon-site/finance\n\n";
 
 $audit = [];
 
@@ -63,9 +63,9 @@ try {
     // 4. Check API Endpoints
     echo "\n🔗 API AUDIT:\n";
     $endpoints = [
-        '/ergon/finance/sync' => 'ETL Sync',
-        '/ergon/finance/dashboard-stats' => 'Dashboard Data',
-        '/ergon/finance/etl-analytics' => 'ETL Analytics'
+        '/ergon-site/finance/sync' => 'ETL Sync',
+        '/ergon-site/finance/dashboard-stats' => 'Dashboard Data',
+        '/ergon-site/finance/etl-analytics' => 'ETL Analytics'
     ];
     
     foreach ($endpoints as $endpoint => $desc) {
@@ -124,7 +124,7 @@ try {
         echo "✅ API endpoints functional\n";
         echo "✅ Performance optimized (SQL-based)\n";
         echo "\n🚀 PRODUCTION READY!\n";
-        echo "Visit: https://athenas.co.in/ergon/finance\n";
+        echo "Visit: https://athenas.co.in/ergon-site/finance\n";
     } else {
         echo "❌ Deployment incomplete. Missing:\n";
         if (!$filesOk) echo "- Upload ETL service files\n";

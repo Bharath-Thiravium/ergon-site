@@ -9,7 +9,7 @@ class SystemAdminController extends Controller {
             session_start();
         }
         if (empty($_SESSION['user_id']) || empty($_SESSION['role']) || $_SESSION['role'] !== 'owner') {
-            header('Location: /ergon/login');
+            header('Location: /ergon-site/login');
             exit;
         }
     }
@@ -46,12 +46,12 @@ class SystemAdminController extends Controller {
             $password = $_POST['password'] ?? '';
             
             if (empty($name) || empty($email) || empty($password)) {
-                header('Location: /ergon/system-admin?error=All fields are required');
+                header('Location: /ergon-site/system-admin?error=All fields are required');
                 exit;
             }
             
             if (strlen($password) < 6) {
-                header('Location: /ergon/system-admin?error=Password must be at least 6 characters');
+                header('Location: /ergon-site/system-admin?error=Password must be at least 6 characters');
                 exit;
             }
             
@@ -62,7 +62,7 @@ class SystemAdminController extends Controller {
                 $checkStmt = $db->prepare("SELECT id FROM users WHERE email = ?");
                 $checkStmt->execute([$email]);
                 if ($checkStmt->fetch()) {
-                    header('Location: /ergon/system-admin?error=Email already exists. Please use a different email address.');
+                    header('Location: /ergon-site/system-admin?error=Email already exists. Please use a different email address.');
                     exit;
                 }
                 
@@ -72,15 +72,15 @@ class SystemAdminController extends Controller {
                 
                 if ($result) {
                     error_log('Admin created successfully: ' . $name . ' (' . $email . ')');
-                    header('Location: /ergon/system-admin?success=Admin created successfully');
+                    header('Location: /ergon-site/system-admin?success=Admin created successfully');
                 } else {
                     error_log('Failed to create admin: ' . $name . ' (' . $email . ')');
-                    header('Location: /ergon/system-admin?error=Failed to create admin');
+                    header('Location: /ergon-site/system-admin?error=Failed to create admin');
                 }
                 exit;
             } catch (Exception $e) {
                 error_log('Create admin error: ' . $e->getMessage());
-                header('Location: /ergon/system-admin?error=Failed to create admin: ' . $e->getMessage());
+                header('Location: /ergon-site/system-admin?error=Failed to create admin: ' . $e->getMessage());
                 exit;
             }
         }
@@ -135,7 +135,7 @@ class SystemAdminController extends Controller {
             $password = $_POST['password'] ?? '';
             
             if (empty($adminId) || empty($name) || empty($email)) {
-                header('Location: /ergon/system-admin?error=All fields are required');
+                header('Location: /ergon-site/system-admin?error=All fields are required');
                 exit;
             }
             
@@ -146,7 +146,7 @@ class SystemAdminController extends Controller {
                 $checkStmt = $db->prepare("SELECT id FROM users WHERE email = ? AND id != ?");
                 $checkStmt->execute([$email, $adminId]);
                 if ($checkStmt->fetch()) {
-                    header('Location: /ergon/system-admin?error=Email already exists');
+                    header('Location: /ergon-site/system-admin?error=Email already exists');
                     exit;
                 }
                 
@@ -159,10 +159,10 @@ class SystemAdminController extends Controller {
                     $stmt->execute([$name, $email, $adminId]);
                 }
                 
-                header('Location: /ergon/system-admin?success=Admin updated successfully');
+                header('Location: /ergon-site/system-admin?success=Admin updated successfully');
                 exit;
             } catch (Exception $e) {
-                header('Location: /ergon/system-admin?error=Email already exists');
+                header('Location: /ergon-site/system-admin?error=Email already exists');
                 exit;
             }
         }
@@ -195,7 +195,7 @@ class SystemAdminController extends Controller {
             fclose($output);
             exit;
         } catch (Exception $e) {
-            header('Location: /ergon/system-admin?error=Export failed');
+            header('Location: /ergon-site/system-admin?error=Export failed');
             exit;
         }
     }
@@ -208,7 +208,7 @@ class SystemAdminController extends Controller {
             $status = $_POST['status'] ?? '';
             
             if (empty($adminId) || !in_array($status, ['active', 'inactive'])) {
-                header('Location: /ergon/system-admin?error=Invalid request');
+                header('Location: /ergon-site/system-admin?error=Invalid request');
                 exit;
             }
             
@@ -218,10 +218,10 @@ class SystemAdminController extends Controller {
                 $stmt->execute([$status, $adminId]);
                 
                 $action = $status === 'active' ? 'activated' : 'deactivated';
-                header("Location: /ergon/system-admin?success=Admin {$action} successfully");
+                header("Location: /ergon-site/system-admin?success=Admin {$action} successfully");
                 exit;
             } catch (Exception $e) {
-                header('Location: /ergon/system-admin?error=Failed to update status');
+                header('Location: /ergon-site/system-admin?error=Failed to update status');
                 exit;
             }
         }

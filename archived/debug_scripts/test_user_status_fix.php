@@ -90,5 +90,5 @@ try {
 }
 
 echo "<hr>\n";
-echo "<p><a href='/ergon/users'>Go to User Management</a> | <a href='/ergon/admin/management'>Go to Admin Management</a></p>\n";
+echo "<p><a href='/ergon-site/users'>Go to User Management</a> | <a href='/ergon-site/admin/management'>Go to Admin Management</a></p>\n";
 ?>

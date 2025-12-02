@@ -105,7 +105,7 @@ try {
         echo "</div>";
     }
     
-    echo "<p><a href='/ergon/attendance'>Go to Attendance Page</a></p>";
+    echo "<p><a href='/ergon-site/attendance'>Go to Attendance Page</a></p>";
     
 } catch (Exception $e) {
     echo "<p>❌ Error: " . $e->getMessage() . "</p>";

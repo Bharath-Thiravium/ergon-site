@@ -28,7 +28,7 @@
     }
     
     function testCarryForward() {
-        fetch('/ergon/workflow/manual-carry-forward', {
+        fetch('/ergon-site/workflow/manual-carry-forward', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' }
         })
@@ -47,12 +47,12 @@
     
     function checkTasks() {
         const today = new Date().toISOString().split('T')[0];
-        fetch(`/ergon/workflow/daily-planner/${today}`)
+        fetch(`/ergon-site/workflow/daily-planner/${today}`)
         .then(response => {
             if (response.ok) {
                 showResult(`✓ Redirecting to today's planner...`);
                 setTimeout(() => {
-                    window.location.href = `/ergon/workflow/daily-planner/${today}`;
+                    window.location.href = `/ergon-site/workflow/daily-planner/${today}`;
                 }, 1000);
             } else {
                 showResult(`✗ Failed to access daily planner`, true);

@@ -11,7 +11,7 @@ ob_start();
         <p>Manage user roles and administrative permissions</p>
     </div>
     <div class="page-actions">
-        <a href="/ergon/users/create" class="btn btn--primary">
+        <a href="/ergon-site/users/create" class="btn btn--primary">
             <span>➕</span> Add User
         </a>
         <button class="btn btn--secondary" onclick="showAssignAdminModal()">
@@ -21,7 +21,7 @@ ob_start();
             <span>📊</span> Export
         </button>
         <?php if (isset($_SESSION['new_credentials']) || isset($_SESSION['reset_credentials'])): ?>
-        <a href="/ergon/users/download-credentials" class="btn btn--success">
+        <a href="/ergon-site/users/download-credentials" class="btn btn--success">
             <span>📥</span> Download Credentials
         </a>
         <?php endif; ?>
@@ -259,7 +259,7 @@ function assignAdmin(userId) {
     if (confirm('Are you sure you want to assign admin role to this user?')) {
         const form = document.createElement('form');
         form.method = 'POST';
-        form.action = '/ergon/admin/assign';
+        form.action = '/ergon-site/admin/assign';
         
         const input = document.createElement('input');
         input.type = 'hidden';
@@ -276,7 +276,7 @@ function removeAdmin(adminId) {
     if (confirm('Are you sure you want to remove admin role from this user?')) {
         const form = document.createElement('form');
         form.method = 'POST';
-        form.action = '/ergon/admin/remove';
+        form.action = '/ergon-site/admin/remove';
         
         const input = document.createElement('input');
         input.type = 'hidden';
@@ -290,15 +290,15 @@ function removeAdmin(adminId) {
 }
 
 function viewUser(userId) {
-    window.location.href = '/ergon/users/view/' + userId;
+    window.location.href = '/ergon-site/users/view/' + userId;
 }
 
 function editUser(userId) {
-    window.location.href = '/ergon/users/edit/' + userId;
+    window.location.href = '/ergon-site/users/edit/' + userId;
 }
 
 function exportUserList() {
-    window.location.href = '/ergon/admin/export';
+    window.location.href = '/ergon-site/admin/export';
 }
 
 function resetPassword(userId, userName) {
@@ -306,7 +306,7 @@ function resetPassword(userId, userName) {
         const formData = new FormData();
         formData.append('user_id', userId);
         
-        fetch('/ergon/users/reset-password', {
+        fetch('/ergon-site/users/reset-password', {
             method: 'POST',
             body: formData
         })
@@ -328,7 +328,7 @@ function resetPassword(userId, userName) {
 
 function deleteUser(userId, userName) {
     if (confirm(`Are you sure you want to terminate user "${userName}"? This will set their status to terminated and disable their access.`)) {
-        fetch(`/ergon/users/terminate/${userId}`, {
+        fetch(`/ergon-site/users/terminate/${userId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

@@ -53,7 +53,7 @@ class SessionValidationMiddleware {
         $_SESSION['logout_message'] = $message;
         
         // Redirect to login
-        header('Location: /ergon/login');
+        header('Location: /ergon-site/login');
         exit;
     }
 }

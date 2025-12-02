@@ -10,7 +10,7 @@ ob_start();
         <p>Track and manage employee expense claims</p>
     </div>
     <div class="page-actions">
-        <a href="/ergon/expenses/create" class="btn btn--primary">
+        <a href="/ergon-site/expenses/create" class="btn btn--primary">
             <span>💰</span> Submit Expense
         </a>
     </div>
@@ -217,7 +217,7 @@ ob_start();
 
 <script>
 function showRejectModal(expenseId) {
-    document.getElementById('rejectForm').action = '/ergon/expenses/reject/' + expenseId;
+    document.getElementById('rejectForm').action = '/ergon-site/expenses/reject/' + expenseId;
     document.getElementById('rejectModal').style.display = 'flex';
 }
 
@@ -247,13 +247,13 @@ document.addEventListener('click', function(e) {
     const name = btn.dataset.name;
     
     if (action === 'view' && module && id) {
-        window.location.href = `/ergon/${module}/view/${id}`;
+        window.location.href = `/ergon-site/${module}/view/${id}`;
     } else if (action === 'edit' && module && id) {
-        window.location.href = `/ergon/${module}/edit/${id}`;
+        window.location.href = `/ergon-site/${module}/edit/${id}`;
     } else if (action === 'delete' && module && id && name) {
         deleteRecord(module, id, name);
     } else if (action === 'approve' && module && id) {
-        window.location.href = `/ergon/${module}/approve/${id}`;
+        window.location.href = `/ergon-site/${module}/approve/${id}`;
     }
 });
 </script>

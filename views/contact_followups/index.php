@@ -12,7 +12,7 @@ ob_start();
         <button class="btn btn--secondary" onclick="showAddContactModal()">
             <span>👤</span> Add Contact
         </button>
-        <a href="/ergon/contacts/followups/create" class="btn btn--primary">
+        <a href="/ergon-site/contacts/followups/create" class="btn btn--primary">
             <span>➕</span> New Follow-up
         </a>
     </div>
@@ -156,7 +156,7 @@ $todayCount = array_sum(array_column($contacts, 'today_count'));
                                     </svg>
                                 </button>
                             </div>
-                            <a href="/ergon/contacts/followups/view/<?= $contact['id'] ?>" class="btn btn--primary btn--sm">
+                            <a href="/ergon-site/contacts/followups/view/<?= $contact['id'] ?>" class="btn btn--primary btn--sm">
                                 View Follow-ups
                             </a>
                             <?php if ($contact['phone']): ?>
@@ -231,7 +231,7 @@ $todayCount = array_sum(array_column($contacts, 'today_count'));
                                     </svg>
                                 </button>
                             </div>
-                            <a href="/ergon/contacts/followups/view/<?= $contact['id'] ?>" class="btn btn--primary btn--sm">
+                            <a href="/ergon-site/contacts/followups/view/<?= $contact['id'] ?>" class="btn btn--primary btn--sm">
                                 Follow-ups
                             </a>
                             <?php if ($contact['phone']): ?>
@@ -248,7 +248,7 @@ $todayCount = array_sum(array_column($contacts, 'today_count'));
                 <div class="empty-icon">👥</div>
                 <h3>No Contacts with Follow-ups</h3>
                 <p>Create follow-ups for your contacts to see them here</p>
-                <a href="/ergon/contacts/followups/create" class="btn btn--primary">Create Follow-up</a>
+                <a href="/ergon-site/contacts/followups/create" class="btn btn--primary">Create Follow-up</a>
             </div>
         <?php endif; ?>
     </div>
@@ -752,7 +752,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Followup action functions
 function completeFollowup(id) {
     if (confirm('Mark this follow-up as completed?')) {
-        fetch(`/ergon/contacts/followups/complete/${id}`, {
+        fetch(`/ergon-site/contacts/followups/complete/${id}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -780,7 +780,7 @@ function cancelFollowup(id) {
         const formData = new FormData();
         formData.append('reason', reason.trim());
         
-        fetch(`/ergon/contacts/followups/cancel/${id}`, {
+        fetch(`/ergon-site/contacts/followups/cancel/${id}`, {
             method: 'POST',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
@@ -811,7 +811,7 @@ function rescheduleFollowup(id) {
         formData.append('new_date', newDate.trim());
         formData.append('reason', reason || 'No reason provided');
         
-        fetch(`/ergon/contacts/followups/reschedule/${id}`, {
+        fetch(`/ergon-site/contacts/followups/reschedule/${id}`, {
             method: 'POST',
             body: formData
         })
@@ -831,7 +831,7 @@ function rescheduleFollowup(id) {
 
 function showFollowupDetails(id) {
     // Redirect to contact followup view
-    window.location.href = `/ergon/contacts/followups/view/${id}`;
+    window.location.href = `/ergon-site/contacts/followups/view/${id}`;
 }
 
 function showHistory(id) {
@@ -839,7 +839,7 @@ function showHistory(id) {
 }
 
 function viewContact(contactId) {
-    fetch(`/ergon/api/contacts/${contactId}`)
+    fetch(`/ergon-site/api/contacts/${contactId}`)
         .then(response => response.json())
         .then(data => {
             if (data.success && data.contact) {
@@ -849,7 +849,7 @@ function viewContact(contactId) {
                 document.getElementById('viewContactEmail').textContent = contact.email || 'N/A';
                 document.getElementById('viewContactCompany').textContent = contact.company || 'N/A';
                 document.getElementById('viewFollowupsBtn').onclick = () => {
-                    window.location.href = `/ergon/contacts/followups/view/${contactId}`;
+                    window.location.href = `/ergon-site/contacts/followups/view/${contactId}`;
                 };
                 document.getElementById('editFromViewBtn').onclick = () => {
                     closeModal('viewContactModal');
@@ -867,7 +867,7 @@ function viewContact(contactId) {
 }
 
 function editContact(contactId) {
-    fetch(`/ergon/api/contacts/${contactId}`)
+    fetch(`/ergon-site/api/contacts/${contactId}`)
         .then(response => response.json())
         .then(data => {
             if (data.success && data.contact) {
@@ -898,7 +898,7 @@ function saveContactChanges() {
         return;
     }
     
-    fetch(`/ergon/api/contacts/${contactId}/update`, {
+    fetch(`/ergon-site/api/contacts/${contactId}/update`, {
         method: 'POST',
         body: formData
     })
@@ -953,7 +953,7 @@ function saveNewContact() {
         return;
     }
     
-    fetch('/ergon/api/contacts/create', {
+    fetch('/ergon-site/api/contacts/create', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

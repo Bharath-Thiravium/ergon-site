@@ -111,7 +111,7 @@ class ReportsController extends Controller {
             echo $csv;
         } catch (Exception $e) {
             error_log('Export error: ' . $e->getMessage());
-            header('Location: /ergon/reports?error=Export failed');
+            header('Location: /ergon-site/reports?error=Export failed');
         }
         exit;
     }
@@ -164,7 +164,7 @@ class ReportsController extends Controller {
             echo $csv;
         } catch (Exception $e) {
             error_log('Attendance export error: ' . $e->getMessage());
-            header('Location: /ergon/reports?error=Attendance export failed');
+            header('Location: /ergon-site/reports?error=Attendance export failed');
         }
         exit;
     }
@@ -218,7 +218,7 @@ class ReportsController extends Controller {
             echo $csv;
         } catch (Exception $e) {
             error_log('Approvals export error: ' . $e->getMessage());
-            header('Location: /ergon/reports?error=Approvals export failed');
+            header('Location: /ergon-site/reports?error=Approvals export failed');
         }
         exit;
     }

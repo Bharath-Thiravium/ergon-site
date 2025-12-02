@@ -137,7 +137,7 @@ class NavigationHelper {
         
         return sprintf(
             '<li class="nav-item %s">
-                <a href="/ergon%s" class="nav-link">
+                <a href="/ergon-site%s" class="nav-link">
                     <span class="nav-icon">%s</span>
                     <span class="nav-text">%s</span>
                 </a>

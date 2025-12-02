@@ -12,7 +12,7 @@ class EnhancedAttendanceController extends Controller {
     
     protected function requireAuth() {
         if (!isset($_SESSION['user_id'])) {
-            header('Location: /ergon/login');
+            header('Location: /ergon-site/login');
             exit;
         }
     }
@@ -216,7 +216,7 @@ class EnhancedAttendanceController extends Controller {
         
         if (!in_array($_SESSION['role'], ['owner', 'admin'])) {
             error_log('Access denied for role: ' . ($_SESSION['role'] ?? 'none'));
-            header('Location: /ergon/attendance?error=access_denied');
+            header('Location: /ergon-site/attendance?error=access_denied');
             exit;
         }
         
@@ -228,7 +228,7 @@ class EnhancedAttendanceController extends Controller {
         
         if (!$userId) {
             error_log('Attendance report error: Missing user_id parameter');
-            header('Location: /ergon/attendance?error=missing_user_id');
+            header('Location: /ergon-site/attendance?error=missing_user_id');
             exit;
         }
         
@@ -242,7 +242,7 @@ class EnhancedAttendanceController extends Controller {
             
             if (!$user) {
                 error_log('User not found for ID: ' . $userId);
-                header('Location: /ergon/attendance?error=user_not_found');
+                header('Location: /ergon-site/attendance?error=user_not_found');
                 exit;
             }
             
@@ -283,7 +283,7 @@ class EnhancedAttendanceController extends Controller {
         } catch (Exception $e) {
             error_log('Attendance report error: ' . $e->getMessage());
             error_log('Report parameters: user_id=' . ($userId ?? 'null') . ', start_date=' . $startDate . ', end_date=' . $endDate);
-            header('Location: /ergon/attendance?error=report_failed&details=' . urlencode($e->getMessage()));
+            header('Location: /ergon-site/attendance?error=report_failed&details=' . urlencode($e->getMessage()));
             exit;
         }
     }

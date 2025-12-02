@@ -10,7 +10,7 @@ ob_start();
         <p>Complete attendance records for the selected employee</p>
     </div>
     <div class="page-actions">
-        <a href="/ergon/attendance" class="btn btn--secondary">
+        <a href="/ergon-site/attendance" class="btn btn--secondary">
             <span>←</span> Back to Attendance
         </a>
     </div>
@@ -158,7 +158,7 @@ ob_start();
 <script>
 function filterPeriod(period) {
     const employeeId = <?= $employee_id ?? 0 ?>;
-    window.location.href = `/ergon/attendance/history/${employeeId}?period=${period}`;
+    window.location.href = `/ergon-site/attendance/history/${employeeId}?period=${period}`;
 }
 </script>
 

@@ -80,7 +80,7 @@ try {
     }
     
     echo "<hr>";
-    echo "<p><a href='/ergon/workflow/daily-planner'>Go to Daily Planner</a></p>";
+    echo "<p><a href='/ergon-site/workflow/daily-planner'>Go to Daily Planner</a></p>";
     
 } catch (Exception $e) {
     echo "<p style='color: red;'>Error: " . $e->getMessage() . "</p>";

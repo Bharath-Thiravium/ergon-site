@@ -95,7 +95,7 @@ try {
             $title, 
             $message, 
             $leave['id'], 
-            "/ergon/leaves/view/{$leave['id']}"
+            "/ergon-site/leaves/view/{$leave['id']}"
         ]);
     }
     echo "   ✅ Created " . count($missingLeaveApprovals) . " missing leave approval notifications\n";
@@ -127,7 +127,7 @@ try {
             $title, 
             $message, 
             $expense['id'], 
-            "/ergon/expenses/view/{$expense['id']}"
+            "/ergon-site/expenses/view/{$expense['id']}"
         ]);
     }
     echo "   ✅ Created " . count($missingExpenseApprovals) . " missing expense approval notifications\n";
@@ -159,7 +159,7 @@ try {
             $title, 
             $message, 
             $advance['id'], 
-            "/ergon/advances/view/{$advance['id']}"
+            "/ergon-site/advances/view/{$advance['id']}"
         ]);
     }
     echo "   ✅ Created " . count($missingAdvanceApprovals) . " missing advance approval notifications\n";

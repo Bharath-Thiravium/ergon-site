@@ -29,11 +29,11 @@ try {
 echo "<h2>Step 2: API Endpoints Test</h2>\n";
 
 $apiTests = [
-    'Dashboard Stats' => 'http://localhost/ergon/src/api/simple_api.php?action=dashboard&prefix=ERGN',
-    'Recent Activities' => 'http://localhost/ergon/src/api/simple_api.php?action=activities&prefix=ERGN&limit=5',
-    'Funnel Containers' => 'http://localhost/ergon/src/api/simple_api.php?action=funnel-containers&prefix=ERGN',
-    'Visualization' => 'http://localhost/ergon/src/api/simple_api.php?action=visualization&type=quotations&prefix=ERGN',
-    'Outstanding Invoices' => 'http://localhost/ergon/src/api/simple_api.php?action=outstanding-invoices&prefix=ERGN&limit=5'
+    'Dashboard Stats' => 'http://localhost/ergon-site/src/api/simple_api.php?action=dashboard&prefix=ERGN',
+    'Recent Activities' => 'http://localhost/ergon-site/src/api/simple_api.php?action=activities&prefix=ERGN&limit=5',
+    'Funnel Containers' => 'http://localhost/ergon-site/src/api/simple_api.php?action=funnel-containers&prefix=ERGN',
+    'Visualization' => 'http://localhost/ergon-site/src/api/simple_api.php?action=visualization&type=quotations&prefix=ERGN',
+    'Outstanding Invoices' => 'http://localhost/ergon-site/src/api/simple_api.php?action=outstanding-invoices&prefix=ERGN&limit=5'
 ];
 
 foreach ($apiTests as $name => $url) {
@@ -73,7 +73,7 @@ foreach ($apiTests as $name => $url) {
 echo "<h2>Step 3: KPI Calculations Test</h2>\n";
 
 $context = stream_context_create(['http' => ['timeout' => 5]]);
-$response = @file_get_contents('http://localhost/ergon/src/api/simple_api.php?action=dashboard&prefix=ERGN', false, $context);
+$response = @file_get_contents('http://localhost/ergon-site/src/api/simple_api.php?action=dashboard&prefix=ERGN', false, $context);
 
 if ($response) {
     $data = json_decode($response, true);
@@ -112,9 +112,9 @@ if ($response) {
 
 // Step 4: Frontend Integration Test
 echo "<h2>Step 4: Frontend Integration Test</h2>\n";
-echo "🌐 <strong>Dashboard URL:</strong> <a href='/ergon/finance/' target='_blank'>http://localhost/ergon/finance/</a><br>\n";
-echo "🧪 <strong>KPI Cards Test:</strong> <a href='/ergon/test_kpi_cards.html' target='_blank'>http://localhost/ergon/test_kpi_cards.html</a><br>\n";
-echo "🔧 <strong>API Integration Test:</strong> <a href='/ergon/test_api_integration.html' target='_blank'>http://localhost/ergon/test_api_integration.html</a><br>\n";
+echo "🌐 <strong>Dashboard URL:</strong> <a href='/ergon-site/finance/' target='_blank'>http://localhost/ergon-site/finance/</a><br>\n";
+echo "🧪 <strong>KPI Cards Test:</strong> <a href='/ergon-site/test_kpi_cards.html' target='_blank'>http://localhost/ergon-site/test_kpi_cards.html</a><br>\n";
+echo "🔧 <strong>API Integration Test:</strong> <a href='/ergon-site/test_api_integration.html' target='_blank'>http://localhost/ergon-site/test_api_integration.html</a><br>\n";
 
 echo "<h2>Summary</h2>\n";
 echo "✅ <strong>Data Flow Status:</strong> PostgreSQL → MySQL → API → Visualization<br>\n";

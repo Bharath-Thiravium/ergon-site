@@ -76,8 +76,8 @@ try {
     }
     
     echo "<p><strong>Setup completed successfully!</strong></p>";
-    echo "<p><a href='/ergon/attendance'>Go to Attendance Page</a></p>";
-    echo "<p><a href='/ergon/test_admin_attendance.php'>Run Admin Attendance Test</a></p>";
+    echo "<p><a href='/ergon-site/attendance'>Go to Attendance Page</a></p>";
+    echo "<p><a href='/ergon-site/test_admin_attendance.php'>Run Admin Attendance Test</a></p>";
     
 } catch (Exception $e) {
     echo "<p>❌ Error: " . $e->getMessage() . "</p>";

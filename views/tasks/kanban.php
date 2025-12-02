@@ -11,17 +11,17 @@ ob_start();
     </div>
     <div class="page-actions">
         <div class="view-options">
-            <a href="/ergon/tasks" class="view-btn" data-view="list">
+            <a href="/ergon-site/tasks" class="view-btn" data-view="list">
                 <span>📋</span> List
             </a>
-            <a href="/ergon/tasks/kanban" class="view-btn view-btn--active" data-view="kanban">
+            <a href="/ergon-site/tasks/kanban" class="view-btn view-btn--active" data-view="kanban">
                 <span>📏</span> Kanban
             </a>
-            <a href="/ergon/tasks/calendar" class="view-btn" data-view="calendar">
+            <a href="/ergon-site/tasks/calendar" class="view-btn" data-view="calendar">
                 <span>📆</span> Calendar
             </a>
         </div>
-        <a href="/ergon/tasks/create" class="btn btn--primary">
+        <a href="/ergon-site/tasks/create" class="btn btn--primary">
             <span>➕</span> Create Task
         </a>
     </div>
@@ -252,7 +252,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function loadTasks() {
-    fetch('/ergon/api/tasks')
+    fetch('/ergon-site/api/tasks')
         .then(response => response.json())
         .then(data => {
             tasks = data.tasks || [];
@@ -414,7 +414,7 @@ function updateTaskStatus(taskId, newStatus, reason = '') {
     }
     
     // Update server
-    fetch('/ergon/tasks/update-status', {
+    fetch('/ergon-site/tasks/update-status', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

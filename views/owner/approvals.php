@@ -262,7 +262,7 @@ function approveItem(type, id) {
         formData.append('id', id);
         formData.append('remarks', '');
         
-        fetch('/ergon/owner/approve-request', {
+        fetch('/ergon-site/owner/approve-request', {
             method: 'POST',
             body: formData
         })
@@ -290,7 +290,7 @@ function rejectItem(type, id) {
         formData.append('id', id);
         formData.append('remarks', reason);
         
-        fetch('/ergon/owner/reject-request', {
+        fetch('/ergon-site/owner/reject-request', {
             method: 'POST',
             body: formData
         })
@@ -311,7 +311,7 @@ function rejectItem(type, id) {
 }
 
 function viewItem(type, id) {
-    window.location.href = `/ergon/owner/approvals/view/${type}/${id}`;
+    window.location.href = `/ergon-site/owner/approvals/view/${type}/${id}`;
 }
 
 function refreshData() {
@@ -319,7 +319,7 @@ function refreshData() {
 }
 
 function exportApprovals() {
-    window.open('/ergon/reports/approvals-export', '_blank');
+    window.open('/ergon-site/reports/approvals-export', '_blank');
 }
 </script>
 

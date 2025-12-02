@@ -10,7 +10,7 @@ ob_start();
         <p>Update your expense claim details</p>
     </div>
     <div class="page-actions">
-        <a href="/ergon/expenses" class="btn btn--secondary">
+        <a href="/ergon-site/expenses" class="btn btn--secondary">
             <span>←</span> Back to Expenses
         </a>
     </div>
@@ -23,7 +23,7 @@ ob_start();
         </h2>
     </div>
     <div class="card__body">
-        <form method="POST" action="/ergon/expenses/edit/<?= $expense['id'] ?>" class="form" enctype="multipart/form-data">
+        <form method="POST" action="/ergon-site/expenses/edit/<?= $expense['id'] ?>" class="form" enctype="multipart/form-data">
             <div class="form-row">
                 <div class="form-group">
                     <label for="category" class="form-label">Category *</label>
@@ -69,7 +69,7 @@ ob_start();
                 <button type="submit" class="btn btn--primary">
                     💸 Update Expense Claim
                 </button>
-                <a href="/ergon/expenses" class="btn btn--secondary">❌ Cancel</a>
+                <a href="/ergon-site/expenses" class="btn btn--secondary">❌ Cancel</a>
             </div>
         </form>
     </div>

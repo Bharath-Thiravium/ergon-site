@@ -95,8 +95,8 @@ try {
     
     // Test if the API endpoints are accessible
     $apiEndpoints = [
-        '/ergon/api/daily_planner_workflow.php?action=sla-dashboard&date=' . $yesterday,
-        '/ergon/api/daily_planner_workflow.php?action=timer&task_id=1'
+        '/ergon-site/api/daily_planner_workflow.php?action=sla-dashboard&date=' . $yesterday,
+        '/ergon-site/api/daily_planner_workflow.php?action=timer&task_id=1'
     ];
     
     foreach ($apiEndpoints as $endpoint) {
@@ -130,7 +130,7 @@ try {
     echo "Stack trace:\n" . $e->getTraceAsString() . "\n";
 }
 
-echo "\n<p><a href='/ergon/workflow/daily-planner'>← Back to Daily Planner</a></p>\n";
+echo "\n<p><a href='/ergon-site/workflow/daily-planner'>← Back to Daily Planner</a></p>\n";
 ?>
 
 <style>

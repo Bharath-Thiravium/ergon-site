@@ -90,6 +90,6 @@ header('Content-Type: text/html; charset=UTF-8');
     echo "<div class='info'>Document Root: " . $_SERVER['DOCUMENT_ROOT'] . "</div>";
     ?>
     
-    <p><a href="/ergon/finance">← Back to Finance Dashboard</a></p>
+    <p><a href="/ergon-site/finance">← Back to Finance Dashboard</a></p>
 </body>
 </html>

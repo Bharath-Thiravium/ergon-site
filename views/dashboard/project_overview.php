@@ -10,7 +10,7 @@ ob_start();
         <p>Track progress across all active projects</p>
     </div>
     <div class="page-actions">
-        <a href="/ergon/dashboard" class="btn btn--secondary">
+        <a href="/ergon-site/dashboard" class="btn btn--secondary">
             <span>←</span> Back to Dashboard
         </a>
     </div>

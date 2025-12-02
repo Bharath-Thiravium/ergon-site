@@ -51,13 +51,13 @@ class SettingsController extends Controller {
                 $result = $this->updateSettings($settings);
                 
                 if ($result) {
-                    header('Location: /ergon/settings?success=Settings updated successfully');
+                    header('Location: /ergon-site/settings?success=Settings updated successfully');
                 } else {
-                    header('Location: /ergon/settings?error=Failed to update settings');
+                    header('Location: /ergon-site/settings?error=Failed to update settings');
                 }
             } catch (Exception $e) {
                 error_log('Settings update error: ' . $e->getMessage());
-                header('Location: /ergon/settings?error=Database error');
+                header('Location: /ergon-site/settings?error=Database error');
             }
             exit;
         }

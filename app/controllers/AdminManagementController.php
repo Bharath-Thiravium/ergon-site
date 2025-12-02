@@ -12,12 +12,12 @@ class AdminManagementController extends Controller {
         }
         
         if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['owner', 'admin'])) {
-            header('Location: /ergon/login');
+            header('Location: /ergon-site/login');
             exit;
         }
         
         // Redirect to unified users management
-        header('Location: /ergon/users');
+        header('Location: /ergon-site/users');
         exit;
     }
     
@@ -42,7 +42,7 @@ class AdminManagementController extends Controller {
         }
         
         if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'owner') {
-            header('Location: /ergon/login');
+            header('Location: /ergon-site/login');
             exit;
         }
         
@@ -52,11 +52,11 @@ class AdminManagementController extends Controller {
                 $stmt = $db->prepare("UPDATE users SET role = 'admin' WHERE id = ? AND role = 'user'");
                 $stmt->execute([$_POST['user_id']]);
                 
-                header('Location: /ergon/admin/management?success=admin_assigned');
+                header('Location: /ergon-site/admin/management?success=admin_assigned');
                 exit;
             } catch (Exception $e) {
                 error_log('Assign Admin Error: ' . $e->getMessage());
-                header('Location: /ergon/admin/management?error=assign_failed');
+                header('Location: /ergon-site/admin/management?error=assign_failed');
                 exit;
             }
         }
@@ -68,7 +68,7 @@ class AdminManagementController extends Controller {
         }
         
         if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'owner') {
-            header('Location: /ergon/login');
+            header('Location: /ergon-site/login');
             exit;
         }
         
@@ -78,11 +78,11 @@ class AdminManagementController extends Controller {
                 $stmt = $db->prepare("UPDATE users SET role = 'user' WHERE id = ? AND role = 'admin'");
                 $stmt->execute([$_POST['admin_id']]);
                 
-                header('Location: /ergon/admin/management?success=admin_removed');
+                header('Location: /ergon-site/admin/management?success=admin_removed');
                 exit;
             } catch (Exception $e) {
                 error_log('Remove Admin Error: ' . $e->getMessage());
-                header('Location: /ergon/admin/management?error=remove_failed');
+                header('Location: /ergon-site/admin/management?error=remove_failed');
                 exit;
             }
         }

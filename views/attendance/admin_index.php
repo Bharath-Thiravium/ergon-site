@@ -353,7 +353,7 @@ ob_start();
 <script>
 function refreshAttendance() {
     const currentDate = document.getElementById('attendanceDate').value;
-    const url = `/ergon/attendance?ajax=1${currentDate ? '&date=' + currentDate : ''}`;
+    const url = `/ergon-site/attendance?ajax=1${currentDate ? '&date=' + currentDate : ''}`;
     
     fetch(url)
         .then(response => response.text())
@@ -376,7 +376,7 @@ function refreshAttendance() {
 }
 
 function filterByDate(date) {
-    window.location.href = '/ergon/attendance?date=' + date;
+    window.location.href = '/ergon-site/attendance?date=' + date;
 }
 
 function viewEmployeeDetails(employeeId) {
@@ -396,7 +396,7 @@ function markManualAttendance(employeeId) {
     formData.append('check_out', checkOut || '');
     formData.append('date', date);
     
-    fetch('/ergon/attendance/manual', {
+    fetch('/ergon-site/attendance/manual', {
         method: 'POST',
         body: formData
     })
@@ -438,7 +438,7 @@ function performAdminClock(type, latitude, longitude) {
         formData.append('longitude', longitude);
     }
     
-    fetch('/ergon/attendance/clock', {
+    fetch('/ergon-site/attendance/clock', {
         method: 'POST',
         body: formData
     })
@@ -493,8 +493,8 @@ function performAdminClock(type, latitude, longitude) {
 }
 </style>
 
-<link rel="stylesheet" href="/ergon/assets/css/enhanced-table-utils.css?v=<?= time() ?>">
-<script src="/ergon/assets/js/table-utils.js?v=<?= time() ?>"></script>
+<link rel="stylesheet" href="/ergon-site/assets/css/enhanced-table-utils.css?v=<?= time() ?>">
+<script src="/ergon-site/assets/js/table-utils.js?v=<?= time() ?>"></script>
 
 <?php
 $content = ob_get_clean();

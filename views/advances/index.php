@@ -11,7 +11,7 @@ ob_start();
         <p>Manage employee salary advance requests and approvals</p>
     </div>
     <div class="page-actions">
-        <a href="/ergon/advances/create" class="btn btn--primary">
+        <a href="/ergon-site/advances/create" class="btn btn--primary">
             <span>➕</span> Request Advance
         </a>
     </div>
@@ -196,7 +196,7 @@ renderModal('rejectModal', 'Reject Advance Request', $rejectContent, $rejectFoot
 function showRejectModal(advanceId) {
     const form = document.getElementById('rejectForm');
     if (form) {
-        form.action = '/ergon/advances/reject/' + advanceId;
+        form.action = '/ergon-site/advances/reject/' + advanceId;
         form.method = 'POST';
         // Clear previous reason
         const reasonField = document.getElementById('rejection_reason');
@@ -243,13 +243,13 @@ document.addEventListener('click', function(e) {
     const name = btn.dataset.name;
     
     if (action === 'view' && module && id) {
-        window.location.href = `/ergon/${module}/view/${id}`;
+        window.location.href = `/ergon-site/${module}/view/${id}`;
     } else if (action === 'edit' && module && id) {
-        window.location.href = `/ergon/${module}/edit/${id}`;
+        window.location.href = `/ergon-site/${module}/edit/${id}`;
     } else if (action === 'delete' && module && id && name) {
         deleteRecord(module, id, name);
     } else if (action === 'approve' && module && id) {
-        window.location.href = `/ergon/${module}/approve/${id}`;
+        window.location.href = `/ergon-site/${module}/approve/${id}`;
     }
 });
 </script>

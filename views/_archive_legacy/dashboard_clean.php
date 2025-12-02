@@ -1,8 +1,8 @@
 <?php
 require_once __DIR__ . '/../../app/helpers/Security.php';
 if (session_status() === PHP_SESSION_NONE) session_start();
-if (empty($_SESSION['user_id']) || empty($_SESSION['role'])) { header('Location: /ergon/login'); exit; }
-if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > 28800)) { session_unset(); session_destroy(); header('Location: /ergon/login?timeout=1'); exit; }
+if (empty($_SESSION['user_id']) || empty($_SESSION['role'])) { header('Location: /ergon-site/login'); exit; }
+if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > 28800)) { session_unset(); session_destroy(); header('Location: /ergon-site/login?timeout=1'); exit; }
 $_SESSION['last_activity'] = time();
 $content = $content ?? '';
 $userPrefs = ['theme' => 'light', 'dashboard_layout' => 'default', 'language' => 'en'];
@@ -16,7 +16,7 @@ $userPrefs = ['theme' => 'light', 'dashboard_layout' => 'default', 'language' =>
     <title><?= $title ?? 'Dashboard' ?> - ergon</title>
     <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,">
     
-    <script src="/ergon/assets/js/theme-preload.js"></script>
+    <script src="/ergon-site/assets/js/theme-preload.js"></script>
     
     <style>
     html{box-sizing:border-box}*,*:before,*:after{box-sizing:inherit}
@@ -29,7 +29,7 @@ $userPrefs = ['theme' => 'light', 'dashboard_layout' => 'default', 'language' =>
     .mobile-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:9997;display:none}
     </style>
     
-    <link href="/ergon/assets/css/ergon.css?v=1.0" rel="stylesheet">
+    <link href="/ergon-site/assets/css/ergon.css?v=1.0" rel="stylesheet">
 </head>
 <body>
     <main class="main-content">

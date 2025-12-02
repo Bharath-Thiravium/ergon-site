@@ -67,14 +67,14 @@ class ProfileController extends Controller {
                     echo json_encode(['success' => true, 'message' => 'Profile updated successfully']);
                     exit;
                 }
-                header('Location: /ergon/profile?success=1');
+                header('Location: /ergon-site/profile?success=1');
             } else {
                 if ($isAjax) {
                     header('Content-Type: application/json');
                     echo json_encode(['success' => false, 'message' => 'Failed to update profile']);
                     exit;
                 }
-                header('Location: /ergon/profile?error=1');
+                header('Location: /ergon-site/profile?error=1');
             }
             exit;
         }
@@ -142,7 +142,7 @@ class ProfileController extends Controller {
         
         // Restrict preferences to owner only
         if ($_SESSION['role'] !== 'owner') {
-            header('Location: /ergon/profile?error=Access denied');
+            header('Location: /ergon-site/profile?error=Access denied');
             exit;
         }
         
@@ -155,7 +155,7 @@ class ProfileController extends Controller {
             // Simple validation - check if user is logged in
             if (!isset($_SESSION['user_id'])) {
                 error_log('User not logged in during preferences save');
-                header('Location: /ergon/profile/preferences?error=1');
+                header('Location: /ergon-site/profile/preferences?error=1');
                 exit;
             }
             
@@ -169,7 +169,7 @@ class ProfileController extends Controller {
                 error_log('CSRF validation failed - regenerating token and redirecting');
                 // Regenerate token for next attempt
                 $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-                header('Location: /ergon/profile/preferences?error=1');
+                header('Location: /ergon-site/profile/preferences?error=1');
                 exit;
             }
             
@@ -197,7 +197,7 @@ class ProfileController extends Controller {
                     echo json_encode(['success' => true, 'message' => 'Preferences saved successfully']);
                     exit;
                 }
-                header('Location: /ergon/profile/preferences?success=1');
+                header('Location: /ergon-site/profile/preferences?success=1');
             } else {
                 error_log('Database save failed for user ' . $_SESSION['user_id']);
                 if ($isAjax) {
@@ -205,7 +205,7 @@ class ProfileController extends Controller {
                     echo json_encode(['success' => false, 'message' => 'Failed to save preferences']);
                     exit;
                 }
-                header('Location: /ergon/profile/preferences?error=1');
+                header('Location: /ergon-site/profile/preferences?error=1');
             }
             exit;
         }

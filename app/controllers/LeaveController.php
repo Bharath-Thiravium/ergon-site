@@ -211,7 +211,7 @@ class LeaveController extends Controller {
         
         $id = Security::validateInt($id);
         if (!$id) {
-            header('Location: /ergon/leaves?error=invalid_id');
+            header('Location: /ergon-site/leaves?error=invalid_id');
             exit;
         }
         
@@ -225,13 +225,13 @@ class LeaveController extends Controller {
             $leave = $stmt->fetch(PDO::FETCH_ASSOC);
             
             if (!$leave) {
-                header('Location: /ergon/leaves?error=not_found');
+                header('Location: /ergon-site/leaves?error=not_found');
                 exit;
             }
             
             // Check permissions
             if ($_SESSION['role'] === 'user' && $leave['user_id'] != $_SESSION['user_id']) {
-                header('Location: /ergon/leaves?error=access_denied');
+                header('Location: /ergon-site/leaves?error=access_denied');
                 exit;
             }
             
@@ -243,12 +243,12 @@ class LeaveController extends Controller {
                 $contactDuringLeave = trim($_POST['contact_during_leave'] ?? '');
                 
                 if (empty($type) || empty($startDate) || empty($endDate) || empty($reason)) {
-                    header('Location: /ergon/leaves/edit/' . $id . '?error=All fields are required');
+                    header('Location: /ergon-site/leaves/edit/' . $id . '?error=All fields are required');
                     exit;
                 }
                 
                 if (strtotime($endDate) < strtotime($startDate)) {
-                    header('Location: /ergon/leaves/edit/' . $id . '?error=End date must be after start date');
+                    header('Location: /ergon-site/leaves/edit/' . $id . '?error=End date must be after start date');
                     exit;
                 }
                 
@@ -262,9 +262,9 @@ class LeaveController extends Controller {
                 $result = $stmt->execute([$type, $startDate, $endDate, $reason, $contactDuringLeave, $days, $id]);
                 
                 if ($result) {
-                    header('Location: /ergon/leaves?success=Leave request updated successfully');
+                    header('Location: /ergon-site/leaves?success=Leave request updated successfully');
                 } else {
-                    header('Location: /ergon/leaves/edit/' . $id . '?error=Update failed');
+                    header('Location: /ergon-site/leaves/edit/' . $id . '?error=Update failed');
                 }
                 exit;
             }
@@ -272,7 +272,7 @@ class LeaveController extends Controller {
             $this->view('leaves/edit', ['leave' => $leave, 'active_page' => 'leaves']);
         } catch (Exception $e) {
             error_log('Leave edit error: ' . $e->getMessage());
-            header('Location: /ergon/leaves?error=database_error');
+            header('Location: /ergon-site/leaves?error=database_error');
             exit;
         }
     }
@@ -282,14 +282,14 @@ class LeaveController extends Controller {
         
         $id = Security::validateInt($id);
         if (!$id) {
-            header('Location: /ergon/leaves?error=invalid_id');
+            header('Location: /ergon-site/leaves?error=invalid_id');
             exit;
         }
         
         try {
             $leave = $this->leave->getById($id);
             if (!$leave) {
-                header('Location: /ergon/leaves?error=not_found');
+                header('Location: /ergon-site/leaves?error=not_found');
                 exit;
             }
             
@@ -301,7 +301,7 @@ class LeaveController extends Controller {
             $this->view('leaves/view', $data);
         } catch (Exception $e) {
             error_log('Leave view error: ' . $e->getMessage());
-            header('Location: /ergon/leaves?error=view_failed');
+            header('Location: /ergon-site/leaves?error=view_failed');
             exit;
         }
     }
@@ -367,7 +367,7 @@ class LeaveController extends Controller {
         }
         
         if (!$id) {
-            header('Location: /ergon/leaves?error=Invalid leave ID');
+            header('Location: /ergon-site/leaves?error=Invalid leave ID');
             exit;
         }
         
@@ -381,7 +381,7 @@ class LeaveController extends Controller {
             $leave = $stmt->fetch(PDO::FETCH_ASSOC);
             
             if (!$leave) {
-                header('Location: /ergon/leaves?error=Leave not found or already processed');
+                header('Location: /ergon-site/leaves?error=Leave not found or already processed');
                 exit;
             }
             
@@ -398,12 +398,12 @@ class LeaveController extends Controller {
                     error_log('Leave approval notification error: ' . $notifError->getMessage());
                 }
                 
-                header('Location: /ergon/leaves?success=Leave approved successfully');
+                header('Location: /ergon-site/leaves?success=Leave approved successfully');
             } else {
-                header('Location: /ergon/leaves?error=Failed to approve leave');
+                header('Location: /ergon-site/leaves?error=Failed to approve leave');
             }
         } catch (Exception $e) {
-            header('Location: /ergon/leaves?error=Database error: ' . $e->getMessage());
+            header('Location: /ergon-site/leaves?error=Database error: ' . $e->getMessage());
         }
         exit;
     }
@@ -446,7 +446,7 @@ class LeaveController extends Controller {
             $reason = $_POST['rejection_reason'];
             
             if (!$id) {
-                header('Location: /ergon/leaves?error=Invalid leave ID');
+                header('Location: /ergon-site/leaves?error=Invalid leave ID');
                 exit;
             }
             
@@ -475,15 +475,15 @@ class LeaveController extends Controller {
                     if ($leave) {
                         $this->removeLeaveAttendanceRecords($db, $leave['user_id'], $leave['start_date'], $leave['end_date']);
                     }
-                    header('Location: /ergon/leaves?success=Leave rejected successfully');
+                    header('Location: /ergon-site/leaves?success=Leave rejected successfully');
                 } else {
-                    header('Location: /ergon/leaves?error=Leave not found or already processed');
+                    header('Location: /ergon-site/leaves?error=Leave not found or already processed');
                 }
             } catch (Exception $e) {
-                header('Location: /ergon/leaves?error=Database error: ' . $e->getMessage());
+                header('Location: /ergon-site/leaves?error=Database error: ' . $e->getMessage());
             }
         } else {
-            header('Location: /ergon/leaves?error=Rejection reason is required');
+            header('Location: /ergon-site/leaves?error=Rejection reason is required');
         }
         exit;
     }

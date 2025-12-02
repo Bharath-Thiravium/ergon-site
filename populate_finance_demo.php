@@ -96,7 +96,7 @@ try {
     echo "📊 Invoices: " . count($invoices) . "\n";
     echo "📝 Quotations: " . count($quotations) . "\n";
     echo "👥 Customers: " . count($customers) . "\n";
-    echo "\n🔗 Visit: https://athenas.co.in/ergon/finance\n";
+    echo "\n🔗 Visit: https://athenas.co.in/ergon-site/finance\n";
     
 } catch (Exception $e) {
     echo "❌ Error: " . $e->getMessage() . "\n";

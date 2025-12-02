@@ -146,7 +146,7 @@
         
         <div class="flow-step output">
             <h2>4️⃣ DASHBOARD OUTPUT: Fast Analytics</h2>
-            <p><strong>API Endpoint:</strong> /ergon/finance/dashboard-stats</p>
+            <p><strong>API Endpoint:</strong> /ergon-site/finance/dashboard-stats</p>
             <p><strong>Response Time:</strong> 0.14ms (SQL optimized)</p>
             
             <?php

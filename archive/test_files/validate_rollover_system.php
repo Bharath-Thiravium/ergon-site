@@ -149,7 +149,7 @@ try {
         echo "<p>🔧 No tasks found for today. Check if tasks are being created in the tasks table with today's date</p>";
     }
     
-    echo "<p><a href='/ergon/workflow/daily-planner'>Go to Daily Planner</a></p>";
+    echo "<p><a href='/ergon-site/workflow/daily-planner'>Go to Daily Planner</a></p>";
     
 } catch (Exception $e) {
     echo "<p style='color: red;'>Error: " . $e->getMessage() . "</p>";

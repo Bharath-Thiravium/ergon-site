@@ -9,7 +9,7 @@ class AuthMiddleware {
             $domain = $_SERVER['HTTP_HOST'];
             session_set_cookie_params([
                 'lifetime' => 28800,
-                'path' => '/ergon/',
+                'path' => '/ergon-site/',
                 'domain' => $domain,
                 'secure' => $isSecure,
                 'httponly' => true,
@@ -51,14 +51,14 @@ class AuthMiddleware {
         
         if ($_SESSION['role'] !== $requiredRole) {
             if (!headers_sent()) {
-                header('Location: /ergon/dashboard');
+                header('Location: /ergon-site/dashboard');
             }
             exit;
         }
     }
     
     private static function redirectToLogin($query = '') {
-        $url = '/ergon/login';
+        $url = '/ergon-site/login';
         if ($query) {
             $url .= '?' . $query;
         }

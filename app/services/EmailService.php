@@ -17,7 +17,7 @@ class EmailService {
     }
     
     public function sendPasswordResetEmail($email, $name, $resetToken) {
-        $resetUrl = $this->getBaseUrl() . "/ergon/auth/reset-password?token=" . $resetToken;
+        $resetUrl = $this->getBaseUrl() . "/ergon-site/auth/reset-password?token=" . $resetToken;
         
         $subject = "Password Reset Request - Ergon";
         $message = $this->getPasswordResetTemplate($name, $resetUrl);

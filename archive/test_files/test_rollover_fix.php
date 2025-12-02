@@ -136,7 +136,7 @@ try {
         echo "<p style='color: red;'><strong>❌ Rollover may not be working as expected.</strong></p>";
     }
     
-    echo "<p><a href='/ergon/workflow/daily-planner'>Go to Daily Planner</a></p>";
+    echo "<p><a href='/ergon-site/workflow/daily-planner'>Go to Daily Planner</a></p>";
     
 } catch (Exception $e) {
     echo "<p style='color: red;'>Error: " . $e->getMessage() . "</p>";

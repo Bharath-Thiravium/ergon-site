@@ -1,7 +1,7 @@
 <?php
 /**
  * Web-based ETL Test
- * Access via: http://localhost/ergon/web_test_etl.php
+ * Access via: http://localhost/ergon-site/web_test_etl.php
  */
 ?>
 <!DOCTYPE html>
@@ -77,7 +77,7 @@
         echo "<div class='success'>✅ Finance ETL Module is ready!</div>";
         echo "<p><strong>Next Steps:</strong></p>";
         echo "<ol>";
-        echo "<li>Visit: <a href='/ergon/finance'>/ergon/finance</a></li>";
+        echo "<li>Visit: <a href='/ergon-site/finance'>/ergon-site/finance</a></li>";
         echo "<li>Click 'Sync Data' button</li>";
         echo "<li>View analytics dashboard</li>";
         echo "</ol>";

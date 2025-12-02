@@ -6,7 +6,7 @@ $documents = $data['documents'] ?? [];
 
 // Check access permissions
 if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'] ?? '', ['owner', 'admin'])) {
-    header('Location: /ergon/login');
+    header('Location: /ergon-site/login');
     exit;
 }
 
@@ -41,7 +41,7 @@ ob_start();
                 <button class="btn btn--success" data-action="activate" data-module="users" data-id="<?= $userId ?>" data-name="<?= $userName ?>">
                     <span>✅</span> Activate
                 </button>
-                <a href="/ergon/users/edit/<?= $userId ?>" class="btn btn--primary">
+                <a href="/ergon-site/users/edit/<?= $userId ?>" class="btn btn--primary">
                     <span>✏️</span> Edit
                 </a>
                 <button class="btn btn--warning" data-action="reset" data-module="users" data-id="<?= $userId ?>" data-name="<?= $userName ?>">
@@ -52,7 +52,7 @@ ob_start();
                 </button>
             <?php elseif ($userStatus === 'active'): ?>
                 <!-- Active Users: Edit + Reset Password + Deactivate + Suspend + Terminate -->
-                <a href="/ergon/users/edit/<?= $userId ?>" class="btn btn--primary">
+                <a href="/ergon-site/users/edit/<?= $userId ?>" class="btn btn--primary">
                     <span>✏️</span> Edit
                 </a>
                 <button class="btn btn--warning" data-action="reset" data-module="users" data-id="<?= $userId ?>" data-name="<?= $userName ?>">
@@ -69,7 +69,7 @@ ob_start();
                 </button>
             <?php else: ?>
                 <!-- Inactive Users: Edit + Reset Password + Activate -->
-                <a href="/ergon/users/edit/<?= $userId ?>" class="btn btn--primary">
+                <a href="/ergon-site/users/edit/<?= $userId ?>" class="btn btn--primary">
                     <span>✏️</span> Edit
                 </a>
                 <button class="btn btn--warning" data-action="reset" data-module="users" data-id="<?= $userId ?>" data-name="<?= $userName ?>">
@@ -81,7 +81,7 @@ ob_start();
             <?php endif; ?>
         <?php endif; ?>
         
-        <a href="/ergon/users" class="btn btn--secondary">
+        <a href="/ergon-site/users" class="btn btn--secondary">
             <span>←</span> Back to Users
         </a>
     </div>
@@ -233,7 +233,7 @@ ob_start();
                             </div>
                             <div class="document-actions">
                                 <div class="ab-container">
-                                    <a href="/ergon/public/uploads/users/<?= $user['id'] ?>/<?= urlencode($doc['filename']) ?>" 
+                                    <a href="/ergon-site/public/uploads/users/<?= $user['id'] ?>/<?= urlencode($doc['filename']) ?>" 
                                        class="ab-btn ab-btn--view" 
                                        target="_blank" 
                                        title="View Document">
@@ -242,7 +242,7 @@ ob_start();
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                         </svg>
                                     </a>
-                                    <a href="/ergon/users/download-document/<?= $user['id'] ?>/<?= urlencode($doc['filename']) ?>" 
+                                    <a href="/ergon-site/users/download-document/<?= $user['id'] ?>/<?= urlencode($doc['filename']) ?>" 
                                        class="ab-btn ab-btn--edit" 
                                        title="Download Document">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -439,7 +439,7 @@ document.addEventListener('click', function(e) {
     
     if (action === 'inactive' && module && id && name) {
         if (confirm(`Deactivate user ${name}? They will not be able to login.`)) {
-            fetch(`/ergon/${module}/inactive/${id}`, { 
+            fetch(`/ergon-site/${module}/inactive/${id}`, { 
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -462,7 +462,7 @@ document.addEventListener('click', function(e) {
         }
     } else if (action === 'activate' && module && id && name) {
         if (confirm(`Activate user ${name}?`)) {
-            fetch(`/ergon/${module}/activate/${id}`, { 
+            fetch(`/ergon-site/${module}/activate/${id}`, { 
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -485,7 +485,7 @@ document.addEventListener('click', function(e) {
         }
     } else if (action === 'suspend' && module && id && name) {
         if (confirm(`Suspend user ${name}? They will not be able to login.`)) {
-            fetch(`/ergon/${module}/suspend/${id}`, { 
+            fetch(`/ergon-site/${module}/suspend/${id}`, { 
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -508,7 +508,7 @@ document.addEventListener('click', function(e) {
         }
     } else if (action === 'terminate' && module && id && name) {
         if (confirm(`Terminate user ${name}? This action cannot be undone and they will not be able to login.`)) {
-            fetch(`/ergon/${module}/terminate/${id}`, { 
+            fetch(`/ergon-site/${module}/terminate/${id}`, { 
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -531,7 +531,7 @@ document.addEventListener('click', function(e) {
         }
     } else if (action === 'reset' && module && id && name) {
         if (confirm(`Reset password for ${name}?`)) {
-            fetch(`/ergon/${module}/reset-password`, {
+            fetch(`/ergon-site/${module}/reset-password`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ user_id: id })

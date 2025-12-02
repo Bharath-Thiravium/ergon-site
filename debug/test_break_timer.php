@@ -114,7 +114,7 @@ try {
     echo "<h3>5. Testing API Timer Endpoint</h3>\n";
     
     // Test the timer API endpoint
-    $timerUrl = "http://localhost/ergon/api/daily_planner_workflow.php?action=timer&task_id={$testTaskId}";
+    $timerUrl = "http://localhost/ergon-site/api/daily_planner_workflow.php?action=timer&task_id={$testTaskId}";
     
     // Simulate API call (we'll just query the database directly for this test)
     $stmt = $db->prepare("

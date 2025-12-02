@@ -15,19 +15,19 @@
     
     if (isProduction) {
         // Production: Load single minified CSS file
-        loadCSS('/ergon/assets/css/ergon.production.min.css');
+        loadCSS('/ergon-site/assets/css/ergon.production.min.css');
     } else {
         // Development: Load individual CSS files
         const cssFiles = [
-            '/ergon/assets/css/ergon.css',
-            '/ergon/assets/css/theme-enhanced.css',
-            '/ergon/assets/css/utilities-new.css',
-            '/ergon/assets/css/instant-theme.css',
-            '/ergon/assets/css/global-tooltips.css',
+            '/ergon-site/assets/css/ergon.css',
+            '/ergon-site/assets/css/theme-enhanced.css',
+            '/ergon-site/assets/css/utilities-new.css',
+            '/ergon-site/assets/css/instant-theme.css',
+            '/ergon-site/assets/css/global-tooltips.css',
 
-            '/ergon/assets/css/responsive-mobile.css',
-            '/ergon/assets/css/mobile-critical-fixes.css',
-            '/ergon/assets/css/nav-simple-fix.css'
+            '/ergon-site/assets/css/responsive-mobile.css',
+            '/ergon-site/assets/css/mobile-critical-fixes.css',
+            '/ergon-site/assets/css/nav-simple-fix.css'
         ];
         
         let loadedCount = 0;

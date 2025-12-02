@@ -29,6 +29,6 @@ function showHistoryInfo() {
 
 // Change date function
 function changeDate(date) {
-    const baseUrl = window.dailyPlannerBaseUrl || '/ergon/workflow/daily-planner/';
+    const baseUrl = window.dailyPlannerBaseUrl || '/ergon-site/workflow/daily-planner/';
     window.location.href = baseUrl + date;
 }

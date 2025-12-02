@@ -5,7 +5,7 @@ window.pauseTask = function(taskId) {
     if (taskCard) taskCard.dataset.pauseStart = Date.now();
     if (slaTimers[taskId]) clearInterval(slaTimers[taskId]);
     slaTimers[taskId] = setInterval(() => updateLocalCountdown(taskId), 1000);
-    fetch('/ergon/api/daily_planner_workflow.php?action=pause', {
+    fetch('/ergon-site/api/daily_planner_workflow.php?action=pause', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ task_id: parseInt(taskId) })
@@ -164,7 +164,7 @@ function saveProgress() {
         csrf_token: csrfToken
     };
     
-    fetch('/ergon/api/daily_planner_workflow.php?action=update-progress', {
+    fetch('/ergon-site/api/daily_planner_workflow.php?action=update-progress', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(requestData)
@@ -311,7 +311,7 @@ function refreshTaskStatuses() {
     const currentDate = plannerGrid.dataset.selectedDate;
     const currentUserId = plannerGrid.dataset.userId;
     
-    return fetch(`/ergon/api/daily_planner_workflow.php?action=task-statuses&date=${currentDate}&user_id=${currentUserId}&t=${Date.now()}`, {
+    return fetch(`/ergon-site/api/daily_planner_workflow.php?action=task-statuses&date=${currentDate}&user_id=${currentUserId}&t=${Date.now()}`, {
         method: 'GET',
         credentials: 'same-origin',
         headers: {
@@ -355,7 +355,7 @@ function refreshSLADashboard() {
     const currentDate = plannerGrid.dataset.selectedDate;
     const currentUserId = plannerGrid.dataset.userId;
     
-    return fetch(`/ergon/api/daily_planner_workflow.php?action=sla-dashboard&date=${currentDate}&user_id=${currentUserId}&t=${Date.now()}`, {
+    return fetch(`/ergon-site/api/daily_planner_workflow.php?action=sla-dashboard&date=${currentDate}&user_id=${currentUserId}&t=${Date.now()}`, {
         method: 'GET',
         credentials: 'same-origin'
     })
@@ -444,11 +444,11 @@ function changeDate(date) {
         return;
     }
     
-    window.location.href = '/ergon/workflow/daily-planner/' + date;
+    window.location.href = '/ergon-site/workflow/daily-planner/' + date;
 }
 
 function activatePostponedTask(taskId) {
-    fetch('/ergon/api/daily_planner_workflow.php?action=activate-postponed', {
+    fetch('/ergon-site/api/daily_planner_workflow.php?action=activate-postponed', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'same-origin',
@@ -472,7 +472,7 @@ window.startTask = function(taskId) {
     slaTimers[taskId] = setInterval(() => updateLocalCountdown(taskId), 1000);
     showNotification('Task started', 'success');
     
-    fetch('/ergon/api/daily_planner_workflow.php?action=start', {
+    fetch('/ergon-site/api/daily_planner_workflow.php?action=start', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ task_id: parseInt(taskId) })
@@ -487,7 +487,7 @@ window.resumeTask = function(taskId) {
     slaTimers[taskId] = setInterval(() => updateLocalCountdown(taskId), 1000);
     showNotification('Task resumed', 'success');
     
-    fetch('/ergon/api/daily_planner_workflow.php?action=resume', {
+    fetch('/ergon-site/api/daily_planner_workflow.php?action=resume', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ task_id: parseInt(taskId) })
@@ -512,7 +512,7 @@ function submitPostpone() {
         return;
     }
     
-    fetch('/ergon/api/daily_planner_workflow.php?action=postpone', {
+    fetch('/ergon-site/api/daily_planner_workflow.php?action=postpone', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 

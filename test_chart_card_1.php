@@ -105,7 +105,7 @@ try {
     
     // Test API endpoint
     echo "<h3>Testing API Endpoint</h3>\n";
-    echo "<p>You can test the API endpoint at: <a href='/ergon/finance/visualization?type=quotations' target='_blank'>/ergon/finance/visualization?type=quotations</a></p>\n";
+    echo "<p>You can test the API endpoint at: <a href='/ergon-site/finance/visualization?type=quotations' target='_blank'>/ergon-site/finance/visualization?type=quotations</a></p>\n";
     
     echo "<h2>Implementation Summary</h2>\n";
     echo "<ul>";

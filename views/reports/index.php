@@ -10,7 +10,7 @@ ob_start();
         <p>Comprehensive analytics and reporting dashboard</p>
     </div>
     <div class="page-actions">
-        <a href="/ergon/reports/export" class="btn btn--primary">
+        <a href="/ergon-site/reports/export" class="btn btn--primary">
             <span>📄</span> Export Report
         </a>
     </div>

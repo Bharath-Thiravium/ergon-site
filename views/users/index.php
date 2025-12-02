@@ -10,14 +10,14 @@ ob_start();
         <p>Manage user roles and administrative permissions</p>
     </div>
     <div class="page-actions">
-        <a href="/ergon/users/create" class="btn btn--primary">
+        <a href="/ergon-site/users/create" class="btn btn--primary">
             <span>➕</span> Add User
         </a>
         <button class="btn btn--accent" onclick="exportUserList()">
             <span>📊</span> Export
         </button>
         <?php if (isset($_SESSION['new_credentials']) || isset($_SESSION['reset_credentials'])): ?>
-        <a href="/ergon/users/download-credentials" class="btn btn--success">
+        <a href="/ergon-site/users/download-credentials" class="btn btn--success">
             <span>📥</span> Download Credentials
         </a>
         <?php endif; ?>
@@ -409,15 +409,15 @@ window.toggleView = function() {
 }
 
 function exportUserList() {
-    window.location.href = '/ergon/users/export';
+    window.location.href = '/ergon-site/users/export';
 }
 
 function viewUser(userId) {
-    window.location.href = '/ergon/users/view/' + userId;
+    window.location.href = '/ergon-site/users/view/' + userId;
 }
 
 function editUser(userId) {
-    window.location.href = '/ergon/users/edit/' + userId;
+    window.location.href = '/ergon-site/users/edit/' + userId;
 }
 
 function resetPassword(userId, userName) {
@@ -425,7 +425,7 @@ function resetPassword(userId, userName) {
         const formData = new FormData();
         formData.append('user_id', userId);
         
-        fetch('/ergon/users/reset-password', {
+        fetch('/ergon-site/users/reset-password', {
             method: 'POST',
             body: formData
         })
@@ -447,7 +447,7 @@ function resetPassword(userId, userName) {
 
 function deleteUser(userId, userName) {
     if (confirm(`Are you sure you want to terminate user "${userName}"? This will set their status to terminated and disable their access.`)) {
-        fetch(`/ergon/users/terminate/${userId}`, {
+        fetch(`/ergon-site/users/terminate/${userId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -471,7 +471,7 @@ function deleteUser(userId, userName) {
 
 function activateUser(userId, userName) {
     if (confirm(`Activate user ${userName}?`)) {
-        fetch(`/ergon/users/activate/${userId}`, {
+        fetch(`/ergon-site/users/activate/${userId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -495,7 +495,7 @@ function activateUser(userId, userName) {
 
 function deactivateUser(userId, userName) {
     if (confirm(`Deactivate user ${userName}? They will not be able to login.`)) {
-        fetch(`/ergon/users/inactive/${userId}`, {
+        fetch(`/ergon-site/users/inactive/${userId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -519,7 +519,7 @@ function deactivateUser(userId, userName) {
 
 function suspendUser(userId, userName) {
     if (confirm(`Suspend user ${userName}? They will not be able to login.`)) {
-        fetch(`/ergon/users/suspend/${userId}`, {
+        fetch(`/ergon-site/users/suspend/${userId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

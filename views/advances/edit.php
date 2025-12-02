@@ -6,7 +6,7 @@ ob_start();
 
 <div class="page-header">
     <h1>Edit Advance Request</h1>
-    <a href="/ergon/advances" class="btn btn--secondary">Back to Advances</a>
+    <a href="/ergon-site/advances" class="btn btn--secondary">Back to Advances</a>
 </div>
 
 <div class="card">
@@ -46,7 +46,7 @@ ob_start();
             
             <div class="form-actions">
                 <button type="submit" class="btn btn--primary">Update Advance Request</button>
-                <a href="/ergon/advances" class="btn btn--secondary">Cancel</a>
+                <a href="/ergon-site/advances" class="btn btn--secondary">Cancel</a>
             </div>
         </form>
         
@@ -55,13 +55,13 @@ ob_start();
             <h3 style="margin-bottom: 1rem; color: var(--text-primary);">Approval Actions</h3>
             <div style="display: flex; gap: 1rem;">
                 <?php if (($advance['status'] ?? '') === 'pending'): ?>
-                <form method="POST" action="/ergon/advances/approve/<?= $advance['id'] ?>" style="display: inline;">
+                <form method="POST" action="/ergon-site/advances/approve/<?= $advance['id'] ?>" style="display: inline;">
                     <button type="submit" class="btn btn--success" 
                             onclick="return confirm('Are you sure you want to approve this advance request?')">
                         ✅ Approve Request
                     </button>
                 </form>
-                <form method="POST" action="/ergon/advances/reject/<?= $advance['id'] ?>" style="display: inline;">
+                <form method="POST" action="/ergon-site/advances/reject/<?= $advance['id'] ?>" style="display: inline;">
                     <button type="submit" class="btn btn--danger" 
                             onclick="return confirm('Are you sure you want to reject this advance request?')">
                         ❌ Reject Request

@@ -10,9 +10,9 @@ class ModuleManager {
     public static function isModuleEnabled($module) {
         $config = require __DIR__ . '/../config/modules.php';
         
-        // Check role-based restrictions first
-        if (isset($_SESSION['role']) && isset($config['role_modules'][$_SESSION['role']])) {
-            return in_array($module, $config['role_modules'][$_SESSION['role']]);
+        // Check role-based restrictions only for company_owner
+        if (isset($_SESSION['role']) && $_SESSION['role'] === 'company_owner' && isset($config['role_modules']['company_owner'])) {
+            return in_array($module, $config['role_modules']['company_owner']);
         }
         
         // Basic modules are always enabled
@@ -29,9 +29,9 @@ class ModuleManager {
         if (self::$enabledModules === null) {
             $config = require __DIR__ . '/../config/modules.php';
             
-            // Check role-based restrictions first
-            if (isset($_SESSION['role']) && isset($config['role_modules'][$_SESSION['role']])) {
-                self::$enabledModules = $config['role_modules'][$_SESSION['role']];
+            // Check role-based restrictions only for company_owner
+            if (isset($_SESSION['role']) && $_SESSION['role'] === 'company_owner' && isset($config['role_modules']['company_owner'])) {
+                self::$enabledModules = $config['role_modules']['company_owner'];
                 return self::$enabledModules;
             }
             
@@ -118,5 +118,9 @@ class ModuleManager {
         } catch (Exception $e) {
             return false;
         }
+    }
+    
+    public static function clearCache() {
+        self::$enabledModules = null;
     }
 }

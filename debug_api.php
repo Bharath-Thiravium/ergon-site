@@ -21,7 +21,7 @@ if ($_POST['test_api'] ?? false) {
     ];
     
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, "http://localhost/ergon/api/daily_planner_workflow.php?action=" . $action);
+    curl_setopt($ch, CURLOPT_URL, "http://localhost/ergon-site/api/daily_planner_workflow.php?action=" . $action);
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
     curl_setopt($ch, CURLOPT_HTTPHEADER, [

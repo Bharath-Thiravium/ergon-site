@@ -6,7 +6,7 @@ if (!defined('DEFAULT_SLA_HOURS')) {
     define('DEFAULT_SLA_HOURS', 0.25); // 15 minutes default SLA
 }
 if (!defined('DAILY_PLANNER_BASE_URL')) {
-    define('DAILY_PLANNER_BASE_URL', '/ergon/workflow/daily-planner/');
+    define('DAILY_PLANNER_BASE_URL', '/ergon-site/workflow/daily-planner/');
 }
 
 // Generate CSRF token if not exists
@@ -16,9 +16,9 @@ if (!isset($_SESSION['csrf_token'])) {
 $content = ob_start();
 ?>
 <meta name="csrf-token" content="<?= $_SESSION['csrf_token'] ?>">
-<link rel="stylesheet" href="/ergon/assets/css/unified-daily-planner.css">
-<link rel="stylesheet" href="/ergon/assets/css/task-timing.css">
-<link rel="stylesheet" href="/ergon/assets/css/sla-dashboard-improvements.css">
+<link rel="stylesheet" href="/ergon-site/assets/css/unified-daily-planner.css">
+<link rel="stylesheet" href="/ergon-site/assets/css/task-timing.css">
+<link rel="stylesheet" href="/ergon-site/assets/css/sla-dashboard-improvements.css">
 
 <?php renderModalCSS(); ?>
 
@@ -63,7 +63,7 @@ $content = ob_start();
             <a href="<?= DAILY_PLANNER_BASE_URL . $selected_date ?>?refresh=1" class="btn btn--info" title="Add new tasks from Tasks module (preserves existing progress)">
                 <i class="bi bi-plus-circle"></i> Sync New Tasks
             </a>
-            <a href="/ergon/tasks/create" class="btn btn--secondary">
+            <a href="/ergon-site/tasks/create" class="btn btn--secondary">
                 <i class="bi bi-plus"></i> Add Task
             </a>
         <?php endif; ?>
@@ -106,7 +106,7 @@ data-user-id="<?= htmlspecialchars($_SESSION['user_id'] ?? '1', ENT_QUOTES, 'UTF
                             <li><strong>Rolled over</strong> - Unfinished tasks from previous days</li>
                         </ul>
                         <div class="empty-state-actions">
-                            <a href="/ergon/tasks/create" class="btn btn--primary btn-spaced">
+                            <a href="/ergon-site/tasks/create" class="btn btn--primary btn-spaced">
                                 <i class="bi bi-plus"></i> Create Task
                             </a>
                             <a href="<?= DAILY_PLANNER_BASE_URL . $selected_date ?>?refresh=1" class="btn btn--info">
@@ -595,11 +595,11 @@ renderModal('updateProgressModal', 'Update Progress', $updateProgressContent, $u
 </div>
 
 <?php renderModalJS(); ?>
-<script src="/ergon/assets/js/task-timer.js"></script>
-<script src="/ergon/assets/js/unified-daily-planner.js"></script>
-<script src="/ergon/assets/js/timer-init.js"></script>
-<script src="/ergon/assets/js/sla-dashboard-fix.js"></script>
-<script src="/ergon/assets/js/planner-access-control.js"></script>
+<script src="/ergon-site/assets/js/task-timer.js"></script>
+<script src="/ergon-site/assets/js/unified-daily-planner.js"></script>
+<script src="/ergon-site/assets/js/timer-init.js"></script>
+<script src="/ergon-site/assets/js/sla-dashboard-fix.js"></script>
+<script src="/ergon-site/assets/js/planner-access-control.js"></script>
 
 <?php
 $content = ob_get_clean();

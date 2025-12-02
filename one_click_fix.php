@@ -45,7 +45,7 @@ try {
     
     echo "✅ Created notification queue table<br>";
     echo "<br><strong>🎉 Fix completed! You can now create expenses without errors.</strong><br>";
-    echo "<a href='/ergon/expenses/create' style='background: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-top: 10px; display: inline-block;'>Test Expense Creation</a>";
+    echo "<a href='/ergon-site/expenses/create' style='background: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-top: 10px; display: inline-block;'>Test Expense Creation</a>";
     
 } catch (Exception $e) {
     echo "❌ Error: " . $e->getMessage() . "<br>";

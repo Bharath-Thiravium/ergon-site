@@ -3,7 +3,7 @@ echo "Complete GST Liability Test\n";
 echo "==========================\n\n";
 
 echo "1. Testing refresh-stats endpoint...\n";
-$response = @file_get_contents('http://localhost/ergon/finance/refresh-stats');
+$response = @file_get_contents('http://localhost/ergon-site/finance/refresh-stats');
 if ($response) {
     $result = json_decode($response, true);
     if ($result && $result['success']) {
@@ -16,7 +16,7 @@ if ($response) {
 }
 
 echo "2. Testing dashboard API...\n";
-$dashboardResponse = @file_get_contents('http://localhost/ergon/finance/dashboard-stats');
+$dashboardResponse = @file_get_contents('http://localhost/ergon-site/finance/dashboard-stats');
 if ($dashboardResponse) {
     $data = json_decode($dashboardResponse, true);
     if ($data) {

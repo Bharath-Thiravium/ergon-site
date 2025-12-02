@@ -10,7 +10,7 @@ ob_start();
         <p>Tasks that are overdue and need immediate attention</p>
     </div>
     <div class="page-actions">
-        <a href="/ergon/dashboard" class="btn btn--secondary">
+        <a href="/ergon-site/dashboard" class="btn btn--secondary">
             <span>←</span> Back to Dashboard
         </a>
     </div>
@@ -99,13 +99,13 @@ ob_start();
                         </td>
                         <td>
                             <div class="ab-container">
-                                <a href="/ergon/tasks/view/<?= $task['id'] ?>" class="ab-btn ab-btn--view" title="View Task">
+                                <a href="/ergon-site/tasks/view/<?= $task['id'] ?>" class="ab-btn ab-btn--view" title="View Task">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
                                         <circle cx="12" cy="12" r="3"/>
                                     </svg>
                                 </a>
-                                <a href="/ergon/tasks/edit/<?= $task['id'] ?>" class="ab-btn ab-btn--edit" title="Edit Task">
+                                <a href="/ergon-site/tasks/edit/<?= $task['id'] ?>" class="ab-btn ab-btn--edit" title="Edit Task">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                         <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
                                         <path d="M15 5l4 4"/>
@@ -125,7 +125,7 @@ ob_start();
     <div class="empty-state__icon">✅</div>
     <h3>No Delayed Tasks</h3>
     <p>Great! All tasks are on schedule or completed.</p>
-    <a href="/ergon/tasks" class="btn btn--primary">View All Tasks</a>
+    <a href="/ergon-site/tasks" class="btn btn--primary">View All Tasks</a>
 </div>
 <?php endif; ?>
 

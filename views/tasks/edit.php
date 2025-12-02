@@ -9,7 +9,7 @@ $content = ob_start();
         <button type="button" class="btn-help" onclick="toggleHelpPanel()" title="Show Help">
             ❓ Help
         </button>
-        <a href="/ergon/tasks" class="btn-back">← Back</a>
+        <a href="/ergon-site/tasks" class="btn-back">← Back</a>
     </div>
 </div>
 
@@ -107,7 +107,7 @@ $content = ob_start();
 </div>
 
 <div class="compact-form">
-    <form id="editTaskForm" method="POST" action="/ergon/tasks/edit/<?= $task['id'] ?>">
+    <form id="editTaskForm" method="POST" action="/ergon-site/tasks/edit/<?= $task['id'] ?>">
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Security::generateCSRFToken()) ?>">
         
         <!-- Main Task Info -->
@@ -438,7 +438,7 @@ $content = ob_start();
             <button type="submit" class="btn-primary">
                 ✨ Update Task
             </button>
-            <a href="/ergon/tasks" class="btn-secondary">
+            <a href="/ergon-site/tasks" class="btn-secondary">
                 ❌ Cancel
             </a>
         </div>
@@ -473,7 +473,7 @@ function loadTaskCategories() {
     if (!deptId) return;
 
     // Fetch categories for selected department via API
-    fetch(`/ergon/api/task-categories?department_id=${deptId}`)
+    fetch(`/ergon-site/api/task-categories?department_id=${deptId}`)
         .then(response => response.json())
         .then(data => {
             console.log('Categories data:', data);
@@ -617,7 +617,7 @@ let followupData = [];
 
 // Load contacts for the dropdown
 function loadContacts() {
-    fetch('/ergon/api/contact-persons')
+    fetch('/ergon-site/api/contact-persons')
         .then(response => response.json())
         .then(data => {
             const contactSelect = document.getElementById('contact_id');
@@ -885,7 +885,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (contactSelect) {
         contactSelect.addEventListener('change', function() {
             if (this.value) {
-                fetch('/ergon/api/contact-persons')
+                fetch('/ergon-site/api/contact-persons')
                     .then(response => response.json())
                     .then(data => {
                         if (data.success && data.contacts) {

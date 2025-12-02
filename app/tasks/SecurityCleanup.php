@@ -1,7 +1,7 @@
 <?php
 /**
  * Security cleanup task to remove old logs and unlock expired accounts
- * Run this script via cron job: 0 */6 * * * php /path/to/ergon/app/tasks/SecurityCleanup.php
+ * Run this script via cron job: 0 */6 * * * php /path/to/ergon-site/app/tasks/SecurityCleanup.php
  */
 
 require_once __DIR__ . '/../services/SecurityService.php';

@@ -19,7 +19,7 @@ ob_start();
             <option value="two_weeks" <?= ($current_filter ?? '') === 'two_weeks' ? 'selected' : '' ?>>Two Weeks</option>
             <option value="month" <?= ($current_filter ?? '') === 'month' ? 'selected' : '' ?>>One Month</option>
         </select>
-        <a href="/ergon/attendance/clock" class="btn btn--primary">
+        <a href="/ergon-site/attendance/clock" class="btn btn--primary">
             <span>🕰️</span> Clock In/Out
         </a>
     </div>
@@ -219,7 +219,7 @@ ob_start();
 <script>
 function filterAttendance(filter) {
     const currentDate = document.getElementById('dateFilter')?.value || '';
-    let url = '/ergon/attendance?filter=' + filter;
+    let url = '/ergon-site/attendance?filter=' + filter;
     if (currentDate) {
         url += '&date=' + currentDate;
     }
@@ -228,11 +228,11 @@ function filterAttendance(filter) {
 
 function filterByDate(selectedDate) {
     const currentFilter = document.getElementById('filterSelect')?.value || 'today';
-    window.location.href = '/ergon/attendance?date=' + selectedDate + '&filter=' + currentFilter;
+    window.location.href = '/ergon-site/attendance?date=' + selectedDate + '&filter=' + currentFilter;
 }
 
 function viewAttendanceDetails(attendanceId) {
-    fetch('/ergon/api/attendance_admin.php', {
+    fetch('/ergon-site/api/attendance_admin.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -257,7 +257,7 @@ function viewAttendanceDetails(attendanceId) {
 
 function clockInUser(userId) {
     if (confirm('Clock in this user?')) {
-        fetch('/ergon/api/attendance_admin.php', {
+        fetch('/ergon-site/api/attendance_admin.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -283,7 +283,7 @@ function clockInUser(userId) {
 
 function clockOutUser(userId) {
     if (confirm('Clock out this user?')) {
-        fetch('/ergon/api/attendance_admin.php', {
+        fetch('/ergon-site/api/attendance_admin.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -317,7 +317,7 @@ function generateUserReport(userId) {
 
 function deleteAttendanceRecord(attendanceId, userName) {
     if (confirm(`Are you sure you want to delete the attendance record for ${userName}?\n\nThis action cannot be undone.`)) {
-        fetch('/ergon/api/attendance_admin.php', {
+        fetch('/ergon-site/api/attendance_admin.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

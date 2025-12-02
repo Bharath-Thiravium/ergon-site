@@ -9,7 +9,7 @@ $content = ob_start();
         <button type="button" class="btn-help" onclick="toggleHelpPanel()" title="Show Help">
             ❓ Help
         </button>
-        <a href="/ergon/tasks" class="btn-back">← Back</a>
+        <a href="/ergon-site/tasks" class="btn-back">← Back</a>
     </div>
 </div>
 
@@ -108,7 +108,7 @@ $content = ob_start();
 </div>
 
 <div class="compact-form">
-        <form id="createTaskForm" method="POST" action="/ergon/tasks/create">
+        <form id="createTaskForm" method="POST" action="/ergon-site/tasks/create">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Security::generateCSRFToken()) ?>">
             
             <!-- Main Task Info -->
@@ -415,7 +415,7 @@ $content = ob_start();
                 <button type="submit" class="btn-primary">
                     ✨ Create Task
                 </button>
-                <a href="/ergon/tasks" class="btn-secondary">
+                <a href="/ergon-site/tasks" class="btn-secondary">
                     ❌ Cancel
                 </a>
             </div>
@@ -449,7 +449,7 @@ function loadTaskCategories() {
     if (!deptId) return;
 
     // Fetch categories for selected department via API
-    fetch(`/ergon/api/task-categories?department_id=${deptId}`)
+    fetch(`/ergon-site/api/task-categories?department_id=${deptId}`)
         .then(response => response.json())
         .then(data => {
             console.log('Categories data:', data);
@@ -487,7 +487,7 @@ function handleAssignmentTypeChange() {
 function loadAllUsers() {
     const assignedToSelect = document.getElementById('assigned_to');
     
-    fetch('/ergon/api/users')
+    fetch('/ergon-site/api/users')
         .then(response => response.json())
         .then(data => {
             if (data.success && data.users) {
@@ -652,7 +652,7 @@ function loadContacts() {
     const contactSelect = document.getElementById('contact_id');
     if (contactSelect.length > 1) return; // Already loaded
 
-    fetch('/ergon/api/contact-persons')
+    fetch('/ergon-site/api/contact-persons')
         .then(response => response.json())
         .then(data => {
             if (data.success && data.contacts) {
@@ -676,7 +676,7 @@ document.addEventListener('DOMContentLoaded', function() {
         contactSelect.addEventListener('change', function() {
             if (this.value) {
                 // Find selected contact and auto-fill fields
-                fetch('/ergon/api/contact-persons')
+                fetch('/ergon-site/api/contact-persons')
                     .then(response => response.json())
                     .then(data => {
                         if (data.success && data.contacts) {

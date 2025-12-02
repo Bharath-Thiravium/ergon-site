@@ -1,7 +1,7 @@
 // User status check for automatic logout
 (function() {
     function checkUserStatus() {
-        fetch('/ergon/api/check-auth.php', {
+        fetch('/ergon-site/api/check-auth.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -16,7 +16,7 @@
                 } else {
                     alert('Your account has been deactivated. You will be logged out.');
                 }
-                window.location.href = '/ergon/logout';
+                window.location.href = '/ergon-site/logout';
             }
         })
         .catch(() => {

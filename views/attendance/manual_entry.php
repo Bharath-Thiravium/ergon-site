@@ -4,7 +4,7 @@ require_once __DIR__ . '/../../app/config/database.php';
 
 // Check if user is owner or admin
 if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['owner', 'admin'])) {
-    header('Location: /ergon/login.php');
+    header('Location: /ergon-site/login.php');
     exit;
 }
 
@@ -244,7 +244,7 @@ document.addEventListener('DOMContentLoaded', function() {
 function submitManualEntry() {
     const formData = new FormData(document.getElementById('manualAttendanceForm'));
     
-    fetch('/ergon/api/manual_attendance.php', {
+    fetch('/ergon-site/api/manual_attendance.php', {
         method: 'POST',
         body: formData
     })
@@ -265,7 +265,7 @@ function submitManualEntry() {
 }
 
 function loadRecentEntries() {
-    fetch('/ergon/api/manual_attendance.php?action=recent')
+    fetch('/ergon-site/api/manual_attendance.php?action=recent')
     .then(response => response.json())
     .then(data => {
         const container = document.getElementById('recentEntries');

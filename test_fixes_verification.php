@@ -84,7 +84,7 @@ try {
     
     if ($ownerCount > 0) {
         echo "   ✅ Owner approvals page fix can be tested\n";
-        echo "   🔗 Visit: http://localhost/ergon/owner/approvals\n";
+        echo "   🔗 Visit: http://localhost/ergon-site/owner/approvals\n";
     } else {
         echo "   ⚠️  No owner users found - create an owner user to test approvals\n";
     }
@@ -96,7 +96,7 @@ try {
     
     echo "\n📋 Testing Instructions:\n";
     echo "   1. Login as Admin → Check mobile sidebar (resize browser or use mobile)\n";
-    echo "   2. Login as Owner → Visit /ergon/owner/approvals\n";
+    echo "   2. Login as Owner → Visit /ergon-site/owner/approvals\n";
     echo "   3. Create test requests to verify approval functionality\n";
     
 } catch (Exception $e) {

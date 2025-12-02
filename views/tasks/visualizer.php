@@ -22,7 +22,7 @@ $content = ob_start();
                 Next <i class="bi bi-chevron-right"></i>
             </button>
         </div>
-        <a href="/ergon/tasks/create" class="btn btn--primary">
+        <a href="/ergon-site/tasks/create" class="btn btn--primary">
             <i class="bi bi-plus-circle"></i> Add Task
         </a>
     </div>
@@ -131,7 +131,7 @@ function changeMonth(direction) {
         currentYear--;
     }
     
-    window.location.href = `/ergon/tasks/schedule?month=${currentMonth}&year=${currentYear}&view=${currentView}`;
+    window.location.href = `/ergon-site/tasks/schedule?month=${currentMonth}&year=${currentYear}&view=${currentView}`;
 }
 
 // Timeline view removed - calendar is the primary view
@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', function() {
         item.addEventListener('click', function(e) {
             e.stopPropagation();
             const taskId = this.dataset.taskId;
-            window.location.href = `/ergon/tasks/view/${taskId}`;
+            window.location.href = `/ergon-site/tasks/view/${taskId}`;
         });
     });
     
@@ -197,8 +197,8 @@ function showTasksForDate(date) {
                         ${task.project_name ? `<span class="task-project">Project: ${task.project_name}</span>` : ''}
                     </div>
                     <div class="task-actions">
-                        <a href="/ergon/tasks/view/${task.id}" class="btn btn--sm btn--secondary">View</a>
-                        <a href="/ergon/tasks/edit/${task.id}" class="btn btn--sm btn--warning">Edit</a>
+                        <a href="/ergon-site/tasks/view/${task.id}" class="btn btn--sm btn--secondary">View</a>
+                        <a href="/ergon-site/tasks/edit/${task.id}" class="btn btn--sm btn--warning">Edit</a>
                     </div>
                 </div>
             `;
@@ -211,7 +211,7 @@ function showTasksForDate(date) {
                 <i class="bi bi-calendar-x"></i>
                 <h4>No tasks for this date</h4>
                 <p>You don't have any tasks scheduled for ${formatDate(date)}</p>
-                <a href="/ergon/tasks/create" class="btn btn--primary">Add Task</a>
+                <a href="/ergon-site/tasks/create" class="btn btn--primary">Add Task</a>
             </div>
         `;
     }

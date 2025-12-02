@@ -27,7 +27,7 @@ ob_start();
             <option value="month" <?= ($current_filter ?? '') === 'month' ? 'selected' : '' ?>>One Month</option>
         </select>
         <?php endif; ?>
-        <a href="/ergon/attendance/clock" class="btn btn--primary">
+        <a href="/ergon-site/attendance/clock" class="btn btn--primary">
             <span>🕰️</span> Clock In/Out
         </a>
     </div>
@@ -498,7 +498,7 @@ ob_start();
 <script>
 function filterAttendance(filter) {
     const currentDate = document.getElementById('dateFilter')?.value || '';
-    let url = '/ergon/attendance?filter=' + filter;
+    let url = '/ergon-site/attendance?filter=' + filter;
     if (currentDate) {
         url += '&date=' + currentDate;
     }
@@ -507,7 +507,7 @@ function filterAttendance(filter) {
 
 function filterByDate(selectedDate) {
     const currentFilter = document.getElementById('filterSelect')?.value || 'today';
-    window.location.href = '/ergon/attendance?date=' + selectedDate + '&filter=' + currentFilter;
+    window.location.href = '/ergon-site/attendance?date=' + selectedDate + '&filter=' + currentFilter;
 }
 
 function viewAttendanceDetails(attendanceId) {
@@ -516,7 +516,7 @@ function viewAttendanceDetails(attendanceId) {
 
 function clockInUser(userId) {
     if (confirm('Clock in this user?')) {
-        fetch('/ergon/attendance/manual', {
+        fetch('/ergon-site/attendance/manual', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: `user_id=${userId}&check_in=1&date=${new Date().toISOString().split('T')[0]}`
@@ -539,7 +539,7 @@ function clockInUser(userId) {
 
 function clockOutUser(userId) {
     if (confirm('Clock out this user?')) {
-        fetch('/ergon/attendance/manual', {
+        fetch('/ergon-site/attendance/manual', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: `user_id=${userId}&check_out=1&date=${new Date().toISOString().split('T')[0]}`
@@ -671,7 +671,7 @@ function downloadAttendanceReport(userId) {
     console.log('Generating report for user:', userId, 'from', startDate, 'to', endDate);
     document.querySelector('.modal-overlay')?.remove();
     
-    const reportUrl = `/ergon/attendance/report?user_id=${userId}&start_date=${startDate}&end_date=${endDate}`;
+    const reportUrl = `/ergon-site/attendance/report?user_id=${userId}&start_date=${startDate}&end_date=${endDate}`;
     console.log('Report URL:', reportUrl);
     window.open(reportUrl, '_blank');
 }
@@ -682,7 +682,7 @@ function generateReport(userId) {
 
 function deleteAttendanceRecord(attendanceId) {
     if (confirm('Are you sure you want to delete this attendance record?')) {
-        fetch('/ergon/attendance/delete', {
+        fetch('/ergon-site/attendance/delete', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: `attendance_id=${attendanceId}`
@@ -705,7 +705,7 @@ function deleteAttendanceRecord(attendanceId) {
 
 function makeUserActive(userId) {
     if (confirm('Make this user active?')) {
-        fetch('/ergon/users/update-status', {
+        fetch('/ergon-site/users/update-status', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: `user_id=${userId}&status=active`
@@ -728,7 +728,7 @@ function makeUserActive(userId) {
 
 function resetUserPassword(userId) {
     if (confirm('Reset password for this user?')) {
-        fetch('/ergon/users/reset-password', {
+        fetch('/ergon-site/users/reset-password', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: `user_id=${userId}`
@@ -750,7 +750,7 @@ function resetUserPassword(userId) {
 
 function terminateUser(userId) {
     if (confirm('Terminate this user? This action cannot be undone.')) {
-        fetch('/ergon/users/update-status', {
+        fetch('/ergon-site/users/update-status', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: `user_id=${userId}&status=terminated`
@@ -772,9 +772,9 @@ function terminateUser(userId) {
 }
 </script>
 
-<link rel="stylesheet" href="/ergon/assets/css/enhanced-table-utils.css?v=<?= time() ?>">
-<script src="/ergon/assets/js/table-utils.js?v=<?= time() ?>"></script>
-<script src="/ergon/assets/js/attendance-auto-refresh.js?v=<?= time() ?>"></script>
+<link rel="stylesheet" href="/ergon-site/assets/css/enhanced-table-utils.css?v=<?= time() ?>">
+<script src="/ergon-site/assets/js/table-utils.js?v=<?= time() ?>"></script>
+<script src="/ergon-site/assets/js/attendance-auto-refresh.js?v=<?= time() ?>"></script>
 
 <?php
 $content = ob_get_clean();

@@ -108,7 +108,7 @@ try {
     }
     
     echo "\n🎉 EXPENSE SYSTEM FIX COMPLETED SUCCESSFULLY!\n";
-    echo "You can now test expense approval and rejection at: http://localhost/ergon/expenses\n";
+    echo "You can now test expense approval and rejection at: http://localhost/ergon-site/expenses\n";
     
 } catch (Exception $e) {
     echo "❌ Error: " . $e->getMessage() . "\n";

@@ -243,7 +243,7 @@ try {
     // STEP 4: Test API endpoint
     echo "<h2>STEP 4: Test API Endpoint</h2>";
     
-    $apiUrl = "/ergon/api/daily_planner_workflow.php?action=get_tasks&date={$today}&user_id={$userId}";
+    $apiUrl = "/ergon-site/api/daily_planner_workflow.php?action=get_tasks&date={$today}&user_id={$userId}";
     echo "<p>API URL: <a href='{$apiUrl}' target='_blank'>{$apiUrl}</a></p>";
     
     // Test the API call

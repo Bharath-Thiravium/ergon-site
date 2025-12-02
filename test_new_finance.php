@@ -94,8 +94,8 @@
         
         <div class="test-section">
             <h3>5. Dashboard Access</h3>
-            <a href="/ergon/finance" class="btn" target="_blank">Open New Finance Dashboard</a>
-            <a href="/ergon/finance/old" class="btn" target="_blank">Open Old Finance Dashboard</a>
+            <a href="/ergon-site/finance" class="btn" target="_blank">Open New Finance Dashboard</a>
+            <a href="/ergon-site/finance/old" class="btn" target="_blank">Open Old Finance Dashboard</a>
         </div>
     </div>
 
@@ -107,7 +107,7 @@
             result.className = 'result info';
             
             try {
-                const response = await fetch('/ergon/setup_new_finance.php');
+                const response = await fetch('/ergon-site/setup_new_finance.php');
                 const text = await response.text();
                 result.textContent = text;
                 result.className = 'result success';
@@ -124,7 +124,7 @@
             result.className = 'result info';
             
             try {
-                const response = await fetch(`/ergon/finance/new/api?action=${action}`);
+                const response = await fetch(`/ergon-site/finance/new/api?action=${action}`);
                 const data = await response.json();
                 result.textContent = `${action.toUpperCase()} API Response:\n` + JSON.stringify(data, null, 2);
                 result.className = 'result success';
@@ -145,7 +145,7 @@
                 const formData = new FormData();
                 formData.append('prefix', prefix);
                 
-                const response = await fetch('/ergon/finance/new/api?action=prefix', {
+                const response = await fetch('/ergon-site/finance/new/api?action=prefix', {
                     method: 'POST',
                     body: formData
                 });
@@ -165,7 +165,7 @@
             result.className = 'result info';
             
             try {
-                const response = await fetch('/ergon/finance/new/api?action=prefix');
+                const response = await fetch('/ergon-site/finance/new/api?action=prefix');
                 const data = await response.json();
                 result.textContent = 'Current Prefix:\n' + JSON.stringify(data, null, 2);
                 result.className = 'result success';
@@ -182,7 +182,7 @@
             result.className = 'result info';
             
             try {
-                const response = await fetch('/ergon/finance/new/api?action=sync');
+                const response = await fetch('/ergon-site/finance/new/api?action=sync');
                 const data = await response.json();
                 result.textContent = 'Sync Response:\n' + JSON.stringify(data, null, 2);
                 result.className = data.success ? 'result success' : 'result error';

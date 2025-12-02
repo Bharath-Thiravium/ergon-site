@@ -1,7 +1,7 @@
 <?php
 
 // Web-accessible auto-sync endpoint for external cron services
-// URL: https://yourdomain.com/ergon/public/auto-sync.php?token=sync123
+// URL: https://yourdomain.com/ergon-site/public/auto-sync.php?token=sync123
 
 header('Content-Type: application/json');
 

@@ -6,7 +6,7 @@ ob_start();
 
 <div class="page-header">
     <h1>Edit User</h1>
-    <a href="<?= in_array($_SESSION['role'] ?? '', ['admin', 'owner']) ? '/ergon/admin/management' : '/ergon/users' ?>" class="btn btn--secondary">Back to Users</a>
+    <a href="<?= in_array($_SESSION['role'] ?? '', ['admin', 'owner']) ? '/ergon-site/admin/management' : '/ergon-site/users' ?>" class="btn btn--secondary">Back to Users</a>
 </div>
 
 <div class="card">
@@ -54,8 +54,9 @@ ob_start();
                     <select name="role" class="form-control" required>
                         <option value="user" <?= ($user['role'] ?? '') === 'user' ? 'selected' : '' ?>>User</option>
                         <option value="admin" <?= ($user['role'] ?? '') === 'admin' ? 'selected' : '' ?>>Admin</option>
-                        <?php if (($_SESSION['role'] ?? '') === 'owner'): ?>
+                        <?php if (in_array($_SESSION['role'] ?? '', ['owner', 'admin'])): ?>
                         <option value="owner" <?= ($user['role'] ?? '') === 'owner' ? 'selected' : '' ?>>Owner</option>
+                        <option value="company_owner" <?= ($user['role'] ?? '') === 'company_owner' ? 'selected' : '' ?>>Company Owner</option>
                         <?php endif; ?>
                     </select>
                 </div>
@@ -155,7 +156,7 @@ ob_start();
                 <?php else: ?>
                     <button type="button" class="btn btn--primary" disabled>✨ Update User (Terminated)</button>
                 <?php endif; ?>
-                <a href="<?= in_array($_SESSION['role'] ?? '', ['admin', 'owner']) ? '/ergon/admin/management' : '/ergon/users' ?>" class="btn btn--secondary">❌ Cancel</a>
+                <a href="<?= in_array($_SESSION['role'] ?? '', ['admin', 'owner']) ? '/ergon-site/admin/management' : '/ergon-site/users' ?>" class="btn btn--secondary">❌ Cancel</a>
             </div>
         </form>
     </div>
@@ -185,7 +186,7 @@ ob_start();
 
 <script>
 function generateEmployeeId() {
-    fetch('/ergon/api/generate-employee-id')
+    fetch('/ergon-site/api/generate-employee-id')
     .then(response => response.json())
     .then(data => {
         if (data.employee_id) {
@@ -197,7 +198,7 @@ function generateEmployeeId() {
 
 function deleteDocument(filename) {
     if (confirm('Are you sure you want to delete this document?')) {
-        fetch('/ergon/users/delete-document/<?= $user['id'] ?>/' + filename, {
+        fetch('/ergon-site/users/delete-document/<?= $user['id'] ?>/' + filename, {
             method: 'POST'
         })
         .then(response => response.json())

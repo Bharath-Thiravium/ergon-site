@@ -24,7 +24,7 @@ ob_start();
         </h2>
     </div>
     <div class="card__body">
-        <form method="POST" action="/ergon/settings">
+        <form method="POST" action="/ergon-site/settings">
             <div class="form-group">
                 <label class="form-label">Search Location</label>
                 <input type="text" class="form-control" id="searchInput" placeholder="Search for your office location...">

@@ -102,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['csv_file'])) {
         }
         
         echo "<div class='success'>✅ Successfully imported $imported finance records!</div>";
-        echo "<p><a href='/ergon/finance'>View Finance Dashboard</a></p>";
+        echo "<p><a href='/ergon-site/finance'>View Finance Dashboard</a></p>";
         
     } catch (Exception $e) {
         echo "<div class='error'>❌ Error: " . $e->getMessage() . "</div>";
@@ -149,7 +149,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['csv_file'])) {
             <button type="submit">Import Finance Data</button>
         </form>
         
-        <p><a href="/ergon/finance">← Back to Finance Dashboard</a></p>
+        <p><a href="/ergon-site/finance">← Back to Finance Dashboard</a></p>
     </div>
 </body>
 </html>

@@ -307,7 +307,7 @@ try {
     
     if ($finalCount > 0) {
         echo "<p class='success'>✅ SUCCESS! The planner should now display {$finalCount} tasks.</p>";
-        echo "<p>Visit: <a href='/ergon/workflow/daily-planner/{$today}' target='_blank'>Daily Planner</a></p>";
+        echo "<p>Visit: <a href='/ergon-site/workflow/daily-planner/{$today}' target='_blank'>Daily Planner</a></p>";
     } else {
         echo "<p class='error'>❌ Still no tasks in daily_tasks table. Check:</p>";
         echo "<ul>";

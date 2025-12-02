@@ -11,17 +11,17 @@ ob_start();
     </div>
     <div class="page-actions">
         <div class="view-options">
-            <a href="/ergon/tasks" class="view-btn" data-view="list">
+            <a href="/ergon-site/tasks" class="view-btn" data-view="list">
                 <span>📋</span> List
             </a>
-            <a href="/ergon/tasks/kanban" class="view-btn" data-view="kanban">
+            <a href="/ergon-site/tasks/kanban" class="view-btn" data-view="kanban">
                 <span>📏</span> Kanban
             </a>
-            <a href="/ergon/tasks/calendar" class="view-btn view-btn--active" data-view="calendar">
+            <a href="/ergon-site/tasks/calendar" class="view-btn view-btn--active" data-view="calendar">
                 <span>📆</span> Calendar
             </a>
         </div>
-        <a href="/ergon/tasks/create" class="btn btn--primary">
+        <a href="/ergon-site/tasks/create" class="btn btn--primary">
             <span>➕</span> Create Task
         </a>
     </div>
@@ -238,7 +238,7 @@ function loadTasks() {
         return;
     }
     
-    fetch('/ergon/api/tasks?user_id=' + userId)
+    fetch('/ergon-site/api/tasks?user_id=' + userId)
         .then(response => response.json())
         .then(data => {
             console.log('API Response:', data);
@@ -368,7 +368,7 @@ function nextMonth() {
 }
 
 function viewTask(taskId) {
-    window.location.href = `/ergon/tasks/view/${taskId}`;
+    window.location.href = `/ergon-site/tasks/view/${taskId}`;
 }
 
 function createTaskForDate(date) {
@@ -376,7 +376,7 @@ function createTaskForDate(date) {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const dayNum = String(date.getDate()).padStart(2, '0');
     const dateStr = `${year}-${month}-${dayNum}`;
-    const url = `/ergon/tasks/create?planned_date=${dateStr}`;
+    const url = `/ergon-site/tasks/create?planned_date=${dateStr}`;
     window.location.href = url;
 }
 

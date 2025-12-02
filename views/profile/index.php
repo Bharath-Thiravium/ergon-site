@@ -10,7 +10,7 @@ ob_start();
         <p>Manage your account information and security settings</p>
     </div>
     <div class="page-actions">
-        <a href="/ergon/dashboard" class="btn btn--secondary">
+        <a href="/ergon-site/dashboard" class="btn btn--secondary">
             <span>←</span> Back to Dashboard
         </a>
     </div>
@@ -239,7 +239,7 @@ document.getElementById('profileForm').addEventListener('submit', function(e) {
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<span>⏳</span> Updating...';
     
-    fetch('/ergon/profile', {
+    fetch('/ergon-site/profile', {
         method: 'POST',
         headers: {
             'X-Requested-With': 'XMLHttpRequest'
@@ -283,7 +283,7 @@ document.getElementById('passwordForm').addEventListener('submit', function(e) {
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<span>⏳</span> Changing...';
     
-    fetch('/ergon/profile/change-password', {
+    fetch('/ergon-site/profile/change-password', {
         method: 'POST',
         headers: {
             'X-Requested-With': 'XMLHttpRequest',

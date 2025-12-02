@@ -98,9 +98,9 @@ try {
     
     // Check if there are multiple attendance endpoints
     $endpoints = [
-        '/ergon/attendance/clock' => 'AttendanceController',
-        '/ergon/api/simple_attendance.php' => 'Simple API',
-        '/ergon/public/api_attendance.php' => 'Public API (Attendance Model)'
+        '/ergon-site/attendance/clock' => 'AttendanceController',
+        '/ergon-site/api/simple_attendance.php' => 'Simple API',
+        '/ergon-site/public/api_attendance.php' => 'Public API (Attendance Model)'
     ];
     
     foreach ($endpoints as $endpoint => $description) {

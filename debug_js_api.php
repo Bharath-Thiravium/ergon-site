@@ -32,7 +32,7 @@ echo "<!DOCTYPE html>
             csrfToken: csrfToken
         });
         
-        fetch('/ergon/api/daily_planner_workflow.php?action=pause', {
+        fetch('/ergon-site/api/daily_planner_workflow.php?action=pause', {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
@@ -68,7 +68,7 @@ echo "<!DOCTYPE html>
             csrfToken: csrfToken
         });
         
-        fetch('/ergon/api/daily_planner_workflow.php?action=resume', {
+        fetch('/ergon-site/api/daily_planner_workflow.php?action=resume', {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',

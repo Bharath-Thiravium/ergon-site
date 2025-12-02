@@ -11,14 +11,14 @@ ob_start();
     </div>
     <div class="page-actions">
         <?php if (($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'owner') && strtolower($leave['status']) === 'pending'): ?>
-        <a href="/ergon/leaves/approve/<?= $leave['id'] ?>" class="btn btn--success" onclick="return confirm('Approve this leave request?')">
+        <a href="/ergon-site/leaves/approve/<?= $leave['id'] ?>" class="btn btn--success" onclick="return confirm('Approve this leave request?')">
             ✅ Approve
         </a>
         <button class="btn btn--danger" onclick="showRejectModal(<?= $leave['id'] ?>)">
             ❌ Reject
         </button>
         <?php endif; ?>
-        <a href="/ergon/leaves" class="btn btn--secondary">
+        <a href="/ergon-site/leaves" class="btn btn--secondary">
             <span>←</span> Back to Leaves
         </a>
     </div>
@@ -122,7 +122,7 @@ ob_start();
 
 <script>
 function showRejectModal(leaveId) {
-    document.getElementById('rejectForm').action = '/ergon/leaves/reject/' + leaveId;
+    document.getElementById('rejectForm').action = '/ergon-site/leaves/reject/' + leaveId;
     document.getElementById('rejectModal').style.display = 'flex';
 }
 

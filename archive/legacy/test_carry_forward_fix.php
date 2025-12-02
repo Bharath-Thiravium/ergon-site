@@ -103,7 +103,7 @@ try {
     echo str_repeat("=", 50) . "\n";
     
     echo "\nNow visit the daily planner to see if carry forward works:\n";
-    echo "http://localhost/ergon/workflow/daily-planner\n";
+    echo "http://localhost/ergon-site/workflow/daily-planner\n";
     
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage() . "\n";

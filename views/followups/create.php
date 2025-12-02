@@ -9,7 +9,7 @@ ob_start();
         <p>Create a new follow-up for contact communication</p>
     </div>
     <div class="page-actions">
-        <a href="/ergon/followups" class="btn btn--secondary">
+        <a href="/ergon-site/followups" class="btn btn--secondary">
             <span>←</span> Back to Follow-ups
         </a>
     </div>
@@ -28,7 +28,7 @@ ob_start();
         <h2 class="card__title">Follow-up Details</h2>
     </div>
     <div class="card__body">
-        <form method="POST" action="/ergon/followups/create" id="followupForm">
+        <form method="POST" action="/ergon-site/followups/create" id="followupForm">
             <div class="form-group">
                 <label class="form-label" for="followup_type">Follow-up Type *</label>
                 <select name="followup_type" id="followup_type" class="form-control" required onchange="toggleTaskSelection()">
@@ -101,7 +101,7 @@ ob_start();
                 <button type="submit" class="btn btn--primary">
                     <span>💾</span> Create Follow-up
                 </button>
-                <a href="/ergon/followups" class="btn btn--secondary">Cancel</a>
+                <a href="/ergon-site/followups" class="btn btn--secondary">Cancel</a>
             </div>
         </form>
     </div>

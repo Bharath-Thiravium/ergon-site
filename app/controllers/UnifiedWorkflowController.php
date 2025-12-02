@@ -17,14 +17,14 @@ class UnifiedWorkflowController extends Controller {
         
         // Validate date format
         if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
-            header('Location: /ergon/workflow/daily-planner/' . date('Y-m-d'));
+            header('Location: /ergon-site/workflow/daily-planner/' . date('Y-m-d'));
             exit;
         }
         
         // Allow future dates for planning (up to 30 days ahead)
         $maxFutureDate = date('Y-m-d', strtotime('+30 days'));
         if ($date > $maxFutureDate) {
-            header('Location: /ergon/workflow/daily-planner/' . date('Y-m-d'));
+            header('Location: /ergon-site/workflow/daily-planner/' . date('Y-m-d'));
             exit;
         }
         
@@ -181,7 +181,7 @@ class UnifiedWorkflowController extends Controller {
     // Calendar functionality moved to TasksController::getTaskSchedule()
     // This method redirects to the new task visualization layer
     public function calendar() {
-        header('Location: /ergon/tasks/schedule');
+        header('Location: /ergon-site/tasks/schedule');
         exit;
     }
     

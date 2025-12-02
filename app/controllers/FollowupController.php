@@ -101,7 +101,7 @@ class FollowupController extends Controller {
             $user_id = $_SESSION['user_id'] ?? 1;
             
             if (empty($title)) {
-                header('Location: /ergon/followups/create?error=Title is required');
+                header('Location: /ergon-site/followups/create?error=Title is required');
                 exit;
             }
             
@@ -123,14 +123,14 @@ class FollowupController extends Controller {
                 $stmt = $pdo->prepare("INSERT INTO followup_history (followup_id, action, notes, created_by, created_at) VALUES (?, 'created', 'Follow-up created', ?, NOW())");
                 $stmt->execute([$followup_id, $user_id]);
                 
-                header('Location: /ergon/followups?success=Follow-up created successfully');
+                header('Location: /ergon-site/followups?success=Follow-up created successfully');
             } else {
-                header('Location: /ergon/followups/create?error=Failed to create follow-up');
+                header('Location: /ergon-site/followups/create?error=Failed to create follow-up');
             }
             exit;
         } catch (Exception $e) {
             error_log('Followup store error: ' . $e->getMessage());
-            header('Location: /ergon/followups/create?error=' . urlencode($e->getMessage()));
+            header('Location: /ergon-site/followups/create?error=' . urlencode($e->getMessage()));
             exit;
         }
     }

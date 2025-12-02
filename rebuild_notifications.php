@@ -92,8 +92,8 @@ try {
     echo "<table border='1'>";
     echo "<tr><th>ID</th><th>Module</th><th>Ref ID</th><th>Message</th><th>Generated URL</th></tr>";
     foreach ($samples as $notif) {
-        $url = "/ergon/{$notif['module_name']}s/view/{$notif['reference_id']}";
-        if ($notif['module_name'] === 'advance') $url = "/ergon/advances/view/{$notif['reference_id']}";
+        $url = "/ergon-site/{$notif['module_name']}s/view/{$notif['reference_id']}";
+        if ($notif['module_name'] === 'advance') $url = "/ergon-site/advances/view/{$notif['reference_id']}";
         
         echo "<tr>";
         echo "<td>{$notif['id']}</td>";
@@ -106,7 +106,7 @@ try {
     echo "</table>";
     
     echo "<h2>🎉 Notification rebuild complete!</h2>";
-    echo "<p><a href='/ergon/notifications'>View Notifications</a></p>";
+    echo "<p><a href='/ergon-site/notifications'>View Notifications</a></p>";
     
 } catch (Exception $e) {
     echo "<p>❌ Error: " . $e->getMessage() . "</p>";

@@ -8,7 +8,7 @@ header("Pragma: no-cache");
 header("Expires: 0");
 
 if (empty($_SESSION['user_id']) || empty($_SESSION['role']) || $_SESSION['role'] !== 'owner') {
-    header("Location: /ergon/login");
+    header("Location: /ergon-site/login");
     exit;
 }
 
@@ -19,11 +19,11 @@ ob_start();
 ?>
 
 <div class="header-actions">
-    <a href="/ergon/system-admin" class="btn btn--primary">🔧 System Admins</a>
-    <a href="/ergon/users" class="btn btn--secondary">👥 User Admins</a>
-    <a href="/ergon/owner/approvals" class="btn btn--secondary">Review Approvals</a>
-    <a href="/ergon/reports" class="btn btn--secondary">View Reports</a>
-    <a href="/ergon/settings" class="btn btn--secondary">System Settings</a>
+    <a href="/ergon-site/system-admin" class="btn btn--primary">🔧 System Admins</a>
+    <a href="/ergon-site/users" class="btn btn--secondary">👥 User Admins</a>
+    <a href="/ergon-site/owner/approvals" class="btn btn--secondary">Review Approvals</a>
+    <a href="/ergon-site/reports" class="btn btn--secondary">View Reports</a>
+    <a href="/ergon-site/settings" class="btn btn--secondary">System Settings</a>
 </div>
 
 <div class="dashboard-grid">
@@ -73,7 +73,7 @@ ob_start();
         <div class="card__header">
             <h2 class="card__title">🎯 Project Progress Overview</h2>
             <div class="card-actions">
-                <a href="/ergon/dashboard/project-overview" class="btn btn--primary btn--sm">View Details</a>
+                <a href="/ergon-site/dashboard/project-overview" class="btn btn--primary btn--sm">View Details</a>
             </div>
         </div>
         <div class="card__body">
@@ -150,7 +150,7 @@ ob_start();
         <div class="card__header">
             <h2 class="card__title">⚠️ Delayed Tasks Overview</h2>
             <div class="card-actions">
-                <a href="/ergon/dashboard/delayed-tasks-overview" class="btn btn--primary btn--sm">View Details</a>
+                <a href="/ergon-site/dashboard/delayed-tasks-overview" class="btn btn--primary btn--sm">View Details</a>
             </div>
         </div>
         <div class="card__body">

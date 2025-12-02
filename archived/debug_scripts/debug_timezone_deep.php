@@ -117,9 +117,9 @@ try {
     // 7. Check which attendance endpoint is being called
     echo "<h3>7. Attendance Endpoint Investigation</h3>";
     echo "Check browser network tab to see which endpoint is being called:<br>";
-    echo "- /ergon/attendance/clock (AttendanceController)<br>";
-    echo "- /ergon/api/simple_attendance.php<br>";
-    echo "- /ergon/public/api_attendance.php<br>";
+    echo "- /ergon-site/attendance/clock (AttendanceController)<br>";
+    echo "- /ergon-site/api/simple_attendance.php<br>";
+    echo "- /ergon-site/public/api_attendance.php<br>";
     
     // 8. Environment check
     echo "<h3>8. Environment Check</h3>";

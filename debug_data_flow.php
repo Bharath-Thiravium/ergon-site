@@ -61,10 +61,10 @@ try {
 echo "<h3>3. API Endpoints Test</h3>\n";
 
 $apiTests = [
-    'dashboard' => '/ergon/src/api/?action=dashboard&prefix=ERGN',
-    'activities' => '/ergon/src/api/?action=activities&prefix=ERGN',
-    'funnel-containers' => '/ergon/src/api/?action=funnel-containers&prefix=ERGN',
-    'visualization' => '/ergon/src/api/?action=visualization&type=quotations&prefix=ERGN'
+    'dashboard' => '/ergon-site/src/api/?action=dashboard&prefix=ERGN',
+    'activities' => '/ergon-site/src/api/?action=activities&prefix=ERGN',
+    'funnel-containers' => '/ergon-site/src/api/?action=funnel-containers&prefix=ERGN',
+    'visualization' => '/ergon-site/src/api/?action=visualization&type=quotations&prefix=ERGN'
 ];
 
 foreach ($apiTests as $name => $url) {

@@ -4,7 +4,7 @@ window.loadRecentActivities = async function(type = 'all') {
         const prefix = document.getElementById('companyPrefix').value;
         if (!prefix) return;
         
-        let url = `/ergon/src/api/activities.php?prefix=${encodeURIComponent(prefix)}&limit=20`;
+        let url = `/ergon-site/src/api/activities.php?prefix=${encodeURIComponent(prefix)}&limit=20`;
         if (type !== 'all') {
             url += `&record_type=${encodeURIComponent(type)}`;
         }

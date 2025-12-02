@@ -376,7 +376,7 @@ function deleteRecord(type, id, name) {
         return;
     }
     
-    fetch(`/ergon/${type}/delete/${id}`, {
+    fetch(`/ergon-site/${type}/delete/${id}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

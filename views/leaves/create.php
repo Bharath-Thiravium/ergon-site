@@ -10,7 +10,7 @@ ob_start();
         <p>Submit your leave application for approval</p>
     </div>
     <div class="page-actions">
-        <a href="/ergon/leaves" class="btn btn--secondary">
+        <a href="/ergon-site/leaves" class="btn btn--secondary">
             <span>←</span> Back to Leaves
         </a>
     </div>
@@ -79,7 +79,7 @@ ob_start();
                 <button type="submit" class="btn btn--primary" id="submitBtn">
                     📤 Submit Leave Request
                 </button>
-                <a href="/ergon/leaves" class="btn btn--secondary">❌ Cancel</a>
+                <a href="/ergon-site/leaves" class="btn btn--secondary">❌ Cancel</a>
             </div>
         </form>
     </div>
@@ -206,7 +206,7 @@ document.getElementById('leaveForm').addEventListener('submit', function(e) {
     
     const formData = new FormData(this);
     
-    fetch('/ergon/leaves/create', {
+    fetch('/ergon-site/leaves/create', {
         method: 'POST',
         body: formData
     })
@@ -219,7 +219,7 @@ document.getElementById('leaveForm').addEventListener('submit', function(e) {
     .then(data => {
         if (data.success) {
             alert('✅ Leave request submitted successfully for ' + data.days + ' days!');
-            window.location.href = '/ergon/leaves';
+            window.location.href = '/ergon-site/leaves';
         } else {
             alert('❌ Error: ' + (data.error || 'Failed to submit leave request'));
         }

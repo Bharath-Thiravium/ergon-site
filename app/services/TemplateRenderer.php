@@ -108,15 +108,15 @@ class TemplateRenderer {
         
         switch ($event['module']) {
             case 'leave':
-                return "{$protocol}://{$baseUrl}/ergon/leaves";
+                return "{$protocol}://{$baseUrl}/ergon-site/leaves";
             case 'expense':
-                return "{$protocol}://{$baseUrl}/ergon/expenses";
+                return "{$protocol}://{$baseUrl}/ergon-site/expenses";
             case 'advance':
-                return "{$protocol}://{$baseUrl}/ergon/advances";
+                return "{$protocol}://{$baseUrl}/ergon-site/advances";
             case 'task':
-                return "{$protocol}://{$baseUrl}/ergon/tasks";
+                return "{$protocol}://{$baseUrl}/ergon-site/tasks";
             default:
-                return "{$protocol}://{$baseUrl}/ergon/notifications";
+                return "{$protocol}://{$baseUrl}/ergon-site/notifications";
         }
     }
 }

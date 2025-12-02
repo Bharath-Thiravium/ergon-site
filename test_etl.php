@@ -87,7 +87,7 @@ try {
     
     echo "\n✅ ETL Test Completed Successfully!\n";
     echo "\n🎯 Next Steps:\n";
-    echo "1. Visit: https://athenas.co.in/ergon/finance\n";
+    echo "1. Visit: https://athenas.co.in/ergon-site/finance\n";
     echo "2. Click 'Sync Data' to run ETL\n";
     echo "3. Analytics will be served from SQL tables (fast!)\n";
     

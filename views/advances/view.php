@@ -16,7 +16,7 @@ ob_start();
         $canApprove = in_array($userRole, ['admin', 'owner']) && ($advance['status'] ?? 'pending') === 'pending';
         if ($canApprove): 
         ?>
-        <form method="POST" action="/ergon/advances/approve/<?= $advance['id'] ?>" style="display: inline;">
+        <form method="POST" action="/ergon-site/advances/approve/<?= $advance['id'] ?>" style="display: inline;">
             <button type="submit" class="btn btn--success" onclick="return confirm('Are you sure you want to approve this advance request?')">
                 <span>✅</span> Approve
             </button>
@@ -25,7 +25,7 @@ ob_start();
             <span>❌</span> Reject
         </button>
         <?php endif; ?>
-        <a href="/ergon/advances" class="btn btn--secondary">
+        <a href="/ergon-site/advances" class="btn btn--secondary">
             <span>←</span> Back to Advances
         </a>
     </div>
@@ -337,7 +337,7 @@ ob_start();
 function showRejectModal(advanceId) {
     const modal = document.getElementById('rejectModal');
     const form = document.getElementById('rejectForm');
-    form.action = '/ergon/advances/reject/' + advanceId;
+    form.action = '/ergon-site/advances/reject/' + advanceId;
     modal.style.display = 'flex';
 }
 

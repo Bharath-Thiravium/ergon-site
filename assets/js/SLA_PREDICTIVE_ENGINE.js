@@ -241,7 +241,7 @@ function logSLAEvent(eventData) {
     console.log('SLA Event:', eventData);
     
     if (window.SLA_AUDIT_ENABLED) {
-        fetch('/ergon/api/sla_audit.php', {
+        fetch('/ergon-site/api/sla_audit.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(eventData)

@@ -22,7 +22,7 @@ ob_start();
                 <div class="option-card">
                     <h3>📁 CSV Import</h3>
                     <p>Import finance data from your CSV file</p>
-                    <a href="/ergon/import_finance_data.php" class="btn btn--secondary">
+                    <a href="/ergon-site/import_finance_data.php" class="btn btn--secondary">
                         <span class="btn__text">Upload CSV File</span>
                     </a>
                 </div>
@@ -31,7 +31,7 @@ ob_start();
             <div class="import-status" id="importStatus" style="display:none;"></div>
             
             <div class="actions">
-                <a href="/ergon/finance" class="btn btn--outline">
+                <a href="/ergon-site/finance" class="btn btn--outline">
                     <span class="btn__text">← Back to Dashboard</span>
                 </a>
             </div>
@@ -104,7 +104,7 @@ document.getElementById('populateDemoBtn').addEventListener('click', function() 
     btn.disabled = true;
     btn.querySelector('.btn__text').textContent = 'Populating...';
     
-    fetch('/ergon/finance/import', {
+    fetch('/ergon-site/finance/import', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -116,7 +116,7 @@ document.getElementById('populateDemoBtn').addEventListener('click', function() 
         status.style.display = 'block';
         if (data.success) {
             status.className = 'import-status success';
-            status.innerHTML = '✅ ' + data.message + '<br><a href="/ergon/finance">View Finance Dashboard →</a>';
+            status.innerHTML = '✅ ' + data.message + '<br><a href="/ergon-site/finance">View Finance Dashboard →</a>';
         } else {
             status.className = 'import-status error';
             status.innerHTML = '❌ Error: ' + data.error;

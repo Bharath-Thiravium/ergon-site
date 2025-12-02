@@ -73,7 +73,7 @@ try {
         
         if ($movedCount > 0) {
             echo "   ✓ Carry forward is working!\n";
-            echo "   Check today's planner at: /ergon/workflow/daily-planner\n";
+            echo "   Check today's planner at: /ergon-site/workflow/daily-planner\n";
         }
     }
     
@@ -106,7 +106,7 @@ try {
     }
     
     echo "\nDiagnosis complete. If tasks are showing above, carry forward is working.\n";
-    echo "Visit /ergon/workflow/daily-planner to see the daily planner.\n";
+    echo "Visit /ergon-site/workflow/daily-planner to see the daily planner.\n";
     
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage() . "\n";

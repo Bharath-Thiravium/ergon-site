@@ -9,7 +9,7 @@ ob_start();
         <p>Audit trail for follow-up: <?= htmlspecialchars($followup['title']) ?></p>
     </div>
     <div class="page-actions">
-        <a href="/ergon/contacts/followups" class="btn btn--secondary">
+        <a href="/ergon-site/contacts/followups" class="btn btn--secondary">
             <span>←</span> Back to Contacts
         </a>
     </div>

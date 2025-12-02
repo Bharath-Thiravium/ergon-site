@@ -103,6 +103,6 @@ $unreadCount = $notification->getUnreadCount($userId);
 echo "<p>Unread count: <strong>{$unreadCount}</strong></p>";
 
 echo "<hr>";
-echo "<p><a href='/ergon/notifications'>Go to Notifications Page</a></p>";
-echo "<p><a href='/ergon/dashboard'>Go to Dashboard</a></p>";
+echo "<p><a href='/ergon-site/notifications'>Go to Notifications Page</a></p>";
+echo "<p><a href='/ergon-site/dashboard'>Go to Dashboard</a></p>";
 ?>

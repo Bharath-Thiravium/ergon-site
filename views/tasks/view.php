@@ -23,10 +23,10 @@ ob_start();
         <button onclick="showTaskHistory(<?= $task['id'] ?>)" class="btn btn--info">
             <span>📋</span> History
         </button>
-        <a href="/ergon/tasks/edit/<?= $task['id'] ?? '' ?>" class="btn btn--secondary">
+        <a href="/ergon-site/tasks/edit/<?= $task['id'] ?? '' ?>" class="btn btn--secondary">
             <span>✏️</span> Edit Task
         </a>
-        <a href="/ergon/tasks" class="btn btn--secondary">
+        <a href="/ergon-site/tasks" class="btn btn--secondary">
             <span>←</span> Back to Tasks
         </a>
     </div>
@@ -295,7 +295,7 @@ document.addEventListener('DOMContentLoaded', function() {
     window.saveProgress = function() {
         var progress = document.getElementById('taskProgress').value;
         
-        fetch('/ergon/tasks/update-status', {
+        fetch('/ergon-site/tasks/update-status', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -350,7 +350,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('historyContent').innerHTML = 'Loading...';
         
         // Load history
-        fetch(`/ergon/tasks/history/${taskId}`, {
+        fetch(`/ergon-site/tasks/history/${taskId}`, {
             method: 'GET',
             headers: { 'X-Requested-With': 'XMLHttpRequest' }
         })

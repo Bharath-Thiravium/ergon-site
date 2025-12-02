@@ -29,9 +29,9 @@ if (file_exists(__DIR__ . '/views/finance/dashboard.php')) {
 // Test 4: Test direct access
 echo "\n🔗 Access URLs:\n";
 echo "Direct: https://athenas.co.in/finance\n";
-echo "With ergon: https://athenas.co.in/ergon/finance (this should work if ergon is the document root)\n";
+echo "With ergon: https://athenas.co.in/ergon-site/finance (this should work if ergon is the document root)\n";
 
 // Test 5: Check current working directory
 echo "\n📁 Current directory: " . __DIR__ . "\n";
-echo "Document root should be: /path/to/ergon/\n";
+echo "Document root should be: /path/to/ergon-site/\n";
 ?>

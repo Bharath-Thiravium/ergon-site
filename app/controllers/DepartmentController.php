@@ -16,7 +16,7 @@ class DepartmentController extends Controller {
     
     public function index() {
         if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['admin', 'owner'])) {
-            header('Location: /ergon/login');
+            header('Location: /ergon-site/login');
             exit;
         }
         
@@ -37,14 +37,14 @@ class DepartmentController extends Controller {
         } catch (Exception $e) {
             error_log('Department index error: ' . $e->getMessage());
             $_SESSION['error'] = 'Failed to load departments';
-            header('Location: /ergon/dashboard');
+            header('Location: /ergon-site/dashboard');
             exit;
         }
     }
     
     public function create() {
         if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['admin', 'owner'])) {
-            header('Location: /ergon/login');
+            header('Location: /ergon-site/login');
             exit;
         }
         
@@ -65,12 +65,12 @@ class DepartmentController extends Controller {
                     $_SESSION['error'] = 'Failed to create department';
                 }
                 
-                header('Location: /ergon/departments');
+                header('Location: /ergon-site/departments');
                 exit;
             } catch (Exception $e) {
                 error_log('Department create error: ' . $e->getMessage());
                 $_SESSION['error'] = 'Failed to create department';
-                header('Location: /ergon/departments');
+                header('Location: /ergon-site/departments');
                 exit;
             }
         }
@@ -86,14 +86,14 @@ class DepartmentController extends Controller {
     
     public function edit($id) {
         if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['admin', 'owner'])) {
-            header('Location: /ergon/login');
+            header('Location: /ergon-site/login');
             exit;
         }
         
         $department = $this->departmentModel->findById($id);
         if (!$department) {
             $_SESSION['error'] = 'Department not found';
-            header('Location: /ergon/departments');
+            header('Location: /ergon-site/departments');
             exit;
         }
         
@@ -114,12 +114,12 @@ class DepartmentController extends Controller {
                     $_SESSION['error'] = 'Failed to update department';
                 }
                 
-                header('Location: /ergon/departments');
+                header('Location: /ergon-site/departments');
                 exit;
             } catch (Exception $e) {
                 error_log('Department update error: ' . $e->getMessage());
                 $_SESSION['error'] = 'Failed to update department';
-                header('Location: /ergon/departments');
+                header('Location: /ergon-site/departments');
                 exit;
             }
         }
@@ -161,7 +161,7 @@ class DepartmentController extends Controller {
     
     public function viewDepartment($id) {
         if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['admin', 'owner'])) {
-            header('Location: /ergon/login');
+            header('Location: /ergon-site/login');
             exit;
         }
         
@@ -184,7 +184,7 @@ class DepartmentController extends Controller {
             
             if (!$department) {
                 $_SESSION['error'] = 'Department not found';
-                header('Location: /ergon/departments');
+                header('Location: /ergon-site/departments');
                 exit;
             }
             
@@ -221,14 +221,14 @@ class DepartmentController extends Controller {
         } catch (Exception $e) {
             error_log('Department view error: ' . $e->getMessage());
             $_SESSION['error'] = 'Failed to load department details';
-            header('Location: /ergon/departments');
+            header('Location: /ergon-site/departments');
             exit;
         }
     }
     
     public function editPost() {
         if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['admin', 'owner'])) {
-            header('Location: /ergon/login');
+            header('Location: /ergon-site/login');
             exit;
         }
         
@@ -244,10 +244,10 @@ class DepartmentController extends Controller {
                 $stmt = $db->prepare("UPDATE departments SET name = ?, description = ?, head_id = ?, status = ? WHERE id = ?");
                 $stmt->execute([$name, $description, $head_id, $status, $id]);
                 
-                header('Location: /ergon/departments?success=Department updated successfully');
+                header('Location: /ergon-site/departments?success=Department updated successfully');
                 exit;
             } catch (Exception $e) {
-                header('Location: /ergon/departments?error=Failed to update department');
+                header('Location: /ergon-site/departments?error=Failed to update department');
                 exit;
             }
         }
@@ -255,7 +255,7 @@ class DepartmentController extends Controller {
     
     public function deletePost() {
         if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['admin', 'owner'])) {
-            header('Location: /ergon/login');
+            header('Location: /ergon-site/login');
             exit;
         }
         
@@ -267,10 +267,10 @@ class DepartmentController extends Controller {
                 $stmt = $db->prepare("DELETE FROM departments WHERE id = ?");
                 $stmt->execute([$id]);
                 
-                header('Location: /ergon/departments?success=Department deleted successfully');
+                header('Location: /ergon-site/departments?success=Department deleted successfully');
                 exit;
             } catch (Exception $e) {
-                header('Location: /ergon/departments?error=Failed to delete department');
+                header('Location: /ergon-site/departments?error=Failed to delete department');
                 exit;
             }
         }

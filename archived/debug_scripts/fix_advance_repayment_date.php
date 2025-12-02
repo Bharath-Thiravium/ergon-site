@@ -31,8 +31,8 @@ try {
     
     echo "<h3>Next Steps:</h3>";
     echo "<ul>";
-    echo "<li>Visit <a href='/ergon/advances/create' target='_blank'>/ergon/advances/create</a> to test creating an advance with repayment date</li>";
-    echo "<li>Visit <a href='/ergon/advances' target='_blank'>/ergon/advances</a> to view advances with repayment date column</li>";
+    echo "<li>Visit <a href='/ergon-site/advances/create' target='_blank'>/ergon-site/advances/create</a> to test creating an advance with repayment date</li>";
+    echo "<li>Visit <a href='/ergon-site/advances' target='_blank'>/ergon-site/advances</a> to view advances with repayment date column</li>";
     echo "<li>Edit existing advances to add repayment dates</li>";
     echo "</ul>";
     

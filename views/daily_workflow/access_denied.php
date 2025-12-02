@@ -11,10 +11,10 @@ ob_start();
         <h2>Access Restricted</h2>
         <p><?= htmlspecialchars($message ?? 'This feature is not available for your role.') ?></p>
         <div class="access-denied-actions">
-            <a href="<?= htmlspecialchars($redirect_url ?? '/ergon/dashboard') ?>" class="btn btn-primary">
+            <a href="<?= htmlspecialchars($redirect_url ?? '/ergon-site/dashboard') ?>" class="btn btn-primary">
                 Go to Tasks
             </a>
-            <a href="/ergon/dashboard" class="btn btn-secondary">
+            <a href="/ergon-site/dashboard" class="btn btn-secondary">
                 Back to Dashboard
             </a>
         </div>

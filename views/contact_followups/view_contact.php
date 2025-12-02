@@ -10,10 +10,10 @@ ob_start();
         <p>All follow-up history and communications for this contact</p>
     </div>
     <div class="page-actions">
-        <a href="/ergon/contacts/followups" class="btn btn--secondary">
+        <a href="/ergon-site/contacts/followups" class="btn btn--secondary">
             <span>←</span> Back to Contacts
         </a>
-        <a href="/ergon/contacts/followups/create?contact_id=<?= $contact['id'] ?>" class="btn btn--primary">
+        <a href="/ergon-site/contacts/followups/create?contact_id=<?= $contact['id'] ?>" class="btn btn--primary">
             <span>➕</span> New Follow-up
         </a>
     </div>
@@ -177,7 +177,7 @@ ob_start();
                 <div class="empty-icon">📞</div>
                 <h3>No Follow-ups Yet</h3>
                 <p>Create the first follow-up for <?= htmlspecialchars($contact['name']) ?></p>
-                <a href="/ergon/contacts/followups/create?contact_id=<?= $contact['id'] ?>" class="btn btn--primary">
+                <a href="/ergon-site/contacts/followups/create?contact_id=<?= $contact['id'] ?>" class="btn btn--primary">
                     Create Follow-up
                 </a>
             </div>
@@ -305,7 +305,7 @@ ob_start();
 <script>
 function completeFollowup(id) {
     if (confirm('Mark this follow-up as completed?')) {
-        fetch(`/ergon/contacts/followups/complete/${id}`, {
+        fetch(`/ergon-site/contacts/followups/complete/${id}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -330,7 +330,7 @@ function completeFollowup(id) {
 function rescheduleFollowup(id) {
     showModal('rescheduleModal');
     document.getElementById('rescheduleFollowupId').value = id;
-    document.getElementById('rescheduleForm').action = `/ergon/contacts/followups/reschedule/${id}`;
+    document.getElementById('rescheduleForm').action = `/ergon-site/contacts/followups/reschedule/${id}`;
     
     // Add form submit handler
     const form = document.getElementById('rescheduleForm');
@@ -363,7 +363,7 @@ function rescheduleFollowup(id) {
 function cancelFollowup(id) {
     showModal('cancelModal');
     document.getElementById('cancelFollowupId').value = id;
-    document.getElementById('cancelForm').action = `/ergon/contacts/followups/cancel/${id}`;
+    document.getElementById('cancelForm').action = `/ergon-site/contacts/followups/cancel/${id}`;
     
     // Add form submit handler
     const form = document.getElementById('cancelForm');
@@ -398,7 +398,7 @@ function showHistory(id) {
     showModal('historyModal');
     document.getElementById('historyContent').innerHTML = 'Loading...';
     
-    fetch(`/ergon/contacts/followups/history/${id}`, {
+    fetch(`/ergon-site/contacts/followups/history/${id}`, {
         method: 'GET',
         headers: {
             'X-Requested-With': 'XMLHttpRequest'
@@ -420,7 +420,7 @@ function showHistory(id) {
 
 function editContact(contactId) {
     // Load contact data
-    fetch(`/ergon/api/contacts/${contactId}`)
+    fetch(`/ergon-site/api/contacts/${contactId}`)
         .then(response => response.json())
         .then(data => {
             if (data.success && data.contact) {
@@ -446,7 +446,7 @@ function saveContactChanges() {
     const formData = new FormData(form);
     const contactId = document.getElementById('editContactId').value;
     
-    fetch(`/ergon/api/contacts/${contactId}/update`, {
+    fetch(`/ergon-site/api/contacts/${contactId}/update`, {
         method: 'POST',
         body: formData
     })

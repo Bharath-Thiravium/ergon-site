@@ -19,9 +19,9 @@ $advances = $advances ?? [];
 ?>
 
 <div class="header-actions">
-    <a href="/ergon/leaves/create" class="btn btn--primary">Apply Leave</a>
-    <a href="/ergon/expenses/create" class="btn btn--secondary">Submit Expense</a>
-    <a href="/ergon/advances/create" class="btn btn--accent">Request Advance</a>
+    <a href="/ergon-site/leaves/create" class="btn btn--primary">Apply Leave</a>
+    <a href="/ergon-site/expenses/create" class="btn btn--secondary">Submit Expense</a>
+    <a href="/ergon-site/advances/create" class="btn btn--accent">Request Advance</a>
 </div>
 
 <div class="dashboard-grid">

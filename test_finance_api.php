@@ -33,11 +33,11 @@ header('Content-Type: text/html; charset=UTF-8');
     async function testEndpoint(endpoint) {
         const testDiv = document.createElement('div');
         testDiv.className = 'test loading';
-        testDiv.innerHTML = `<h3>Testing: /ergon/finance/${endpoint}</h3><p>Loading...</p>`;
+        testDiv.innerHTML = `<h3>Testing: /ergon-site/finance/${endpoint}</h3><p>Loading...</p>`;
         resultsDiv.appendChild(testDiv);
 
         try {
-            const response = await fetch(`/ergon/finance/${endpoint}`);
+            const response = await fetch(`/ergon-site/finance/${endpoint}`);
             const text = await response.text();
             
             let data;
@@ -49,7 +49,7 @@ header('Content-Type: text/html; charset=UTF-8');
 
             testDiv.className = 'test success';
             testDiv.innerHTML = `
-                <h3>✅ /ergon/finance/${endpoint}</h3>
+                <h3>✅ /ergon-site/finance/${endpoint}</h3>
                 <p><strong>Status:</strong> ${response.status} ${response.statusText}</p>
                 <p><strong>Response:</strong></p>
                 <pre>${JSON.stringify(data, null, 2)}</pre>
@@ -57,7 +57,7 @@ header('Content-Type: text/html; charset=UTF-8');
         } catch (error) {
             testDiv.className = 'test error';
             testDiv.innerHTML = `
-                <h3>❌ /ergon/finance/${endpoint}</h3>
+                <h3>❌ /ergon-site/finance/${endpoint}</h3>
                 <p><strong>Error:</strong> ${error.message}</p>
             `;
         }

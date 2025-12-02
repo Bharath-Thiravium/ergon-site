@@ -65,7 +65,7 @@ try {
         'message' => "Leave request from {$user['name']} for Annual Leave (3 days)",
         'reference_type' => 'leave',
         'reference_id' => 1,
-        'action_url' => '/ergon/leaves'
+        'action_url' => '/ergon-site/leaves'
     ]);
     
     // Expense approval notifications for Owner
@@ -78,7 +78,7 @@ try {
         'message' => "Expense request from {$user['name']} - $250.00 for office supplies",
         'reference_type' => 'expense',
         'reference_id' => 1,
-        'action_url' => '/ergon/expenses'
+        'action_url' => '/ergon-site/expenses'
     ]);
     
     // Advance approval notifications for Owner
@@ -91,7 +91,7 @@ try {
         'message' => "Advance request from {$user['name']} - $500.00 for emergency",
         'reference_type' => 'advance',
         'reference_id' => 1,
-        'action_url' => '/ergon/advances'
+        'action_url' => '/ergon-site/advances'
     ]);
     
     // Task assignment from Admin to Owner
@@ -104,7 +104,7 @@ try {
         'message' => "You have been assigned: Review Monthly Financial Reports",
         'reference_type' => 'task',
         'reference_id' => 1,
-        'action_url' => '/ergon/tasks'
+        'action_url' => '/ergon-site/tasks'
     ]);
     
     echo "✅ Owner notifications created<br>";
@@ -122,7 +122,7 @@ try {
         'message' => "Leave request from {$user['name']} for Sick Leave (2 days)",
         'reference_type' => 'leave',
         'reference_id' => 2,
-        'action_url' => '/ergon/leaves'
+        'action_url' => '/ergon-site/leaves'
     ]);
     
     // Expense approval notifications for Admin
@@ -135,7 +135,7 @@ try {
         'message' => "Expense request from {$user['name']} - $120.00 for travel",
         'reference_type' => 'expense',
         'reference_id' => 2,
-        'action_url' => '/ergon/expenses'
+        'action_url' => '/ergon-site/expenses'
     ]);
     
     // Task assignment from Owner to Admin
@@ -148,7 +148,7 @@ try {
         'message' => "You have been assigned: Prepare Team Performance Report",
         'reference_type' => 'task',
         'reference_id' => 2,
-        'action_url' => '/ergon/tasks'
+        'action_url' => '/ergon-site/tasks'
     ]);
     
     // Approved request notification for Admin
@@ -161,7 +161,7 @@ try {
         'message' => "Your expense request has been approved by {$owner['name']}",
         'reference_type' => 'expense',
         'reference_id' => 3,
-        'action_url' => '/ergon/expenses'
+        'action_url' => '/ergon-site/expenses'
     ]);
     
     echo "✅ Admin notifications created<br>";
@@ -179,7 +179,7 @@ try {
         'message' => "Your leave request has been approved by {$admin['name']}",
         'reference_type' => 'leave',
         'reference_id' => 1,
-        'action_url' => '/ergon/leaves'
+        'action_url' => '/ergon-site/leaves'
     ]);
     
     // Rejected expense notification
@@ -192,7 +192,7 @@ try {
         'message' => "Your expense request has been rejected. Please review and resubmit.",
         'reference_type' => 'expense',
         'reference_id' => 2,
-        'action_url' => '/ergon/expenses'
+        'action_url' => '/ergon-site/expenses'
     ]);
     
     // Task assignment notifications
@@ -205,7 +205,7 @@ try {
         'message' => "You have been assigned: Update Customer Database",
         'reference_type' => 'task',
         'reference_id' => 3,
-        'action_url' => '/ergon/tasks'
+        'action_url' => '/ergon-site/tasks'
     ]);
     
     // Task reminder notification
@@ -218,7 +218,7 @@ try {
         'message' => "Task 'Complete Documentation' is due tomorrow",
         'reference_type' => 'task',
         'reference_id' => 4,
-        'action_url' => '/ergon/tasks',
+        'action_url' => '/ergon-site/tasks',
         'priority' => 2
     ]);
     
@@ -254,7 +254,7 @@ try {
     echo "<p><strong>Next Steps:</strong></p>";
     echo "<ol>";
     echo "<li>Test the notification button in the header</li>";
-    echo "<li><a href='/ergon/notifications'>Visit Notifications Page</a></li>";
+    echo "<li><a href='/ergon-site/notifications'>Visit Notifications Page</a></li>";
     echo "<li>Create actual requests to test live notifications</li>";
     echo "</ol>";
     

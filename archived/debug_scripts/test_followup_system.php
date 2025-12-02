@@ -114,10 +114,10 @@ try {
         echo "<h3 style='color: green;'>🎉 Follow-up System Test Completed Successfully!</h3>";
         echo "<p><strong>Next Steps:</strong></p>";
         echo "<ul>";
-        echo "<li>Visit <a href='/ergon/followups/create' target='_blank'>/ergon/followups/create</a> to create a new follow-up</li>";
-        echo "<li>Visit <a href='/ergon/followups' target='_blank'>/ergon/followups</a> to view all follow-ups</li>";
-        echo "<li>Visit <a href='/ergon/contacts/followups/create' target='_blank'>/ergon/contacts/followups/create</a> for contact-centric follow-ups</li>";
-        echo "<li>Visit <a href='/ergon/contacts/followups/view' target='_blank'>/ergon/contacts/followups/view</a> to view contact follow-ups</li>";
+        echo "<li>Visit <a href='/ergon-site/followups/create' target='_blank'>/ergon-site/followups/create</a> to create a new follow-up</li>";
+        echo "<li>Visit <a href='/ergon-site/followups' target='_blank'>/ergon-site/followups</a> to view all follow-ups</li>";
+        echo "<li>Visit <a href='/ergon-site/contacts/followups/create' target='_blank'>/ergon-site/contacts/followups/create</a> for contact-centric follow-ups</li>";
+        echo "<li>Visit <a href='/ergon-site/contacts/followups/view' target='_blank'>/ergon-site/contacts/followups/view</a> to view contact follow-ups</li>";
         echo "</ul>";
         
     } else {

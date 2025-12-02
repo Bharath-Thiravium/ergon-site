@@ -22,7 +22,7 @@ try {
             'message' => 'Leave request for Annual Leave (Dec 25-27) needs approval',
             'reference_type' => 'leave',
             'reference_id' => 1,
-            'action_url' => '/ergon/leaves'
+            'action_url' => '/ergon-site/leaves'
         ],
         [
             'sender_id' => 1,
@@ -33,7 +33,7 @@ try {
             'message' => 'Expense request for $250.00 office supplies needs approval',
             'reference_type' => 'expense',
             'reference_id' => 1,
-            'action_url' => '/ergon/expenses'
+            'action_url' => '/ergon-site/expenses'
         ],
         [
             'sender_id' => 1,
@@ -44,7 +44,7 @@ try {
             'message' => 'Your leave request has been approved',
             'reference_type' => 'leave',
             'reference_id' => 2,
-            'action_url' => '/ergon/leaves'
+            'action_url' => '/ergon-site/leaves'
         ],
         [
             'sender_id' => 1,
@@ -55,7 +55,7 @@ try {
             'message' => 'You have been assigned: Update Customer Database',
             'reference_type' => 'task',
             'reference_id' => 1,
-            'action_url' => '/ergon/tasks'
+            'action_url' => '/ergon-site/tasks'
         ],
         [
             'sender_id' => 1,
@@ -66,7 +66,7 @@ try {
             'message' => 'Task "Complete Documentation" is due tomorrow',
             'reference_type' => 'task',
             'reference_id' => 2,
-            'action_url' => '/ergon/tasks'
+            'action_url' => '/ergon-site/tasks'
         ]
     ];
     
@@ -87,7 +87,7 @@ try {
     }
     
     echo "✅ Created " . count($notifications) . " test notifications for user ID: {$currentUserId}<br>";
-    echo "<a href='/ergon/notifications'>View Notifications</a>";
+    echo "<a href='/ergon-site/notifications'>View Notifications</a>";
     
 } catch (Exception $e) {
     echo "❌ Error: " . $e->getMessage();

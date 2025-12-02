@@ -10,7 +10,7 @@ class WebCronService {
                 'easycron.com' => 'https://www.easycron.com - Free tier available',
                 'webcron.org' => 'https://webcron.org - Simple web cron'
             ],
-            'endpoint' => 'https://yourdomain.com/ergon/finance/auto-sync',
+            'endpoint' => 'https://yourdomain.com/ergon-site/finance/auto-sync',
             'interval' => '*/30 * * * *' // Every 30 minutes
         ];
     }
@@ -62,7 +62,7 @@ class WebCronService {
             syncInterval = setInterval(async () => {
                 if (!document.hidden) {
                     try {
-                        const response = await fetch("/ergon/finance/sync", {method: "POST"});
+                        const response = await fetch("/ergon-site/finance/sync", {method: "POST"});
                         const result = await response.json();
                         console.log("Auto-sync:", result);
                     } catch (error) {

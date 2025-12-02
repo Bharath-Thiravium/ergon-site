@@ -6,7 +6,7 @@ ob_start();
 
 <div class="page-header">
     <h1>Create New User</h1>
-    <a href="<?= in_array($_SESSION['role'] ?? '', ['admin', 'owner']) ? '/ergon/admin/management' : '/ergon/users' ?>" class="btn btn--secondary">Back to Users</a>
+    <a href="<?= in_array($_SESSION['role'] ?? '', ['admin', 'owner']) ? '/ergon-site/admin/management' : '/ergon-site/users' ?>" class="btn btn--secondary">Back to Users</a>
 </div>
 
 <div class="card">
@@ -51,8 +51,9 @@ ob_start();
                     <select name="role" class="form-control" required>
                         <option value="user" <?= ($old_data['role'] ?? 'user') === 'user' ? 'selected' : '' ?>>User</option>
                         <option value="admin" <?= ($old_data['role'] ?? '') === 'admin' ? 'selected' : '' ?>>Admin</option>
-                        <?php if (($_SESSION['role'] ?? '') === 'owner'): ?>
+                        <?php if (in_array($_SESSION['role'] ?? '', ['owner', 'admin'])): ?>
                         <option value="owner" <?= ($old_data['role'] ?? '') === 'owner' ? 'selected' : '' ?>>Owner</option>
+                        <option value="company_owner" <?= ($old_data['role'] ?? '') === 'company_owner' ? 'selected' : '' ?>>Company Owner</option>
                         <?php endif; ?>
                     </select>
                 </div>
@@ -142,7 +143,7 @@ ob_start();
             
             <div class="form-actions">
                 <button type="submit" class="btn btn--primary">✨ Create User</button>
-                <a href="<?= in_array($_SESSION['role'] ?? '', ['admin', 'owner']) ? '/ergon/admin/management' : '/ergon/users' ?>" class="btn btn--secondary">❌ Cancel</a>
+                <a href="<?= in_array($_SESSION['role'] ?? '', ['admin', 'owner']) ? '/ergon-site/admin/management' : '/ergon-site/users' ?>" class="btn btn--secondary">❌ Cancel</a>
             </div>
         </form>
     </div>

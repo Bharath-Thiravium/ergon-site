@@ -25,7 +25,7 @@ try {
     echo "✅ Module system setup completed successfully!\n";
     echo "📋 Basic modules (always enabled): attendance, leaves, advances, expenses, dashboard\n";
     echo "🔒 Premium modules (require activation): tasks, projects, reports, users, departments, notifications, finance, followups, gamification, analytics, system_admin\n";
-    echo "\n🎯 Access /ergon/modules as owner to manage module access\n";
+    echo "\n🎯 Access /ergon-site/modules as owner to manage module access\n";
     
 } catch (Exception $e) {
     echo "❌ Setup failed: " . $e->getMessage() . "\n";
