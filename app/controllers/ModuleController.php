@@ -43,16 +43,20 @@ class ModuleController extends Controller {
         AuthMiddleware::requireAuth();
         
         if ($_SESSION['role'] !== 'owner') {
-            $this->jsonResponse(['success' => false, 'error' => 'Access denied']);
-            return;
+            header('Content-Type: application/json');
+            http_response_code(403);
+            echo json_encode(['success' => false, 'error' => 'Access denied']);
+            exit;
         }
         
         $module = $_POST['module'] ?? '';
         $action = $_POST['action'] ?? '';
         
         if (empty($module) || !in_array($action, ['enable', 'disable'])) {
-            $this->jsonResponse(['success' => false, 'error' => 'Invalid parameters']);
-            return;
+            header('Content-Type: application/json');
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'Invalid parameters']);
+            exit;
         }
         
         $result = $action === 'enable' 
@@ -60,15 +64,21 @@ class ModuleController extends Controller {
             : ModuleManager::disableModule($module);
         
         if ($result) {
-            $this->jsonResponse([
+            header('Content-Type: application/json');
+            http_response_code(200);
+            echo json_encode([
                 'success' => true, 
                 'message' => ucfirst($action) . 'd module successfully'
             ]);
+            exit;
         } else {
-            $this->jsonResponse([
+            header('Content-Type: application/json');
+            http_response_code(500);
+            echo json_encode([
                 'success' => false, 
                 'error' => 'Failed to ' . $action . ' module'
             ]);
+            exit;
         }
     }
 }

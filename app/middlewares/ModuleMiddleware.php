@@ -5,6 +5,7 @@
  */
 
 require_once __DIR__ . '/../helpers/ModuleManager.php';
+if (session_status() === PHP_SESSION_NONE) session_start();
 
 class ModuleMiddleware {
     
@@ -33,28 +34,41 @@ class ModuleMiddleware {
             ]);
         } else {
             http_response_code(403);
-            echo "<!DOCTYPE html>
-<html>
-<head>
-    <title>Access Denied</title>
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
-        .container { max-width: 500px; margin: 0 auto; }
-        .icon { font-size: 64px; margin-bottom: 20px; }
-        h1 { color: #e74c3c; }
-        .upgrade-btn { background: #3498db; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 20px; }
-    </style>
-</head>
-<body>
-    <div class='container'>
-        <div class='icon'>🔒</div>
-        <h1>Access Denied</h1>
-        <p><strong>{$moduleLabel}</strong> is not available in your current subscription.</p>
-        <p>Please contact your administrator to upgrade your subscription.</p>
-        <a href='/ergon/dashboard' class='upgrade-btn'>Back to Dashboard</a>
-    </div>
-</body>
-</html>";
+            
+            // Use main layout for consistent styling
+            $title = 'Access Denied';
+            $active_page = 'access_denied';
+            
+            ob_start();
+            ?>
+            <div class="access-denied-container">
+                <div class="access-denied-card">
+                    <div class="access-denied-icon">
+                        <i class="bi bi-lock-fill"></i>
+                    </div>
+                    <h1 class="access-denied-title">Premium Feature Required</h1>
+                    <div class="access-denied-message">
+                        <p><strong><?= htmlspecialchars($moduleLabel) ?></strong> is a premium feature that requires activation.</p>
+                        <p>Contact your administrator to enable this module in your subscription.</p>
+                    </div>
+                    <div class="access-denied-actions">
+                        <a href="/ergon-site/dashboard" class="btn btn-primary">
+                            <i class="bi bi-house-fill"></i>
+                            Back to Dashboard
+                        </a>
+                        <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'owner'): ?>
+                        <a href="/ergon-site/modules" class="btn btn-outline-primary">
+                            <i class="bi bi-gear-fill"></i>
+                            Manage Modules
+                        </a>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+            <?php
+            $content = ob_get_clean();
+            
+            require __DIR__ . '/../../views/layouts/dashboard.php';
         }
     }
     

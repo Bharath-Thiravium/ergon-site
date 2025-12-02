@@ -40,8 +40,10 @@ class AuthController extends Controller {
         $clientIp = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
         
         if (empty($email) || empty($password)) {
-            $this->json(['error' => 'Email and password are required'], 400);
-            return;
+            header('Content-Type: application/json');
+            http_response_code(400);
+            echo json_encode(['error' => 'Email and password are required']);
+            exit;
         }
         
         require_once __DIR__ . '/../services/SecurityService.php';
@@ -49,15 +51,19 @@ class AuthController extends Controller {
         
         // Check rate limiting
         if (!$securityService->checkRateLimit($clientIp, 'login')) {
-            $this->json(['error' => 'Too many login attempts. Please try again later.'], 429);
-            return;
+            header('Content-Type: application/json');
+            http_response_code(429);
+            echo json_encode(['error' => 'Too many login attempts. Please try again later.']);
+            exit;
         }
         
         // Check account lockout
         $lockoutStatus = $securityService->checkAccountLockout($email);
         if ($lockoutStatus['locked']) {
-            $this->json(['error' => $lockoutStatus['message']], 423);
-            return;
+            header('Content-Type: application/json');
+            http_response_code(423);
+            echo json_encode(['error' => $lockoutStatus['message']]);
+            exit;
         }
         
         try {
@@ -86,7 +92,9 @@ class AuthController extends Controller {
                 
                 $redirectUrl = $this->getRedirectUrl($user['role']);
                 
-                $this->json([
+                header('Content-Type: application/json');
+                http_response_code(200);
+                echo json_encode([
                     'success' => true,
                     'message' => 'Login successful',
                     'user' => [
@@ -97,6 +105,7 @@ class AuthController extends Controller {
                     ],
                     'redirect' => $redirectUrl
                 ]);
+                exit;
             } else {
                 // Record failed login
                 $securityService->recordLoginAttempt($email, false);
@@ -108,12 +117,18 @@ class AuthController extends Controller {
                     $message .= ". {$remainingAttempts} attempts remaining before account lockout.";
                 }
                 
-                $this->json(['error' => $message], 401);
+                header('Content-Type: application/json');
+                http_response_code(401);
+                echo json_encode(['error' => $message]);
+                exit;
             }
         } catch (Exception $e) {
             error_log('Login error: ' . $e->getMessage());
             $securityService->logAttempt($clientIp, 'login', false);
-            $this->json(['error' => 'Login failed. Please try again.'], 500);
+            header('Content-Type: application/json');
+            http_response_code(500);
+            echo json_encode(['error' => 'Login failed. Please try again.']);
+            exit;
         }
     }
     
@@ -137,7 +152,7 @@ class AuthController extends Controller {
         header('Pragma: no-cache');
         header('Expires: Thu, 01 Jan 1970 00:00:00 GMT');
         
-        header('Location: /ergon/login');
+        header('Location: /ergon-site/login');
         exit;
     }
     
@@ -242,13 +257,13 @@ class AuthController extends Controller {
     private function getRedirectUrl($role) {
         switch ($role) {
             case ROLE_OWNER:
-                return '/ergon/owner/dashboard';
+                return '/ergon-site/owner/dashboard';
             case ROLE_ADMIN:
-                return '/ergon/admin/dashboard';
+                return '/ergon-site/admin/dashboard';
             case ROLE_USER:
-                return '/ergon/user/dashboard';
+                return '/ergon-site/user/dashboard';
             default:
-                return '/ergon/dashboard';
+                return '/ergon-site/dashboard';
         }
     }
 }

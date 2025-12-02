@@ -26,8 +26,8 @@ class Controller {
     }
     
     protected function redirect($url) {
-        if (strpos($url, 'http') !== 0 && strpos($url, '/ergon/') !== 0) {
-            $url = '/ergon' . $url;
+        if (strpos($url, 'http') !== 0 && strpos($url, '/ergon-site/') !== 0) {
+            $url = '/ergon-site' . $url;
         }
         header("Location: {$url}");
         exit;

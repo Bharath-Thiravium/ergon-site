@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Ergon</title>
-    <link rel="stylesheet" href="/ergon/assets/css/ergon.css">
-    <link rel="stylesheet" href="/ergon/assets/css/mobile-login-fixes.css">
+    <link rel="stylesheet" href="/ergon-site/assets/css/ergon.css">
+    <link rel="stylesheet" href="/ergon-site/assets/css/mobile-login-fixes.css">
     <style>
         * {
             margin: 0;
@@ -363,7 +363,7 @@
                 </div>
                 <?php unset($_SESSION['logout_message']); endif; ?>
                 
-                <form id="loginForm">
+                <form id="loginForm" action="/ergon-site/simple_login.php" method="POST">
                     <div class="form-group">
                         <label for="email" class="form-label">Email Address</label>
                         <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
@@ -541,41 +541,12 @@
             }
         });
         
-        // Login form submission
+        // Simple form submission - no AJAX
         document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
             const submitBtn = this.querySelector('button[type="submit"]');
-            const originalText = submitBtn.textContent;
-            
             submitBtn.textContent = 'Signing In...';
             submitBtn.disabled = true;
-            
-            const formData = new FormData(this);
-            const messageDiv = document.getElementById('message');
-            
-            fetch('/ergon/login', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    messageDiv.innerHTML = '<div class="alert alert-success">✓ Login successful! Redirecting...</div>';
-                    setTimeout(() => {
-                        window.location.href = data.redirect;
-                    }, 1000);
-                } else {
-                    messageDiv.innerHTML = '<div class="alert alert-error">⚠ ' + data.error + '</div>';
-                    submitBtn.textContent = originalText;
-                    submitBtn.disabled = false;
-                }
-            })
-            .catch(error => {
-                messageDiv.innerHTML = '<div class="alert alert-error">⚠ Login failed. Please try again.</div>';
-                submitBtn.textContent = originalText;
-                submitBtn.disabled = false;
-            });
+            // Let the form submit normally
         });
     </script>
 </body>

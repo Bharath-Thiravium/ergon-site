@@ -91,4 +91,21 @@ class ModuleManager {
         $config = require __DIR__ . '/../config/modules.php';
         return $config['module_labels'][$module] ?? ucfirst($module);
     }
+    
+    public static function isPremiumModule($module) {
+        try {
+            $config = require __DIR__ . '/../config/modules.php';
+            return in_array($module, $config['premium_modules']);
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+    
+    public static function isModuleDisabled($module) {
+        try {
+            return self::isPremiumModule($module) && !self::isModuleEnabled($module);
+        } catch (Exception $e) {
+            return false;
+        }
+    }
 }

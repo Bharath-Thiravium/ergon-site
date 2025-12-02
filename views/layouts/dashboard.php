@@ -3,10 +3,37 @@ ob_start();
 header('Content-Type: text/html; charset=UTF-8');
 require_once __DIR__ . '/../../app/helpers/Security.php';
 require_once __DIR__ . '/../../app/helpers/SecurityHeaders.php';
+require_once __DIR__ . '/../../app/helpers/ModuleManager.php';
+
+// Check module status once at the top
+$tasksDisabled = false;
+$followupsDisabled = false;
+$systemAdminDisabled = false;
+$usersDisabled = false;
+$departmentsDisabled = false;
+$projectsDisabled = false;
+$financeDisabled = false;
+$reportsDisabled = false;
+$analyticsDisabled = false;
+
+try {
+    $tasksDisabled = ModuleManager::isModuleDisabled('tasks');
+    $followupsDisabled = ModuleManager::isModuleDisabled('followups');
+    $systemAdminDisabled = ModuleManager::isModuleDisabled('system_admin');
+    $usersDisabled = ModuleManager::isModuleDisabled('users');
+    $departmentsDisabled = ModuleManager::isModuleDisabled('departments');
+    $projectsDisabled = ModuleManager::isModuleDisabled('projects');
+    $financeDisabled = ModuleManager::isModuleDisabled('finance');
+    $reportsDisabled = ModuleManager::isModuleDisabled('reports');
+    $analyticsDisabled = ModuleManager::isModuleDisabled('analytics');
+} catch (Exception $e) {
+    // Silently fail - all modules will appear enabled
+}
+
 SecurityHeaders::apply();
 if (session_status() === PHP_SESSION_NONE) session_start();
-if (empty($_SESSION['user_id']) || empty($_SESSION['role'])) { header('Location: /ergon/login'); exit; }
-if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > 28800)) { session_unset(); session_destroy(); header('Location: /ergon/login?timeout=1'); exit; }
+if (empty($_SESSION['user_id']) || empty($_SESSION['role'])) { header('Location: /ergon-site/login'); exit; }
+if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > 28800)) { session_unset(); session_destroy(); header('Location: /ergon-site/login?timeout=1'); exit; }
 
 // Clear any error/success messages to prevent popup alerts
 if (isset($_GET['error'])) {
@@ -35,13 +62,13 @@ try {
     if (!$user || $user['status'] !== 'active') {
         session_unset();
         session_destroy();
-        header('Location: /ergon/login?deactivated=1');
+        header('Location: /ergon-site/login?deactivated=1');
         exit;
     }
     if ($user['role'] !== $_SESSION['role']) {
         session_unset();
         session_destroy();
-        header('Location: /ergon/login?role_changed=1');
+        header('Location: /ergon-site/login?role_changed=1');
         exit;
     }
 } catch (Exception $e) {
@@ -49,7 +76,7 @@ try {
     // Redirect to login on database connection failure
     session_unset();
     session_destroy();
-    header('Location: /ergon/login?error=database');
+    header('Location: /ergon-site/login?error=database');
     exit;
 }
 $_SESSION['last_activity'] = time();
@@ -67,7 +94,7 @@ ob_end_clean();
     <title><?= $title ?? 'Dashboard' ?> - ergon</title>
     <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,">
     
-    <script src="/ergon/assets/js/theme-preload.js?v=<?= time() ?>"></script>
+    <script src="/ergon-site/assets/js/theme-preload.js?v=<?= time() ?>"></script>
     <script>
     // Convert title attributes to data-tooltip for custom tooltips
     document.addEventListener('DOMContentLoaded', function() {
@@ -169,38 +196,40 @@ ob_end_clean();
     }
     </style>
     
-    <link href="/ergon/assets/css/bootstrap-icons.min.css?v=1.0" rel="stylesheet">
-    <link href="/ergon/assets/css/ergon.css?v=<?= time() ?>" rel="stylesheet">
-    <link href="/ergon/assets/css/theme-enhanced.css?v=1.0" rel="stylesheet">
-    <link href="/ergon/assets/css/utilities-new.css?v=1.0" rel="stylesheet">
-    <link href="/ergon/assets/css/instant-theme.css?v=1.0" rel="stylesheet">
-    <link href="/ergon/assets/css/global-tooltips.css?v=1.0" rel="stylesheet">
+    <link href="/ergon-site/assets/css/bootstrap-icons.min.css?v=1.0" rel="stylesheet">
+    <link href="/ergon-site/assets/css/ergon.css?v=<?= time() ?>" rel="stylesheet">
+    <link href="/ergon-site/assets/css/theme-enhanced.css?v=1.0" rel="stylesheet">
+    <link href="/ergon-site/assets/css/utilities-new.css?v=1.0" rel="stylesheet">
+    <link href="/ergon-site/assets/css/instant-theme.css?v=1.0" rel="stylesheet">
+    <link href="/ergon-site/assets/css/global-tooltips.css?v=1.0" rel="stylesheet">
 
 
-    <link href="/ergon/assets/css/responsive-mobile.css?v=1.0" rel="stylesheet">
-    <link href="/ergon/assets/_archive_legacy/css/user-management-mobile.css?v=1.0" rel="stylesheet">
-    <link href="/ergon/assets/_archive_legacy/css/management-mobile-fix.css?v=1.0" rel="stylesheet">
+    <link href="/ergon-site/assets/css/responsive-mobile.css?v=1.0" rel="stylesheet">
+    <link href="/ergon-site/assets/_archive_legacy/css/user-management-mobile.css?v=1.0" rel="stylesheet">
+    <link href="/ergon-site/assets/_archive_legacy/css/management-mobile-fix.css?v=1.0" rel="stylesheet">
     <!-- Mobile Dark Theme Fixes - Critical for visibility -->
-    <link href="/ergon/assets/css/mobile-dark-theme-fixes.css?v=<?= time() ?>" rel="stylesheet">
+    <link href="/ergon-site/assets/css/mobile-dark-theme-fixes.css?v=<?= time() ?>" rel="stylesheet">
     <!-- Modal Dialog Fixes - Ensures dialog visibility -->
-    <link href="/ergon/assets/css/modal-dialog-fixes.css?v=<?= time() ?>" rel="stylesheet">
+    <link href="/ergon-site/assets/css/modal-dialog-fixes.css?v=<?= time() ?>" rel="stylesheet">
     <!-- Dashboard overrides loaded last to ensure overrides on compiled CSS in deployments -->
-    <link href="/ergon/assets/css/ergon-overrides.css?v=<?= time() ?>" rel="stylesheet">
+    <link href="/ergon-site/assets/css/ergon-overrides.css?v=<?= time() ?>" rel="stylesheet">
+    <link href="/ergon-site/assets/css/access-denied.css?v=1.0" rel="stylesheet">
+    <link href="/ergon-site/assets/css/premium-navigation.css?v=1.0" rel="stylesheet">
     <?php if (isset($active_page) && $active_page === 'dashboard' && isset($_SESSION['role']) && $_SESSION['role'] === 'owner'): ?>
-    <link href="/ergon/assets/css/dashboard-owner.css?v=1.0" rel="stylesheet">
+    <link href="/ergon-site/assets/css/dashboard-owner.css?v=1.0" rel="stylesheet">
     <?php endif; ?>
 
-    <script src="/ergon/assets/js/theme-switcher.js?v=1.0" defer></script>
-    <script src="/ergon/assets/js/ergon-core.min.js?v=1.0" defer></script>
-    <script src="/ergon/assets/_archive_legacy/js/action-button-clean.js?v=1.0" defer></script>
-    <script src="/ergon/assets/_archive_legacy/js/mobile-enhanced.js?v=1.0" defer></script>
-    <script src="/ergon/assets/js/mobile-table-cards.js?v=1.0" defer></script>
-    <script src="/ergon/assets/js/table-utils.js?v=1.0" defer></script>
-    <script src="/ergon/assets/js/user-status-check.js?v=1.0" defer></script>
-
+    <script src="/ergon-site/assets/js/theme-switcher.js?v=1.0" defer></script>
+    <script src="/ergon-site/assets/js/ergon-core.min.js?v=1.0" defer></script>
+    <script src="/ergon-site/assets/_archive_legacy/js/action-button-clean.js?v=1.0" defer></script>
+    <script src="/ergon-site/assets/_archive_legacy/js/mobile-enhanced.js?v=1.0" defer></script>
+    <script src="/ergon-site/assets/js/mobile-table-cards.js?v=1.0" defer></script>
+    <script src="/ergon-site/assets/js/table-utils.js?v=1.0" defer></script>
+    <script src="/ergon-site/assets/js/user-status-check.js?v=1.0" defer></script>
+    <script src="/ergon-site/assets/js/premium-navigation.js?v=1.0" defer></script>
 
     <?php if (isset($_GET['validate']) && $_GET['validate'] === 'mobile'): ?>
-    <script src="/ergon/assets/js/mobile-validation.js?v=<?= time() ?>" defer></script>
+    <script src="/ergon-site/assets/js/mobile-validation.js?v=<?= time() ?>" defer></script>
     <?php endif; ?>
 </head>
 <body data-layout="<?= isset($userPrefs['dashboard_layout']) ? $userPrefs['dashboard_layout'] : 'default' ?>" data-lang="<?= isset($userPrefs['language']) ? $userPrefs['language'] : 'en' ?>" data-page="<?= isset($active_page) ? $active_page : '' ?>" data-user-role="<?= $_SESSION['role'] ?? 'user' ?>" data-theme="<?= isset($userPrefs['theme']) ? $userPrefs['theme'] : 'light' ?>">
@@ -239,27 +268,27 @@ ob_end_clean();
                 </button>
                 
                 <div class="profile-menu" id="profileMenu">
-                    <a href="/ergon/profile" class="profile-menu-item">
+                    <a href="/ergon-site/profile" class="profile-menu-item">
                         <span class="menu-icon"><i class="bi bi-person-fill"></i></span>
                         My Profile
                     </a>
-                    <a href="/ergon/profile/change-password" class="profile-menu-item">
+                    <a href="/ergon-site/profile/change-password" class="profile-menu-item">
                         <span class="menu-icon"><i class="bi bi-lock-fill"></i></span>
                         Change Password
                     </a>
                     <div class="profile-menu-divider"></div>
-                    <a href="/ergon/profile/preferences" class="profile-menu-item">
+                    <a href="/ergon-site/profile/preferences" class="profile-menu-item">
                         <span class="menu-icon"><i class="bi bi-palette-fill"></i></span>
                         Appearance
                     </a>
                     <?php if (isset($_SESSION['role']) && in_array($_SESSION['role'], ['owner', 'admin'])): ?>
-                    <a href="/ergon/settings" class="profile-menu-item">
+                    <a href="/ergon-site/settings" class="profile-menu-item">
                         <span class="menu-icon"><i class="bi bi-gear-fill"></i></span>
                         System Settings
                     </a>
                     <?php endif; ?>
                     <div class="profile-menu-divider"></div>
-                    <a href="/ergon/logout" class="profile-menu-item profile-menu-item--danger">
+                    <a href="/ergon-site/logout" class="profile-menu-item profile-menu-item--danger">
                         <span class="menu-icon"><i class="bi bi-box-arrow-right"></i></span>
                         Logout
                     </a>
@@ -286,11 +315,11 @@ ob_end_clean();
                             <span class="dropdown-arrow">▼</span>
                         </button>
                         <div class="nav-dropdown-menu" id="overview">
-                            <a href="/ergon/dashboard" class="nav-dropdown-item <?= ($active_page ?? '') === 'dashboard' ? 'nav-dropdown-item--active' : '' ?>">
+                            <a href="/ergon-site/dashboard" class="nav-dropdown-item <?= ($active_page ?? '') === 'dashboard' ? 'nav-dropdown-item--active' : '' ?>">
                                 <span class="nav-icon"><i class="bi bi-speedometer2"></i></span>
                                 Dashboard
                             </a>
-                            <a href="/ergon/gamification/team-competition" class="nav-dropdown-item <?= ($active_page ?? '') === 'team-competition' ? 'nav-dropdown-item--active' : '' ?>">
+                            <a href="/ergon-site/gamification/team-competition" class="nav-dropdown-item <?= ($active_page ?? '') === 'team-competition' ? 'nav-dropdown-item--active' : '' ?>">
                                 <span class="nav-icon"><i class="bi bi-trophy-fill"></i></span>
                                 Competition
                             </a>
@@ -303,21 +332,29 @@ ob_end_clean();
                             <span class="dropdown-arrow">▼</span>
                         </button>
                         <div class="nav-dropdown-menu" id="management">
-                            <a href="/ergon/system-admin" class="nav-dropdown-item <?= ($active_page ?? '') === 'system-admin' ? 'nav-dropdown-item--active' : '' ?>">
+                            <a href="/ergon-site/system-admin" class="nav-dropdown-item <?= ($active_page ?? '') === 'system-admin' ? 'nav-dropdown-item--active' : '' ?> <?= $systemAdminDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
                                 <span class="nav-icon">🔧</span>
                                 System
+                                <?php if ($systemAdminDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                             </a>
-                            <a href="/ergon/admin/management" class="nav-dropdown-item <?= ($active_page ?? '') === 'admin' ? 'nav-dropdown-item--active' : '' ?>">
+                            <a href="/ergon-site/admin/management" class="nav-dropdown-item <?= ($active_page ?? '') === 'admin' ? 'nav-dropdown-item--active' : '' ?> <?= $usersDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
                                 <span class="nav-icon">👥</span>
                                 Users
+                                <?php if ($usersDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                             </a>
-                            <a href="/ergon/departments" class="nav-dropdown-item <?= ($active_page ?? '') === 'departments' ? 'nav-dropdown-item--active' : '' ?>">
+                            <a href="/ergon-site/departments" class="nav-dropdown-item <?= ($active_page ?? '') === 'departments' ? 'nav-dropdown-item--active' : '' ?> <?= $departmentsDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
                                 <span class="nav-icon">🏢</span>
                                 Departments
+                                <?php if ($departmentsDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                             </a>
-                            <a href="/ergon/project-management" class="nav-dropdown-item <?= ($active_page ?? '') === 'project-management' ? 'nav-dropdown-item--active' : '' ?>">
+                            <a href="/ergon-site/project-management" class="nav-dropdown-item <?= ($active_page ?? '') === 'project-management' ? 'nav-dropdown-item--active' : '' ?> <?= $projectsDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
                                 <span class="nav-icon">📁</span>
                                 Projects
+                                <?php if ($projectsDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
+                            </a>
+                            <a href="/ergon-site/modules" class="nav-dropdown-item <?= ($active_page ?? '') === 'modules' ? 'nav-dropdown-item--active' : '' ?>">
+                                <span class="nav-icon">🔧</span>
+                                Modules
                             </a>
                         </div>
                     </div>
@@ -328,13 +365,15 @@ ob_end_clean();
                             <span class="dropdown-arrow">▼</span>
                         </button>
                         <div class="nav-dropdown-menu" id="operations">
-                            <a href="/ergon/tasks" class="nav-dropdown-item <?= ($active_page ?? '') === 'tasks' ? 'nav-dropdown-item--active' : '' ?>">
+                            <a href="/ergon-site/tasks" class="nav-dropdown-item <?= ($active_page ?? '') === 'tasks' ? 'nav-dropdown-item--active' : '' ?> <?= $tasksDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
                                 <span class="nav-icon">✅</span>
                                 Tasks
+                                <?php if ($tasksDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                             </a>
-                            <a href="/ergon/contacts/followups" class="nav-dropdown-item <?= ($active_page ?? '') === 'contact_followups' ? 'nav-dropdown-item--active' : '' ?>">
+                            <a href="/ergon-site/contacts/followups" class="nav-dropdown-item <?= ($active_page ?? '') === 'contact_followups' ? 'nav-dropdown-item--active' : '' ?> <?= $followupsDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
                                 <span class="nav-icon">📞</span>
                                 Follow-ups
+                                <?php if ($followupsDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                             </a>
                         </div>
                     </div>
@@ -345,19 +384,19 @@ ob_end_clean();
                             <span class="dropdown-arrow">▼</span>
                         </button>
                         <div class="nav-dropdown-menu" id="hrfinance">
-                            <a href="/ergon/leaves" class="nav-dropdown-item <?= ($active_page ?? '') === 'leaves' ? 'nav-dropdown-item--active' : '' ?>">
+                            <a href="/ergon-site/leaves" class="nav-dropdown-item <?= ($active_page ?? '') === 'leaves' ? 'nav-dropdown-item--active' : '' ?>">
                                 <span class="nav-icon">📅</span>
                                 Leaves
                             </a>
-                            <a href="/ergon/expenses" class="nav-dropdown-item <?= ($active_page ?? '') === 'expenses' ? 'nav-dropdown-item--active' : '' ?>">
+                            <a href="/ergon-site/expenses" class="nav-dropdown-item <?= ($active_page ?? '') === 'expenses' ? 'nav-dropdown-item--active' : '' ?>">
                                 <span class="nav-icon">💰</span>
                                 Expenses
                             </a>
-                            <a href="/ergon/advances" class="nav-dropdown-item <?= ($active_page ?? '') === 'advances' ? 'nav-dropdown-item--active' : '' ?>">
+                            <a href="/ergon-site/advances" class="nav-dropdown-item <?= ($active_page ?? '') === 'advances' ? 'nav-dropdown-item--active' : '' ?>">
                                 <span class="nav-icon">💳</span>
                                 Advances
                             </a>
-                            <a href="/ergon/attendance" class="nav-dropdown-item <?= ($active_page ?? '') === 'attendance' ? 'nav-dropdown-item--active' : '' ?>">
+                            <a href="/ergon-site/attendance" class="nav-dropdown-item <?= ($active_page ?? '') === 'attendance' ? 'nav-dropdown-item--active' : '' ?>">
                                 <span class="nav-icon">📍</span>
                                 Attendance
                             </a>
@@ -370,17 +409,20 @@ ob_end_clean();
                             <span class="dropdown-arrow">▼</span>
                         </button>
                         <div class="nav-dropdown-menu" id="analytics">
-                            <a href="/ergon/finance" class="nav-dropdown-item <?= ($active_page ?? '') === 'finance' ? 'nav-dropdown-item--active' : '' ?>">
+                            <a href="/ergon-site/finance" class="nav-dropdown-item <?= ($active_page ?? '') === 'finance' ? 'nav-dropdown-item--active' : '' ?> <?= $financeDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
                                 <span class="nav-icon">💰</span>
                                 Finance
+                                <?php if ($financeDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                             </a>
-                            <a href="/ergon/reports" class="nav-dropdown-item <?= ($active_page ?? '') === 'reports' ? 'nav-dropdown-item--active' : '' ?>">
+                            <a href="/ergon-site/reports" class="nav-dropdown-item <?= ($active_page ?? '') === 'reports' ? 'nav-dropdown-item--active' : '' ?> <?= $reportsDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
                                 <span class="nav-icon">📈</span>
                                 Reports
+                                <?php if ($reportsDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                             </a>
-                            <a href="/ergon/settings" class="nav-dropdown-item <?= ($active_page ?? '') === 'settings' ? 'nav-dropdown-item--active' : '' ?>">
+                            <a href="/ergon-site/settings" class="nav-dropdown-item <?= ($active_page ?? '') === 'settings' ? 'nav-dropdown-item--active' : '' ?> <?= $analyticsDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
                                 <span class="nav-icon">⚙️</span>
                                 Settings
+                                <?php if ($analyticsDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                             </a>
                         </div>
                     </div>
@@ -392,11 +434,11 @@ ob_end_clean();
                             <span class="dropdown-arrow">▼</span>
                         </button>
                         <div class="nav-dropdown-menu" id="overview">
-                            <a href="/ergon/dashboard" class="nav-dropdown-item <?= ($active_page ?? '') === 'dashboard' ? 'nav-dropdown-item--active' : '' ?>">
+                            <a href="/ergon-site/dashboard" class="nav-dropdown-item <?= ($active_page ?? '') === 'dashboard' ? 'nav-dropdown-item--active' : '' ?>">
                                 <span class="nav-icon">📊</span>
                                 Dashboard
                             </a>
-                            <a href="/ergon/gamification/team-competition" class="nav-dropdown-item <?= ($active_page ?? '') === 'team-competition' ? 'nav-dropdown-item--active' : '' ?>">
+                            <a href="/ergon-site/gamification/team-competition" class="nav-dropdown-item <?= ($active_page ?? '') === 'team-competition' ? 'nav-dropdown-item--active' : '' ?>">
                                 <span class="nav-icon">🏆</span>
                                 Competition
                             </a>
@@ -409,13 +451,15 @@ ob_end_clean();
                             <span class="dropdown-arrow">▼</span>
                         </button>
                         <div class="nav-dropdown-menu" id="team">
-                            <a href="/ergon/users" class="nav-dropdown-item <?= ($active_page ?? '') === 'users' ? 'nav-dropdown-item--active' : '' ?>">
+                            <a href="/ergon-site/users" class="nav-dropdown-item <?= ($active_page ?? '') === 'users' ? 'nav-dropdown-item--active' : '' ?> <?= $usersDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
                                 <span class="nav-icon">👥</span>
                                 Members
+                                <?php if ($usersDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                             </a>
-                            <a href="/ergon/departments" class="nav-dropdown-item <?= ($active_page ?? '') === 'departments' ? 'nav-dropdown-item--active' : '' ?>">
+                            <a href="/ergon-site/departments" class="nav-dropdown-item <?= ($active_page ?? '') === 'departments' ? 'nav-dropdown-item--active' : '' ?> <?= $departmentsDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
                                 <span class="nav-icon">🏢</span>
                                 Departments
+                                <?php if ($departmentsDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                             </a>
                         </div>
                     </div>
@@ -426,17 +470,20 @@ ob_end_clean();
                             <span class="dropdown-arrow">▼</span>
                         </button>
                         <div class="nav-dropdown-menu" id="tasks">
-                            <a href="/ergon/tasks" class="nav-dropdown-item <?= ($active_page ?? '') === 'tasks' ? 'nav-dropdown-item--active' : '' ?>">
+                            <a href="/ergon-site/tasks" class="nav-dropdown-item <?= ($active_page ?? '') === 'tasks' ? 'nav-dropdown-item--active' : '' ?> <?= $tasksDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
                                 <span class="nav-icon">✅</span>
                                 Overall Tasks
+                                <?php if ($tasksDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                             </a>
-                            <a href="/ergon/workflow/daily-planner" class="nav-dropdown-item <?= ($active_page ?? '') === 'daily-planner' ? 'nav-dropdown-item--active' : '' ?>">
+                            <a href="/ergon-site/workflow/daily-planner" class="nav-dropdown-item <?= ($active_page ?? '') === 'daily-planner' ? 'nav-dropdown-item--active' : '' ?> <?= $tasksDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
                                 <span class="nav-icon">🌅</span>
                                 Daily Planner
+                                <?php if ($tasksDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                             </a>
-                            <a href="/ergon/contacts/followups" class="nav-dropdown-item <?= ($active_page ?? '') === 'contact_followups' ? 'nav-dropdown-item--active' : '' ?>">
+                            <a href="/ergon-site/contacts/followups" class="nav-dropdown-item <?= ($active_page ?? '') === 'contact_followups' ? 'nav-dropdown-item--active' : '' ?> <?= $followupsDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
                                 <span class="nav-icon">📞</span>
                                 Follow-ups
+                                <?php if ($followupsDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                             </a>
                         </div>
                     </div>
@@ -447,25 +494,26 @@ ob_end_clean();
                             <span class="dropdown-arrow">▼</span>
                         </button>
                         <div class="nav-dropdown-menu" id="approvals">
-                            <a href="/ergon/leaves" class="nav-dropdown-item <?= ($active_page ?? '') === 'leaves' ? 'nav-dropdown-item--active' : '' ?>">
+                            <a href="/ergon-site/leaves" class="nav-dropdown-item <?= ($active_page ?? '') === 'leaves' ? 'nav-dropdown-item--active' : '' ?>">
                                 <span class="nav-icon">📅</span>
                                 Leaves
                             </a>
-                            <a href="/ergon/expenses" class="nav-dropdown-item <?= ($active_page ?? '') === 'expenses' ? 'nav-dropdown-item--active' : '' ?>">
+                            <a href="/ergon-site/expenses" class="nav-dropdown-item <?= ($active_page ?? '') === 'expenses' ? 'nav-dropdown-item--active' : '' ?>">
                                 <span class="nav-icon">💰</span>
                                 Expenses
                             </a>
-                            <a href="/ergon/advances" class="nav-dropdown-item <?= ($active_page ?? '') === 'advances' ? 'nav-dropdown-item--active' : '' ?>">
+                            <a href="/ergon-site/advances" class="nav-dropdown-item <?= ($active_page ?? '') === 'advances' ? 'nav-dropdown-item--active' : '' ?>">
                                 <span class="nav-icon">💳</span>
                                 Advances
                             </a>
-                            <a href="/ergon/attendance" class="nav-dropdown-item <?= ($active_page ?? '') === 'attendance' ? 'nav-dropdown-item--active' : '' ?>">
+                            <a href="/ergon-site/attendance" class="nav-dropdown-item <?= ($active_page ?? '') === 'attendance' ? 'nav-dropdown-item--active' : '' ?>">
                                 <span class="nav-icon">📍</span>
                                 Attendance
                             </a>
-                            <a href="/ergon/reports/activity" class="nav-dropdown-item <?= ($active_page ?? '') === 'activity' ? 'nav-dropdown-item--active' : '' ?>">
+                            <a href="/ergon-site/reports/activity" class="nav-dropdown-item <?= ($active_page ?? '') === 'activity' ? 'nav-dropdown-item--active' : '' ?> <?= $reportsDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
                                 <span class="nav-icon">⏱️</span>
                                 Reports
+                                <?php if ($reportsDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                             </a>
                         </div>
                     </div>
@@ -477,15 +525,15 @@ ob_end_clean();
                             <span class="dropdown-arrow">▼</span>
                         </button>
                         <div class="nav-dropdown-menu" id="overview">
-                            <a href="/ergon/dashboard" class="nav-dropdown-item <?= ($active_page ?? '') === 'dashboard' ? 'nav-dropdown-item--active' : '' ?>">
+                            <a href="/ergon-site/dashboard" class="nav-dropdown-item <?= ($active_page ?? '') === 'dashboard' ? 'nav-dropdown-item--active' : '' ?>">
                                 <span class="nav-icon">🏠</span>
                                 Dashboard
                             </a>
-                            <a href="/ergon/gamification/individual" class="nav-dropdown-item <?= ($active_page ?? '') === 'individual-gamification' ? 'nav-dropdown-item--active' : '' ?>">
+                            <a href="/ergon-site/gamification/individual" class="nav-dropdown-item <?= ($active_page ?? '') === 'individual-gamification' ? 'nav-dropdown-item--active' : '' ?>">
                                 <span class="nav-icon">🎖️</span>
                                 My Performance
                             </a>
-                            <a href="/ergon/gamification/team-competition" class="nav-dropdown-item <?= ($active_page ?? '') === 'team-competition' ? 'nav-dropdown-item--active' : '' ?>">
+                            <a href="/ergon-site/gamification/team-competition" class="nav-dropdown-item <?= ($active_page ?? '') === 'team-competition' ? 'nav-dropdown-item--active' : '' ?>">
                                 <span class="nav-icon">🏆</span>
                                 Team Competition
                             </a>
@@ -498,17 +546,20 @@ ob_end_clean();
                             <span class="dropdown-arrow">▼</span>
                         </button>
                         <div class="nav-dropdown-menu" id="work">
-                            <a href="/ergon/tasks" class="nav-dropdown-item <?= ($active_page ?? '') === 'tasks' ? 'nav-dropdown-item--active' : '' ?>">
+                            <a href="/ergon-site/tasks" class="nav-dropdown-item <?= ($active_page ?? '') === 'tasks' ? 'nav-dropdown-item--active' : '' ?> <?= $tasksDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
                                 <span class="nav-icon">✅</span>
                                 Tasks
+                                <?php if ($tasksDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                             </a>
-                            <a href="/ergon/workflow/daily-planner" class="nav-dropdown-item <?= ($active_page ?? '') === 'daily-planner' ? 'nav-dropdown-item--active' : '' ?>">
+                            <a href="/ergon-site/workflow/daily-planner" class="nav-dropdown-item <?= ($active_page ?? '') === 'daily-planner' ? 'nav-dropdown-item--active' : '' ?> <?= $tasksDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
                                 <span class="nav-icon">📅</span>
                                 Daily Planner
+                                <?php if ($tasksDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                             </a>
-                            <a href="/ergon/contacts/followups" class="nav-dropdown-item <?= ($active_page ?? '') === 'contact_followups' ? 'nav-dropdown-item--active' : '' ?>">
+                            <a href="/ergon-site/contacts/followups" class="nav-dropdown-item <?= ($active_page ?? '') === 'contact_followups' ? 'nav-dropdown-item--active' : '' ?> <?= $followupsDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
                                 <span class="nav-icon">📞</span>
                                 Follow-ups
+                                <?php if ($followupsDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                             </a>
                         </div>
                     </div>
@@ -519,23 +570,23 @@ ob_end_clean();
                             <span class="dropdown-arrow">▼</span>
                         </button>
                         <div class="nav-dropdown-menu" id="personal">
-                            <a href="/ergon/user/requests" class="nav-dropdown-item <?= ($active_page ?? '') === 'requests' ? 'nav-dropdown-item--active' : '' ?>">
+                            <a href="/ergon-site/user/requests" class="nav-dropdown-item <?= ($active_page ?? '') === 'requests' ? 'nav-dropdown-item--active' : '' ?>">
                                 <span class="nav-icon">📋</span>
                                 Requests
                             </a>
-                            <a href="/ergon/leaves" class="nav-dropdown-item <?= ($active_page ?? '') === 'leaves' ? 'nav-dropdown-item--active' : '' ?>">
+                            <a href="/ergon-site/leaves" class="nav-dropdown-item <?= ($active_page ?? '') === 'leaves' ? 'nav-dropdown-item--active' : '' ?>">
                                 <span class="nav-icon">📅</span>
                                 Leaves
                             </a>
-                            <a href="/ergon/expenses" class="nav-dropdown-item <?= ($active_page ?? '') === 'expenses' ? 'nav-dropdown-item--active' : '' ?>">
+                            <a href="/ergon-site/expenses" class="nav-dropdown-item <?= ($active_page ?? '') === 'expenses' ? 'nav-dropdown-item--active' : '' ?>">
                                 <span class="nav-icon">💰</span>
                                 Expenses
                             </a>
-                            <a href="/ergon/advances" class="nav-dropdown-item <?= ($active_page ?? '') === 'advances' ? 'nav-dropdown-item--active' : '' ?>">
+                            <a href="/ergon-site/advances" class="nav-dropdown-item <?= ($active_page ?? '') === 'advances' ? 'nav-dropdown-item--active' : '' ?>">
                                 <span class="nav-icon">💳</span>
                                 Advances
                             </a>
-                            <a href="/ergon/attendance" class="nav-dropdown-item <?= ($active_page ?? '') === 'attendance' ? 'nav-dropdown-item--active' : '' ?>">
+                            <a href="/ergon-site/attendance" class="nav-dropdown-item <?= ($active_page ?? '') === 'attendance' ? 'nav-dropdown-item--active' : '' ?>">
                                 <span class="nav-icon">📍</span>
                                 Attendance
                             </a>
@@ -558,165 +609,185 @@ ob_end_clean();
         <nav class="sidebar__menu">
             <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'owner'): ?>
                 <div class="sidebar__divider">Overview</div>
-                <a href="/ergon/dashboard" class="sidebar__link <?= ($active_page ?? '') === 'dashboard' ? 'sidebar__link--active' : '' ?>">
+                <a href="/ergon-site/dashboard" class="sidebar__link <?= ($active_page ?? '') === 'dashboard' ? 'sidebar__link--active' : '' ?>">
                     <span class="sidebar__icon"><i class="bi bi-speedometer2"></i></span>
                     Dashboard
                 </a>
-                <a href="/ergon/gamification/team-competition" class="sidebar__link <?= ($active_page ?? '') === 'team-competition' ? 'sidebar__link--active' : '' ?>">
+                <a href="/ergon-site/gamification/team-competition" class="sidebar__link <?= ($active_page ?? '') === 'team-competition' ? 'sidebar__link--active' : '' ?>">
                     <span class="sidebar__icon"><i class="bi bi-trophy-fill"></i></span>
                     Competition
                 </a>
                 
                 <div class="sidebar__divider">Management</div>
-                <a href="/ergon/system-admin" class="sidebar__link <?= ($active_page ?? '') === 'system-admin' ? 'sidebar__link--active' : '' ?>">
+                <a href="/ergon-site/system-admin" class="sidebar__link <?= ($active_page ?? '') === 'system-admin' ? 'sidebar__link--active' : '' ?> <?= $systemAdminDisabled ? 'sidebar__link--disabled' : '' ?>">
                     <span class="sidebar__icon">🔧</span>
                     System
+                    <?php if ($systemAdminDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                 </a>
-                <a href="/ergon/admin/management" class="sidebar__link <?= ($active_page ?? '') === 'admin' ? 'sidebar__link--active' : '' ?>">
+                <a href="/ergon-site/admin/management" class="sidebar__link <?= ($active_page ?? '') === 'admin' ? 'sidebar__link--active' : '' ?> <?= $usersDisabled ? 'sidebar__link--disabled' : '' ?>">
                     <span class="sidebar__icon">👥</span>
                     Users
+                    <?php if ($usersDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                 </a>
-                <a href="/ergon/departments" class="sidebar__link <?= ($active_page ?? '') === 'departments' ? 'sidebar__link--active' : '' ?>">
+                <a href="/ergon-site/departments" class="sidebar__link <?= ($active_page ?? '') === 'departments' ? 'sidebar__link--active' : '' ?> <?= $departmentsDisabled ? 'sidebar__link--disabled' : '' ?>">
                     <span class="sidebar__icon">🏢</span>
                     Departments
+                    <?php if ($departmentsDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                 </a>
-                <a href="/ergon/project-management" class="sidebar__link <?= ($active_page ?? '') === 'project-management' ? 'sidebar__link--active' : '' ?>">
+                <a href="/ergon-site/project-management" class="sidebar__link <?= ($active_page ?? '') === 'project-management' ? 'sidebar__link--active' : '' ?> <?= $projectsDisabled ? 'sidebar__link--disabled' : '' ?>">
                     <span class="sidebar__icon">📁</span>
                     Projects
+                    <?php if ($projectsDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
+                </a>
+                <a href="/ergon-site/modules" class="sidebar__link <?= ($active_page ?? '') === 'modules' ? 'sidebar__link--active' : '' ?>">
+                    <span class="sidebar__icon">🔧</span>
+                    Modules
                 </a>
                 
                 <div class="sidebar__divider">Operations</div>
-                <a href="/ergon/tasks" class="sidebar__link <?= ($active_page ?? '') === 'tasks' ? 'sidebar__link--active' : '' ?>">
+                <a href="/ergon-site/tasks" class="sidebar__link <?= ($active_page ?? '') === 'tasks' ? 'sidebar__link--active' : '' ?> <?= $tasksDisabled ? 'sidebar__link--disabled' : '' ?>">
                     <span class="sidebar__icon">✅</span>
                     Tasks
+                    <?php if ($tasksDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                 </a>
-                <a href="/ergon/contacts/followups" class="sidebar__link <?= ($active_page ?? '') === 'contact_followups' ? 'sidebar__link--active' : '' ?>">
+                <a href="/ergon-site/contacts/followups" class="sidebar__link <?= ($active_page ?? '') === 'contact_followups' ? 'sidebar__link--active' : '' ?> <?= $followupsDisabled ? 'sidebar__link--disabled' : '' ?>">
                     <span class="sidebar__icon">📞</span>
                     Follow-ups
+                    <?php if ($followupsDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                 </a>
                 
                 <div class="sidebar__divider">HR & Finance</div>
-                <a href="/ergon/leaves" class="sidebar__link <?= ($active_page ?? '') === 'leaves' ? 'sidebar__link--active' : '' ?>">
+                <a href="/ergon-site/leaves" class="sidebar__link <?= ($active_page ?? '') === 'leaves' ? 'sidebar__link--active' : '' ?>">
                     <span class="sidebar__icon">📅</span>
                     Leaves
                 </a>
-                <a href="/ergon/expenses" class="sidebar__link <?= ($active_page ?? '') === 'expenses' ? 'sidebar__link--active' : '' ?>">
+                <a href="/ergon-site/expenses" class="sidebar__link <?= ($active_page ?? '') === 'expenses' ? 'sidebar__link--active' : '' ?>">
                     <span class="sidebar__icon">💰</span>
                     Expenses
                 </a>
-                <a href="/ergon/advances" class="sidebar__link <?= ($active_page ?? '') === 'advances' ? 'sidebar__link--active' : '' ?>">
+                <a href="/ergon-site/advances" class="sidebar__link <?= ($active_page ?? '') === 'advances' ? 'sidebar__link--active' : '' ?>">
                     <span class="sidebar__icon">💳</span>
                     Advances
                 </a>
-                <a href="/ergon/attendance" class="sidebar__link <?= ($active_page ?? '') === 'attendance' ? 'sidebar__link--active' : '' ?>">
+                <a href="/ergon-site/attendance" class="sidebar__link <?= ($active_page ?? '') === 'attendance' ? 'sidebar__link--active' : '' ?>">
                     <span class="sidebar__icon">📍</span>
                     Attendance
                 </a>
                 
                 <div class="sidebar__divider">Analytics</div>
-                <a href="/ergon/finance" class="sidebar__link <?= ($active_page ?? '') === 'finance' ? 'sidebar__link--active' : '' ?>">
+                <a href="/ergon-site/finance" class="sidebar__link <?= ($active_page ?? '') === 'finance' ? 'sidebar__link--active' : '' ?> <?= $financeDisabled ? 'sidebar__link--disabled' : '' ?>">
                     <span class="sidebar__icon">💰</span>
                     Finance
+                    <?php if ($financeDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                 </a>
             <?php elseif (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
                 <div class="sidebar__divider">Overview</div>
-                <a href="/ergon/dashboard" class="sidebar__link <?= ($active_page ?? '') === 'dashboard' ? 'sidebar__link--active' : '' ?>">
+                <a href="/ergon-site/dashboard" class="sidebar__link <?= ($active_page ?? '') === 'dashboard' ? 'sidebar__link--active' : '' ?>">
                     <span class="sidebar__icon">📊</span>
                     Dashboard
                 </a>
-                <a href="/ergon/gamification/team-competition" class="sidebar__link <?= ($active_page ?? '') === 'team-competition' ? 'sidebar__link--active' : '' ?>">
+                <a href="/ergon-site/gamification/team-competition" class="sidebar__link <?= ($active_page ?? '') === 'team-competition' ? 'sidebar__link--active' : '' ?>">
                     <span class="sidebar__icon">🏆</span>
                     Competition
                 </a>
                 
                 <div class="sidebar__divider">Team</div>
-                <a href="/ergon/users" class="sidebar__link <?= ($active_page ?? '') === 'users' ? 'sidebar__link--active' : '' ?>">
+                <a href="/ergon-site/users" class="sidebar__link <?= ($active_page ?? '') === 'users' ? 'sidebar__link--active' : '' ?> <?= $usersDisabled ? 'sidebar__link--disabled' : '' ?>">
                     <span class="sidebar__icon">👥</span>
                     Members
+                    <?php if ($usersDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                 </a>
-                <a href="/ergon/departments" class="sidebar__link <?= ($active_page ?? '') === 'departments' ? 'sidebar__link--active' : '' ?>">
+                <a href="/ergon-site/departments" class="sidebar__link <?= ($active_page ?? '') === 'departments' ? 'sidebar__link--active' : '' ?> <?= $departmentsDisabled ? 'sidebar__link--disabled' : '' ?>">
                     <span class="sidebar__icon">🏢</span>
                     Departments
+                    <?php if ($departmentsDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                 </a>
                 
                 <div class="sidebar__divider">Tasks</div>
-                <a href="/ergon/tasks" class="sidebar__link <?= ($active_page ?? '') === 'tasks' ? 'sidebar__link--active' : '' ?>">
+                <a href="/ergon-site/tasks" class="sidebar__link <?= ($active_page ?? '') === 'tasks' ? 'sidebar__link--active' : '' ?> <?= $tasksDisabled ? 'sidebar__link--disabled' : '' ?>">
                     <span class="sidebar__icon">✅</span>
                     Overall Tasks
+                    <?php if ($tasksDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                 </a>
-                <a href="/ergon/workflow/daily-planner" class="sidebar__link <?= ($active_page ?? '') === 'daily-planner' ? 'sidebar__link--active' : '' ?>">
+                <a href="/ergon-site/workflow/daily-planner" class="sidebar__link <?= ($active_page ?? '') === 'daily-planner' ? 'sidebar__link--active' : '' ?> <?= $tasksDisabled ? 'sidebar__link--disabled' : '' ?>">
                     <span class="sidebar__icon">🌅</span>
                     Daily Planner
+                    <?php if ($tasksDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                 </a>
-                <a href="/ergon/contacts/followups" class="sidebar__link <?= ($active_page ?? '') === 'contact_followups' ? 'sidebar__link--active' : '' ?>">
+                <a href="/ergon-site/contacts/followups" class="sidebar__link <?= ($active_page ?? '') === 'contact_followups' ? 'sidebar__link--active' : '' ?> <?= $followupsDisabled ? 'sidebar__link--disabled' : '' ?>">
                     <span class="sidebar__icon">📞</span>
                     Follow-ups
+                    <?php if ($followupsDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                 </a>
                 
                 <div class="sidebar__divider">Approvals</div>
-                <a href="/ergon/leaves" class="sidebar__link <?= ($active_page ?? '') === 'leaves' ? 'sidebar__link--active' : '' ?>">
+                <a href="/ergon-site/leaves" class="sidebar__link <?= ($active_page ?? '') === 'leaves' ? 'sidebar__link--active' : '' ?>">
                     <span class="sidebar__icon">📅</span>
                     Leaves
                 </a>
-                <a href="/ergon/expenses" class="sidebar__link <?= ($active_page ?? '') === 'expenses' ? 'sidebar__link--active' : '' ?>">
+                <a href="/ergon-site/expenses" class="sidebar__link <?= ($active_page ?? '') === 'expenses' ? 'sidebar__link--active' : '' ?>">
                     <span class="sidebar__icon">💰</span>
                     Expenses
                 </a>
-                <a href="/ergon/advances" class="sidebar__link <?= ($active_page ?? '') === 'advances' ? 'sidebar__link--active' : '' ?>">
+                <a href="/ergon-site/advances" class="sidebar__link <?= ($active_page ?? '') === 'advances' ? 'sidebar__link--active' : '' ?>">
                     <span class="sidebar__icon">💳</span>
                     Advances
                 </a>
-                <a href="/ergon/attendance" class="sidebar__link <?= ($active_page ?? '') === 'attendance' ? 'sidebar__link--active' : '' ?>">
+                <a href="/ergon-site/attendance" class="sidebar__link <?= ($active_page ?? '') === 'attendance' ? 'sidebar__link--active' : '' ?>">
                     <span class="sidebar__icon">📍</span>
                     Attendance
                 </a>
-                <a href="/ergon/reports/activity" class="sidebar__link <?= ($active_page ?? '') === 'activity' ? 'sidebar__link--active' : '' ?>">
+                <a href="/ergon-site/reports/activity" class="sidebar__link <?= ($active_page ?? '') === 'activity' ? 'sidebar__link--active' : '' ?> <?= $reportsDisabled ? 'sidebar__link--disabled' : '' ?>">
                     <span class="sidebar__icon">⏱️</span>
                     Reports
+                    <?php if ($reportsDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                 </a>
             <?php else: ?>
                 <div class="sidebar__divider">Overview</div>
-                <a href="/ergon/dashboard" class="sidebar__link <?= ($active_page ?? '') === 'dashboard' ? 'sidebar__link--active' : '' ?>">
+                <a href="/ergon-site/dashboard" class="sidebar__link <?= ($active_page ?? '') === 'dashboard' ? 'sidebar__link--active' : '' ?>">
                     <span class="sidebar__icon">🏠</span>
                     Dashboard
                 </a>
-                <a href="/ergon/gamification/individual" class="sidebar__link <?= ($active_page ?? '') === 'individual-gamification' ? 'sidebar__link--active' : '' ?>">
+                <a href="/ergon-site/gamification/individual" class="sidebar__link <?= ($active_page ?? '') === 'individual-gamification' ? 'sidebar__link--active' : '' ?>">
                     <span class="sidebar__icon">🏅</span>
                     My Performance
                 </a>
-                <a href="/ergon/gamification/team-competition" class="sidebar__link <?= ($active_page ?? '') === 'team-competition' ? 'sidebar__link--active' : '' ?>">
+                <a href="/ergon-site/gamification/team-competition" class="sidebar__link <?= ($active_page ?? '') === 'team-competition' ? 'sidebar__link--active' : '' ?>">
                     <span class="sidebar__icon">🏆</span>
                     Team Competition
                 </a>
                 
                 <div class="sidebar__divider">Work</div>
-                <a href="/ergon/tasks" class="sidebar__link <?= ($active_page ?? '') === 'tasks' ? 'sidebar__link--active' : '' ?>">
+                <a href="/ergon-site/tasks" class="sidebar__link <?= ($active_page ?? '') === 'tasks' ? 'sidebar__link--active' : '' ?> <?= $tasksDisabled ? 'sidebar__link--disabled' : '' ?>">
                     <span class="sidebar__icon">✅</span>
                     Tasks
+                    <?php if ($tasksDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                 </a>
-                <a href="/ergon/workflow/daily-planner" class="sidebar__link <?= ($active_page ?? '') === 'daily-planner' ? 'sidebar__link--active' : '' ?>">
+                <a href="/ergon-site/workflow/daily-planner" class="sidebar__link <?= ($active_page ?? '') === 'daily-planner' ? 'sidebar__link--active' : '' ?> <?= $tasksDisabled ? 'sidebar__link--disabled' : '' ?>">
                     <span class="sidebar__icon">📅</span>
                     Daily Planner
+                    <?php if ($tasksDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                 </a>
-                <a href="/ergon/contacts/followups" class="sidebar__link <?= ($active_page ?? '') === 'contact_followups' ? 'sidebar__link--active' : '' ?>">
+                <a href="/ergon-site/contacts/followups" class="sidebar__link <?= ($active_page ?? '') === 'contact_followups' ? 'sidebar__link--active' : '' ?> <?= $followupsDisabled ? 'sidebar__link--disabled' : '' ?>">
                     <span class="sidebar__icon">📞</span>
                     Follow-ups
+                    <?php if ($followupsDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                 </a>
                 
                 <div class="sidebar__divider">Personal</div>
-                <a href="/ergon/leaves" class="sidebar__link <?= ($active_page ?? '') === 'leaves' ? 'sidebar__link--active' : '' ?>">
+                <a href="/ergon-site/leaves" class="sidebar__link <?= ($active_page ?? '') === 'leaves' ? 'sidebar__link--active' : '' ?>">
                     <span class="sidebar__icon">📅</span>
                     Leaves
                 </a>
-                <a href="/ergon/expenses" class="sidebar__link <?= ($active_page ?? '') === 'expenses' ? 'sidebar__link--active' : '' ?>">
+                <a href="/ergon-site/expenses" class="sidebar__link <?= ($active_page ?? '') === 'expenses' ? 'sidebar__link--active' : '' ?>">
                     <span class="sidebar__icon">💰</span>
                     Expenses
                 </a>
-                <a href="/ergon/advances" class="sidebar__link <?= ($active_page ?? '') === 'advances' ? 'sidebar__link--active' : '' ?>">
+                <a href="/ergon-site/advances" class="sidebar__link <?= ($active_page ?? '') === 'advances' ? 'sidebar__link--active' : '' ?>">
                     <span class="sidebar__icon">💳</span>
                     Advances
                 </a>
-                <a href="/ergon/attendance" class="sidebar__link <?= ($active_page ?? '') === 'attendance' ? 'sidebar__link--active' : '' ?>">
+                <a href="/ergon-site/attendance" class="sidebar__link <?= ($active_page ?? '') === 'attendance' ? 'sidebar__link--active' : '' ?>">
                     <span class="sidebar__icon">📍</span>
                     Attendance
                 </a>
@@ -727,7 +798,7 @@ ob_end_clean();
     <div class="notification-dropdown" id="notificationDropdown">
         <div class="notification-header">
             <h3>Notifications</h3>
-            <button type="button" class="view-all-link" id="viewAllNotificationsBtn" onclick="window.location.href='/ergon/notifications'">View All</button>
+            <button type="button" class="view-all-link" id="viewAllNotificationsBtn" onclick="window.location.href='/ergon-site/notifications'">View All</button>
         </div>
         <div class="notification-list" id="notificationList">
             <div class="notification-loading">Loading notifications...</div>
@@ -798,7 +869,7 @@ ob_end_clean();
         
         list.innerHTML = '<div class="notification-loading">Loading...</div>';
         
-        fetch('/ergon/api/notifications.php', {
+        fetch('/ergon-site/api/notifications.php', {
             credentials: 'same-origin',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
@@ -813,7 +884,7 @@ ob_end_clean();
                         const message = escapeHtml(notif.message || '');
                         
                         return `
-                            <a href="/ergon/notifications" class="notification-item">
+                            <a href="/ergon-site/notifications" class="notification-item">
                                 <div class="notification-title">${title}</div>
                                 <div class="notification-message">${message}</div>
                                 <div class="notification-time">${time}</div>
@@ -868,7 +939,7 @@ ob_end_clean();
         if (window.history.length > 1) {
             window.history.back();
         } else {
-            window.location.href = '/ergon/dashboard';
+            window.location.href = '/ergon-site/dashboard';
         }
     }
     
@@ -1023,7 +1094,7 @@ ob_end_clean();
                 deleteBtn.style.opacity = '0.5';
             }
             
-            fetch('/ergon/' + module + '/delete/' + id, {
+            fetch('/ergon-site/' + module + '/delete/' + id, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -1129,7 +1200,7 @@ ob_end_clean();
                     
                     text.textContent = action === 'in' ? 'Clocking In...' : 'Clocking Out...';
                     
-                    fetch('/ergon/attendance/clock', {
+                    fetch('/ergon-site/attendance/clock', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                         body: `type=${action}&latitude=${latitude}&longitude=${longitude}`
@@ -1321,7 +1392,7 @@ ob_end_clean();
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
         
-        fetch('/ergon/attendance/status', {
+        fetch('/ergon-site/attendance/status', {
             signal: controller.signal,
             headers: {
                 'Cache-Control': 'no-cache',

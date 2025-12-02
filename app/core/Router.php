@@ -24,8 +24,8 @@ class Router {
         $isLocalhost = strpos($_SERVER['HTTP_HOST'] ?? '', 'localhost') !== false;
         
         if ($isLocalhost) {
-            // For localhost, remove /ergon prefix
-            $basePath = '/ergon';
+            // For localhost, remove /ergon-site prefix
+            $basePath = '/ergon-site';
             if (strpos($path, $basePath) === 0) {
                 $path = substr($path, strlen($basePath));
             }
@@ -136,8 +136,8 @@ class Router {
             echo "<body><h1>404 - Page Not Found</h1>";
             echo "<p>The requested page could not be found.</p>";
             $isProduction = strpos($_SERVER['HTTP_HOST'] ?? '', 'athenas.co.in') !== false;
-            $basePath = '/ergon';
-            echo "<a href='{$basePath}/login'>Return to Login</a></body></html>";
+            $basePath = '/ergon-site';
+            echo "<a href='/ergon-site/login'>Return to Login</a></body></html>";
         }
     }
     

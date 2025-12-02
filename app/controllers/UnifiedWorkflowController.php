@@ -9,6 +9,10 @@ class UnifiedWorkflowController extends Controller {
     public function dailyPlanner($date = null) {
         AuthMiddleware::requireAuth();
         
+        // Check if tasks module is enabled
+        require_once __DIR__ . '/../middlewares/ModuleMiddleware.php';
+        ModuleMiddleware::requireModule('tasks');
+        
         $date = $date ?? date('Y-m-d');
         
         // Validate date format
@@ -103,6 +107,10 @@ class UnifiedWorkflowController extends Controller {
     
     public function followups() {
         AuthMiddleware::requireAuth();
+        
+        // Check if followups module is enabled
+        require_once __DIR__ . '/../middlewares/ModuleMiddleware.php';
+        ModuleMiddleware::requireModule('followups');
         
         try {
             require_once __DIR__ . '/../config/database.php';

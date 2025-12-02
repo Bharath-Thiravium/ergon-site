@@ -13,9 +13,13 @@ class ContactFollowupController extends Controller {
     
     public function index() {
         if (!isset($_SESSION['user_id'])) {
-            header('Location: /ergon/login');
+            header('Location: /ergon-site/login');
             exit;
         }
+        
+        // Check if followups module is enabled
+        require_once __DIR__ . '/../middlewares/ModuleMiddleware.php';
+        ModuleMiddleware::requireModule('followups');
         
         try {
             $db = Database::connect();

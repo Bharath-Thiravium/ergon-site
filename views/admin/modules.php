@@ -115,7 +115,8 @@ function toggleModule(module, action) {
         return;
     }
     
-    fetch('/ergon/modules/toggle', {
+    const basePath = window.location.hostname === 'localhost' ? '/ergon-site' : '/ergon';
+    fetch(basePath + '/modules/toggle', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
