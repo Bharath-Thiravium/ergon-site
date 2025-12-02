@@ -1,10 +1,13 @@
 <?php
 
 require_once __DIR__ . '/../services/DataSyncService.php';
+require_once __DIR__ . '/../middlewares/ModuleMiddleware.php';
 
 class FinanceController {
     
     public function dashboard($request) {
+        ModuleMiddleware::requireModule('finance');
+        
         // Render finance dashboard view
         $title = 'Finance Dashboard';
         $active_page = 'finance';

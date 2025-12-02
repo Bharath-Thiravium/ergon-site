@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../core/Controller.php';
 require_once __DIR__ . '/../models/User.php';
+require_once __DIR__ . '/../middlewares/ModuleMiddleware.php';
 
 class UsersController extends Controller {
     
@@ -10,6 +11,8 @@ class UsersController extends Controller {
             header('Location: /ergon/login');
             exit;
         }
+        
+        ModuleMiddleware::requireModule('users');
         
         try {
             require_once __DIR__ . '/../config/database.php';

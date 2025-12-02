@@ -308,6 +308,10 @@ $router->post('/admin/assign', 'AdminManagementController', 'assignAdmin');
 $router->post('/admin/remove', 'AdminManagementController', 'removeAdmin');
 $router->post('/admin/change-password', 'AdminManagementController', 'changePassword');
 
+// Module Management Routes (Owner only)
+$router->get('/modules', 'ModuleController', 'index');
+$router->post('/modules/toggle', 'ModuleController', 'toggle');
+
 // System Admin Management Routes (Owner only)
 $router->get('/system-admin', 'SystemAdminController', 'index');
 $router->post('/system-admin/create', 'SystemAdminController', 'create');

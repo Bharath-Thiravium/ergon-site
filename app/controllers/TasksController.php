@@ -3,6 +3,7 @@ require_once __DIR__ . '/../models/Task.php';
 require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../helpers/Security.php';
 require_once __DIR__ . '/../middlewares/AuthMiddleware.php';
+require_once __DIR__ . '/../middlewares/ModuleMiddleware.php';
 require_once __DIR__ . '/../core/Controller.php';
 
 class TasksController extends Controller {
@@ -23,6 +24,7 @@ class TasksController extends Controller {
     
     public function index() {
         AuthMiddleware::requireAuth();
+        ModuleMiddleware::requireModule('tasks');
         
         try {
             require_once __DIR__ . '/../config/database.php';
@@ -49,6 +51,7 @@ class TasksController extends Controller {
     
     public function create() {
         AuthMiddleware::requireAuth();
+        ModuleMiddleware::requireModule('tasks');
         
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             return $this->store();
