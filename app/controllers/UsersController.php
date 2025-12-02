@@ -297,7 +297,7 @@ class UsersController extends Controller {
                         'password' => $tempPassword,
                         'employee_id' => $employeeId
                     ];
-                    header('Location: /ergon-site/users?success=User created successfully');
+                    header('Location: /ergon-site/users?success=User created successfully&t=' . time());
                     exit;
                 } else {
                     $errorInfo = $stmt->errorInfo();

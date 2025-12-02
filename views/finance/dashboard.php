@@ -41,6 +41,8 @@
                     </select>
                 </div>
             </div>
+            <input type="hidden" id="companyPrefixHidden" value="BKGE">
+            <input type="hidden" id="dateFilterHidden" value="all">
         </div>
     </div>
 
@@ -289,18 +291,46 @@
     </div>
 </div>
 
+<style>
+/* Hide page-actions-section for company_owner users */
+body[data-user-role="company_owner"] .page-actions-section {
+    display: none !important;
+}
+</style>
+
 <link rel="stylesheet" href="/ergon-site/views/finance/funnel-styles.css">
 <script src="/ergon-site/views/finance/dashboard-svg-charts.js"></script>
 <script src="/ergon-site/views/finance/dashboard-loader.js"></script>
 <script src="/ergon-site/views/finance/cashflow-listener.js"></script>
 <script>
-setTimeout(() => {
-    const prefix = document.getElementById('companyPrefix')?.value;
-    if (prefix) {
-        console.log('Auto-loading charts for prefix:', prefix);
-        loadAllCharts();
+// Fetch owner prefix function for dashboard.php
+function fetchOwnerPrefix() {
+    const prefixInput = document.getElementById('companyPrefix');
+    if (prefixInput && prefixInput.type === 'hidden') {
+        return Promise.resolve('BKGE');
     }
-}, 2000);
+    
+    return fetch('/ergon-site/src/api/owner-prefix.php')
+        .then(r => r.json())
+        .then(d => d.success ? d.prefix : 'BKGE')
+        .catch(() => 'BKGE');
+}
+
+// Force company_owner to use BKGE prefix immediately
+document.addEventListener('DOMContentLoaded', () => {
+    const prefixInput = document.getElementById('companyPrefix');
+    if (prefixInput && prefixInput.type === 'hidden') {
+        prefixInput.value = 'BKGE';
+        localStorage.setItem('financePrefix', 'BKGE');
+        console.log('Company owner forced to BKGE prefix');
+        
+        // Trigger data load immediately
+        setTimeout(() => {
+            if (typeof loadAllCharts === 'function') loadAllCharts();
+            if (typeof loadAllStatCardsData === 'function') loadAllStatCardsData();
+        }, 500);
+    }
+});
 </script>
 <script>
 
@@ -1003,7 +1033,7 @@ async function updateConversionFunnel(data) {
 
 async function loadOutstandingInvoices() {
     try {
-        const prefix = document.getElementById('companyPrefix').value;
+        const prefix = await fetchOwnerPrefix();
         if (!prefix) return;
         
         const response = await fetch(`/ergon-site/src/api/outstanding.php?prefix=${encodeURIComponent(prefix)}&limit=20`, {
@@ -1057,7 +1087,7 @@ async function loadOutstandingByCustomer(limit = 10) {
 
 async function loadRecentActivities(type = 'all') {
     try {
-        const prefix = document.getElementById('companyPrefix').value;
+        const prefix = await fetchOwnerPrefix();
         const container = document.getElementById('recentActivities');
         
         if (!prefix) {
@@ -1552,7 +1582,7 @@ function forceUpdateStats() {
 
 async function loadCustomersForFunnel() {
     try {
-        const prefix = document.getElementById('companyPrefix').value;
+        const prefix = await fetchOwnerPrefix();
         if (!prefix) return;
         
         const customerSelect = document.getElementById('customerFilter');
@@ -1577,7 +1607,7 @@ async function loadCustomersForFunnel() {
 
 async function updateConversionFunnel() {
     try {
-        const prefix = document.getElementById('companyPrefix').value;
+        const prefix = await fetchOwnerPrefix();
         if (!prefix) return;
         
         const customerSelect = document.getElementById('customerFilter');
@@ -1638,7 +1668,7 @@ async function updateConversionFunnel() {
 
 async function updateAnalyticsWidgets() {
     try {
-        const prefix = document.getElementById('companyPrefix').value;
+        const prefix = await fetchOwnerPrefix();
         const customerSelect = document.getElementById('customerFilter');
         const customerId = customerSelect ? customerSelect.value : '';
         
@@ -1667,7 +1697,7 @@ async function updateAnalyticsWidgets() {
 
 async function loadAllStatCardsData() {
     try {
-        const prefix = document.getElementById('companyPrefix').value.trim() || '';
+        const prefix = await fetchOwnerPrefix();
         if (!prefix) {
             console.log('No prefix selected, skipping stat cards update');
             return;

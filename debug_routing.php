@@ -1,46 +1,72 @@
 <?php
-// Debug script for routing issues
-// Place this in /public_html/ergon-site/debug_routing.php
+/**
+ * Debug Users Index Query
+ */
 
-echo "<h2>Routing Debug Information</h2>";
+session_start();
+$_SESSION['user_id'] = 1;
+$_SESSION['role'] = 'owner';
 
-echo "<h3>Server Variables:</h3>";
-echo "HTTP_HOST: " . ($_SERVER['HTTP_HOST'] ?? 'Not set') . "<br>";
-echo "REQUEST_URI: " . ($_SERVER['REQUEST_URI'] ?? 'Not set') . "<br>";
-echo "REQUEST_METHOD: " . ($_SERVER['REQUEST_METHOD'] ?? 'Not set') . "<br>";
-echo "SCRIPT_NAME: " . ($_SERVER['SCRIPT_NAME'] ?? 'Not set') . "<br>";
-echo "DOCUMENT_ROOT: " . ($_SERVER['DOCUMENT_ROOT'] ?? 'Not set') . "<br>";
-echo "PHP_SELF: " . ($_SERVER['PHP_SELF'] ?? 'Not set') . "<br>";
+require_once __DIR__ . '/app/config/database.php';
 
-echo "<h3>Path Analysis:</h3>";
-$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-echo "Parsed Path: " . $path . "<br>";
+echo "<h2>Debug Users Index Query</h2>";
 
-$basePath = '/ergon-site';
-if (strpos($path, $basePath) === 0) {
-    $cleanPath = substr($path, strlen($basePath));
-    echo "After removing /ergon-site: " . $cleanPath . "<br>";
-} else {
-    echo "Path does not start with /ergon-site<br>";
+try {
+    $db = Database::connect();
+    
+    // Test the exact same query from UsersController::index()
+    echo "<h3>Testing UsersController Query</h3>";
+    $stmt = $db->prepare("SELECT DISTINCT u.*, d.name as department_name FROM users u LEFT JOIN departments d ON u.department_id = d.id WHERE u.status != 'deleted' ORDER BY u.created_at DESC");
+    $stmt->execute();
+    $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    echo "<p>Query returned " . count($users) . " users</p>";
+    
+    if (!empty($users)) {
+        echo "<table border='1' style='border-collapse: collapse; width: 100%;'>";
+        echo "<tr><th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Department</th></tr>";
+        foreach ($users as $user) {
+            echo "<tr>";
+            echo "<td>" . $user['id'] . "</td>";
+            echo "<td>" . htmlspecialchars($user['name']) . "</td>";
+            echo "<td>" . htmlspecialchars($user['email']) . "</td>";
+            echo "<td>" . htmlspecialchars($user['role']) . "</td>";
+            echo "<td>" . htmlspecialchars($user['status']) . "</td>";
+            echo "<td>" . htmlspecialchars($user['department_name'] ?? 'None') . "</td>";
+            echo "</tr>";
+        }
+        echo "</table>";
+    }
+    
+    // Test deduplication logic
+    echo "<h3>After Deduplication</h3>";
+    $uniqueUsers = [];
+    foreach ($users as $user) {
+        $uniqueUsers[$user['id']] = $user;
+    }
+    $users = array_values($uniqueUsers);
+    
+    echo "<p>After deduplication: " . count($users) . " users</p>";
+    
+    // Test the actual controller
+    echo "<h3>Testing Actual Controller</h3>";
+    
+    require_once __DIR__ . '/app/controllers/UsersController.php';
+    
+    ob_start();
+    $controller = new UsersController();
+    $controller->index();
+    $output = ob_get_clean();
+    
+    echo "<p>Controller executed. Output length: " . strlen($output) . " characters</p>";
+    
+    if (strlen($output) > 0) {
+        echo "<h4>Controller Output (first 500 chars):</h4>";
+        echo "<pre>" . htmlspecialchars(substr($output, 0, 500)) . "...</pre>";
+    }
+    
+} catch (Exception $e) {
+    echo "<p style='color: red;'>Error: " . $e->getMessage() . "</p>";
+    echo "<pre>" . $e->getTraceAsString() . "</pre>";
 }
-
-echo "<h3>File Checks:</h3>";
-echo "Current directory: " . __DIR__ . "<br>";
-echo "Index.php exists: " . (file_exists(__DIR__ . '/index.php') ? 'Yes' : 'No') . "<br>";
-echo ".htaccess exists: " . (file_exists(__DIR__ . '/.htaccess') ? 'Yes' : 'No') . "<br>";
-echo "Router.php exists: " . (file_exists(__DIR__ . '/app/core/Router.php') ? 'Yes' : 'No') . "<br>";
-
-echo "<h3>Environment Detection:</h3>";
-if (file_exists(__DIR__ . '/app/config/environment.php')) {
-    require_once __DIR__ . '/app/config/environment.php';
-    echo "Environment: " . Environment::detect() . "<br>";
-    echo "Base URL: " . Environment::getBaseUrl() . "<br>";
-} else {
-    echo "Environment.php not found<br>";
-}
-
-echo "<h3>Test Links:</h3>";
-echo "<a href='/ergon-site/'>Root</a><br>";
-echo "<a href='/ergon-site/login'>Login</a><br>";
-echo "<a href='/ergon-site/dashboard'>Dashboard</a><br>";
 ?>

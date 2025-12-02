@@ -372,13 +372,13 @@
                 <form id="loginForm" action="/ergon-site/login" method="POST">
                     <div class="form-group">
                         <label for="email" class="form-label">Email Address</label>
-                        <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" autocomplete="username" required>
                     </div>
                     
                     <div class="form-group">
                         <label for="password" class="form-label">Password</label>
                         <div style="position: relative;">
-                            <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" autocomplete="current-password" required>
                             <button type="button" id="togglePassword" class="password-toggle">
                                 👁️
                             </button>

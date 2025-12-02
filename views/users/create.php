@@ -4,6 +4,22 @@ $active_page = 'users';
 ob_start();
 ?>
 
+<?php
+// Display success/error messages
+if (isset($_GET['success'])): ?>
+<div class="alert alert--success">
+    <i class="bi bi-check-circle-fill"></i>
+    <?= htmlspecialchars($_GET['success']) ?>
+</div>
+<?php endif; ?>
+
+<?php if (isset($_GET['error'])): ?>
+<div class="alert alert--error">
+    <i class="bi bi-exclamation-triangle-fill"></i>
+    <?= htmlspecialchars($_GET['error']) ?>
+</div>
+<?php endif; ?>
+
 <div class="page-header">
     <h1>Create New User</h1>
     <a href="<?= in_array($_SESSION['role'] ?? '', ['admin', 'owner']) ? '/ergon-site/admin/management' : '/ergon-site/users' ?>" class="btn btn--secondary">Back to Users</a>
@@ -168,6 +184,33 @@ ob_start();
     color: #374151;
     margin-bottom: 0.5rem;
     display: block;
+}
+
+/* Alert Messages */
+.alert {
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+}
+
+.alert--success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert--error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.alert i {
+    font-size: 16px;
 }
 </style>
 

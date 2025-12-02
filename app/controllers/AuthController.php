@@ -299,11 +299,12 @@ class AuthController extends Controller {
         
         switch ($role) {
             case ROLE_OWNER:
-                return $baseUrl . '/owner/dashboard';
+            case 'company_owner':
+                return $baseUrl . '/dashboard';
             case ROLE_ADMIN:
-                return $baseUrl . '/admin/dashboard';
+                return $baseUrl . '/dashboard';
             case ROLE_USER:
-                return $baseUrl . '/user/dashboard';
+                return $baseUrl . '/dashboard';
             default:
                 return $baseUrl . '/dashboard';
         }

@@ -37,19 +37,7 @@ if (session_status() === PHP_SESSION_NONE) session_start();
 if (empty($_SESSION['user_id']) || empty($_SESSION['role'])) { header('Location: /ergon-site/login'); exit; }
 if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > 28800)) { session_unset(); session_destroy(); header('Location: /ergon-site/login?timeout=1'); exit; }
 
-// Clear any error/success messages to prevent popup alerts
-if (isset($_GET['error'])) {
-    unset($_GET['error']);
-}
-if (isset($_GET['success'])) {
-    unset($_GET['success']);
-}
-if (isset($_SESSION['error'])) {
-    unset($_SESSION['error']);
-}
-if (isset($_SESSION['success'])) {
-    unset($_SESSION['success']);
-}
+// Note: Success/error messages are now handled by individual pages
 
 // Check if user is still active and role hasn't changed
 try {
@@ -312,7 +300,8 @@ ob_end_clean();
         
         <div class="header__nav-container">
             <nav class="header__nav">
-                <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'owner'): ?>
+                <?php if (isset($_SESSION['role']) && in_array($_SESSION['role'], ['owner', 'company_owner'])): ?>
+                    <?php if ($_SESSION['role'] === 'owner'): ?>
                     <div class="nav-dropdown">
                         <button class="nav-dropdown-btn" onclick="toggleDropdown('overview')">
                             <span class="nav-icon"><i class="bi bi-graph-up"></i></span>
@@ -431,6 +420,34 @@ ob_end_clean();
                             </a>
                         </div>
                     </div>
+                    <?php else: // company_owner ?>
+                    <div class="nav-dropdown">
+                        <button class="nav-dropdown-btn" onclick="toggleDropdown('overview')">
+                            <span class="nav-icon"><i class="bi bi-graph-up"></i></span>
+                            Overview
+                            <span class="dropdown-arrow">▼</span>
+                        </button>
+                        <div class="nav-dropdown-menu" id="overview">
+                            <a href="/ergon-site/dashboard" class="nav-dropdown-item <?= ($active_page ?? '') === 'dashboard' ? 'nav-dropdown-item--active' : '' ?>">
+                                <span class="nav-icon"><i class="bi bi-speedometer2"></i></span>
+                                Dashboard
+                            </a>
+                        </div>
+                    </div>
+                    <div class="nav-dropdown">
+                        <button class="nav-dropdown-btn" onclick="toggleDropdown('finance')">
+                            <span class="nav-icon">💰</span>
+                            Finance
+                            <span class="dropdown-arrow">▼</span>
+                        </button>
+                        <div class="nav-dropdown-menu" id="finance">
+                            <a href="/ergon-site/finance" class="nav-dropdown-item <?= ($active_page ?? '') === 'finance' ? 'nav-dropdown-item--active' : '' ?>">
+                                <span class="nav-icon">💰</span>
+                                Finance
+                            </a>
+                        </div>
+                    </div>
+                    <?php endif; ?>
                 <?php elseif (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
                     <div class="nav-dropdown">
                         <button class="nav-dropdown-btn" onclick="toggleDropdown('overview')">
@@ -612,7 +629,8 @@ ob_end_clean();
             </div>
         </div>
         <nav class="sidebar__menu">
-            <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'owner'): ?>
+            <?php if (isset($_SESSION['role']) && in_array($_SESSION['role'], ['owner', 'company_owner'])): ?>
+                <?php if ($_SESSION['role'] === 'owner'): ?>
                 <div class="sidebar__divider">Overview</div>
                 <a href="/ergon-site/dashboard" class="sidebar__link <?= ($active_page ?? '') === 'dashboard' ? 'sidebar__link--active' : '' ?>">
                     <span class="sidebar__icon"><i class="bi bi-speedometer2"></i></span>
@@ -685,6 +703,19 @@ ob_end_clean();
                     Finance
                     <?php if ($financeDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                 </a>
+                <?php else: // company_owner ?>
+                <div class="sidebar__divider">Overview</div>
+                <a href="/ergon-site/dashboard" class="sidebar__link <?= ($active_page ?? '') === 'dashboard' ? 'sidebar__link--active' : '' ?>">
+                    <span class="sidebar__icon"><i class="bi bi-speedometer2"></i></span>
+                    Dashboard
+                </a>
+                
+                <div class="sidebar__divider">Finance</div>
+                <a href="/ergon-site/finance" class="sidebar__link <?= ($active_page ?? '') === 'finance' ? 'sidebar__link--active' : '' ?>">
+                    <span class="sidebar__icon">💰</span>
+                    Finance
+                </a>
+                <?php endif; ?>
             <?php elseif (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
                 <div class="sidebar__divider">Overview</div>
                 <a href="/ergon-site/dashboard" class="sidebar__link <?= ($active_page ?? '') === 'dashboard' ? 'sidebar__link--active' : '' ?>">

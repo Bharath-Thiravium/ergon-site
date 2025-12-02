@@ -1,8 +1,30 @@
 <?php
 $title = 'User Management';
 $active_page = 'users';
+
+// Prevent caching of users list
+header('Cache-Control: no-cache, no-store, must-revalidate');
+header('Pragma: no-cache');
+header('Expires: 0');
+
 ob_start();
 ?>
+
+<?php
+// Display success/error messages
+if (isset($_GET['success'])): ?>
+<div class="alert alert--success">
+    <i class="bi bi-check-circle-fill"></i>
+    <?= htmlspecialchars($_GET['success']) ?>
+</div>
+<?php endif; ?>
+
+<?php if (isset($_GET['error'])): ?>
+<div class="alert alert--error">
+    <i class="bi bi-exclamation-triangle-fill"></i>
+    <?= htmlspecialchars($_GET['error']) ?>
+</div>
+<?php endif; ?>
 
 <div class="page-header">
     <div class="page-title">
@@ -77,6 +99,7 @@ ob_start();
                     <?php if ($_SESSION['role'] === 'owner'): ?>
                         <?php 
                         $owners = array_filter($users, fn($u) => $u['role'] === 'owner');
+                        $companyOwners = array_filter($users, fn($u) => $u['role'] === 'company_owner');
                         $admins = array_filter($users, fn($u) => $u['role'] === 'admin');
                         $regularUsers = array_filter($users, fn($u) => $u['role'] === 'user');
                         ?>
@@ -95,6 +118,26 @@ ob_start();
                             </thead>
                             <tbody>
                                 <?php foreach ($owners as $user): ?>
+                                    <?php include 'user_row.php'; ?>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                        <?php endif; ?>
+                        
+                        <?php if (!empty($companyOwners)): ?>
+                        <h3 class="section-title">🏢 Company Owners</h3>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($companyOwners as $user): ?>
                                     <?php include 'user_row.php'; ?>
                                 <?php endforeach; ?>
                             </tbody>
@@ -579,6 +622,33 @@ function suspendUser(userId, userName) {
 .badge--primary {
     background-color: #007bff;
     color: white;
+}
+
+/* Alert Messages */
+.alert {
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+}
+
+.alert--success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert--error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.alert i {
+    font-size: 16px;
 }
 </style>
 
