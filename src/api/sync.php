@@ -26,19 +26,39 @@ try {
         throw new Exception('PostgreSQL connection test failed');
     }
     
+    // Create shipping table if not exists
+    $mysql->exec("CREATE TABLE IF NOT EXISTS `finance_customershippingaddress` (
+      `id` bigint NOT NULL AUTO_INCREMENT,
+      `label` varchar(255) NOT NULL,
+      `address_line1` varchar(255) NOT NULL,
+      `address_line2` varchar(255) DEFAULT NULL,
+      `city` varchar(255) NOT NULL,
+      `state` varchar(255) NOT NULL,
+      `pincode` varchar(20) NOT NULL,
+      `country` varchar(255) NOT NULL DEFAULT 'India',
+      `is_default` tinyint(1) NOT NULL DEFAULT '0',
+      `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+      `customer_id` bigint NOT NULL,
+      PRIMARY KEY (`id`),
+      KEY `idx_customer_id` (`customer_id`),
+      KEY `idx_is_default` (`is_default`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+    
     // Clear existing MySQL data
     $mysql->exec('TRUNCATE TABLE finance_invoices');
     $mysql->exec('TRUNCATE TABLE finance_purchase_orders');
     $mysql->exec('TRUNCATE TABLE finance_customer');
     $mysql->exec('TRUNCATE TABLE finance_payments');
     $mysql->exec('TRUNCATE TABLE finance_quotations');
+    $mysql->exec('TRUNCATE TABLE finance_customershippingaddress');
     
     $invoiceCount = $poCount = $customerCount = 0;
     
     $paymentCount = $quotationCount = 0;
     
     // Direct 1:1 sync - all columns
-    $tables = ['finance_invoices', 'finance_purchase_orders', 'finance_customer', 'finance_payments', 'finance_quotations'];
+    $tables = ['finance_invoices', 'finance_purchase_orders', 'finance_customer', 'finance_payments', 'finance_quotations', 'finance_customershippingaddress'];
     $counts = [];
     
     foreach ($tables as $table) {
@@ -67,7 +87,7 @@ try {
                     }
                 }
                 // Convert booleans
-                if (in_array($key, ['is_filed_in_gstr1', 'reverse_charge_applicable', 'is_rejected', 'is_revised', 'shipping_same_as_billing', 'is_active', 'is_gst_registered', 'statement_import_enabled', 'is_tds_received', 'tds_certificate_issued', 'invoice_created', 'po_created', 'proforma_created'])) {
+                if (in_array($key, ['is_filed_in_gstr1', 'reverse_charge_applicable', 'is_rejected', 'is_revised', 'shipping_same_as_billing', 'is_active', 'is_gst_registered', 'statement_import_enabled', 'is_tds_received', 'tds_certificate_issued', 'invoice_created', 'po_created', 'proforma_created', 'is_default'])) {
                     if ($value === 't' || $value === true || $value === '1') {
                         $row[$key] = 1;
                     } else {
@@ -86,10 +106,11 @@ try {
     $customerCount = $counts['finance_customer'] ?? 0;
     $paymentCount = $counts['finance_payments'] ?? 0;
     $quotationCount = $counts['finance_quotations'] ?? 0;
+    $shippingCount = $counts['finance_customershippingaddress'] ?? 0;
     
     echo json_encode([
         'success' => true,
-        'message' => "Synced {$invoiceCount} invoices, {$poCount} POs, {$customerCount} customers, {$paymentCount} payments, {$quotationCount} quotations from PostgreSQL"
+        'message' => "Synced {$invoiceCount} invoices, {$poCount} POs, {$customerCount} customers, {$paymentCount} payments, {$quotationCount} quotations, {$shippingCount} shipping addresses from PostgreSQL"
     ]);
     
 } catch (Exception $e) {

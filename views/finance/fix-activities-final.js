@@ -4,7 +4,7 @@ window.loadRecentActivities = async function(type = 'all') {
     if (!prefix) return;
     
     try {
-        const url = `/ergon-site/src/api/activities.php?prefix=${encodeURIComponent(prefix)}&limit=20${type !== 'all' ? `&record_type=${encodeURIComponent(type)}` : ''}`;
+        const url = `/ergon/src/api/activities.php?prefix=${encodeURIComponent(prefix)}&limit=20${type !== 'all' ? `&record_type=${encodeURIComponent(type)}` : ''}`;
         const response = await fetch(url);
         const result = await response.json();
         const container = document.getElementById('recentActivities');

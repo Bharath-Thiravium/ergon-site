@@ -3,7 +3,7 @@ window.loadOutstandingInvoices = async function() {
         const prefix = document.getElementById('companyPrefix').value;
         if (!prefix) return;
         
-        const response = await fetch(`/ergon-site/src/api/outstanding.php?prefix=${encodeURIComponent(prefix)}&limit=20`, {
+        const response = await fetch(`/ergon/src/api/outstanding.php?prefix=${encodeURIComponent(prefix)}&limit=20`, {
             signal: AbortSignal.timeout(5000)
         }).catch(e => null);
         if (!response || !response.ok) throw new Error('Outstanding API unavailable');
@@ -45,7 +45,7 @@ window.loadRecentActivities = async function(type = 'all') {
             return;
         }
         
-        let url = `/ergon-site/src/api/activities.php?prefix=${encodeURIComponent(prefix)}&limit=20`;
+        let url = `/ergon/src/api/activities.php?prefix=${encodeURIComponent(prefix)}&limit=20`;
         if (type !== 'all') url += `&record_type=${encodeURIComponent(type)}`;
         
         const response = await fetch(url, {signal: AbortSignal.timeout(5000)}).catch(e => null);

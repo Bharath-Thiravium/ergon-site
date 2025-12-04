@@ -8,7 +8,7 @@ async function loadCashFlow() {
             return;
         }
         
-        const url = '/ergon-site/src/api/cashflow.php?prefix=' + encodeURIComponent(prefix);
+        const url = '/ergon/src/api/cashflow.php?prefix=' + encodeURIComponent(prefix);
         
         const response = await fetch(url, {
             signal: AbortSignal.timeout(5000)

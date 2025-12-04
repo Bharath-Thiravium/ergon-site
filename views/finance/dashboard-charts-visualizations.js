@@ -1,6 +1,6 @@
 // 1. Quotations Status — Donut Chart
 async function chartQuotations() {
-    const data = await apiGet("/ergon-site/src/api/dashboard/quotations.php");
+    const data = await apiGet("/ergon/src/api/dashboard/quotations.php");
     if (!data) return;
     new Chart(document.getElementById("chart-quotations"), {
         type: "doughnut",
@@ -20,7 +20,7 @@ async function chartQuotations() {
 
 // 2. Purchase Orders — Bar Chart
 async function chartPurchaseOrders() {
-    const data = await apiGet("/ergon-site/src/api/dashboard/purchase-orders.php");
+    const data = await apiGet("/ergon/src/api/dashboard/purchase-orders.php");
     if (!data) return;
     new Chart(document.getElementById("chart-po"), {
         type: "bar",
@@ -37,7 +37,7 @@ async function chartPurchaseOrders() {
 
 // 3. Invoice Status — Donut Chart
 async function chartInvoices() {
-    const data = await apiGet("/ergon-site/src/api/dashboard/invoices.php");
+    const data = await apiGet("/ergon/src/api/dashboard/invoices.php");
     if (!data) return;
     new Chart(document.getElementById("chart-invoices"), {
         type: "doughnut",
@@ -57,7 +57,7 @@ async function chartInvoices() {
 
 // 4. Outstanding by Customer — Horizontal Bar Chart
 async function chartOutstanding() {
-    const data = await apiGet("/ergon-site/src/api/dashboard/outstanding-by-customer.php");
+    const data = await apiGet("/ergon/src/api/dashboard/outstanding-by-customer.php");
     if (!data) return;
     const labels = data.map(x => x.customer_name);
     const values = data.map(x => Number(x.outstanding));
@@ -79,7 +79,7 @@ async function chartOutstanding() {
 
 // 5. Aging Buckets — Bar Chart
 async function chartAging() {
-    const d = await apiGet("/ergon-site/src/api/dashboard/aging-buckets.php");
+    const d = await apiGet("/ergon/src/api/dashboard/aging-buckets.php");
     if (!d) return;
     new Chart(document.getElementById("chart-aging"), {
         type: "bar",
@@ -96,7 +96,7 @@ async function chartAging() {
 
 // 6. Payments Trend — Line Chart
 async function chartPayments() {
-    const d = await apiGet("/ergon-site/src/api/dashboard/payments.php");
+    const d = await apiGet("/ergon/src/api/dashboard/payments.php");
     if (!d) return;
     new Chart(document.getElementById("chart-payments"), {
         type: "line",

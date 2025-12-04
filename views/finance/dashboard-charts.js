@@ -44,7 +44,7 @@ function loadAllCharts() {
 
 async function fetchChartData(chart, prefix) {
     try {
-        const url = `/ergon-site/src/api/charts.php?chart=${chart}&prefix=${encodeURIComponent(prefix)}`;
+        const url = `/ergon/src/api/charts.php?chart=${chart}&prefix=${encodeURIComponent(prefix)}`;
         console.log(`Fetching ${chart} from:`, url);
         const response = await fetch(url, {
             signal: AbortSignal.timeout(5000)

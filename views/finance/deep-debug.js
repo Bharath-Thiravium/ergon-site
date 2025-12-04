@@ -35,7 +35,7 @@ console.log('- cashflow-listener.js loaded:', !!window.loadCashFlow);
 
 // Test 6: Try API call directly
 console.log('Testing API call...');
-fetch('/ergon-site/src/api/charts.php?chart=quotations&prefix=ERGN')
+fetch('/ergon/src/api/charts.php?chart=quotations&prefix=ERGN')
     .then(r => r.json())
     .then(data => {
         console.log('API Response:', data);

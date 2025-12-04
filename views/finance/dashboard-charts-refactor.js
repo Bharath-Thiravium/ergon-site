@@ -79,7 +79,7 @@ async function renderQuotations(prefix) {
         console.warn('Canvas not found:', CANVAS_IDS.quotations);
         return;
     }
-    const url = getApiUrl('/ergon-site/src/api/dashboard/quotations.php', prefix);
+    const url = getApiUrl('/ergon/src/api/dashboard/quotations.php', prefix);
     const data = await apiGet(url) || {};
     const pending = safeNum(data.pending_count);
     const placed = safeNum(data.placed_count);
@@ -119,7 +119,7 @@ async function renderPurchaseOrders(prefix) {
         console.warn('Canvas not found:', CANVAS_IDS.purchaseOrders);
         return;
     }
-    const url = getApiUrl('/ergon-site/src/api/dashboard/purchase-orders.php', prefix);
+    const url = getApiUrl('/ergon/src/api/dashboard/purchase-orders.php', prefix);
     const data = await apiGet(url) || {};
     const open = safeNum(data.open_count);
     const fulfilled = safeNum(data.fulfilled);
@@ -158,7 +158,7 @@ async function renderInvoices(prefix) {
         console.warn('Canvas not found:', CANVAS_IDS.invoices);
         return;
     }
-    const url = getApiUrl('/ergon-site/src/api/dashboard/invoices.php', prefix);
+    const url = getApiUrl('/ergon/src/api/dashboard/invoices.php', prefix);
     const data = await apiGet(url) || {};
     const paid = safeNum(data.paid);
     const unpaid = safeNum(data.unpaid);
@@ -198,7 +198,7 @@ async function renderOutstandingByCustomer(prefix) {
         console.warn('Canvas not found:', CANVAS_IDS.outstandingByCustomer);
         return;
     }
-    const url = getApiUrl('/ergon-site/src/api/dashboard/outstanding-by-customer.php', prefix);
+    const url = getApiUrl('/ergon/src/api/dashboard/outstanding-by-customer.php', prefix);
     const rows = await apiGet(url) || [];
     const labels = rows.map(r => String(r.customer_name || 'Unknown'));
     const values = rows.map(r => safeNum(r.outstanding));
@@ -235,7 +235,7 @@ async function renderAgingBuckets(prefix) {
         console.warn('Canvas not found:', CANVAS_IDS.agingBuckets);
         return;
     }
-    const url = getApiUrl('/ergon-site/src/api/dashboard/aging-buckets.php', prefix);
+    const url = getApiUrl('/ergon/src/api/dashboard/aging-buckets.php', prefix);
     const data = await apiGet(url) || {};
     const b0 = safeNum(data.bucket_0_30);
     const b31 = safeNum(data.bucket_31_60);
@@ -274,7 +274,7 @@ async function renderPayments(prefix) {
         console.warn('Canvas not found:', CANVAS_IDS.payments);
         return;
     }
-    const url = getApiUrl('/ergon-site/src/api/dashboard/payments.php', prefix);
+    const url = getApiUrl('/ergon/src/api/dashboard/payments.php', prefix);
     const data = await apiGet(url) || {};
     const total = safeNum(data.total_paid ?? data.total_amount ?? 0);
     const count = safeNum(data.payment_count);

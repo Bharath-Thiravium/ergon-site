@@ -9,7 +9,7 @@ async function updateAnalyticsWidgets() {
         const prefix = document.getElementById('companyPrefix').value;
         if (!prefix) return;
         
-        const url = `/ergon-site/src/api/index.php?action=analytics&prefix=${prefix}`;
+        const url = `/ergon/src/api/index.php?action=analytics&prefix=${prefix}`;
         const response = await fetch(url);
         const result = await response.json();
         

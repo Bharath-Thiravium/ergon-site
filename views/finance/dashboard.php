@@ -41,8 +41,6 @@
                     </select>
                 </div>
             </div>
-            <input type="hidden" id="companyPrefixHidden" value="BKGE">
-            <input type="hidden" id="dateFilterHidden" value="all">
         </div>
     </div>
 
@@ -291,46 +289,18 @@
     </div>
 </div>
 
-<style>
-/* Hide page-actions-section for company_owner users */
-body[data-user-role="company_owner"] .page-actions-section {
-    display: none !important;
-}
-</style>
-
-<link rel="stylesheet" href="/ergon-site/views/finance/funnel-styles.css">
-<script src="/ergon-site/views/finance/dashboard-svg-charts.js"></script>
-<script src="/ergon-site/views/finance/dashboard-loader.js"></script>
-<script src="/ergon-site/views/finance/cashflow-listener.js"></script>
+<link rel="stylesheet" href="/ergon/views/finance/funnel-styles.css">
+<script src="/ergon/views/finance/dashboard-svg-charts.js"></script>
+<script src="/ergon/views/finance/dashboard-loader.js"></script>
+<script src="/ergon/views/finance/cashflow-listener.js"></script>
 <script>
-// Fetch owner prefix function for dashboard.php
-function fetchOwnerPrefix() {
-    const prefixInput = document.getElementById('companyPrefix');
-    if (prefixInput && prefixInput.type === 'hidden') {
-        return Promise.resolve('BKGE');
+setTimeout(() => {
+    const prefix = document.getElementById('companyPrefix')?.value;
+    if (prefix) {
+        console.log('Auto-loading charts for prefix:', prefix);
+        loadAllCharts();
     }
-    
-    return fetch('/ergon-site/src/api/owner-prefix.php')
-        .then(r => r.json())
-        .then(d => d.success ? d.prefix : 'BKGE')
-        .catch(() => 'BKGE');
-}
-
-// Force company_owner to use BKGE prefix immediately
-document.addEventListener('DOMContentLoaded', () => {
-    const prefixInput = document.getElementById('companyPrefix');
-    if (prefixInput && prefixInput.type === 'hidden') {
-        prefixInput.value = 'BKGE';
-        localStorage.setItem('financePrefix', 'BKGE');
-        console.log('Company owner forced to BKGE prefix');
-        
-        // Trigger data load immediately
-        setTimeout(() => {
-            if (typeof loadAllCharts === 'function') loadAllCharts();
-            if (typeof loadAllStatCardsData === 'function') loadAllStatCardsData();
-        }, 500);
-    }
-});
+}, 2000);
 </script>
 <script>
 
@@ -439,7 +409,7 @@ window.addEventListener('load', function() {
     if (outDownload) outDownload.addEventListener('click', () => {
         const limit = parseInt(document.getElementById('outstandingTopN').value || '10', 10);
         // Use server-side export endpoint which supports `limit`
-        window.open(`/ergon-site/finance/export-outstanding?limit=${limit}`, '_blank');
+        window.open(`/ergon/finance/export-outstanding?limit=${limit}`, '_blank');
     });
     
     // Load current prefix, then dashboard data
@@ -566,7 +536,7 @@ async function showTableStructure() {
     btn.textContent = 'Loading...';
     
     try {
-        const response = await fetch('/ergon-site/finance/structure');
+        const response = await fetch('/ergon/finance/structure');
         const data = await response.json();
         
         console.log('Table Structure:', data);
@@ -719,7 +689,7 @@ function updateCashFlow(cashFlow) {
 
 async function loadDashboardDataOld() {
     try {
-        const response = await fetch('/ergon-site/finance/dashboard-stats');
+        const response = await fetch('/ergon/finance/dashboard-stats');
         const data = await response.json();
         
         if (data.error) {
@@ -820,7 +790,7 @@ function analyzeAllTables() {
     
     // Create download link
     const link = document.createElement('a');
-    link.href = '/ergon-site/finance/analyze';
+    link.href = '/ergon/finance/analyze';
     link.download = 'finance_analysis.csv';
     document.body.appendChild(link);
     link.click();
@@ -840,7 +810,7 @@ function syncFinanceData() {
     btn.disabled = true;
     btn.innerHTML = '<span class="btn__icon">⏳</span><span class="btn__text">Syncing...</span>';
     
-    fetch('/ergon-site/src/api/sync.php', {
+    fetch('/ergon/src/api/sync.php', {
         method: 'POST'
     })
     .then(response => response.json())
@@ -1033,10 +1003,10 @@ async function updateConversionFunnel(data) {
 
 async function loadOutstandingInvoices() {
     try {
-        const prefix = await fetchOwnerPrefix();
+        const prefix = document.getElementById('companyPrefix').value;
         if (!prefix) return;
         
-        const response = await fetch(`/ergon-site/src/api/outstanding.php?prefix=${encodeURIComponent(prefix)}&limit=20`, {
+        const response = await fetch(`/ergon/src/api/outstanding.php?prefix=${encodeURIComponent(prefix)}&limit=20`, {
             signal: AbortSignal.timeout(5000)
         }).catch(e => null);
         if (!response || !response.ok) throw new Error('Outstanding API unavailable');
@@ -1082,12 +1052,12 @@ async function loadOutstandingByCustomer(limit = 10) {
     }
 }
 
-// (Server-side export used via /ergon-site/finance/export-outstanding)
+// (Server-side export used via /ergon/finance/export-outstanding)
 
 
 async function loadRecentActivities(type = 'all') {
     try {
-        const prefix = await fetchOwnerPrefix();
+        const prefix = document.getElementById('companyPrefix').value;
         const container = document.getElementById('recentActivities');
         
         if (!prefix) {
@@ -1095,7 +1065,7 @@ async function loadRecentActivities(type = 'all') {
             return;
         }
         
-        let url = `/ergon-site/src/api/activities.php?prefix=${encodeURIComponent(prefix)}&limit=20`;
+        let url = `/ergon/src/api/activities.php?prefix=${encodeURIComponent(prefix)}&limit=20`;
         if (type !== 'all') {
             url += `&record_type=${encodeURIComponent(type)}`;
         }
@@ -1283,7 +1253,7 @@ function loadGridView(module) {
 
 async function loadTables() {
     try {
-        const response = await fetch('/ergon-site/finance/tables');
+        const response = await fetch('/ergon/finance/tables');
         const data = await response.json();
         
         const container = document.getElementById('tablesContainer');
@@ -1333,7 +1303,7 @@ async function loadTableData() {
     }
     
     try {
-        const response = await fetch(`/ergon-site/finance/data?table=${table}&limit=100`);
+        const response = await fetch(`/ergon/finance/data?table=${table}&limit=100`);
         const data = await response.json();
         
         if (data.error) {
@@ -1411,15 +1381,15 @@ function showError(message) {
 }
 
 function exportChart(type) {
-    window.open(`/ergon-site/finance/export?type=${type}`, '_blank');
+    window.open(`/ergon/finance/export?type=${type}`, '_blank');
 }
 
 function exportTable(type) {
-    window.open(`/ergon-site/finance/export-table?type=${type}`, '_blank');
+    window.open(`/ergon/finance/export-table?type=${type}`, '_blank');
 }
 
 function exportDashboard() {
-    window.open('/ergon-site/finance/export-dashboard', '_blank');
+    window.open('/ergon/finance/export-dashboard', '_blank');
 }
 
 
@@ -1428,7 +1398,7 @@ let prefixTree = {};
 
 async function loadCompanyPrefix() {
     try {
-        const response = await fetch('/ergon-site/src/api/prefixes.php', {
+        const response = await fetch('/ergon/src/api/prefixes.php', {
             signal: AbortSignal.timeout(5000)
         }).catch(e => null);
         if (!response || !response.ok) throw new Error('Prefixes API unavailable');
@@ -1519,7 +1489,7 @@ async function updateCompanyPrefix() {
         const formData = new FormData();
         formData.append('company_prefix', prefix);
         
-        const response = await fetch('/ergon-site/finance/?action=company-prefix', {
+        const response = await fetch('/ergon/finance/?action=company-prefix', {
             method: 'POST',
             body: formData
         });
@@ -1582,13 +1552,13 @@ function forceUpdateStats() {
 
 async function loadCustomersForFunnel() {
     try {
-        const prefix = await fetchOwnerPrefix();
+        const prefix = document.getElementById('companyPrefix').value;
         if (!prefix) return;
         
         const customerSelect = document.getElementById('customerFilter');
         if (!customerSelect) return;
         
-        const response = await fetch(`/ergon-site/src/api/customers.php?prefix=${encodeURIComponent(prefix)}`, {
+        const response = await fetch(`/ergon/src/api/customers.php?prefix=${encodeURIComponent(prefix)}`, {
             signal: AbortSignal.timeout(5000)
         }).catch(e => null);
         if (!response || !response.ok) throw new Error('Customers API unavailable');
@@ -1607,13 +1577,13 @@ async function loadCustomersForFunnel() {
 
 async function updateConversionFunnel() {
     try {
-        const prefix = await fetchOwnerPrefix();
+        const prefix = document.getElementById('companyPrefix').value;
         if (!prefix) return;
         
         const customerSelect = document.getElementById('customerFilter');
         const customerId = customerSelect ? customerSelect.value : '';
         
-        let url = `/ergon-site/src/api/funnel.php?prefix=${encodeURIComponent(prefix)}`;
+        let url = `/ergon/src/api/funnel.php?prefix=${encodeURIComponent(prefix)}`;
         if (customerId) {
             url += `&customer_id=${encodeURIComponent(customerId)}`;
         }
@@ -1668,7 +1638,7 @@ async function updateConversionFunnel() {
 
 async function updateAnalyticsWidgets() {
     try {
-        const prefix = await fetchOwnerPrefix();
+        const prefix = document.getElementById('companyPrefix').value;
         const customerSelect = document.getElementById('customerFilter');
         const customerId = customerSelect ? customerSelect.value : '';
         
@@ -1697,12 +1667,12 @@ async function updateAnalyticsWidgets() {
 
 async function loadAllStatCardsData() {
     try {
-        const prefix = await fetchOwnerPrefix();
+        const prefix = document.getElementById('companyPrefix').value.trim() || '';
         if (!prefix) {
             console.log('No prefix selected, skipping stat cards update');
             return;
         }
-        const response = await fetch(`/ergon-site/src/api/dashboard/stats.php?prefix=${encodeURIComponent(prefix)}`, {
+        const response = await fetch(`/ergon/src/api/dashboard/stats.php?prefix=${encodeURIComponent(prefix)}`, {
             signal: AbortSignal.timeout(5000)
         }).catch(e => null);
         if (!response || !response.ok) throw new Error('Stats API unavailable');

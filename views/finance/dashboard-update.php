@@ -13,7 +13,7 @@ async function updateAnalyticsWidgets() {
         
         console.log('Updating analytics widgets for prefix:', prefix);
         
-        let url = `/ergon-site/src/api/index.php?action=analytics&prefix=${prefix}`;
+        let url = `/ergon/src/api/index.php?action=analytics&prefix=${prefix}`;
         if (customerId) {
             url += `&customer_id=${customerId}`;
         }
