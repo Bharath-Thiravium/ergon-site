@@ -1,36 +1,20 @@
 <?php
-// Simple test to check if API route is working
-session_start();
+// Test the outstanding API directly
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, 'http://localhost/ergon/src/api/outstanding.php?prefix=BKGE&limit=3');
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+$response = curl_exec($ch);
+$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+curl_close($ch);
 
-// Simulate being logged in (replace with actual user ID)
-$_SESSION['user_id'] = 1;
-$_SESSION['role'] = 'owner';
+echo "HTTP Code: $httpCode\n";
+echo "Response: $response\n";
 
-// Test the API endpoint
-$userId = 1; // Replace with actual user ID
-$url = "http://localhost/ergon-site/api/users/{$userId}";
-
-$context = stream_context_create([
-    'http' => [
-        'method' => 'GET',
-        'header' => [
-            'Cookie: ' . session_name() . '=' . session_id()
-        ]
-    ]
-]);
-
-$response = file_get_contents($url, false, $context);
-echo "Response: " . $response . "\n";
-
-// Also test direct database connection
-require_once __DIR__ . '/app/config/database.php';
-try {
-    $db = Database::connect();
-    $stmt = $db->prepare("SELECT id, name, email FROM users LIMIT 1");
-    $stmt->execute();
-    $user = $stmt->fetch();
-    echo "Direct DB test: " . json_encode($user) . "\n";
-} catch (Exception $e) {
-    echo "DB Error: " . $e->getMessage() . "\n";
+if ($response) {
+    $data = json_decode($response, true);
+    if ($data && isset($data['data'])) {
+        echo "\nFirst invoice shipping address: " . ($data['data'][0]['shipping_address'] ?? 'NOT FOUND') . "\n";
+    }
 }
 ?>

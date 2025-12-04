@@ -17,10 +17,11 @@ class PostgreSQLSyncService {
             $invoiceCount = $this->syncInvoices();
             $poCount = $this->syncPurchaseOrders();
             $customerCount = $this->syncCustomers();
+            $shippingCount = $this->syncCustomerShippingAddress();
             
             return [
                 'success' => true, 
-                'message' => "Synced {$invoiceCount} invoices, {$poCount} POs, {$customerCount} customers from PostgreSQL"
+                'message' => "Synced {$invoiceCount} invoices, {$poCount} POs, {$customerCount} customers, {$shippingCount} shipping addresses from PostgreSQL"
             ];
         } catch (Exception $e) {
             return ['success' => false, 'message' => $e->getMessage()];
@@ -62,6 +63,21 @@ class PostgreSQLSyncService {
         $pgStmt = $this->pgPdo->query($pgSql);
         
         $mysqlSql = "INSERT INTO finance_customers (customer_id, customer_name, customer_gstin) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE customer_name=VALUES(customer_name)";
+        $mysqlStmt = $this->mysqlPdo->prepare($mysqlSql);
+        
+        $count = 0;
+        while ($row = $pgStmt->fetch(PDO::FETCH_ASSOC)) {
+            $mysqlStmt->execute(array_values($row));
+            $count++;
+        }
+        return $count;
+    }
+    
+    private function syncCustomerShippingAddress() {
+        $pgSql = "SELECT customer_id, shipping_address, shipping_city, shipping_state, shipping_pincode, shipping_country FROM customershippingaddress";
+        $pgStmt = $this->pgPdo->query($pgSql);
+        
+        $mysqlSql = "INSERT INTO finance_customershippingaddress (customer_id, shipping_address, shipping_city, shipping_state, shipping_pincode, shipping_country) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE shipping_address=VALUES(shipping_address), shipping_city=VALUES(shipping_city), shipping_state=VALUES(shipping_state), shipping_pincode=VALUES(shipping_pincode), shipping_country=VALUES(shipping_country)";
         $mysqlStmt = $this->mysqlPdo->prepare($mysqlSql);
         
         $count = 0;
