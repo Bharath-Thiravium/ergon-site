@@ -17,7 +17,7 @@ ob_start();
     </div>
 </div>
 
-<?php renderModalCSS(); ?>
+
 
 <div class="dashboard-grid">
     <div class="kpi-card">
@@ -61,7 +61,7 @@ ob_start();
                     <tr>
                         <th>Project Name</th>
                         <th>Department</th>
-                        <th>Description</th>
+                        <th>Location</th>
                         <th>Status</th>
                         <th>Created</th>
                         <th>Actions</th>
@@ -78,7 +78,13 @@ ob_start();
                                 <span class="badge badge--secondary">General</span>
                             <?php endif; ?>
                         </td>
-                        <td><?= htmlspecialchars($project['description']) ?></td>
+                        <td>
+                            <?php if ($project['latitude'] && $project['longitude']): ?>
+                                <span class="badge badge--info">📍 <?= $project['checkin_radius'] ?>m radius</span>
+                            <?php else: ?>
+                                <span class="badge badge--secondary">No location</span>
+                            <?php endif; ?>
+                        </td>
                         <td>
                             <span class="badge badge--<?= $project['status'] === 'active' ? 'success' : ($project['status'] === 'completed' ? 'info' : 'warning') ?>">
                                 <?= ucfirst($project['status']) ?>
@@ -87,7 +93,7 @@ ob_start();
                         <td><?= date('M j, Y', strtotime($project['created_at'])) ?></td>
                         <td>
                             <div class="ab-container">
-                                <button class="ab-btn ab-btn--edit" onclick="editProject(<?= $project['id'] ?>, '<?= htmlspecialchars($project['name']) ?>', '<?= htmlspecialchars($project['description']) ?>', <?= $project['department_id'] ?? 'null' ?>, '<?= $project['status'] ?>')" title="Edit Project">
+                                <button class="ab-btn ab-btn--edit" onclick="editProject(<?= $project['id'] ?>, '<?= htmlspecialchars($project['name']) ?>', '<?= htmlspecialchars($project['description']) ?>', <?= $project['latitude'] ?? 'null' ?>, <?= $project['longitude'] ?? 'null' ?>, <?= $project['checkin_radius'] ?? 100 ?>, <?= $project['department_id'] ?? 'null' ?>, '<?= $project['status'] ?>')" title="Edit Project">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                         <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
                                         <path d="M15 5l4 4"/>
@@ -111,80 +117,176 @@ ob_start();
     </div>
 </div>
 
-<?php
-// Project Modal Content
-$projectContent = '
-<form id="projectForm">
-    <input type="hidden" id="projectId" name="project_id">
-    
-    <div class="form-group">
-        <label class="form-label">Project Name *</label>
-        <input type="text" id="projectName" name="name" class="form-control" required placeholder="Enter project name">
-    </div>
-    
-    <div class="form-group">
-        <label class="form-label">Department</label>
-        <select id="projectDepartment" name="department_id" class="form-control">
-            <option value="">Select Department</option>';
-            foreach ($data['departments'] as $dept) {
-                $projectContent .= '<option value="' . $dept['id'] . '">' . htmlspecialchars($dept['name']) . '</option>';
-            }
-$projectContent .= '
-        </select>
-    </div>
-    
-    <div class="form-group">
-        <label class="form-label">Description</label>
-        <textarea id="projectDescription" name="description" class="form-control" rows="3" placeholder="Project description"></textarea>
-    </div>
-    
-    <div class="form-group" id="statusGroup" style="display: none;">
-        <label class="form-label">Status</label>
-        <select id="projectStatus" name="status" class="form-control">
-            <option value="active">Active</option>
-            <option value="completed">Completed</option>
-            <option value="on_hold">On Hold</option>
-            <option value="cancelled">Cancelled</option>
-            <option value="withheld">Withheld</option>
-            <option value="rejected">Rejected</option>
-        </select>
-    </div>
-</form>';
 
-$projectFooter = '
-<button type="button" class="btn btn--secondary" onclick="closeModal(\'projectModal\')">Cancel</button>
-<button type="submit" class="btn btn--primary" form="projectForm">
-    <span id="submitText">Add Project</span>
-</button>';
-
-// Render Modal with dynamic title
-renderModal('projectModal', '<span id="modalTitle">Add New Project</span>', $projectContent, $projectFooter, ['icon' => '📁']);
-?>
 
 <script>
 let isEditing = false;
 
 function showAddProjectModal() {
     isEditing = false;
-    document.getElementById('modalTitle').textContent = 'Add New Project';
-    document.getElementById('submitText').textContent = 'Add Project';
-    document.getElementById('projectForm').reset();
-    document.getElementById('projectId').value = '';
-    document.getElementById('statusGroup').style.display = 'none';
-    showModal('projectModal');
+    const modal = document.createElement('div');
+    modal.className = 'modal-overlay';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">📁 Add New Project</h3>
+                <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="projectForm">
+                    <input type="hidden" id="projectId" name="project_id">
+                    
+                    <label>Project Name *</label>
+                    <input type="text" id="projectName" name="name" class="form-input" required placeholder="Enter project name">
+                    
+                    <label>Department</label>
+                    <select id="projectDepartment" name="department_id" class="form-input">
+                        <option value="">Select Department</option>
+                        <?php foreach ($data['departments'] as $dept): ?>
+                        <option value="<?= $dept['id'] ?>"><?= htmlspecialchars($dept['name']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    
+                    <label>Description</label>
+                    <textarea id="projectDescription" name="description" class="form-input" rows="3" placeholder="Project description"></textarea>
+                    
+                    <label>GPS Coordinates (for attendance)</label>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="number" id="projectLatitude" name="latitude" class="form-input" step="any" placeholder="Latitude">
+                        <input type="number" id="projectLongitude" name="longitude" class="form-input" step="any" placeholder="Longitude">
+                    </div>
+                    
+                    <label>Check-in Radius (meters)</label>
+                    <input type="number" id="projectRadius" name="checkin_radius" class="form-input" value="100" min="10" max="1000">
+                    
+                    <div id="statusGroup" style="display: none;">
+                        <label>Status</label>
+                        <select id="projectStatus" name="status" class="form-input">
+                            <option value="active">Active</option>
+                            <option value="completed">Completed</option>
+                            <option value="on_hold">On Hold</option>
+                            <option value="cancelled">Cancelled</option>
+                            <option value="withheld">Withheld</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn--secondary" onclick="this.closest('.modal-overlay').remove()">Cancel</button>
+                <button class="btn btn--primary" onclick="submitProjectForm()"><span id="submitText">Add Project</span></button>
+            </div>
+        </div>
+    `;
+    
+    if (!document.getElementById('modal-styles')) {
+        const styles = document.createElement('style');
+        styles.id = 'modal-styles';
+        styles.textContent = `
+            .modal-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10001;
+            }
+            .modal-content {
+                background: white;
+                border-radius: 8px;
+                width: 500px;
+                max-width: 90vw;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+            .modal-header {
+                padding: 16px;
+                border-bottom: 1px solid #e5e7eb;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .modal-body {
+                padding: 16px;
+            }
+            .modal-body label {
+                display: block;
+                margin-bottom: 4px;
+                font-weight: 500;
+            }
+            .modal-body .form-input {
+                width: 100%;
+                margin-bottom: 12px;
+                padding: 8px;
+                border: 1px solid #d1d5db;
+                border-radius: 4px;
+            }
+            .modal-footer {
+                padding: 16px;
+                border-top: 1px solid #e5e7eb;
+                display: flex;
+                gap: 8px;
+                justify-content: flex-end;
+            }
+            .modal-close {
+                background: none;
+                border: none;
+                font-size: 24px;
+                cursor: pointer;
+                color: #6b7280;
+            }
+        `;
+        document.head.appendChild(styles);
+    }
+    
+    document.body.appendChild(modal);
 }
 
-function editProject(id, name, description, deptId, status) {
+function editProject(id, name, description, latitude, longitude, radius, deptId, status) {
     isEditing = true;
-    document.getElementById('modalTitle').textContent = 'Edit Project';
-    document.getElementById('submitText').textContent = 'Update Project';
-    document.getElementById('projectId').value = id;
-    document.getElementById('projectName').value = name;
-    document.getElementById('projectDescription').value = description;
-    document.getElementById('projectDepartment').value = deptId || '';
-    document.getElementById('projectStatus').value = status;
-    document.getElementById('statusGroup').style.display = 'block';
-    showModal('projectModal');
+    showAddProjectModal();
+    
+    setTimeout(() => {
+        document.getElementById('modalTitle').textContent = '📁 Edit Project';
+        document.getElementById('submitText').textContent = 'Update Project';
+        document.getElementById('projectId').value = id;
+        document.getElementById('projectName').value = name;
+        document.getElementById('projectDescription').value = description;
+        document.getElementById('projectLatitude').value = latitude || '';
+        document.getElementById('projectLongitude').value = longitude || '';
+        document.getElementById('projectRadius').value = radius || 100;
+        document.getElementById('projectDepartment').value = deptId || '';
+        document.getElementById('projectStatus').value = status;
+        document.getElementById('statusGroup').style.display = 'block';
+    }, 100);
+}
+
+function submitProjectForm() {
+    const form = document.getElementById('projectForm');
+    const formData = new FormData(form);
+    const url = isEditing ? '/ergon-site/project-management/update' : '/ergon-site/project-management/create';
+    
+    fetch(url, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.querySelector('.modal-overlay')?.remove();
+            location.reload();
+        } else {
+            alert('Failed to save project: ' + (data.error || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to save project');
+    });
 }
 
 function deleteProject(id, name) {
@@ -210,58 +312,7 @@ function deleteProject(id, name) {
         });
     }
 }
-
-document.getElementById('projectForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const formData = new FormData(this);
-    const url = isEditing ? '/ergon-site/project-management/update' : '/ergon-site/project-management/create';
-    
-    console.log('Submitting to URL:', url);
-    console.log('Form data:', Object.fromEntries(formData));
-    
-    fetch(url, {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-        }
-    })
-    .then(response => {
-        console.log('Response status:', response.status);
-        console.log('Response URL:', response.url);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const contentType = response.headers.get('content-type');
-        if (contentType && contentType.includes('application/json')) {
-            return response.json();
-        } else {
-            return response.text().then(text => {
-                console.log('Non-JSON response:', text);
-                throw new Error('Expected JSON response but got: ' + text.substring(0, 100));
-            });
-        }
-    })
-    .then(data => {
-        console.log('Response data:', data);
-        if (data.success) {
-            closeModal('projectModal');
-            location.reload();
-        } else {
-            alert('Failed to save project: ' + (data.error || 'Unknown error'));
-        }
-    })
-    .catch(error => {
-        console.error('Error details:', error);
-        alert('Failed to save project. Error: ' + error.message + '. Check console for details.');
-    });
-});
 </script>
-
-<?php renderModalJS(); ?>
 
 <?php
 $content = ob_get_clean();

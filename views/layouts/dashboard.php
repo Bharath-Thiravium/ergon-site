@@ -432,18 +432,34 @@ ob_end_clean();
                                 <span class="nav-icon"><i class="bi bi-speedometer2"></i></span>
                                 Dashboard
                             </a>
-                        </div>
-                    </div>
-                    <div class="nav-dropdown">
-                        <button class="nav-dropdown-btn" onclick="toggleDropdown('finance')">
-                            <span class="nav-icon">💰</span>
-                            Finance
-                            <span class="dropdown-arrow">▼</span>
-                        </button>
-                        <div class="nav-dropdown-menu" id="finance">
                             <a href="/ergon-site/finance" class="nav-dropdown-item <?= ($active_page ?? '') === 'finance' ? 'nav-dropdown-item--active' : '' ?>">
                                 <span class="nav-icon">💰</span>
                                 Finance
+                            </a>
+                        </div>
+                    </div>
+                    <div class="nav-dropdown">
+                        <button class="nav-dropdown-btn" onclick="toggleDropdown('hrfinance')">
+                            <span class="nav-icon">💰</span>
+                            HR & Finance
+                            <span class="dropdown-arrow">▼</span>
+                        </button>
+                        <div class="nav-dropdown-menu" id="hrfinance">
+                            <a href="/ergon-site/leaves" class="nav-dropdown-item <?= ($active_page ?? '') === 'leaves' ? 'nav-dropdown-item--active' : '' ?>">
+                                <span class="nav-icon">📅</span>
+                                Leaves
+                            </a>
+                            <a href="/ergon-site/expenses" class="nav-dropdown-item <?= ($active_page ?? '') === 'expenses' ? 'nav-dropdown-item--active' : '' ?>">
+                                <span class="nav-icon">💰</span>
+                                Expenses
+                            </a>
+                            <a href="/ergon-site/advances" class="nav-dropdown-item <?= ($active_page ?? '') === 'advances' ? 'nav-dropdown-item--active' : '' ?>">
+                                <span class="nav-icon">💳</span>
+                                Advances
+                            </a>
+                            <a href="/ergon-site/attendance" class="nav-dropdown-item <?= ($active_page ?? '') === 'attendance' ? 'nav-dropdown-item--active' : '' ?>">
+                                <span class="nav-icon">📍</span>
+                                Attendance
                             </a>
                         </div>
                     </div>
@@ -709,11 +725,27 @@ ob_end_clean();
                     <span class="sidebar__icon"><i class="bi bi-speedometer2"></i></span>
                     Dashboard
                 </a>
-                
-                <div class="sidebar__divider">Finance</div>
                 <a href="/ergon-site/finance" class="sidebar__link <?= ($active_page ?? '') === 'finance' ? 'sidebar__link--active' : '' ?>">
                     <span class="sidebar__icon">💰</span>
                     Finance
+                </a>
+                
+                <div class="sidebar__divider">HR & Finance</div>
+                <a href="/ergon-site/leaves" class="sidebar__link <?= ($active_page ?? '') === 'leaves' ? 'sidebar__link--active' : '' ?>">
+                    <span class="sidebar__icon">📅</span>
+                    Leaves
+                </a>
+                <a href="/ergon-site/expenses" class="sidebar__link <?= ($active_page ?? '') === 'expenses' ? 'sidebar__link--active' : '' ?>">
+                    <span class="sidebar__icon">💰</span>
+                    Expenses
+                </a>
+                <a href="/ergon-site/advances" class="sidebar__link <?= ($active_page ?? '') === 'advances' ? 'sidebar__link--active' : '' ?>">
+                    <span class="sidebar__icon">💳</span>
+                    Advances
+                </a>
+                <a href="/ergon-site/attendance" class="sidebar__link <?= ($active_page ?? '') === 'attendance' ? 'sidebar__link--active' : '' ?>">
+                    <span class="sidebar__icon">📍</span>
+                    Attendance
                 </a>
                 <?php endif; ?>
             <?php elseif (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
@@ -1234,13 +1266,32 @@ ob_end_clean();
                     const latitude = position.coords.latitude;
                     const longitude = position.coords.longitude;
                     
-                    text.textContent = action === 'in' ? 'Clocking In...' : 'Clocking Out...';
+                    text.textContent = 'Validating Location...';
                     
-                    fetch('/ergon-site/attendance/clock', {
+                    // First validate location against project
+                    fetch('/ergon-site/src/api/location-attendance.php', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: `type=${action}&latitude=${latitude}&longitude=${longitude}`
+                        body: `latitude=${latitude}&longitude=${longitude}`
                     })
+                    .then(response => response.json())
+                    .then(locationData => {
+                        if (!locationData.success || !locationData.within_range) {
+                            showAttendanceNotification(locationData.error || 'Location validation failed', 'error');
+                            text.textContent = originalText;
+                            button.disabled = false;
+                            button.classList.remove('loading');
+                            return;
+                        }
+                        
+                        text.textContent = action === 'in' ? 'Clocking In...' : 'Clocking Out...';
+                        
+                        // Proceed with attendance if location is valid
+                        fetch('/ergon-site/attendance/clock', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                            body: `type=${action}&latitude=${latitude}&longitude=${longitude}`
+                        })
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
@@ -1267,7 +1318,14 @@ ob_end_clean();
                         showAttendanceNotification('Network error occurred', 'error');
                         text.textContent = originalText;
                     })
-                    .finally(() => {
+                        .finally(() => {
+                            button.disabled = false;
+                            button.classList.remove('loading');
+                        });
+                    })
+                    .catch(error => {
+                        showAttendanceNotification('Location validation failed', 'error');
+                        text.textContent = originalText;
                         button.disabled = false;
                         button.classList.remove('loading');
                     });

@@ -45,6 +45,7 @@ $router->post('/users/create', 'UsersController', 'create');
 $router->get('/users/view/{id}', 'UsersController', 'viewUser');
 $router->get('/users/edit/{id}', 'UsersController', 'edit');
 $router->post('/users/edit/{id}', 'UsersController', 'edit');
+$router->post('/users/edit', 'UsersController', 'edit');
 $router->post('/users/inactive/{id}', 'UsersController', 'inactive');
 $router->post('/users/activate/{id}', 'UsersController', 'activate');
 $router->post('/users/suspend/{id}', 'UsersController', 'suspend');
@@ -261,6 +262,16 @@ $router->post('/api/contacts/{id}/update', 'ContactFollowupController', 'updateC
 $router->get('/api/contact-persons', 'ApiController', 'contactPersons');
 $router->get('/api/companies', 'ApiController', 'companies');
 $router->get('/api/users', 'ApiController', 'users');
+
+// Project-based Attendance API Routes
+$router->get('/api/user-projects', 'ApiController', 'userProjects');
+$router->get('/api/service-history', 'ApiController', 'serviceHistory');
+$router->get('/attendance/service-history', 'AttendanceController', 'serviceHistory');
+
+// User Management API Routes
+$router->get('/api/departments', 'ApiController', 'departments');
+$router->get('/api/projects', 'ApiController', 'projects');
+$router->get('/api/users/{id}', 'ApiController', 'getUser');
 
 // Unified Workflow API Routes
 $router->post('/api/update-task-status', 'UnifiedWorkflowController', 'updateTaskStatus');

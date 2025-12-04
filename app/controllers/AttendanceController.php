@@ -26,7 +26,7 @@ class AttendanceController extends Controller {
             
             $dateCondition = $this->getDateCondition($filter);
             
-            $stmt = $db->prepare("SELECT a.*, u.name as user_name, COALESCE(d.name, 'Not Assigned') as department FROM attendance a LEFT JOIN users u ON a.user_id = u.id LEFT JOIN departments d ON u.department_id = d.id WHERE a.user_id = ? AND $dateCondition ORDER BY a.check_in DESC");
+            $stmt = $db->prepare("SELECT a.*, u.name as user_name, COALESCE(a.location_type, 'office') as location_type, COALESCE(a.location_title, CASE WHEN a.location_name IS NOT NULL THEN a.location_name WHEN p.location_title IS NOT NULL THEN p.location_title WHEN s.location_title IS NOT NULL THEN s.location_title ELSE 'Main Office' END) as location_title, COALESCE(a.location_radius, CASE WHEN p.checkin_radius IS NOT NULL THEN p.checkin_radius WHEN s.attendance_radius IS NOT NULL THEN s.attendance_radius ELSE 50 END) as location_radius, COALESCE(d.name, 'Not Assigned') as department, CASE WHEN a.check_in IS NOT NULL AND a.check_out IS NOT NULL THEN CONCAT(FLOOR(TIMESTAMPDIFF(MINUTE, a.check_in, a.check_out) / 60), 'h ', MOD(TIMESTAMPDIFF(MINUTE, a.check_in, a.check_out), 60), 'm') ELSE '0h 0m' END as working_hours FROM attendance a LEFT JOIN users u ON a.user_id = u.id LEFT JOIN departments d ON u.department_id = d.id LEFT JOIN projects p ON a.project_id = p.id LEFT JOIN settings s ON s.id = 1 WHERE a.user_id = ? AND $dateCondition ORDER BY a.check_in DESC");
             $stmt->execute([$_SESSION['user_id']]);
             $attendance = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
@@ -63,16 +63,36 @@ class AttendanceController extends Controller {
             
             $roleFilter = ($role === 'owner') ? "u.role IN ('admin', 'user', 'owner')" : "u.role = 'user'";
             
-            // Get users with attendance
+            // Debug log: Fetching attendance with location data
+            error_log("[ATTENDANCE_DEBUG] Fetching attendance for date: $filterDate with role filter: $roleFilter");
+            
+            // Get users with attendance including location data
             $stmt = $db->prepare("
                 SELECT 
                     u.id,
+                    u.id as user_id,
                     u.name,
                     u.email,
                     u.role,
                     COALESCE(d.name, 'Not Assigned') as department,
                     a.check_in,
                     a.check_out,
+                    COALESCE(a.location_type, 'office') as location_type,
+                    COALESCE(a.location_title, 
+                        CASE 
+                            WHEN a.location_name IS NOT NULL THEN a.location_name
+                            WHEN p.location_title IS NOT NULL THEN p.location_title
+                            WHEN s.location_title IS NOT NULL THEN s.location_title
+                            ELSE 'Main Office'
+                        END
+                    ) as location_title,
+                    COALESCE(a.location_radius, 
+                        CASE 
+                            WHEN p.checkin_radius IS NOT NULL THEN p.checkin_radius
+                            WHEN s.attendance_radius IS NOT NULL THEN s.attendance_radius
+                            ELSE 50
+                        END
+                    ) as location_radius,
                     CASE 
                         WHEN a.location_name = 'On Approved Leave' THEN 'On Leave'
                         WHEN a.check_in IS NOT NULL THEN 'Present'
@@ -80,24 +100,39 @@ class AttendanceController extends Controller {
                     END as status,
                     CASE 
                         WHEN a.check_in IS NOT NULL AND a.check_out IS NOT NULL THEN 
-                            ROUND(TIMESTAMPDIFF(MINUTE, a.check_in, a.check_out) / 60.0, 2)
-                        ELSE 0
-                    END as total_hours
+                            CONCAT(FLOOR(TIMESTAMPDIFF(MINUTE, a.check_in, a.check_out) / 60), 'h ', 
+                                   MOD(TIMESTAMPDIFF(MINUTE, a.check_in, a.check_out), 60), 'm')
+                        ELSE '0h 0m'
+                    END as working_hours
                 FROM users u
                 LEFT JOIN departments d ON u.department_id = d.id
                 LEFT JOIN attendance a ON u.id = a.user_id AND DATE(a.check_in) = ?
+                LEFT JOIN projects p ON a.project_id = p.id
+                LEFT JOIN settings s ON s.id = 1
                 WHERE $roleFilter AND u.status = 'active'
                 ORDER BY u.role DESC, u.name
             ");
             $stmt->execute([$filterDate]);
             $employeeAttendance = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
+            // Debug log: Location data fetch results
+            foreach ($employeeAttendance as $emp) {
+                if ($emp['check_in']) {
+                    error_log("[ATTENDANCE_DEBUG] Employee {$emp['name']}: Location={$emp['location_title']}, Type={$emp['location_type']}, Radius={$emp['location_radius']}");
+                }
+            }
+            
             // Times are already in IST, no conversion needed
             
-            // Get admin's own attendance
-            $stmt = $db->prepare("SELECT * FROM attendance WHERE user_id = ? AND DATE(check_in) = ?");
+            // Get admin's own attendance with location data
+            $stmt = $db->prepare("SELECT a.*, COALESCE(a.location_type, 'office') as location_type, COALESCE(a.location_title, CASE WHEN a.location_name IS NOT NULL THEN a.location_name WHEN p.location_title IS NOT NULL THEN p.location_title WHEN s.location_title IS NOT NULL THEN s.location_title ELSE 'Main Office' END) as location_title, COALESCE(a.location_radius, CASE WHEN p.checkin_radius IS NOT NULL THEN p.checkin_radius WHEN s.attendance_radius IS NOT NULL THEN s.attendance_radius ELSE 50 END) as location_radius, CASE WHEN a.check_in IS NOT NULL AND a.check_out IS NOT NULL THEN CONCAT(FLOOR(TIMESTAMPDIFF(MINUTE, a.check_in, a.check_out) / 60), 'h ', MOD(TIMESTAMPDIFF(MINUTE, a.check_in, a.check_out), 60), 'm') ELSE '0h 0m' END as working_hours FROM attendance a LEFT JOIN projects p ON a.project_id = p.id LEFT JOIN settings s ON s.id = 1 WHERE a.user_id = ? AND DATE(a.check_in) = ?");
             $stmt->execute([$_SESSION['user_id'], $filterDate]);
             $adminAttendance = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            // Debug log: Admin attendance location data
+            if ($adminAttendance && $adminAttendance['check_in']) {
+                error_log("[ATTENDANCE_DEBUG] Admin attendance: Location={$adminAttendance['location_title']}, Type={$adminAttendance['location_type']}, Radius={$adminAttendance['location_radius']}");
+            }
             
             // Times are already in IST, no conversion needed
             
@@ -159,7 +194,7 @@ class AttendanceController extends Controller {
                     echo "<td><span style='color: #6b7280;'>-</span></td>";
                 }
                 
-                echo "<td>" . ($employee['total_hours'] > 0 ? "<span style='color: #1f2937; font-weight: 500;'>" . number_format($employee['total_hours'], 2) . "h</span>" : "<span style='color: #6b7280;'>0h</span>") . "</td>";
+                echo "<td>" . ($employee['working_hours'] !== '0h 0m' ? "<span style='color: #1f2937; font-weight: 500;'>" . htmlspecialchars($employee['working_hours']) . "</span>" : "<span style='color: #6b7280;'>0h 0m</span>") . "</td>";
                 echo "<td><div style='display: flex; gap: 0.25rem;'>";
                 echo "<button class='btn btn--sm btn--secondary' onclick='viewEmployeeDetails({$employee['id']})' title='View Details'><span>👁️</span></button>";
                 if ($employee['status'] === 'Absent') {
@@ -314,20 +349,30 @@ class AttendanceController extends Controller {
             return;
         }
         
-        // Check location restriction
-        if (!$this->isWithinAllowedLocation($db)) {
-            echo json_encode(['success' => false, 'error' => 'Please move within the allowed area to continue.']);
+        $userLat = floatval($_POST['latitude'] ?? 0);
+        $userLng = floatval($_POST['longitude'] ?? 0);
+        $projectId = intval($_POST['project_id'] ?? 0);
+        
+        // Check location and get details
+        $locationInfo = $this->getLocationInfo($db, $userLat, $userLng, $projectId);
+        if (!$locationInfo) {
+            echo json_encode(['success' => false, 'error' => 'You are outside the allowed check-in area']);
             return;
         }
         
-        // Store in IST
         $currentTime = TimezoneHelper::nowIst();
         
-        $stmt = $db->prepare("INSERT INTO attendance (user_id, check_in, created_at) VALUES (?, ?, ?)");
-        $result = $stmt->execute([$userId, $currentTime, $currentTime]);
+        $stmt = $db->prepare("INSERT INTO attendance (user_id, project_id, check_in, check_in_latitude, check_in_longitude, location_verified, location_type, location_title, location_radius, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $result = $stmt->execute([$userId, $locationInfo['project_id'], $currentTime, $userLat, $userLng, 1, $locationInfo['type'], $locationInfo['title'], $locationInfo['radius'], $currentTime]);
         
         if ($result) {
-            echo json_encode(['success' => true, 'message' => 'Clocked in successfully']);
+            // Create service history entry if project-based
+            if ($locationInfo['project_id']) {
+                $stmt = $db->prepare("INSERT INTO service_history (user_id, project_id, attendance_id, service_date, start_time, location_lat, location_lng) VALUES (?, ?, ?, ?, ?, ?, ?)");
+                $stmt->execute([$userId, $locationInfo['project_id'], $db->lastInsertId(), $currentDate, date('H:i:s'), $userLat, $userLng]);
+            }
+            
+            echo json_encode(['success' => true, 'message' => 'Clocked in successfully from ' . $locationInfo['title']]);
         } else {
             echo json_encode(['success' => false, 'error' => 'Failed to clock in']);
         }
@@ -337,7 +382,7 @@ class AttendanceController extends Controller {
         $currentTime = TimezoneHelper::nowIst();
         $currentDate = TimezoneHelper::getCurrentDate();
         
-        $stmt = $db->prepare("SELECT id FROM attendance WHERE user_id = ? AND DATE(check_in) = ? AND check_out IS NULL");
+        $stmt = $db->prepare("SELECT * FROM attendance WHERE user_id = ? AND DATE(check_in) = ? AND check_out IS NULL");
         $stmt->execute([$userId, $currentDate]);
         $attendance = $stmt->fetch();
         
@@ -346,16 +391,25 @@ class AttendanceController extends Controller {
             return;
         }
         
-        // Check location restriction
-        if (!$this->isWithinAllowedLocation($db)) {
-            echo json_encode(['success' => false, 'error' => 'Please move within the allowed area to continue.']);
+        $userLat = floatval($_POST['latitude'] ?? 0);
+        $userLng = floatval($_POST['longitude'] ?? 0);
+        
+        // Check location for checkout
+        $locationInfo = $this->getLocationInfo($db, $userLat, $userLng, $attendance['project_id']);
+        if (!$locationInfo) {
+            echo json_encode(['success' => false, 'error' => 'You are outside the allowed check-out area']);
             return;
         }
         
-        $stmt = $db->prepare("UPDATE attendance SET check_out = ? WHERE id = ?");
-        $result = $stmt->execute([$currentTime, $attendance['id']]);
+        $stmt = $db->prepare("UPDATE attendance SET check_out = ?, check_out_latitude = ?, check_out_longitude = ? WHERE id = ?");
+        $result = $stmt->execute([$currentTime, $userLat, $userLng, $attendance['id']]);
         
         if ($result) {
+            // Update service history
+            $hoursWorked = (strtotime($currentTime) - strtotime($attendance['check_in'])) / 3600;
+            $stmt = $db->prepare("UPDATE service_history SET end_time = ?, hours_worked = ?, status = 'completed' WHERE attendance_id = ?");
+            $stmt->execute([date('H:i:s'), round($hoursWorked, 2), $attendance['id']]);
+            
             echo json_encode(['success' => true, 'message' => 'Clocked out successfully']);
         } else {
             echo json_encode(['success' => false, 'error' => 'Failed to clock out']);
@@ -445,39 +499,47 @@ class AttendanceController extends Controller {
         }
     }
     
-    private function isWithinAllowedLocation($db) {
-        // Get user's current location from POST data
-        $userLat = floatval($_POST['latitude'] ?? 0);
-        $userLng = floatval($_POST['longitude'] ?? 0);
-        
+    private function getLocationInfo($db, $userLat, $userLng, $projectId = null) {
         if ($userLat == 0 || $userLng == 0) {
-            error_log("Location validation failed: No location provided (lat: $userLat, lng: $userLng)");
-            return false; // No location provided
+            return false;
         }
         
-        // Ensure settings table exists
-        $this->ensureSettingsTable($db);
-        
-        // Get office location and radius from settings
-        $stmt = $db->prepare("SELECT base_location_lat, base_location_lng, attendance_radius FROM settings LIMIT 1");
+        // Check if within any project radius
+        $stmt = $db->prepare("SELECT id, name, latitude, longitude, checkin_radius, location_title FROM projects WHERE latitude IS NOT NULL AND longitude IS NOT NULL AND status = 'active'");
         $stmt->execute();
-        $settings = $stmt->fetch(PDO::FETCH_ASSOC);
+        $projects = $stmt->fetchAll();
         
-        if (!$settings || $settings['base_location_lat'] == 0 || $settings['base_location_lng'] == 0) {
-            error_log("Location validation: No office location set, allowing attendance");
-            return true; // No location restrictions set
+        foreach ($projects as $project) {
+            $distance = $this->calculateDistance($userLat, $userLng, $project['latitude'], $project['longitude']);
+            if ($distance <= $project['checkin_radius']) {
+                return [
+                    'type' => 'project',
+                    'title' => $project['location_title'] ?: $project['name'] . ' Site',
+                    'radius' => $project['checkin_radius'],
+                    'project_id' => $project['id']
+                ];
+            }
         }
         
-        $officeLat = floatval($settings['base_location_lat']);
-        $officeLng = floatval($settings['base_location_lng']);
-        $allowedRadius = intval($settings['attendance_radius']);
+        // Check if within settings radius
+        $this->ensureSettingsTable($db);
+        $stmt = $db->prepare("SELECT base_location_lat, base_location_lng, attendance_radius, location_title FROM settings LIMIT 1");
+        $stmt->execute();
+        $settings = $stmt->fetch();
         
-        // Calculate distance using Haversine formula
-        $distance = $this->calculateDistance($userLat, $userLng, $officeLat, $officeLng);
+        if ($settings && $settings['base_location_lat'] != 0 && $settings['base_location_lng'] != 0) {
+            $distance = $this->calculateDistance($userLat, $userLng, $settings['base_location_lat'], $settings['base_location_lng']);
+            if ($distance <= $settings['attendance_radius']) {
+                return [
+                    'type' => 'office',
+                    'title' => $settings['location_title'] ?: 'Main Office',
+                    'radius' => $settings['attendance_radius'],
+                    'project_id' => null
+                ];
+            }
+        }
         
-        error_log("Location validation: User($userLat,$userLng) Office($officeLat,$officeLng) Distance: {$distance}m Radius: {$allowedRadius}m Result: " . ($distance <= $allowedRadius ? 'ALLOWED' : 'BLOCKED'));
-        
-        return $distance <= $allowedRadius;
+        return false;
     }
     
     private function ensureSettingsTable($db) {
@@ -488,16 +550,28 @@ class AttendanceController extends Controller {
                 base_location_lat DECIMAL(10,8) DEFAULT 0,
                 base_location_lng DECIMAL(11,8) DEFAULT 0,
                 attendance_radius INT DEFAULT 5,
+                location_title VARCHAR(255) DEFAULT 'Main Office',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             )");
+            
+            // Add location_title column if it doesn't exist
+            try {
+                $db->exec("ALTER TABLE settings ADD COLUMN location_title VARCHAR(255) DEFAULT 'Main Office'");
+            } catch (Exception $e) {
+                // Column might already exist, ignore error
+            }
             
             // Insert default settings if none exist
             $stmt = $db->query("SELECT COUNT(*) as count FROM settings");
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             if ($result['count'] == 0) {
-                $db->exec("INSERT INTO settings (company_name, base_location_lat, base_location_lng, attendance_radius) VALUES ('ERGON Company', 0, 0, 5)");
+                $db->exec("INSERT INTO settings (company_name, base_location_lat, base_location_lng, attendance_radius, location_title) VALUES ('ERGON Company', 0, 0, 5, 'Main Office')");
             }
+            
+            // Update existing records to have location_title if null
+            $db->exec("UPDATE settings SET location_title = 'Main Office' WHERE location_title IS NULL OR location_title = ''");
+            
         } catch (Exception $e) {
             error_log('ensureSettingsTable error: ' . $e->getMessage());
         }
@@ -537,6 +611,11 @@ class AttendanceController extends Controller {
             'total_minutes' => $remainingMinutes,
             'present_days' => $presentDays
         ];
+    }
+    
+    public function serviceHistory() {
+        $this->requireAuth();
+        $this->view('attendance/service_history', ['active_page' => 'attendance']);
     }
 }
 ?>

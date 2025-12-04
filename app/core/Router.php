@@ -73,6 +73,9 @@ class Router {
         $controllerName = $route['controller'];
         $method = $route['method'];
         
+        // Debug logging
+        error_log("Router Debug - Executing route: {$controllerName}::{$method} with params: " . json_encode($params));
+        
         $controllerFile = __DIR__ . "/../controllers/{$controllerName}.php";
         
         if (!file_exists($controllerFile)) {

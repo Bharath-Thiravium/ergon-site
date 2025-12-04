@@ -93,7 +93,11 @@ class UsersController extends Controller {
         }
     }
     
-    public function edit($id) {
+    public function edit($id = null) {
+        // Get ID from route parameter if not passed directly
+        if (!$id && isset($_POST['user_id'])) {
+            $id = $_POST['user_id'];
+        }
         $this->ensureDepartmentsTable();
         
         if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['owner', 'admin'])) {
@@ -163,14 +167,38 @@ class UsersController extends Controller {
                 ]);
                 
                 if ($result) {
+                    // Handle project assignments
+                    if (isset($_POST['projects'])) {
+                        $this->updateUserProjects($id, $_POST['projects'] ?? [], $db);
+                    }
+                    
                     $this->handleDocumentUploads($id);
+                    
+                    if (isset($_POST['ajax'])) {
+                        header('Content-Type: application/json');
+                        echo json_encode(['success' => true, 'message' => 'User updated successfully']);
+                        exit;
+                    }
+                    
                     header('Location: /ergon-site/users?success=User updated successfully');
                 } else {
+                    if (isset($_POST['ajax'])) {
+                        header('Content-Type: application/json');
+                        echo json_encode(['success' => false, 'error' => 'Failed to update user']);
+                        exit;
+                    }
                     header('Location: /ergon-site/users?error=Failed to update user');
                 }
                 exit;
             } catch (Exception $e) {
                 error_log('User edit error: ' . $e->getMessage());
+                
+                if (isset($_POST['ajax'])) {
+                    header('Content-Type: application/json');
+                    echo json_encode(['success' => false, 'error' => 'Update failed']);
+                    exit;
+                }
+                
                 header('Location: /ergon-site/users/view/' . $id . '?error=Update failed');
                 exit;
             }
@@ -289,8 +317,19 @@ class UsersController extends Controller {
                     $userId = $db->lastInsertId();
                     error_log('User created successfully with ID: ' . $userId);
                     
+                    // Handle project assignments
+                    if (!empty($_POST['projects']) && is_array($_POST['projects'])) {
+                        $this->assignUserProjects($userId, $_POST['projects'], $db);
+                    }
+                    
                     // Handle document uploads
                     $this->handleDocumentUploads($userId);
+                    
+                    if (isset($_POST['ajax'])) {
+                        header('Content-Type: application/json');
+                        echo json_encode(['success' => true, 'message' => 'User created successfully']);
+                        exit;
+                    }
                     
                     $_SESSION['new_credentials'] = [
                         'email' => $_POST['email'],
@@ -304,12 +343,25 @@ class UsersController extends Controller {
                     error_log('User creation failed. Error info: ' . json_encode($errorInfo));
                     error_log('PDO Error: ' . print_r($stmt->errorInfo(), true));
                     
+                    if (isset($_POST['ajax'])) {
+                        header('Content-Type: application/json');
+                        echo json_encode(['success' => false, 'error' => 'Failed to create user: ' . ($errorInfo[2] ?? 'Unknown error')]);
+                        exit;
+                    }
+                    
                     $_SESSION['old_data'] = $_POST;
                     header('Location: /ergon-site/users/create?error=Failed to create user: ' . ($errorInfo[2] ?? 'Unknown error'));
                     exit;
                 }
             } catch (Exception $e) {
                 error_log('User creation error: ' . $e->getMessage());
+                
+                if (isset($_POST['ajax'])) {
+                    header('Content-Type: application/json');
+                    echo json_encode(['success' => false, 'error' => 'Failed to create user']);
+                    exit;
+                }
+                
                 $_SESSION['old_data'] = $_POST;
                 header('Location: /ergon-site/users/create?error=Failed to create user');
                 exit;
@@ -940,6 +992,32 @@ class UsersController extends Controller {
             }
         } catch (Exception $e) {
             error_log('ensureDepartmentsTable error: ' . $e->getMessage());
+        }
+    }
+    
+    private function assignUserProjects($userId, $projectIds, $db) {
+        try {
+            foreach ($projectIds as $projectId) {
+                $stmt = $db->prepare("INSERT IGNORE INTO user_projects (user_id, project_id, status) VALUES (?, ?, 'active')");
+                $stmt->execute([$userId, $projectId]);
+            }
+        } catch (Exception $e) {
+            error_log('Project assignment error: ' . $e->getMessage());
+        }
+    }
+    
+    private function updateUserProjects($userId, $projectIds, $db) {
+        try {
+            // Remove existing assignments
+            $stmt = $db->prepare("DELETE FROM user_projects WHERE user_id = ?");
+            $stmt->execute([$userId]);
+            
+            // Add new assignments
+            if (!empty($projectIds)) {
+                $this->assignUserProjects($userId, $projectIds, $db);
+            }
+        } catch (Exception $e) {
+            error_log('Project update error: ' . $e->getMessage());
         }
     }
 }

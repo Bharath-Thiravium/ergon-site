@@ -166,10 +166,16 @@ function clockAction(type) {
         return;
     }
     
+    // For clock in, show project selection
+    if (type === 'in') {
+        showProjectSelection();
+        return;
+    }
+    
     // Disable button and show loading
     btn.disabled = true;
     const originalText = text.textContent;
-    text.textContent = type === 'in' ? 'Clocking In...' : 'Clocking Out...';
+    text.textContent = 'Clocking Out...';
     
     const formData = new FormData();
     formData.append('type', type);
@@ -288,6 +294,152 @@ function showModal(message, type, icon) {
             }
         }, 5000);
     }
+}
+
+function showProjectSelection() {
+    fetch('/ergon-site/api/user-projects')
+    .then(response => response.json())
+    .then(data => {
+        if (!data.success || !data.projects.length) {
+            showErrorAlert('No projects assigned. Contact your administrator.');
+            return;
+        }
+        
+        const modal = document.createElement('div');
+        modal.className = 'modal-overlay';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>📁 Select Project</h3>
+                    <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <label>Choose project to clock in:</label>
+                    <select id="projectSelect" class="form-input">
+                        <option value="">Select Project</option>
+                        ${data.projects.map(p => `<option value="${p.id}">${p.name} ${p.latitude ? '📍' : ''}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn--secondary" onclick="this.closest('.modal-overlay').remove()">Cancel</button>
+                    <button class="btn btn--success" onclick="proceedClockIn()">Clock In</button>
+                </div>
+            </div>
+        `;
+        
+        if (!document.getElementById('modal-styles')) {
+            const styles = document.createElement('style');
+            styles.id = 'modal-styles';
+            styles.textContent = `
+                .modal-overlay {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.5);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 10001;
+                }
+                .modal-content {
+                    background: white;
+                    border-radius: 8px;
+                    width: 400px;
+                    max-width: 90vw;
+                }
+                .modal-header {
+                    padding: 16px;
+                    border-bottom: 1px solid #e5e7eb;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+                .modal-body {
+                    padding: 16px;
+                }
+                .modal-body label {
+                    display: block;
+                    margin-bottom: 8px;
+                    font-weight: 500;
+                }
+                .modal-body .form-input {
+                    width: 100%;
+                    padding: 8px;
+                    border: 1px solid #d1d5db;
+                    border-radius: 4px;
+                }
+                .modal-footer {
+                    padding: 16px;
+                    border-top: 1px solid #e5e7eb;
+                    display: flex;
+                    gap: 8px;
+                    justify-content: flex-end;
+                }
+                .modal-close {
+                    background: none;
+                    border: none;
+                    font-size: 24px;
+                    cursor: pointer;
+                    color: #6b7280;
+                }
+            `;
+            document.head.appendChild(styles);
+        }
+        
+        document.body.appendChild(modal);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showErrorAlert('Failed to load projects');
+    });
+}
+
+function proceedClockIn() {
+    const projectId = document.getElementById('projectSelect').value;
+    if (!projectId) {
+        showErrorAlert('Please select a project');
+        return;
+    }
+    
+    document.querySelector('.modal-overlay')?.remove();
+    
+    const btn = document.getElementById('clockBtn');
+    const text = document.getElementById('clockBtnText');
+    
+    btn.disabled = true;
+    text.textContent = 'Clocking In...';
+    
+    const formData = new FormData();
+    formData.append('type', 'in');
+    formData.append('project_id', projectId);
+    formData.append('latitude', currentPosition.coords.latitude);
+    formData.append('longitude', currentPosition.coords.longitude);
+    
+    fetch('/ergon-site/attendance/clock', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            attendanceStatus.has_clocked_in = true;
+            updateClockButton(attendanceStatus);
+            showSuccessAlert(data.message);
+            setTimeout(() => window.location.href = '/ergon-site/attendance', 1500);
+        } else {
+            showErrorAlert(data.error || 'Clock in failed');
+            btn.disabled = false;
+            text.textContent = 'Clock In';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showErrorAlert('Server error occurred');
+        btn.disabled = false;
+        text.textContent = 'Clock In';
+    });
 }
 
 // Initialize

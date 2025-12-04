@@ -26,6 +26,13 @@ ob_start();
     <a href="/ergon-site/settings" class="btn btn--secondary">System Settings</a>
 </div>
 
+<style>
+/* Hide header actions for company_owner users */
+body[data-user-role="company_owner"] .header-actions {
+    display: none !important;
+}
+</style>
+
 <div class="dashboard-grid">
     <div class="kpi-card">
         <div class="kpi-card__header">

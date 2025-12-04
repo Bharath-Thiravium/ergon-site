@@ -3,7 +3,8 @@ $title = 'Attendance';
 $active_page = 'attendance';
 require_once __DIR__ . '/../../app/helpers/TimeHelper.php';
 require_once __DIR__ . '/../../app/helpers/TimezoneHelper.php';
-$currentDateIST = (new DateTime('now', new DateTimeZone('Asia/Kolkata')))->format('M d, Y');
+$selectedDateForDisplay = isset($_GET['date']) ? (new DateTime($_GET['date']))->format('M d, Y') : (new DateTime('now', new DateTimeZone('Asia/Kolkata')))->format('M d, Y');
+$currentDateIST = $selectedDateForDisplay;
 ob_start();
 ?>
 
@@ -87,69 +88,26 @@ ob_start();
                         <th class="table-header__cell">
                 <div class="table-header__content">
                     <span class="table-header__text">Admin Name</span>
-                    <div class="table-header__controls">
-                        <span class="table-header__sort" data-column="admin_name_0" data-direction="none">⇅</span>
-                        <span class="table-header__filter" data-column="admin_name_0">🔍</span>
-                    </div>
-                </div>
-                <div class="table-filter-dropdown" data-column="admin_name_0">
-                    <input type="text" class="filter-input" placeholder="Search Admin Name...">
-                    <div class="filter-options"></div>
-                    <div class="filter-actions">
-                        <button class="filter-btn filter-btn--primary" data-action="apply">Apply</button>
-                        <button class="filter-btn" data-action="clear">Clear</button>
-                    </div>
                 </div>
             </th>
                         <th class="table-header__cell">
                 <div class="table-header__content">
                     <span class="table-header__text">Date &amp; Status</span>
-                    <div class="table-header__controls">
-                        <span class="table-header__sort" data-column="date___status_1" data-direction="none">⇅</span>
-                        <span class="table-header__filter" data-column="date___status_1">🔍</span>
-                    </div>
                 </div>
-                <div class="table-filter-dropdown" data-column="date___status_1">
-                    <input type="text" class="filter-input" placeholder="Search Date &amp; Status...">
-                    <div class="filter-options"></div>
-                    <div class="filter-actions">
-                        <button class="filter-btn filter-btn--primary" data-action="apply">Apply</button>
-                        <button class="filter-btn" data-action="clear">Clear</button>
-                    </div>
+            </th>
+                        <th class="table-header__cell">
+                <div class="table-header__content">
+                    <span class="table-header__text">Location</span>
                 </div>
             </th>
                         <th class="table-header__cell">
                 <div class="table-header__content">
                     <span class="table-header__text">Working Hours</span>
-                    <div class="table-header__controls">
-                        <span class="table-header__sort" data-column="working_hours_2" data-direction="none">⇅</span>
-                        <span class="table-header__filter" data-column="working_hours_2">🔍</span>
-                    </div>
-                </div>
-                <div class="table-filter-dropdown" data-column="working_hours_2">
-                    <input type="text" class="filter-input" placeholder="Search Working Hours...">
-                    <div class="filter-options"></div>
-                    <div class="filter-actions">
-                        <button class="filter-btn filter-btn--primary" data-action="apply">Apply</button>
-                        <button class="filter-btn" data-action="clear">Clear</button>
-                    </div>
                 </div>
             </th>
                         <th class="table-header__cell">
                 <div class="table-header__content">
                     <span class="table-header__text">Check Times</span>
-                    <div class="table-header__controls">
-                        <span class="table-header__sort" data-column="check_times_3" data-direction="none">⇅</span>
-                        <span class="table-header__filter" data-column="check_times_3">🔍</span>
-                    </div>
-                </div>
-                <div class="table-filter-dropdown" data-column="check_times_3">
-                    <input type="text" class="filter-input" placeholder="Search Check Times...">
-                    <div class="filter-options"></div>
-                    <div class="filter-actions">
-                        <button class="filter-btn filter-btn--primary" data-action="apply">Apply</button>
-                        <button class="filter-btn" data-action="clear">Clear</button>
-                    </div>
                 </div>
             </th>
                         <th class="table-header__cell">
@@ -174,7 +132,7 @@ ob_start();
                     ?>
                     <?php if (empty($adminPersonalAttendance)): ?>
                                             <tr>
-                        <td colspan="5" class="text-center">
+                        <td colspan="6" class="text-center">
                             <div class="empty-state">
                                 <div class="empty-icon">📍</div>
                                 <h3>No Personal Records</h3>
@@ -191,10 +149,21 @@ ob_start();
                             </td>
                             <td>
                                 <div class="assignment-info">
-                                    <div class="assigned-user"><?= isset($record['date']) ? date('M d, Y', strtotime($record['date'])) : $currentDateIST ?></div>
+                                    <div class="assigned-user"><?= ($record['check_in'] && $record['check_in'] !== '0000-00-00 00:00:00') ? date('M d, Y', strtotime($record['check_in'])) : $currentDateIST ?></div>
                                     <div class="priority-badge">
                                         <span class="badge badge--<?= ($record['status'] ?? 'Present') === 'Present' ? 'success' : 'danger' ?>"><?= $record['status'] ?? 'Present' ?></span>
                                     </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="cell-meta">
+                                    <?php if (!empty($record['location_title'] ?? '')): ?>
+                                        <div class="cell-primary"><?= htmlspecialchars($record['location_title']) ?></div>
+                                        <div class="cell-secondary"><?= ucfirst($record['location_type'] ?? 'office') ?> • <?= ($record['location_radius'] ?? 50) ?>m radius</div>
+                                    <?php else: ?>
+                                        <div class="cell-primary">No location data</div>
+                                        <div class="cell-secondary">-</div>
+                                    <?php endif; ?>
                                 </div>
                             </td>
                             <td>
@@ -241,6 +210,7 @@ ob_start();
                     <tr>
                         <th class="col-title">Employee</th>
                         <th class="col-assignment">Date & Status</th>
+                        <th class="col-location">Location</th>
                         <th class="col-progress">Working Hours</th>
                         <th class="col-date">Check Times</th>
                         <?php if (in_array($user_role ?? '', ['owner', 'admin'])): ?>
@@ -251,7 +221,7 @@ ob_start();
                 <tbody>
                     <?php if (empty($attendance ?? [])): ?>
                     <tr>
-                        <td colspan="<?= in_array($user_role ?? '', ['owner', 'admin']) ? '5' : '4' ?>" class="text-center">
+                        <td colspan="<?= in_array($user_role ?? '', ['owner', 'admin']) ? '6' : '5' ?>" class="text-center">
                             <div class="empty-state">
                                 <div class="empty-icon">📍</div>
                                 <h3>No Attendance Records</h3>
@@ -271,10 +241,21 @@ ob_start();
                             </td>
                             <td>
                                 <div class="assignment-info">
-                                    <div class="assigned-user"><?= $currentDateIST ?></div>
+                                    <div class="assigned-user"><?= ($record['check_in'] && $record['check_in'] !== '0000-00-00 00:00:00') ? date('M d, Y', strtotime($record['check_in'])) : $currentDateIST ?></div>
                                     <div class="priority-badge">
                                         <span class="badge badge--<?= $record['status'] === 'Present' ? 'success' : 'danger' ?>"><?= $record['status'] ?? 'Absent' ?></span>
                                     </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="cell-meta">
+                                    <?php if (!empty($record['location_title'] ?? '')): ?>
+                                        <div class="cell-primary"><?= htmlspecialchars($record['location_title']) ?></div>
+                                        <div class="cell-secondary"><?= ucfirst($record['location_type'] ?? 'office') ?> • <?= ($record['location_radius'] ?? 50) ?>m radius</div>
+                                    <?php else: ?>
+                                        <div class="cell-primary">No location data</div>
+                                        <div class="cell-secondary">-</div>
+                                    <?php endif; ?>
                                 </div>
                             </td>
                             <td>
@@ -293,42 +274,12 @@ ob_start();
                             <?php if (in_array($user_role ?? '', ['owner', 'admin'])): ?>
                             <td>
                                 <div class="ab-container">
-                                    <?php $userStatus = $record['user_status'] ?? 'active'; ?>
-                                    
-                                    <?php if ($userStatus !== 'terminated'): ?>
-                                        <?php if (($selected_date ?? TimezoneHelper::getCurrentDate()) === TimezoneHelper::getCurrentDate()): ?>
-                                            <?php if (empty($record['check_in'])): ?>
-                                            <button class="ab-btn ab-btn--success" onclick="clockInUser(<?= $record['user_id'] ?>)" title="Clock In Admin">
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                                    <circle cx="12" cy="12" r="10"/>
-                                                    <polyline points="12,6 12,12 16,14"/>
-                                                </svg>
-                                            </button>
-                                            <?php elseif (empty($record['check_out'])): ?>
-                                            <button class="ab-btn ab-btn--warning" onclick="clockOutUser(<?= $record['user_id'] ?>)" title="Clock Out Admin">
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                                    <circle cx="12" cy="12" r="10"/>
-                                                    <path d="M16 12l-4-4-4 4"/>
-                                                </svg>
-                                            </button>
-                                            <?php endif; ?>
-                                        <?php endif; ?>
-                                        
-                                        <button class="ab-btn ab-btn--info" onclick="generateAttendanceReport(<?= $record['user_id'] ?>)" title="Generate Report">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                                <polyline points="14,2 14,8 20,8"/>
-                                            </svg>
-                                        </button>
-                                        <button class="ab-btn ab-btn--delete" onclick="deleteAttendanceRecord(<?= $record['attendance_id'] ?? 0 ?>)" title="Delete Record">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                                <polyline points="3,6 5,6 21,6"/>
-                                                <path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6"/>
-                                                <line x1="10" y1="11" x2="10" y2="17"/>
-                                                <line x1="14" y1="11" x2="14" y2="17"/>
-                                            </svg>
-                                        </button>
-                                    <?php endif; ?>
+                                    <button class="ab-btn ab-btn--info" onclick="generateAttendanceReport(<?= $record['user_id'] ?>)" title="Generate Report">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                            <polyline points="14,2 14,8 20,8"/>
+                                        </svg>
+                                    </button>
                                 </div>
                             </td>
                             <?php endif; ?>
@@ -340,7 +291,7 @@ ob_start();
                         <!-- Employee Users Section -->
                         <?php if (!empty($attendance['user'])): ?>
                         <tr class="group-header">
-                            <td colspan="<?= in_array($user_role ?? '', ['owner', 'admin']) ? '5' : '4' ?>" style="background: #f8fafc; font-weight: 600; color: #374151; padding: 0.75rem 1rem; border-top: 2px solid #e5e7eb;">
+                            <td colspan="<?= in_array($user_role ?? '', ['owner', 'admin']) ? '6' : '5' ?>" style="background: #f8fafc; font-weight: 600; color: #374151; padding: 0.75rem 1rem; border-top: 2px solid #e5e7eb;">
                                 <span>👥</span> Employee Users
                             </td>
                         </tr>
@@ -352,10 +303,21 @@ ob_start();
                             </td>
                             <td>
                                 <div class="assignment-info">
-                                    <div class="assigned-user"><?= $currentDateIST ?></div>
+                                    <div class="assigned-user"><?= ($record['check_in'] && $record['check_in'] !== '0000-00-00 00:00:00') ? date('M d, Y', strtotime($record['check_in'])) : $currentDateIST ?></div>
                                     <div class="priority-badge">
                                         <span class="badge badge--<?= $record['status'] === 'Present' ? 'success' : 'danger' ?>"><?= $record['status'] ?? 'Absent' ?></span>
                                     </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="cell-meta">
+                                    <?php if (!empty($record['location_title'] ?? '')): ?>
+                                        <div class="cell-primary"><?= htmlspecialchars($record['location_title']) ?></div>
+                                        <div class="cell-secondary"><?= ucfirst($record['location_type'] ?? 'office') ?> • <?= ($record['location_radius'] ?? 50) ?>m radius</div>
+                                    <?php else: ?>
+                                        <div class="cell-primary">No location data</div>
+                                        <div class="cell-secondary">-</div>
+                                    <?php endif; ?>
                                 </div>
                             </td>
                             <td>
@@ -374,42 +336,12 @@ ob_start();
                             <?php if (in_array($user_role ?? '', ['owner', 'admin'])): ?>
                             <td>
                                 <div class="ab-container">
-                                    <?php $userStatus = $record['user_status'] ?? 'active'; ?>
-                                    
-                                    <?php if ($userStatus !== 'terminated'): ?>
-                                        <?php if (($selected_date ?? TimezoneHelper::getCurrentDate()) === TimezoneHelper::getCurrentDate()): ?>
-                                            <?php if (empty($record['check_in'])): ?>
-                                            <button class="ab-btn ab-btn--success" onclick="clockInUser(<?= $record['user_id'] ?>)" title="Clock In User">
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                                    <circle cx="12" cy="12" r="10"/>
-                                                    <polyline points="12,6 12,12 16,14"/>
-                                                </svg>
-                                            </button>
-                                            <?php elseif (empty($record['check_out'])): ?>
-                                            <button class="ab-btn ab-btn--warning" onclick="clockOutUser(<?= $record['user_id'] ?>)" title="Clock Out User">
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                                    <circle cx="12" cy="12" r="10"/>
-                                                    <path d="M16 12l-4-4-4 4"/>
-                                                </svg>
-                                            </button>
-                                            <?php endif; ?>
-                                        <?php endif; ?>
-                                        
-                                        <button class="ab-btn ab-btn--info" onclick="generateAttendanceReport(<?= $record['user_id'] ?>)" title="Generate Report">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                                <polyline points="14,2 14,8 20,8"/>
-                                            </svg>
-                                        </button>
-                                        <button class="ab-btn ab-btn--delete" onclick="deleteAttendanceRecord(<?= $record['attendance_id'] ?? 0 ?>)" title="Delete Record">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                                <polyline points="3,6 5,6 21,6"/>
-                                                <path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6"/>
-                                                <line x1="10" y1="11" x2="10" y2="17"/>
-                                                <line x1="14" y1="11" x2="14" y2="17"/>
-                                            </svg>
-                                        </button>
-                                    <?php endif; ?>
+                                    <button class="ab-btn ab-btn--info" onclick="generateAttendanceReport(<?= $record['user_id'] ?>)" title="Generate Report">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                            <polyline points="14,2 14,8 20,8"/>
+                                        </svg>
+                                    </button>
                                 </div>
                             </td>
                             <?php endif; ?>
@@ -425,10 +357,21 @@ ob_start();
                             </td>
                             <td>
                                 <div class="assignment-info">
-                                    <div class="assigned-user"><?= $currentDateIST ?></div>
+                                    <div class="assigned-user"><?= ($record['check_in'] && $record['check_in'] !== '0000-00-00 00:00:00') ? date('M d, Y', strtotime($record['check_in'])) : $currentDateIST ?></div>
                                     <div class="priority-badge">
                                         <span class="badge badge--<?= $record['status'] === 'Present' ? 'success' : 'danger' ?>"><?= $record['status'] ?? 'Present' ?></span>
                                     </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="cell-meta">
+                                    <?php if (!empty($record['location_title'] ?? '')): ?>
+                                        <div class="cell-primary"><?= htmlspecialchars($record['location_title']) ?></div>
+                                        <div class="cell-secondary"><?= ucfirst($record['location_type'] ?? 'office') ?> • <?= ($record['location_radius'] ?? 50) ?>m radius</div>
+                                    <?php else: ?>
+                                        <div class="cell-primary">No location data</div>
+                                        <div class="cell-secondary">-</div>
+                                    <?php endif; ?>
                                 </div>
                             </td>
                             <td>
@@ -447,42 +390,12 @@ ob_start();
                             <?php if (in_array($user_role ?? '', ['owner', 'admin'])): ?>
                             <td>
                                 <div class="ab-container">
-                                    <?php $userStatus = $record['user_status'] ?? 'active'; ?>
-                                    
-                                    <?php if ($userStatus !== 'terminated'): ?>
-                                        <?php if (($selected_date ?? TimezoneHelper::getCurrentDate()) === TimezoneHelper::getCurrentDate()): ?>
-                                            <?php if (!isset($record['check_in']) || empty($record['check_in'])): ?>
-                                            <button class="ab-btn ab-btn--success" onclick="clockInUser(<?= $record['user_id'] ?>)" title="Clock In User">
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                                    <circle cx="12" cy="12" r="10"/>
-                                                    <polyline points="12,6 12,12 16,14"/>
-                                                </svg>
-                                            </button>
-                                            <?php elseif (isset($record['check_in']) && !empty($record['check_in']) && (!isset($record['check_out']) || empty($record['check_out']))): ?>
-                                            <button class="ab-btn ab-btn--warning" onclick="clockOutUser(<?= $record['user_id'] ?>)" title="Clock Out User">
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                                    <circle cx="12" cy="12" r="10"/>
-                                                    <path d="M16 12l-4-4-4 4"/>
-                                                </svg>
-                                            </button>
-                                            <?php endif; ?>
-                                        <?php endif; ?>
-                                        
-                                        <button class="ab-btn ab-btn--info" onclick="generateAttendanceReport(<?= $record['user_id'] ?>)" title="Generate Report">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                                <polyline points="14,2 14,8 20,8"/>
-                                            </svg>
-                                        </button>
-                                        <button class="ab-btn ab-btn--delete" onclick="deleteAttendanceRecord(<?= $record['attendance_id'] ?? 0 ?>)" title="Delete Record">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                                <polyline points="3,6 5,6 21,6"/>
-                                                <path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6"/>
-                                                <line x1="10" y1="11" x2="10" y2="17"/>
-                                                <line x1="14" y1="11" x2="14" y2="17"/>
-                                            </svg>
-                                        </button>
-                                    <?php endif; ?>
+                                    <button class="ab-btn ab-btn--info" onclick="generateAttendanceReport(<?= $record['user_id'] ?>)" title="Generate Report">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                            <polyline points="14,2 14,8 20,8"/>
+                                        </svg>
+                                    </button>
                                 </div>
                             </td>
                             <?php endif; ?>
@@ -508,60 +421,6 @@ function filterAttendance(filter) {
 function filterByDate(selectedDate) {
     const currentFilter = document.getElementById('filterSelect')?.value || 'today';
     window.location.href = '/ergon-site/attendance?date=' + selectedDate + '&filter=' + currentFilter;
-}
-
-function viewAttendanceDetails(attendanceId) {
-    alert('View details for attendance ID: ' + attendanceId);
-}
-
-function clockInUser(userId) {
-    if (confirm('Clock in this user?')) {
-        fetch('/ergon-site/attendance/manual', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `user_id=${userId}&check_in=1&date=${new Date().toISOString().split('T')[0]}`
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('User clocked in successfully!');
-                location.reload();
-            } else {
-                alert('Error: ' + (data.error || 'Failed to clock in'));
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Network error occurred');
-        });
-    }
-}
-
-function clockOutUser(userId) {
-    if (confirm('Clock out this user?')) {
-        fetch('/ergon-site/attendance/manual', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `user_id=${userId}&check_out=1&date=${new Date().toISOString().split('T')[0]}`
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('User clocked out successfully!');
-                location.reload();
-            } else {
-                alert('Error: ' + (data.error || 'Failed to clock out'));
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Network error occurred');
-        });
-    }
-}
-
-function editAttendanceRecord(attendanceId, userId) {
-    alert('Edit functionality for attendance ID: ' + attendanceId);
 }
 
 function generateAttendanceReport(userId) {
@@ -668,16 +527,9 @@ function downloadAttendanceReport(userId) {
         return;
     }
     
-    console.log('Generating report for user:', userId, 'from', startDate, 'to', endDate);
     document.querySelector('.modal-overlay')?.remove();
-    
     const reportUrl = `/ergon-site/attendance/report?user_id=${userId}&start_date=${startDate}&end_date=${endDate}`;
-    console.log('Report URL:', reportUrl);
     window.open(reportUrl, '_blank');
-}
-
-function generateReport(userId) {
-    generateAttendanceReport(userId);
 }
 
 function deleteAttendanceRecord(attendanceId) {
@@ -694,74 +546,6 @@ function deleteAttendanceRecord(attendanceId) {
                 location.reload();
             } else {
                 alert('Error: ' + (data.error || 'Failed to delete'));
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Network error occurred');
-        });
-    }
-}
-
-function makeUserActive(userId) {
-    if (confirm('Make this user active?')) {
-        fetch('/ergon-site/users/update-status', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `user_id=${userId}&status=active`
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('User activated successfully!');
-                location.reload();
-            } else {
-                alert('Error: ' + (data.error || 'Failed to activate user'));
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Network error occurred');
-        });
-    }
-}
-
-function resetUserPassword(userId) {
-    if (confirm('Reset password for this user?')) {
-        fetch('/ergon-site/users/reset-password', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `user_id=${userId}`
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Password reset successfully! New password: ' + data.new_password);
-            } else {
-                alert('Error: ' + (data.error || 'Failed to reset password'));
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Network error occurred');
-        });
-    }
-}
-
-function terminateUser(userId) {
-    if (confirm('Terminate this user? This action cannot be undone.')) {
-        fetch('/ergon-site/users/update-status', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `user_id=${userId}&status=terminated`
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('User terminated successfully!');
-                location.reload();
-            } else {
-                alert('Error: ' + (data.error || 'Failed to terminate user'));
             }
         })
         .catch(error => {
