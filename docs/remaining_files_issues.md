@@ -111,7 +111,7 @@ class Database {
 **routes/finance.php**
 ```php
 <?php
-// Route handler for /ergon/finance/* endpoints
+// Route handler for /ergon-site/finance/* endpoints
 $action = $_GET['action'] ?? 'dashboard';
 switch($action) {
     case 'sync':

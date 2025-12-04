@@ -14,7 +14,7 @@
             
             for (const chart of charts) {
                 try {
-                    const url = `/ergon/src/api/charts.php?chart=${chart}&prefix=${prefix}`;
+                    const url = `/ergon-site/src/api/charts.php?chart=${chart}&prefix=${prefix}`;
                     const response = await fetch(url);
                     const data = await response.json();
                     results.innerHTML += `<h3>${chart}</h3><pre>${JSON.stringify(data, null, 2)}</pre>`;

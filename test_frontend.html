@@ -10,7 +10,7 @@
     <script>
     async function testAPI() {
         try {
-            const response = await fetch('/ergon/src/api/outstanding.php?prefix=BKGE&limit=3');
+            const response = await fetch('/ergon-site/src/api/outstanding.php?prefix=BKGE&limit=3');
             const result = await response.json();
             
             console.log('API Response:', result);

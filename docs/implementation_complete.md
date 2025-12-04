@@ -9,7 +9,7 @@
 
 ### **✅ Controller & API**
 - **FinanceController.php**: Complete with security, validation, fallback
-- **Routes**: `/ergon/routes/finance.php` for URL handling
+- **Routes**: `/ergon-site/routes/finance.php` for URL handling
 - **Endpoints**: sync, dashboard-stats, company-prefix, customers, refresh-stats, funnel-containers
 
 ### **✅ Automation & Cron**
@@ -25,26 +25,26 @@
 ## 🚀 **API Endpoints Ready**
 
 ### **ETL Control**
-- `POST /ergon/routes/finance.php?action=sync` - Trigger ETL
-- `GET /ergon/routes/finance.php?action=refresh-stats` - Refresh analytics
+- `POST /ergon-site/routes/finance.php?action=sync` - Trigger ETL
+- `GET /ergon-site/routes/finance.php?action=refresh-stats` - Refresh analytics
 
 ### **Dashboard Data**
-- `GET /ergon/routes/finance.php?action=dashboard-stats&prefix=BKGE` - Get analytics
-- `GET /ergon/routes/finance.php?action=funnel-containers&prefix=BKGE` - Conversion funnel
+- `GET /ergon-site/routes/finance.php?action=dashboard-stats&prefix=BKGE` - Get analytics
+- `GET /ergon-site/routes/finance.php?action=funnel-containers&prefix=BKGE` - Conversion funnel
 
 ### **Company Management**
-- `GET /ergon/routes/finance.php?action=company-prefix` - Get current prefix
-- `POST /ergon/routes/finance.php?action=company-prefix` - Set prefix
+- `GET /ergon-site/routes/finance.php?action=company-prefix` - Get current prefix
+- `POST /ergon-site/routes/finance.php?action=company-prefix` - Set prefix
 
 ### **Data Access**
-- `GET /ergon/routes/finance.php?action=outstanding-invoices&prefix=BKGE` - Outstanding data
-- `GET /ergon/routes/finance.php?action=customers&prefix=BKGE` - Customer list
+- `GET /ergon-site/routes/finance.php?action=outstanding-invoices&prefix=BKGE` - Outstanding data
+- `GET /ergon-site/routes/finance.php?action=customers&prefix=BKGE` - Customer list
 
 ## 🔧 **Cron Job Setup**
 
 ```bash
 # Add to crontab for hourly ETL
-0 * * * * php /path/to/ergon/cron/finance_sync.php
+0 * * * * php /path/to/ergon-site/cron/finance_sync.php
 ```
 
 ## 📊 **Blueprint Compliance: 100%**

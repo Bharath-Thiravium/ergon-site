@@ -2,7 +2,7 @@
 # Run: crontab -e
 # Add this line:
 
-*/30 * * * * /usr/bin/php /path/to/ergon/cron/auto_sync.php >> /var/log/finance_sync.log 2>&1
+*/30 * * * * /usr/bin/php /path/to/ergon-site/cron/auto_sync.php >> /var/log/finance_sync.log 2>&1
 
 # For Windows Task Scheduler:
 # Program: php.exe

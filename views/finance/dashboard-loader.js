@@ -17,7 +17,7 @@ function loadCashFlow() {
     const prefix = document.getElementById('companyPrefix')?.value;
     if (!prefix) return;
     
-    fetch(`/ergon/src/api/dashboard/invoices.php?prefix=${encodeURIComponent(prefix)}`)
+    fetch(`/ergon-site/src/api/dashboard/invoices.php?prefix=${encodeURIComponent(prefix)}`)
         .then(r => r.json())
         .then(d => {
             if (d.success && d.data) {

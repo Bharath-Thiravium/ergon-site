@@ -1,6 +1,6 @@
 <?php
 // Final check - test the exact API call the dashboard makes
-require_once __DIR__ . '/../ergon/app/config/database.php';
+require_once __DIR__ . '/../ergon-site/app/config/database.php';
 
 try {
     $db = Database::connect();

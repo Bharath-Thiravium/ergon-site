@@ -20,7 +20,7 @@ function formatINR(amount) {
 
 // 1. Quotations Card
 async function loadQuotationsCard() {
-    const data = await apiGet("/ergon/src/api/dashboard/quotations.php");
+    const data = await apiGet("/ergon-site/src/api/dashboard/quotations.php");
     if (!data) return;
     document.querySelector("#quotations-total").innerText = formatINR(data.total_value);
     document.querySelector("#quotations-pending").innerText = data.pending_count;
@@ -30,7 +30,7 @@ async function loadQuotationsCard() {
 
 // 2. Purchase Orders Card
 async function loadPOCard() {
-    const data = await apiGet("/ergon/src/api/dashboard/purchase-orders.php");
+    const data = await apiGet("/ergon-site/src/api/dashboard/purchase-orders.php");
     if (!data) return;
     document.querySelector("#po-total").innerText = formatINR(data.total_value);
     document.querySelector("#po-open").innerText = data.open_count;
@@ -40,7 +40,7 @@ async function loadPOCard() {
 
 // 3. Invoices Card
 async function loadInvoicesCard() {
-    const data = await apiGet("/ergon/src/api/dashboard/invoices.php");
+    const data = await apiGet("/ergon-site/src/api/dashboard/invoices.php");
     if (!data) return;
     document.querySelector("#invoice-total").innerText = formatINR(data.total_value);
     document.querySelector("#invoice-paid").innerText = data.paid;
@@ -50,7 +50,7 @@ async function loadInvoicesCard() {
 
 // 4. Outstanding by Customer
 async function loadOutstandingByCustomer() {
-    const data = await apiGet("/ergon/src/api/dashboard/outstanding-by-customer.php");
+    const data = await apiGet("/ergon-site/src/api/dashboard/outstanding-by-customer.php");
     if (!data) return;
     let total = data.reduce((s, c) => s + Number(c.outstanding), 0);
     document.querySelector("#outstanding-total").innerText = formatINR(total);
@@ -63,7 +63,7 @@ async function loadOutstandingByCustomer() {
 
 // 5. Aging Buckets
 async function loadAgingBuckets() {
-    const data = await apiGet("/ergon/src/api/dashboard/aging-buckets.php");
+    const data = await apiGet("/ergon-site/src/api/dashboard/aging-buckets.php");
     if (!data) return;
     document.querySelector("#age-0-30").innerText = formatINR(data.bucket_0_30);
     document.querySelector("#age-31-60").innerText = formatINR(data.bucket_31_60);
@@ -74,7 +74,7 @@ async function loadAgingBuckets() {
 
 // 6. Payments Trend
 async function loadPaymentsTrend() {
-    const data = await apiGet("/ergon/src/api/dashboard/payments.php");
+    const data = await apiGet("/ergon-site/src/api/dashboard/payments.php");
     if (!data) return;
     document.querySelector("#payments-total").innerText = formatINR(data.total_paid);
     document.querySelector("#payments-avg").innerText = formatINR(data.avg_payment);

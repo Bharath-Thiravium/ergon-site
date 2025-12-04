@@ -1,5 +1,5 @@
 <?php
-// /ergon/src/api/dashboard/company-prefixes.php
+// /ergon-site/src/api/dashboard/company-prefixes.php
 return [
     "TC",
     "SE",

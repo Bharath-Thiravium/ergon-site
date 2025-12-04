@@ -361,7 +361,7 @@ function initCharts() {
 
 async function loadDashboardData() {
     try {
-        const response = await fetch('/ergon/finance/dashboard-stats');
+        const response = await fetch('/ergon-site/finance/dashboard-stats');
         const data = await response.json();
         
         if (data.error) {
@@ -439,7 +439,7 @@ function updateKPICards(data) {
 
 async function updateConversionFunnel(data) {
     try {
-        const response = await fetch('/ergon/finance/funnel-containers');
+        const response = await fetch('/ergon-site/finance/funnel-containers');
         const funnelData = await response.json();
         
         if (funnelData.success && funnelData.containers) {
@@ -484,7 +484,7 @@ async function updateConversionFunnel(data) {
 
 async function updateCharts(data) {
     try {
-        const quotationsResponse = await fetch('/ergon/finance/visualization?type=quotations');
+        const quotationsResponse = await fetch('/ergon-site/finance/visualization?type=quotations');
         if (quotationsResponse.ok) {
             const quotationsData = await quotationsResponse.json();
             if (quotationsChart && quotationsData.data) {
@@ -493,7 +493,7 @@ async function updateCharts(data) {
             }
         }
         
-        const invoicesResponse = await fetch('/ergon/finance/visualization?type=invoices');
+        const invoicesResponse = await fetch('/ergon-site/finance/visualization?type=invoices');
         if (invoicesResponse.ok) {
             const invoicesData = await invoicesResponse.json();
             if (invoicesChart && invoicesData.data) {
@@ -509,7 +509,7 @@ async function updateCharts(data) {
 
 async function loadOutstandingInvoices() {
     try {
-        const response = await fetch('/ergon/finance/outstanding-invoices');
+        const response = await fetch('/ergon-site/finance/outstanding-invoices');
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}: Outstanding invoices API not available`);
         }
@@ -540,7 +540,7 @@ async function loadOutstandingInvoices() {
 
 async function loadRecentActivities(type = 'all') {
     try {
-        const response = await fetch('/ergon/finance/recent-activities');
+        const response = await fetch('/ergon-site/finance/recent-activities');
         if (!response.ok) {
             throw new Error('Recent activities API not available');
         }
@@ -630,7 +630,7 @@ async function syncFinanceData() {
     btn.textContent = 'Syncing...';
     
     try {
-        const response = await fetch('/ergon/finance/sync', {method: 'POST'});
+        const response = await fetch('/ergon-site/finance/sync', {method: 'POST'});
         const result = await response.json();
         
         if (result.error) {
@@ -649,7 +649,7 @@ async function syncFinanceData() {
 
 async function loadCompanyPrefix() {
     try {
-        const response = await fetch('/ergon/finance/company-prefix');
+        const response = await fetch('/ergon-site/finance/company-prefix');
         const data = await response.json();
         const currentPrefix = data.prefix || '';
         
@@ -671,7 +671,7 @@ async function updateCompanyPrefix() {
         const formData = new FormData();
         formData.append('company_prefix', prefix);
         
-        const response = await fetch('/ergon/finance/company-prefix', {
+        const response = await fetch('/ergon-site/finance/company-prefix', {
             method: 'POST',
             body: formData
         });
@@ -718,7 +718,7 @@ async function loadCustomers() {
         if (loader) { loader.style.display = 'inline-block'; }
         if (select) { select.disabled = true; select.innerHTML = '<option value="">Loading customers...</option>'; }
 
-        const response = await fetch('/ergon/finance/customers');
+        const response = await fetch('/ergon-site/finance/customers');
         const data = await response.json();
 
         if (select) select.innerHTML = '<option value="">All Customers</option>';
@@ -737,7 +737,7 @@ async function loadCustomers() {
 
 async function refreshDashboardStats() {
     try {
-        const response = await fetch('/ergon/finance/refresh-stats');
+        const response = await fetch('/ergon-site/finance/refresh-stats');
         const result = await response.json();
         
         if (result.success) {
@@ -752,11 +752,11 @@ async function refreshDashboardStats() {
 }
 
 function exportDashboard() {
-    window.open('/ergon/finance/export-dashboard', '_blank');
+    window.open('/ergon-site/finance/export-dashboard', '_blank');
 }
 
 function exportTable(type) {
-    window.open(`/ergon/finance/export-table?type=${type}`, '_blank');
+    window.open(`/ergon-site/finance/export-table?type=${type}`, '_blank');
 }
 </script>
 

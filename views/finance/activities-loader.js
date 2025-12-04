@@ -7,7 +7,7 @@ async function loadRecentActivities(type = 'all') {
     }
     
     try {
-        let url = `/ergon/src/api/activities.php?prefix=${encodeURIComponent(prefix)}&limit=20`;
+        let url = `/ergon-site/src/api/activities.php?prefix=${encodeURIComponent(prefix)}&limit=20`;
         if (type !== 'all') url += `&record_type=${encodeURIComponent(type)}`;
         
         const response = await fetch(url);

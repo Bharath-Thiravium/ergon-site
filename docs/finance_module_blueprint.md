@@ -344,7 +344,7 @@ INDEX idx_customer (customer_id)
 ```
 
 ## Deployment Status
-✅ **Production Ready**: https://athenas.co.in/ergon/finance
+✅ **Production Ready**: https://athenas.co.in/ergon-site/finance
 ✅ **ETL Operational**: Hourly automated sync
 ✅ **Performance Verified**: 6x speed improvement confirmed
 ✅ **Multi-company Support**: BKGE, SE, TC, BKC prefixes active

@@ -6,7 +6,7 @@ async function loadCashFlow() {
         
         if (!prefix) return;
         
-        const url = '/ergon/src/api/cashflow.php?prefix=' + encodeURIComponent(prefix);
+        const url = '/ergon-site/src/api/cashflow.php?prefix=' + encodeURIComponent(prefix);
         const response = await fetch(url, { signal: AbortSignal.timeout(5000) }).catch(e => null);
         if (!response || !response.ok) throw new Error('Cashflow API unavailable');
         
