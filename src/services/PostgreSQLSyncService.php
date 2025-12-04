@@ -7,8 +7,8 @@ class PostgreSQLSyncService {
     public function __construct($mysqlPdo) {
         $this->mysqlPdo = $mysqlPdo;
         
-        // PostgreSQL connection - update with your actual credentials
-        $pgDsn = "pgsql:host=localhost;port=5432;dbname=sap_db";
+        // PostgreSQL connection - production SAP database
+        $pgDsn = "pgsql:host=72.60.218.167;port=5432;dbname=modernsap";
         $this->pgPdo = new PDO($pgDsn, 'postgres', 'postgres');
     }
     
@@ -17,7 +17,8 @@ class PostgreSQLSyncService {
             $invoiceCount = $this->syncInvoices();
             $poCount = $this->syncPurchaseOrders();
             $customerCount = $this->syncCustomers();
-            $shippingCount = $this->syncCustomerShippingAddress();
+            $shippingResult = $this->syncCustomerShippingAddress();
+            $shippingCount = $shippingResult['synced'];
             
             return [
                 'success' => true, 
@@ -73,11 +74,11 @@ class PostgreSQLSyncService {
         return $count;
     }
     
-    private function syncCustomerShippingAddress() {
-        $pgSql = "SELECT customer_id, shipping_address, shipping_city, shipping_state, shipping_pincode, shipping_country FROM customershippingaddress";
+    public function syncCustomerShippingAddress() {
+        $pgSql = "SELECT customer_id, label FROM finance_customershippingaddress";
         $pgStmt = $this->pgPdo->query($pgSql);
         
-        $mysqlSql = "INSERT INTO finance_customershippingaddress (customer_id, shipping_address, shipping_city, shipping_state, shipping_pincode, shipping_country) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE shipping_address=VALUES(shipping_address), shipping_city=VALUES(shipping_city), shipping_state=VALUES(shipping_state), shipping_pincode=VALUES(shipping_pincode), shipping_country=VALUES(shipping_country)";
+        $mysqlSql = "INSERT INTO finance_customershippingaddress (customer_id, label) VALUES (?, ?) ON DUPLICATE KEY UPDATE label=VALUES(label)";
         $mysqlStmt = $this->mysqlPdo->prepare($mysqlSql);
         
         $count = 0;
@@ -85,6 +86,6 @@ class PostgreSQLSyncService {
             $mysqlStmt->execute(array_values($row));
             $count++;
         }
-        return $count;
+        return ['success' => true, 'synced' => $count, 'skipped' => 0];
     }
 }
