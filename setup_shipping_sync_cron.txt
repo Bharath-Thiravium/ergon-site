@@ -1,0 +1,5 @@
+# Add this to production crontab to sync shipping addresses daily at 2 AM
+0 2 * * * /usr/bin/php /path/to/ergon-site/src/api/sync-shipping.php >> /path/to/ergon-site/logs/shipping_sync.log 2>&1
+
+# Or run weekly on Sundays at 3 AM
+0 3 * * 0 /usr/bin/php /path/to/ergon-site/src/api/sync-shipping.php >> /path/to/ergon-site/logs/shipping_sync.log 2>&1
