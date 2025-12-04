@@ -23,6 +23,12 @@ try {
     $syncService = new PostgreSQLSyncService($mysql_db);
     $result = $syncService->syncAll();
     
+    // Also sync shipping addresses separately to ensure they're included
+    $shippingResult = $syncService->syncCustomerShippingAddress();
+    if ($shippingResult['success']) {
+        echo "SHIPPING SYNC: Synced {$shippingResult['synced']} addresses\n";
+    }
+    
     if ($result['success']) {
         echo "SUCCESS: " . $result['message'] . "\n";
     } else {

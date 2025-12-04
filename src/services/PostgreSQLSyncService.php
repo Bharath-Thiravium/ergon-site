@@ -9,7 +9,7 @@ class PostgreSQLSyncService {
         
         // PostgreSQL connection - production SAP database
         $pgDsn = "pgsql:host=72.60.218.167;port=5432;dbname=modernsap";
-        $this->pgPdo = new PDO($pgDsn, 'postgres', 'postgres');
+        $this->pgPdo = new PDO($pgDsn, 'postgres', 'mango');
     }
     
     public function syncAll() {
@@ -75,14 +75,17 @@ class PostgreSQLSyncService {
     }
     
     public function syncCustomerShippingAddress() {
-        $pgSql = "SELECT customer_id, label FROM finance_customershippingaddress";
+        $pgSql = "SELECT id, label, address_line1, address_line2, city, state, pincode, country, is_default, created_at, updated_at, customer_id FROM finance_customershippingaddress";
         $pgStmt = $this->pgPdo->query($pgSql);
         
-        $mysqlSql = "INSERT INTO finance_customershippingaddress (customer_id, label) VALUES (?, ?) ON DUPLICATE KEY UPDATE label=VALUES(label)";
+        $mysqlSql = "INSERT INTO finance_customershippingaddress (id, label, address_line1, address_line2, city, state, pincode, country, is_default, created_at, updated_at, customer_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE label=VALUES(label), address_line1=VALUES(address_line1), address_line2=VALUES(address_line2), city=VALUES(city), state=VALUES(state), pincode=VALUES(pincode), country=VALUES(country), is_default=VALUES(is_default), updated_at=VALUES(updated_at)";
         $mysqlStmt = $this->mysqlPdo->prepare($mysqlSql);
         
         $count = 0;
         while ($row = $pgStmt->fetch(PDO::FETCH_ASSOC)) {
+            $row['is_default'] = $row['is_default'] ? 1 : 0;
+            $row['created_at'] = substr($row['created_at'], 0, 19);
+            $row['updated_at'] = substr($row['updated_at'], 0, 19);
             $mysqlStmt->execute(array_values($row));
             $count++;
         }
