@@ -91,7 +91,7 @@ function getLocation() {
             currentPosition = null;
             document.getElementById('locationStatus').innerHTML = '<span>⚠️</span> Location required - Enable GPS';
         },
-        { enableHighAccuracy: false, timeout: 5000, maximumAge: Infinity }
+        { enableHighAccuracy: false, timeout: 3000, maximumAge: 300000 }
     );
 }
 
