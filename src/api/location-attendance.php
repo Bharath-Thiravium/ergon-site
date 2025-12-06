@@ -20,7 +20,7 @@ try {
     $user_lng = floatval($_POST['longitude'] ?? 0);
     
     if ($user_lat == 0 || $user_lng == 0) {
-        echo json_encode(['success' => true, 'within_range' => true, 'location_name' => 'Remote Location']);
+        echo json_encode(['success' => false, 'within_range' => false, 'error' => 'Location required for clock-in']);
         exit;
     }
     

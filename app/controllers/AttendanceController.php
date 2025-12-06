@@ -501,12 +501,7 @@ class AttendanceController extends Controller {
     
     private function getLocationInfo($db, $userLat, $userLng, $projectId = null) {
         if ($userLat == 0 || $userLng == 0) {
-            return [
-                'type' => 'office',
-                'title' => 'Remote Location',
-                'radius' => 0,
-                'project_id' => null
-            ];
+            return false;
         }
         
         // Check if within any project radius

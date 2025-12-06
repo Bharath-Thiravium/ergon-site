@@ -80,17 +80,18 @@ function getLocation() {
         return;
     }
     
-    document.getElementById('locationStatus').innerHTML = '<span>📍</span> Getting location...';
+    document.getElementById('locationStatus').innerHTML = '<span>📍</span> Detecting location...';
+    
     navigator.geolocation.getCurrentPosition(
         function(position) {
             currentPosition = position;
-            document.getElementById('locationStatus').innerHTML = '<span>✅</span> Ready';
+            document.getElementById('locationStatus').innerHTML = '<span>✅</span> Location verified - Ready';
         },
         function(error) {
             currentPosition = null;
-            document.getElementById('locationStatus').innerHTML = '<span>⚠️</span> Remote mode';
+            document.getElementById('locationStatus').innerHTML = '<span>⚠️</span> Location required - Enable GPS';
         },
-        { enableHighAccuracy: false, timeout: 1000, maximumAge: Infinity }
+        { enableHighAccuracy: false, timeout: 5000, maximumAge: Infinity }
     );
 }
 
