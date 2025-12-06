@@ -171,6 +171,13 @@ function clockAction(type) {
         return;
     }
     
+    // Refresh location from localStorage for clock out
+    const stored = localStorage.getItem('lastLocation');
+    if (stored) {
+        const loc = JSON.parse(stored);
+        currentPosition = { coords: { latitude: loc.lat, longitude: loc.lng } };
+    }
+    
     // Disable button and show loading
     btn.disabled = true;
     const originalText = text.textContent;
