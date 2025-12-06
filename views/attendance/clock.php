@@ -80,20 +80,32 @@ function getLocation() {
         return;
     }
     
-    document.getElementById('locationStatus').innerHTML = '<span>📍</span> Detecting location...';
-    
+    // Try cached first (instant)
     navigator.geolocation.getCurrentPosition(
         function(position) {
             currentPosition = position;
             document.getElementById('locationStatus').innerHTML = '<span>✅</span> Location verified - Ready';
         },
         function(error) {
-            currentPosition = null;
-            document.getElementById('locationStatus').innerHTML = '<span>⚠️</span> Location required - Enable GPS';
+            // No cache, get fresh location
+            document.getElementById('locationStatus').innerHTML = '<span>📍</span> Getting location (first time)...';
+            navigator.geolocation.watchPosition(
+                function(position) {
+                    currentPosition = position;
+                    document.getElementById('locationStatus').innerHTML = '<span>✅</span> Location verified - Ready';
+                    navigator.geolocation.clearWatch(watchId);
+                },
+                function(error) {
+                    currentPosition = null;
+                    document.getElementById('locationStatus').innerHTML = '<span>⚠️</span> Location required - Enable GPS';
+                },
+                { enableHighAccuracy: false, maximumAge: 0 }
+            );
         },
-        { enableHighAccuracy: false, timeout: 1000, maximumAge: Infinity }
+        { enableHighAccuracy: false, timeout: 100, maximumAge: Infinity }
     );
 }
+let watchId;
 
 // Smart button state management - shared with header
 let attendanceStatus = <?= json_encode($attendance_status ?? []) ?>;
