@@ -274,6 +274,12 @@ ob_start();
                             <?php if (in_array($user_role ?? '', ['owner', 'admin'])): ?>
                             <td>
                                 <div class="ab-container">
+                                    <button class="ab-btn ab-btn--warning" title="Edit">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                        </svg>
+                                    </button>
                                     <button class="ab-btn ab-btn--info" onclick="generateAttendanceReport(<?= $record['user_id'] ?>)" title="Generate Report">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -342,7 +348,7 @@ ob_start();
                             <?php if (in_array($user_role ?? '', ['owner', 'admin'])): ?>
                             <td>
                                 <div class="ab-container">
-                                    <button class="ab-btn ab-btn--warning" onclick="editAttendanceRecord(<?= $record['attendance_id'] ?? $record['id'] ?? 0 ?>, <?= $record['user_id'] ?>)" title="Edit Attendance">
+                                    <button class="ab-btn ab-btn--warning" title="Edit Attendance">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                                             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
@@ -408,6 +414,12 @@ ob_start();
                             <?php if (in_array($user_role ?? '', ['owner', 'admin'])): ?>
                             <td>
                                 <div class="ab-container">
+                                    <button class="ab-btn ab-btn--warning" title="Edit">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                        </svg>
+                                    </button>
                                     <button class="ab-btn ab-btn--info" onclick="generateAttendanceReport(<?= $record['user_id'] ?>)" title="Generate Report">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -554,61 +566,6 @@ function downloadAttendanceReport(userId) {
     document.querySelector('.modal-overlay')?.remove();
     const reportUrl = `/ergon-site/attendance/report?user_id=${userId}&start_date=${startDate}&end_date=${endDate}`;
     window.open(reportUrl, '_blank');
-}
-
-function editAttendanceRecord(attendanceId, userId) {
-    document.querySelectorAll('.modal-overlay').forEach(m => m.remove());
-    
-    const modal = document.createElement('div');
-    modal.className = 'modal-overlay';
-    modal.innerHTML = `
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Edit Attendance</h3>
-                <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <label>Check In Time:</label>
-                <input type="time" id="edit-check-in" class="form-input">
-                <label>Check Out Time:</label>
-                <input type="time" id="edit-check-out" class="form-input">
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn--secondary" onclick="this.closest('.modal-overlay').remove()">Cancel</button>
-                <button class="btn btn--primary" onclick="saveAttendanceEdit(${attendanceId})">Save</button>
-            </div>
-        </div>
-    `;
-    document.body.appendChild(modal);
-}
-
-function saveAttendanceEdit(attendanceId) {
-    const checkIn = document.getElementById('edit-check-in').value;
-    const checkOut = document.getElementById('edit-check-out').value;
-    
-    if (!checkIn) {
-        alert('Check in time is required');
-        return;
-    }
-    
-    fetch('/ergon-site/attendance/manual', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `attendance_id=${attendanceId}&check_in=${checkIn}&check_out=${checkOut}`
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Attendance updated successfully!');
-            location.reload();
-        } else {
-            alert('Error: ' + (data.error || 'Failed to update'));
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Network error occurred');
-    });
 }
 
 function deleteAttendanceRecord(attendanceId) {

@@ -75,7 +75,6 @@ function updateTime() {
 }
 
 function getLocation() {
-    // Check localStorage first
     const stored = localStorage.getItem('lastLocation');
     if (stored) {
         const loc = JSON.parse(stored);
@@ -416,6 +415,13 @@ function proceedClockIn() {
     
     btn.disabled = true;
     text.textContent = 'Clocking In...';
+    
+    // Refresh location from localStorage
+    const stored = localStorage.getItem('lastLocation');
+    if (stored) {
+        const loc = JSON.parse(stored);
+        currentPosition = { coords: { latitude: loc.lat, longitude: loc.lng } };
+    }
     
     const formData = new FormData();
     formData.append('type', 'in');
