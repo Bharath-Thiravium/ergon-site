@@ -569,6 +569,8 @@ function downloadAttendanceReport(userId) {
 }
 
 function editAttendanceRecord(attendanceId, userId) {
+    document.querySelectorAll('.modal-overlay').forEach(m => m.remove());
+    
     const modal = document.createElement('div');
     modal.className = 'modal-overlay';
     modal.innerHTML = `
