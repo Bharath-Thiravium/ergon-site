@@ -1,14 +1,19 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+
 header('Content-Type: application/json');
 if (session_status() === PHP_SESSION_NONE) session_start();
 
 if (empty($_SESSION['user_id'])) {
+    http_response_code(401);
     echo json_encode(['success' => false, 'error' => 'Not authenticated']);
     exit;
 }
 
 try {
-    require_once __DIR__ . '/../config/database.php';
+    require_once __DIR__ . '/../../app/config/database.php';
     $db = Database::connect();
     
     $user_id = $_SESSION['user_id'];
@@ -62,7 +67,9 @@ try {
     }
     
 } catch (Exception $e) {
-    echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+    error_log('Location attendance error: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
+    http_response_code(500);
+    echo json_encode(['success' => false, 'error' => 'Server error: ' . $e->getMessage()]);
 }
 
 function calculateDistance($lat1, $lng1, $lat2, $lng2) {
