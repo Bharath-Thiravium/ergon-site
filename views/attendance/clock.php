@@ -90,7 +90,7 @@ function getLocation() {
             currentPosition = null;
             document.getElementById('locationStatus').innerHTML = '<span>⚠️</span> Remote mode';
         },
-        { enableHighAccuracy: false, timeout: 3000, maximumAge: 300000 }
+        { enableHighAccuracy: false, timeout: 1000, maximumAge: Infinity }
     );
 }
 
