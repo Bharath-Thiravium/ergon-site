@@ -84,7 +84,7 @@ function getLocation() {
             },
             function(error) {
                 document.getElementById('locationStatus').innerHTML = 
-                    '<span>⚠️</span> Location access denied - Required for attendance';
+                    '<span>⚠️</span> Location unavailable - Will clock in as Remote';
                 console.error('Location error:', error);
             },
             {
@@ -156,16 +156,6 @@ function clockAction(type) {
     const btn = document.getElementById('clockBtn');
     const text = document.getElementById('clockBtnText');
     
-    // Check if location is available
-    if (!currentPosition) {
-        if (typeof showMessage === 'function') {
-            showMessage('Location required for attendance. Please enable location access.', 'error');
-        } else {
-            showLocationAlert('Location is required for attendance. Please enable location access and try again.');
-        }
-        return;
-    }
-    
     // For clock in, show project selection
     if (type === 'in') {
         showProjectSelection();
@@ -179,8 +169,8 @@ function clockAction(type) {
     
     const formData = new FormData();
     formData.append('type', type);
-    formData.append('latitude', currentPosition.coords.latitude);
-    formData.append('longitude', currentPosition.coords.longitude);
+    formData.append('latitude', currentPosition ? currentPosition.coords.latitude : 0);
+    formData.append('longitude', currentPosition ? currentPosition.coords.longitude : 0);
     
     fetch('/ergon-site/attendance/clock', {
         method: 'POST',
@@ -414,8 +404,8 @@ function proceedClockIn() {
     const formData = new FormData();
     formData.append('type', 'in');
     formData.append('project_id', projectId);
-    formData.append('latitude', currentPosition.coords.latitude);
-    formData.append('longitude', currentPosition.coords.longitude);
+    formData.append('latitude', currentPosition ? currentPosition.coords.latitude : 0);
+    formData.append('longitude', currentPosition ? currentPosition.coords.longitude : 0);
     
     fetch('/ergon-site/attendance/clock', {
         method: 'POST',
