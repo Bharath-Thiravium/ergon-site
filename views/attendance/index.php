@@ -569,7 +569,56 @@ function downloadAttendanceReport(userId) {
 }
 
 function editAttendanceRecord(attendanceId, userId) {
-    alert('Edit functionality coming soon. Attendance ID: ' + attendanceId);
+    const modal = document.createElement('div');
+    modal.className = 'modal-overlay';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Attendance</h3>
+                <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <label>Check In Time:</label>
+                <input type="time" id="edit-check-in" class="form-input">
+                <label>Check Out Time:</label>
+                <input type="time" id="edit-check-out" class="form-input">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn--secondary" onclick="this.closest('.modal-overlay').remove()">Cancel</button>
+                <button class="btn btn--primary" onclick="saveAttendanceEdit(${attendanceId})">Save</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+function saveAttendanceEdit(attendanceId) {
+    const checkIn = document.getElementById('edit-check-in').value;
+    const checkOut = document.getElementById('edit-check-out').value;
+    
+    if (!checkIn) {
+        alert('Check in time is required');
+        return;
+    }
+    
+    fetch('/ergon-site/attendance/manual', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `attendance_id=${attendanceId}&check_in=${checkIn}&check_out=${checkOut}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Attendance updated successfully!');
+            location.reload();
+        } else {
+            alert('Error: ' + (data.error || 'Failed to update'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Network error occurred');
+    });
 }
 
 function deleteAttendanceRecord(attendanceId) {
