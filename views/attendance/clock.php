@@ -76,21 +76,24 @@ function updateTime() {
 
 function getLocation() {
     if (navigator.geolocation) {
+        document.getElementById('locationStatus').innerHTML = '<span>📍</span> Getting location...';
+        
         navigator.geolocation.getCurrentPosition(
             function(position) {
                 currentPosition = position;
                 document.getElementById('locationStatus').innerHTML = 
-                    '<span>📍</span> Location detected';
+                    '<span>✅</span> Location: ' + position.coords.latitude.toFixed(6) + ', ' + position.coords.longitude.toFixed(6);
             },
             function(error) {
+                console.error('Location error:', error.code, error.message);
+                currentPosition = null;
                 document.getElementById('locationStatus').innerHTML = 
                     '<span>⚠️</span> Location unavailable - Will clock in as Remote';
-                console.error('Location error:', error);
             },
             {
-                enableHighAccuracy: false,
-                timeout: 30000,
-                maximumAge: 0
+                enableHighAccuracy: true,
+                timeout: 15000,
+                maximumAge: 30000
             }
         );
     } else {
