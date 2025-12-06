@@ -57,7 +57,6 @@ let currentPosition = null;
 
 function updateTime() {
     const now = new Date();
-    // Convert to IST and format with AM/PM
     const istTime = now.toLocaleTimeString('en-IN', {
         timeZone: 'Asia/Kolkata',
         hour12: true,
@@ -75,42 +74,32 @@ function updateTime() {
 }
 
 function getLocation() {
-    const stored = localStorage.getItem('lastLocation');
-    if (stored) {
-        const loc = JSON.parse(stored);
-        currentPosition = { coords: { latitude: loc.lat, longitude: loc.lng } };
-        document.getElementById('locationStatus').innerHTML = '<span>✅</span> Location ready';
-        return;
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                currentPosition = position;
+                document.getElementById('locationStatus').innerHTML = 
+                    '<span>📍</span> Location detected';
+            },
+            function(error) {
+                document.getElementById('locationStatus').innerHTML = 
+                    '<span>⚠️</span> Location access denied - Required for attendance';
+                console.error('Location error:', error);
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 300000
+            }
+        );
+    } else {
+        document.getElementById('locationStatus').innerHTML = 
+            '<span>⚠️</span> Location not supported by browser';
     }
-    
-    if (!navigator.geolocation) {
-        document.getElementById('locationStatus').innerHTML = '<span>⚠️</span> Location not supported';
-        return;
-    }
-    
-    document.getElementById('locationStatus').innerHTML = '<span>📍</span> Getting location...';
-    navigator.geolocation.getCurrentPosition(
-        function(position) {
-            currentPosition = position;
-            localStorage.setItem('lastLocation', JSON.stringify({
-                lat: position.coords.latitude,
-                lng: position.coords.longitude,
-                time: Date.now()
-            }));
-            document.getElementById('locationStatus').innerHTML = '<span>✅</span> Location verified';
-        },
-        function(error) {
-            currentPosition = null;
-            document.getElementById('locationStatus').innerHTML = '<span>⚠️</span> Enable location access';
-        },
-        { enableHighAccuracy: false, timeout: 10000, maximumAge: Infinity }
-    );
 }
 
-// Smart button state management - shared with header
 let attendanceStatus = <?= json_encode($attendance_status ?? []) ?>;
 
-// Sync with header button status if available
 if (typeof headerAttendanceStatus !== 'undefined') {
     headerAttendanceStatus = attendanceStatus;
 }
@@ -126,32 +115,27 @@ function updateClockButton(status) {
     btn.onclick = null;
     
     if (status.on_leave) {
-        // On Leave state
         text.textContent = 'On Leave';
         icon.textContent = '🏖️';
         btn.className = 'btn btn--secondary';
         btn.disabled = true;
     } else if (status.is_completed || (status.has_clocked_in && status.has_clocked_out)) {
-        // Completed state
         text.textContent = 'Completed';
         icon.textContent = '✅';
         btn.className = 'btn btn--secondary';
         btn.disabled = true;
     } else if (!status.has_clocked_in) {
-        // Clock In state
         text.textContent = 'Clock In';
         icon.textContent = '▶️';
         btn.className = 'btn btn--success';
         btn.onclick = () => clockAction('in');
     } else if (status.has_clocked_in && !status.has_clocked_out) {
-        // Clock Out state
         text.textContent = 'Clock Out';
         icon.textContent = '⏹️';
         btn.className = 'btn btn--danger';
         btn.onclick = () => clockAction('out');
     }
     
-    // Sync header button if available
     if (typeof updateHeaderAttendanceButton === 'function') {
         if (typeof headerAttendanceStatus !== 'undefined') {
             headerAttendanceStatus = status;
@@ -164,28 +148,23 @@ function clockAction(type) {
     const btn = document.getElementById('clockBtn');
     const text = document.getElementById('clockBtnText');
     
-    // For clock in, show project selection
-    if (type === 'in') {
-        showProjectSelection();
+    if (!currentPosition) {
+        if (typeof showMessage === 'function') {
+            showMessage('Location required for attendance. Please enable location access.', 'error');
+        } else {
+            showLocationAlert('Location is required for attendance. Please enable location access and try again.');
+        }
         return;
     }
     
-    // Refresh location from localStorage for clock out
-    const stored = localStorage.getItem('lastLocation');
-    if (stored) {
-        const loc = JSON.parse(stored);
-        currentPosition = { coords: { latitude: loc.lat, longitude: loc.lng } };
-    }
-    
-    // Disable button and show loading
     btn.disabled = true;
     const originalText = text.textContent;
-    text.textContent = 'Clocking Out...';
+    text.textContent = type === 'in' ? 'Clocking In...' : 'Clocking Out...';
     
     const formData = new FormData();
     formData.append('type', type);
-    formData.append('latitude', currentPosition ? currentPosition.coords.latitude : 0);
-    formData.append('longitude', currentPosition ? currentPosition.coords.longitude : 0);
+    formData.append('latitude', currentPosition.coords.latitude);
+    formData.append('longitude', currentPosition.coords.longitude);
     
     fetch('/ergon-site/attendance/clock', {
         method: 'POST',
@@ -199,7 +178,6 @@ function clockAction(type) {
     })
     .then(data => {
         if (data.success) {
-            // Update attendance status
             if (type === 'in') {
                 attendanceStatus.has_clocked_in = true;
                 attendanceStatus.clock_in_time = new Date().toISOString();
@@ -208,10 +186,8 @@ function clockAction(type) {
                 attendanceStatus.clock_out_time = new Date().toISOString();
             }
             
-            // Update both buttons
             updateClockButton(attendanceStatus);
             
-            // Sync header button status
             if (typeof headerAttendanceStatus !== 'undefined') {
                 headerAttendanceStatus = attendanceStatus;
                 if (typeof updateHeaderAttendanceButton === 'function') {
@@ -229,14 +205,12 @@ function clockAction(type) {
             if (typeof showMessage === 'function') {
                 showMessage(data.error || 'An error occurred', 'error');
             } else {
-                // Check if it's a location restriction error
                 if (data.error && data.error.includes('Please move within the allowed area')) {
                     showLocationAlert(data.error);
                 } else {
                     showErrorAlert(data.error || 'An error occurred');
                 }
             }
-            // Restore button state
             text.textContent = originalText;
             btn.disabled = false;
         }
@@ -248,18 +222,15 @@ function clockAction(type) {
         } else {
             showErrorAlert('Server error occurred. Please try again.');
         }
-        // Restore button state
         text.textContent = originalText;
         btn.disabled = false;
     });
 }
 
 <?php if (!$on_leave): ?>
-// Initialize smart button
 updateClockButton(attendanceStatus);
 <?php endif; ?>
 
-// Alert functions
 function showLocationAlert(message) {
     showModal(message, 'warning', '⚠️');
 }
@@ -273,7 +244,6 @@ function showErrorAlert(message) {
 }
 
 function showModal(message, type, icon) {
-    // Remove existing modal if any
     const existingModal = document.querySelector('.message-modal');
     if (existingModal) {
         existingModal.remove();
@@ -291,7 +261,6 @@ function showModal(message, type, icon) {
     
     document.body.appendChild(modal);
     
-    // Auto-close after 5 seconds for success messages
     if (type === 'success') {
         setTimeout(() => {
             if (modal.parentNode) {
@@ -301,160 +270,6 @@ function showModal(message, type, icon) {
     }
 }
 
-function showProjectSelection() {
-    fetch('/ergon-site/api/user-projects')
-    .then(response => response.json())
-    .then(data => {
-        if (!data.success || !data.projects.length) {
-            showErrorAlert('No projects assigned. Contact your administrator.');
-            return;
-        }
-        
-        const modal = document.createElement('div');
-        modal.className = 'modal-overlay';
-        modal.innerHTML = `
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>📁 Select Project</h3>
-                    <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <label>Choose project to clock in:</label>
-                    <select id="projectSelect" class="form-input">
-                        <option value="">Select Project</option>
-                        ${data.projects.map(p => `<option value="${p.id}">${p.name} ${p.latitude ? '📍' : ''}</option>`).join('')}
-                    </select>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn--secondary" onclick="this.closest('.modal-overlay').remove()">Cancel</button>
-                    <button class="btn btn--success" onclick="proceedClockIn()">Clock In</button>
-                </div>
-            </div>
-        `;
-        
-        if (!document.getElementById('modal-styles')) {
-            const styles = document.createElement('style');
-            styles.id = 'modal-styles';
-            styles.textContent = `
-                .modal-overlay {
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background: rgba(0,0,0,0.5);
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    z-index: 10001;
-                }
-                .modal-content {
-                    background: white;
-                    border-radius: 8px;
-                    width: 400px;
-                    max-width: 90vw;
-                }
-                .modal-header {
-                    padding: 16px;
-                    border-bottom: 1px solid #e5e7eb;
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                }
-                .modal-body {
-                    padding: 16px;
-                }
-                .modal-body label {
-                    display: block;
-                    margin-bottom: 8px;
-                    font-weight: 500;
-                }
-                .modal-body .form-input {
-                    width: 100%;
-                    padding: 8px;
-                    border: 1px solid #d1d5db;
-                    border-radius: 4px;
-                }
-                .modal-footer {
-                    padding: 16px;
-                    border-top: 1px solid #e5e7eb;
-                    display: flex;
-                    gap: 8px;
-                    justify-content: flex-end;
-                }
-                .modal-close {
-                    background: none;
-                    border: none;
-                    font-size: 24px;
-                    cursor: pointer;
-                    color: #6b7280;
-                }
-            `;
-            document.head.appendChild(styles);
-        }
-        
-        document.body.appendChild(modal);
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showErrorAlert('Failed to load projects');
-    });
-}
-
-function proceedClockIn() {
-    const projectId = document.getElementById('projectSelect').value;
-    if (!projectId) {
-        showErrorAlert('Please select a project');
-        return;
-    }
-    
-    document.querySelector('.modal-overlay')?.remove();
-    
-    const btn = document.getElementById('clockBtn');
-    const text = document.getElementById('clockBtnText');
-    
-    btn.disabled = true;
-    text.textContent = 'Clocking In...';
-    
-    // Refresh location from localStorage
-    const stored = localStorage.getItem('lastLocation');
-    if (stored) {
-        const loc = JSON.parse(stored);
-        currentPosition = { coords: { latitude: loc.lat, longitude: loc.lng } };
-    }
-    
-    const formData = new FormData();
-    formData.append('type', 'in');
-    formData.append('project_id', projectId);
-    formData.append('latitude', currentPosition ? currentPosition.coords.latitude : 0);
-    formData.append('longitude', currentPosition ? currentPosition.coords.longitude : 0);
-    
-    fetch('/ergon-site/attendance/clock', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            attendanceStatus.has_clocked_in = true;
-            updateClockButton(attendanceStatus);
-            showSuccessAlert(data.message);
-            setTimeout(() => window.location.href = '/ergon-site/attendance', 1500);
-        } else {
-            showErrorAlert(data.error || 'Clock in failed');
-            btn.disabled = false;
-            text.textContent = 'Clock In';
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showErrorAlert('Server error occurred');
-        btn.disabled = false;
-        text.textContent = 'Clock In';
-    });
-}
-
-// Initialize
 updateTime();
 setInterval(updateTime, 1000);
 getLocation();

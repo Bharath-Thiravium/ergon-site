@@ -1,4 +1,4 @@
-// Action Buttons - Imported from ergon attendance module
+// Action Buttons - Enhanced Tooltip functionality
 document.addEventListener('DOMContentLoaded', function() {
     const tooltip = document.createElement('div');
     tooltip.className = 'action-tooltip';

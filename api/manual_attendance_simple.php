@@ -39,11 +39,11 @@ try {
             $clockOutDateTime = $entryDate . ' ' . $clockOutTime . ':00';
             
             $stmt = $db->prepare("
-                INSERT INTO attendance (user_id, clock_in, clock_out, date, status)
+                INSERT INTO attendance (user_id, check_in, check_out, date, status)
                 VALUES (?, ?, ?, ?, 'present')
                 ON DUPLICATE KEY UPDATE 
-                clock_in = VALUES(clock_in), 
-                clock_out = VALUES(clock_out)
+                check_in = VALUES(check_in), 
+                check_out = VALUES(check_out)
             ");
             $stmt->execute([$userId, $clockInDateTime, $clockOutDateTime, $entryDate]);
             
@@ -52,15 +52,15 @@ try {
             
             if ($entryType === 'clock_in') {
                 $stmt = $db->prepare("
-                    INSERT INTO attendance (user_id, clock_in, date, status)
+                    INSERT INTO attendance (user_id, check_in, date, status)
                     VALUES (?, ?, ?, 'present')
-                    ON DUPLICATE KEY UPDATE clock_in = VALUES(clock_in)
+                    ON DUPLICATE KEY UPDATE check_in = VALUES(check_in)
                 ");
                 $stmt->execute([$userId, $entryDateTime, $entryDate]);
             } else {
                 $stmt = $db->prepare("
                     UPDATE attendance 
-                    SET clock_out = ? 
+                    SET check_out = ? 
                     WHERE user_id = ? AND date = ?
                 ");
                 $result = $stmt->execute([$entryDateTime, $userId, $entryDate]);

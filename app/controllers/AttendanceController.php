@@ -106,13 +106,13 @@ class AttendanceController extends Controller {
                     END as working_hours
                 FROM users u
                 LEFT JOIN departments d ON u.department_id = d.id
-                LEFT JOIN attendance a ON u.id = a.user_id AND DATE(a.check_in) = ?
+                LEFT JOIN attendance a ON u.id = a.user_id AND (DATE(a.check_in) = ? OR a.date = ?)
                 LEFT JOIN projects p ON a.project_id = p.id
                 LEFT JOIN settings s ON s.id = 1
                 WHERE $roleFilter AND u.status = 'active'
                 ORDER BY u.role DESC, u.name
             ");
-            $stmt->execute([$filterDate]);
+            $stmt->execute([$filterDate, $filterDate]);
             $employeeAttendance = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
             // Debug log: Location data fetch results
@@ -501,7 +501,12 @@ class AttendanceController extends Controller {
     
     private function getLocationInfo($db, $userLat, $userLng, $projectId = null) {
         if ($userLat == 0 || $userLng == 0) {
-            return false;
+            return [
+                'type' => 'office',
+                'title' => 'Remote Location',
+                'radius' => 0,
+                'project_id' => null
+            ];
         }
         
         // Check if within any project radius

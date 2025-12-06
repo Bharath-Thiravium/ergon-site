@@ -1,0 +1,12 @@
+2025-12-06 10:43:04
+Array
+(
+    [user_id] => 16
+    [entry_date] => 2025-12-06
+    [entry_type] => clock_in
+    [entry_time] => 10:30
+    [reason] => geo_fencing
+    [notes] => Test
+)
+
+
