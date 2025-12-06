@@ -81,32 +81,16 @@ function getLocation() {
     }
     
     document.getElementById('locationStatus').innerHTML = '<span>📍</span> Getting location...';
-    
-    // Try high accuracy first with short timeout
     navigator.geolocation.getCurrentPosition(
         function(position) {
             currentPosition = position;
-            document.getElementById('locationStatus').innerHTML = 
-                '<span>✅</span> Location: ' + position.coords.latitude.toFixed(6) + ', ' + position.coords.longitude.toFixed(6);
+            document.getElementById('locationStatus').innerHTML = '<span>✅</span> Ready';
         },
         function(error) {
-            // Fallback to low accuracy
-            navigator.geolocation.getCurrentPosition(
-                function(position) {
-                    currentPosition = position;
-                    document.getElementById('locationStatus').innerHTML = 
-                        '<span>✅</span> Location: ' + position.coords.latitude.toFixed(6) + ', ' + position.coords.longitude.toFixed(6);
-                },
-                function(error) {
-                    console.error('Location error:', error.code, error.message);
-                    currentPosition = null;
-                    document.getElementById('locationStatus').innerHTML = 
-                        '<span>⚠️</span> Location unavailable - Will clock in as Remote';
-                },
-                { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
-            );
+            currentPosition = null;
+            document.getElementById('locationStatus').innerHTML = '<span>⚠️</span> Remote mode';
         },
-        { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+        { enableHighAccuracy: false, timeout: 3000, maximumAge: 300000 }
     );
 }
 
