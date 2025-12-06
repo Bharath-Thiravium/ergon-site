@@ -75,37 +75,38 @@ function updateTime() {
 }
 
 function getLocation() {
+    // Check localStorage first
+    const stored = localStorage.getItem('lastLocation');
+    if (stored) {
+        const loc = JSON.parse(stored);
+        currentPosition = { coords: { latitude: loc.lat, longitude: loc.lng } };
+        document.getElementById('locationStatus').innerHTML = '<span>✅</span> Location ready';
+        return;
+    }
+    
     if (!navigator.geolocation) {
         document.getElementById('locationStatus').innerHTML = '<span>⚠️</span> Location not supported';
         return;
     }
     
-    // Try cached first (instant)
+    document.getElementById('locationStatus').innerHTML = '<span>📍</span> Getting location...';
     navigator.geolocation.getCurrentPosition(
         function(position) {
             currentPosition = position;
-            document.getElementById('locationStatus').innerHTML = '<span>✅</span> Location verified - Ready';
+            localStorage.setItem('lastLocation', JSON.stringify({
+                lat: position.coords.latitude,
+                lng: position.coords.longitude,
+                time: Date.now()
+            }));
+            document.getElementById('locationStatus').innerHTML = '<span>✅</span> Location verified';
         },
         function(error) {
-            // No cache, get fresh location
-            document.getElementById('locationStatus').innerHTML = '<span>📍</span> Getting location (first time)...';
-            navigator.geolocation.watchPosition(
-                function(position) {
-                    currentPosition = position;
-                    document.getElementById('locationStatus').innerHTML = '<span>✅</span> Location verified - Ready';
-                    navigator.geolocation.clearWatch(watchId);
-                },
-                function(error) {
-                    currentPosition = null;
-                    document.getElementById('locationStatus').innerHTML = '<span>⚠️</span> Location required - Enable GPS';
-                },
-                { enableHighAccuracy: false, maximumAge: 0 }
-            );
+            currentPosition = null;
+            document.getElementById('locationStatus').innerHTML = '<span>⚠️</span> Enable location access';
         },
-        { enableHighAccuracy: false, timeout: 100, maximumAge: Infinity }
+        { enableHighAccuracy: false, timeout: 10000, maximumAge: Infinity }
     );
 }
-let watchId;
 
 // Smart button state management - shared with header
 let attendanceStatus = <?= json_encode($attendance_status ?? []) ?>;
