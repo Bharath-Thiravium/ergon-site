@@ -274,10 +274,22 @@ ob_start();
                             <?php if (in_array($user_role ?? '', ['owner', 'admin'])): ?>
                             <td>
                                 <div class="ab-container">
+                                    <button class="ab-btn ab-btn--warning" title="Edit">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                        </svg>
+                                    </button>
                                     <button class="ab-btn ab-btn--info" onclick="generateAttendanceReport(<?= $record['user_id'] ?>)" title="Generate Report">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                                             <polyline points="14,2 14,8 20,8"/>
+                                        </svg>
+                                    </button>
+                                    <button class="ab-btn ab-btn--delete" onclick="deleteAttendanceRecord(<?= $record['attendance_id'] ?? 0 ?>)" title="Delete">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                            <polyline points="3,6 5,6 21,6"/>
+                                            <path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6"/>
                                         </svg>
                                     </button>
                                 </div>
@@ -336,10 +348,22 @@ ob_start();
                             <?php if (in_array($user_role ?? '', ['owner', 'admin'])): ?>
                             <td>
                                 <div class="ab-container">
+                                    <button class="ab-btn ab-btn--warning" title="Edit Attendance">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                        </svg>
+                                    </button>
                                     <button class="ab-btn ab-btn--info" onclick="generateAttendanceReport(<?= $record['user_id'] ?>)" title="Generate Report">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                                             <polyline points="14,2 14,8 20,8"/>
+                                        </svg>
+                                    </button>
+                                    <button class="ab-btn ab-btn--delete" onclick="deleteAttendanceRecord(<?= $record['attendance_id'] ?? 0 ?>)" title="Delete">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                            <polyline points="3,6 5,6 21,6"/>
+                                            <path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6"/>
                                         </svg>
                                     </button>
                                 </div>
@@ -390,10 +414,22 @@ ob_start();
                             <?php if (in_array($user_role ?? '', ['owner', 'admin'])): ?>
                             <td>
                                 <div class="ab-container">
+                                    <button class="ab-btn ab-btn--warning" title="Edit">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                        </svg>
+                                    </button>
                                     <button class="ab-btn ab-btn--info" onclick="generateAttendanceReport(<?= $record['user_id'] ?>)" title="Generate Report">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                                             <polyline points="14,2 14,8 20,8"/>
+                                        </svg>
+                                    </button>
+                                    <button class="ab-btn ab-btn--delete" onclick="deleteAttendanceRecord(<?= $record['attendance_id'] ?? 0 ?>)" title="Delete">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                            <polyline points="3,6 5,6 21,6"/>
+                                            <path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6"/>
                                         </svg>
                                     </button>
                                 </div>
@@ -556,7 +592,9 @@ function deleteAttendanceRecord(attendanceId) {
 }
 </script>
 
+<link rel="stylesheet" href="/ergon-site/assets/css/action-buttons.css?v=<?= time() ?>">
 <link rel="stylesheet" href="/ergon-site/assets/css/enhanced-table-utils.css?v=<?= time() ?>">
+<script src="/ergon-site/assets/js/action-buttons.js?v=<?= time() ?>"></script>
 <script src="/ergon-site/assets/js/table-utils.js?v=<?= time() ?>"></script>
 <script src="/ergon-site/assets/js/attendance-auto-refresh.js?v=<?= time() ?>"></script>
 
