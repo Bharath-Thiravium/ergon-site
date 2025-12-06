@@ -75,31 +75,39 @@ function updateTime() {
 }
 
 function getLocation() {
-    if (navigator.geolocation) {
-        document.getElementById('locationStatus').innerHTML = '<span>📍</span> Getting location...';
-        
-        navigator.geolocation.getCurrentPosition(
-            function(position) {
-                currentPosition = position;
-                document.getElementById('locationStatus').innerHTML = 
-                    '<span>✅</span> Location: ' + position.coords.latitude.toFixed(6) + ', ' + position.coords.longitude.toFixed(6);
-            },
-            function(error) {
-                console.error('Location error:', error.code, error.message);
-                currentPosition = null;
-                document.getElementById('locationStatus').innerHTML = 
-                    '<span>⚠️</span> Location unavailable - Will clock in as Remote';
-            },
-            {
-                enableHighAccuracy: true,
-                timeout: 15000,
-                maximumAge: 30000
-            }
-        );
-    } else {
-        document.getElementById('locationStatus').innerHTML = 
-            '<span>⚠️</span> Location not supported by browser';
+    if (!navigator.geolocation) {
+        document.getElementById('locationStatus').innerHTML = '<span>⚠️</span> Location not supported';
+        return;
     }
+    
+    document.getElementById('locationStatus').innerHTML = '<span>📍</span> Getting location...';
+    
+    // Try high accuracy first with short timeout
+    navigator.geolocation.getCurrentPosition(
+        function(position) {
+            currentPosition = position;
+            document.getElementById('locationStatus').innerHTML = 
+                '<span>✅</span> Location: ' + position.coords.latitude.toFixed(6) + ', ' + position.coords.longitude.toFixed(6);
+        },
+        function(error) {
+            // Fallback to low accuracy
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    currentPosition = position;
+                    document.getElementById('locationStatus').innerHTML = 
+                        '<span>✅</span> Location: ' + position.coords.latitude.toFixed(6) + ', ' + position.coords.longitude.toFixed(6);
+                },
+                function(error) {
+                    console.error('Location error:', error.code, error.message);
+                    currentPosition = null;
+                    document.getElementById('locationStatus').innerHTML = 
+                        '<span>⚠️</span> Location unavailable - Will clock in as Remote';
+                },
+                { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
+            );
+        },
+        { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+    );
 }
 
 // Smart button state management - shared with header
