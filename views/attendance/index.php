@@ -652,6 +652,7 @@ function deleteAttendanceRecord(attendanceId) {
 <script src="/ergon-site/assets/js/action-buttons.js?v=<?= time() ?>"></script>
 <script src="/ergon-site/assets/js/table-utils.js?v=<?= time() ?>"></script>
 <script src="/ergon-site/assets/js/attendance-auto-refresh.js?v=<?= time() ?>"></script>
+<!-- Force reload: <?= time() ?> -->
 
 <?php
 $content = ob_get_clean();
