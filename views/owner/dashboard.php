@@ -15,8 +15,10 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['role']) || !in_array($_SESSI
 require_once __DIR__ . '/../../app/helpers/ModuleManager.php';
 
 $systemAdminDisabled = false;
+$reportsDisabled = false;
 try {
     $systemAdminDisabled = ModuleManager::isModuleDisabled('system_admin');
+    $reportsDisabled = ModuleManager::isModuleDisabled('reports');
 } catch (Exception $e) {
     // Silently fail - module will appear enabled
 }
@@ -31,7 +33,7 @@ ob_start();
     <a href="/ergon-site/system-admin" class="btn btn--primary <?= $systemAdminDisabled ? 'btn--disabled' : '' ?>" <?= $systemAdminDisabled ? 'onclick="return false;" style="opacity: 0.5; cursor: not-allowed;"' : '' ?>>🔧 System Admins<?= $systemAdminDisabled ? ' 🔒' : '' ?></a>
     <a href="/ergon-site/users" class="btn btn--secondary">👥 User Admins</a>
     <a href="/ergon-site/owner/approvals" class="btn btn--secondary">Review Approvals</a>
-    <a href="/ergon-site/reports" class="btn btn--secondary">View Reports</a>
+    <a href="/ergon-site/reports" class="btn btn--secondary <?= $reportsDisabled ? 'btn--disabled' : '' ?>" <?= $reportsDisabled ? 'onclick="return false;" style="opacity: 0.5; cursor: not-allowed;"' : '' ?>>View Reports<?= $reportsDisabled ? ' 🔒' : '' ?></a>
     <a href="/ergon-site/settings" class="btn btn--secondary">System Settings</a>
 </div>
 

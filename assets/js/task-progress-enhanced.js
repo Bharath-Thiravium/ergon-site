@@ -3,16 +3,28 @@ var currentTaskId;
 function openProgressModal(taskId, progress, status) {
     currentTaskId = taskId;
     var container = document.querySelector('[data-task-id="' + taskId + '"]');
-    var currentProgress = container ? container.querySelector('.progress-percentage').textContent.replace('%', '') : progress;
+    var currentProgress = progress;
     
-    document.getElementById('progressSlider').value = currentProgress;
-    document.getElementById('progressValue').textContent = currentProgress;
-    document.getElementById('progressDescription').value = '';
-    document.getElementById('progressDialog').style.display = 'flex';
+    if (container) {
+        var percentageEl = container.querySelector('.progress-percentage');
+        if (percentageEl && percentageEl.textContent) {
+            currentProgress = percentageEl.textContent.replace('%', '');
+        }
+    }
+    
+    var slider = document.getElementById('progressSlider');
+    var valueDisplay = document.getElementById('progressValue');
+    var description = document.getElementById('progressDescription');
+    var dialog = document.getElementById('progressDialog');
+    
+    if (slider) slider.value = currentProgress;
+    if (valueDisplay) valueDisplay.textContent = currentProgress;
+    if (description) description.value = '';
+    if (dialog) dialog.style.display = 'flex';
     
     // Focus on description field
     setTimeout(() => {
-        document.getElementById('progressDescription').focus();
+        if (description) description.focus();
     }, 100);
 }
 
@@ -23,11 +35,12 @@ function closeDialog() {
 
 function saveProgress() {
     var progress = document.getElementById('progressSlider').value;
-    var description = document.getElementById('progressDescription').value.trim();
+    var descriptionEl = document.getElementById('progressDescription');
+    var description = descriptionEl ? descriptionEl.value.trim() : '';
     
     if (!description) {
         alert('Please provide a description for this progress update.');
-        document.getElementById('progressDescription').focus();
+        if (descriptionEl) descriptionEl.focus();
         return;
     }
     
