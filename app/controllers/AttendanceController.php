@@ -362,8 +362,8 @@ class AttendanceController extends Controller {
         
         $currentTime = TimezoneHelper::nowIst();
         
-        $stmt = $db->prepare("INSERT INTO attendance (user_id, project_id, check_in, check_in_latitude, check_in_longitude, location_verified, location_type, location_title, location_radius, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $result = $stmt->execute([$userId, $locationInfo['project_id'], $currentTime, $userLat, $userLng, 1, $locationInfo['type'], $locationInfo['title'], $locationInfo['radius'], $currentTime]);
+        $stmt = $db->prepare("INSERT INTO attendance (user_id, project_id, check_in, location_name, location_type, location_title, location_radius, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $result = $stmt->execute([$userId, $locationInfo['project_id'], $currentTime, $locationInfo['title'], $locationInfo['type'], $locationInfo['title'], $locationInfo['radius'], $currentTime]);
         
         if ($result) {
             // Create service history entry if project-based
@@ -401,8 +401,8 @@ class AttendanceController extends Controller {
             return;
         }
         
-        $stmt = $db->prepare("UPDATE attendance SET check_out = ?, check_out_latitude = ?, check_out_longitude = ? WHERE id = ?");
-        $result = $stmt->execute([$currentTime, $userLat, $userLng, $attendance['id']]);
+        $stmt = $db->prepare("UPDATE attendance SET check_out = ? WHERE id = ?");
+        $result = $stmt->execute([$currentTime, $attendance['id']]);
         
         if ($result) {
             // Update service history
@@ -465,11 +465,13 @@ class AttendanceController extends Controller {
             $db->exec("CREATE TABLE IF NOT EXISTS attendance (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 user_id INT NOT NULL,
+                project_id INT NULL,
                 check_in DATETIME NOT NULL,
                 check_out DATETIME NULL,
-                latitude DECIMAL(10, 8) NULL,
-                longitude DECIMAL(11, 8) NULL,
                 location_name VARCHAR(255) DEFAULT 'Office',
+                location_type VARCHAR(50) NULL,
+                location_title VARCHAR(255) NULL,
+                location_radius INT NULL,
                 status VARCHAR(20) DEFAULT 'present',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

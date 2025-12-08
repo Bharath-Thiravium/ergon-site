@@ -54,9 +54,6 @@ class ExpenseController extends Controller {
             $user_id = $_SESSION['user_id'];
             $role = $_SESSION['role'];
             
-            // Create test data if no expenses exist
-            $this->createTestExpenseIfNeeded();
-            
             if ($role === 'user') {
                 $expenses = $this->expense->getByUserId($user_id);
             } elseif ($role === 'admin') {

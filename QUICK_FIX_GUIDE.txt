@@ -1,0 +1,63 @@
+================================================================================
+ATTENDANCE CLOCK-IN FIX - QUICK GUIDE
+================================================================================
+
+PROBLEM:
+--------
+1. Clock-in button shows error: "Column not found: 1054 Unknown column 'latitude'"
+2. Console shows 404 error for missing action-buttons.css file
+
+SOLUTION APPLIED:
+-----------------
+✓ Fixed database column references in AttendanceController.php
+✓ Removed reference to non-existent CSS file
+✓ Created database migration scripts
+
+HOW TO APPLY THE FIX:
+---------------------
+
+STEP 1: Run Database Migration
+-------------------------------
+Double-click this file:
+    fix_attendance.bat
+
+OR run this command:
+    php run_attendance_fix.php
+
+STEP 2: Test the Fix
+---------------------
+1. Go to: https://bkgreenenergy.com/ergon-site/attendance/clock
+2. Click "Clock In" button
+3. Verify it works without errors
+4. Click "Clock Out" button
+5. Verify it works without errors
+
+STEP 3: Verify Console
+-----------------------
+1. Press F12 to open Developer Tools
+2. Go to Console tab
+3. Refresh the page
+4. Verify no 404 errors appear
+
+THAT'S IT!
+----------
+The fix is complete. All users should now be able to clock in/out successfully.
+
+FILES MODIFIED:
+---------------
+- app/controllers/AttendanceController.php (code fix)
+- views/attendance/index.php (removed CSS reference)
+
+FILES CREATED:
+--------------
+- fix_attendance_table_structure.sql (database migration)
+- run_attendance_fix.php (migration script)
+- fix_attendance.bat (easy runner)
+- ATTENDANCE_CLOCKIN_FIX_SUMMARY.md (detailed documentation)
+- QUICK_FIX_GUIDE.txt (this file)
+
+NEED HELP?
+----------
+Check ATTENDANCE_CLOCKIN_FIX_SUMMARY.md for detailed information.
+
+================================================================================

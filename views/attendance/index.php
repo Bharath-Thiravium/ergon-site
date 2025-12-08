@@ -896,7 +896,6 @@ function terminateUser(userId) {
 }
 </script>
 
-<link rel="stylesheet" href="/ergon-site/assets/css/action-buttons.css?v=<?= time() ?>">
 <link rel="stylesheet" href="/ergon-site/assets/css/enhanced-table-utils.css?v=<?= time() ?>">
 <script src="/ergon-site/assets/js/action-buttons.js?v=<?= time() ?>"></script>
 <script src="/ergon-site/assets/js/table-utils.js?v=<?= time() ?>"></script>
