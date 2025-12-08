@@ -1,7 +1,6 @@
 <?php
 $title = 'Project Management';
 $active_page = 'project-management';
-include __DIR__ . '/../shared/modal_component.php';
 ob_start();
 ?>
 

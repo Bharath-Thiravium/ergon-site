@@ -75,8 +75,9 @@ class ProjectManagementController extends Controller {
             
         } catch (Exception $e) {
             error_log('Project management error: ' . $e->getMessage());
+            error_log('Stack trace: ' . $e->getTraceAsString());
             http_response_code(500);
-            echo "Error loading project management";
+            echo "Error loading project management: " . $e->getMessage();
         }
     }
     
