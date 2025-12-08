@@ -33,13 +33,15 @@ class ProjectManagementController extends Controller {
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 name VARCHAR(255) NOT NULL,
                 description TEXT,
-                department_id INT,
                 status VARCHAR(50) DEFAULT 'active',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             )");
             
-            // Add location columns if they don't exist
+            // Add columns if they don't exist
+            try {
+                $db->exec("ALTER TABLE projects ADD COLUMN department_id INT NULL");
+            } catch (Exception $e) {}
             try {
                 $db->exec("ALTER TABLE projects ADD COLUMN latitude DECIMAL(10, 8) NULL");
             } catch (Exception $e) {}
@@ -48,12 +50,6 @@ class ProjectManagementController extends Controller {
             } catch (Exception $e) {}
             try {
                 $db->exec("ALTER TABLE projects ADD COLUMN checkin_radius INT DEFAULT 100");
-            } catch (Exception $e) {}
-            
-            // Ensure existing columns allow NULL
-            try {
-                $db->exec("ALTER TABLE projects MODIFY COLUMN latitude DECIMAL(10, 8) NULL");
-                $db->exec("ALTER TABLE projects MODIFY COLUMN longitude DECIMAL(11, 8) NULL");
             } catch (Exception $e) {}
             
             // Get all projects with department info
