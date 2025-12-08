@@ -79,7 +79,7 @@ ob_start();
                             <?php endif; ?>
                         </td>
                         <td>
-                            <?php if ($project['latitude'] && $project['longitude']): ?>
+                            <?php if (!empty($project['latitude']) && !empty($project['longitude'])): ?>
                                 <span class="badge badge--info">📍 <?= $project['checkin_radius'] ?>m radius</span>
                             <?php else: ?>
                                 <span class="badge badge--secondary">No location</span>
@@ -134,7 +134,6 @@ function showAddProjectModal() {
             </div>
             <div class="modal-body">
                 <form id="projectForm">
-                    <input type="hidden" id="projectId" name="project_id">
                     
                     <label>Project Name *</label>
                     <input type="text" id="projectName" name="name" class="form-input" required placeholder="Enter project name">
@@ -251,9 +250,16 @@ function editProject(id, name, description, latitude, longitude, radius, deptId,
     showAddProjectModal();
     
     setTimeout(() => {
+        const form = document.getElementById('projectForm');
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.id = 'projectId';
+        hiddenInput.name = 'project_id';
+        hiddenInput.value = id;
+        form.insertBefore(hiddenInput, form.firstChild);
+        
         document.getElementById('modalTitle').textContent = '📁 Edit Project';
         document.getElementById('submitText').textContent = 'Update Project';
-        document.getElementById('projectId').value = id;
         document.getElementById('projectName').value = name;
         document.getElementById('projectDescription').value = description;
         document.getElementById('projectLatitude').value = latitude || '';
@@ -268,7 +274,8 @@ function editProject(id, name, description, latitude, longitude, radius, deptId,
 function submitProjectForm() {
     const form = document.getElementById('projectForm');
     const formData = new FormData(form);
-    const url = isEditing ? '/ergon-site/project-management/update' : '/ergon-site/project-management/create';
+    const projectId = document.getElementById('projectId');
+    const url = projectId ? '/ergon-site/project-management/update' : '/ergon-site/project-management/create';
     
     fetch(url, {
         method: 'POST',

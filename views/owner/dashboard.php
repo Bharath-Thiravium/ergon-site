@@ -12,6 +12,15 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['role']) || !in_array($_SESSI
     exit;
 }
 
+require_once __DIR__ . '/../../app/helpers/ModuleManager.php';
+
+$systemAdminDisabled = false;
+try {
+    $systemAdminDisabled = ModuleManager::isModuleDisabled('system_admin');
+} catch (Exception $e) {
+    // Silently fail - module will appear enabled
+}
+
 $title = 'Executive Dashboard';
 $active_page = 'dashboard';
 
@@ -19,7 +28,7 @@ ob_start();
 ?>
 
 <div class="header-actions">
-    <a href="/ergon-site/system-admin" class="btn btn--primary">🔧 System Admins</a>
+    <a href="/ergon-site/system-admin" class="btn btn--primary <?= $systemAdminDisabled ? 'btn--disabled' : '' ?>" <?= $systemAdminDisabled ? 'onclick="return false;" style="opacity: 0.5; cursor: not-allowed;"' : '' ?>>🔧 System Admins<?= $systemAdminDisabled ? ' 🔒' : '' ?></a>
     <a href="/ergon-site/users" class="btn btn--secondary">👥 User Admins</a>
     <a href="/ergon-site/owner/approvals" class="btn btn--secondary">Review Approvals</a>
     <a href="/ergon-site/reports" class="btn btn--secondary">View Reports</a>

@@ -270,10 +270,6 @@ ob_end_clean();
                         Change Password
                     </a>
                     <div class="profile-menu-divider"></div>
-                    <a href="/ergon-site/profile/preferences" class="profile-menu-item">
-                        <span class="menu-icon"><i class="bi bi-palette-fill"></i></span>
-                        Appearance
-                    </a>
                     <?php if (isset($_SESSION['role']) && in_array($_SESSION['role'], ['owner', 'admin'])): ?>
                     <a href="/ergon-site/settings" class="profile-menu-item">
                         <span class="menu-icon"><i class="bi bi-gear-fill"></i></span>

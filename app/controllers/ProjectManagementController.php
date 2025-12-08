@@ -41,13 +41,19 @@ class ProjectManagementController extends Controller {
             
             // Add location columns if they don't exist
             try {
-                $db->exec("ALTER TABLE projects ADD COLUMN latitude DECIMAL(10, 8)");
+                $db->exec("ALTER TABLE projects ADD COLUMN latitude DECIMAL(10, 8) NULL");
             } catch (Exception $e) {}
             try {
-                $db->exec("ALTER TABLE projects ADD COLUMN longitude DECIMAL(11, 8)");
+                $db->exec("ALTER TABLE projects ADD COLUMN longitude DECIMAL(11, 8) NULL");
             } catch (Exception $e) {}
             try {
                 $db->exec("ALTER TABLE projects ADD COLUMN checkin_radius INT DEFAULT 100");
+            } catch (Exception $e) {}
+            
+            // Ensure existing columns allow NULL
+            try {
+                $db->exec("ALTER TABLE projects MODIFY COLUMN latitude DECIMAL(10, 8) NULL");
+                $db->exec("ALTER TABLE projects MODIFY COLUMN longitude DECIMAL(11, 8) NULL");
             } catch (Exception $e) {}
             
             // Get all projects with department info
@@ -143,6 +149,12 @@ class ProjectManagementController extends Controller {
             return;
         }
         
+        if (empty($_POST['project_id'])) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'error' => 'Project ID is required']);
+            return;
+        }
+        
         try {
             $db = Database::connect();
             
@@ -154,7 +166,7 @@ class ProjectManagementController extends Controller {
                 !empty($_POST['longitude']) ? $_POST['longitude'] : null,
                 !empty($_POST['checkin_radius']) ? $_POST['checkin_radius'] : 100,
                 !empty($_POST['department_id']) ? $_POST['department_id'] : null,
-                $_POST['status'],
+                $_POST['status'] ?? 'active',
                 $_POST['project_id']
             ]);
             

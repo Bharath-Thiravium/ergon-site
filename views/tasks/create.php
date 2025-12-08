@@ -441,21 +441,23 @@ function updateProgressValue(value) {
 function loadTaskCategories() {
     const deptSelect = document.getElementById('department_id');
     const categorySelect = document.getElementById('task_category');
+    const projectSelect = document.getElementById('project_id');
     const deptId = deptSelect.value;
 
     // Clear existing options
     categorySelect.innerHTML = '<option value="">Select Category</option>';
+    projectSelect.innerHTML = '<option value="">Select Project</option>';
 
     if (!deptId) return;
 
     // Fetch categories for selected department via API
-    fetch(`/ergon-site/api/task-categories?department_id=${deptId}`)
-        .then(response => response.json())
+    fetch(`/ergon-site/api/task-categories.php?department_id=${deptId}`)
+        .then(response => {
+            if (!response.ok) throw new Error('HTTP ' + response.status);
+            return response.json();
+        })
         .then(data => {
-            console.log('Categories data:', data);
-            if (data.categories) {
-                console.log('Found categories:', data.categories.length);
-                // Populate category dropdown with fetched data
+            if (data.success && data.categories && data.categories.length > 0) {
                 data.categories.forEach(category => {
                     const option = document.createElement('option');
                     option.value = category.category_name;
@@ -463,10 +465,38 @@ function loadTaskCategories() {
                     categorySelect.appendChild(option);
                 });
             } else {
-                console.log('No categories found in response');
+                categorySelect.innerHTML += '<option value="" disabled>No categories found</option>';
             }
         })
-        .catch(error => console.error('Error loading categories:', error));
+        .catch(error => {
+            console.error('Error loading categories:', error);
+            categorySelect.innerHTML += '<option value="" disabled>Error loading categories</option>';
+        });
+    
+    // Load projects filtered by department
+    loadProjectsByDepartment(deptId);
+}
+
+// Load projects filtered by department
+function loadProjectsByDepartment(deptId) {
+    const projectSelect = document.getElementById('project_id');
+    
+    fetch(`/ergon-site/api/projects.php?department_id=${deptId}`)
+        .then(response => {
+            if (!response.ok) throw new Error('HTTP ' + response.status);
+            return response.json();
+        })
+        .then(data => {
+            if (data.success && data.projects && data.projects.length > 0) {
+                data.projects.forEach(project => {
+                    const option = document.createElement('option');
+                    option.value = project.id;
+                    option.textContent = project.name;
+                    projectSelect.appendChild(option);
+                });
+            }
+        })
+        .catch(error => console.error('Error loading projects:', error));
 }
 
 // Handle assignment type change
@@ -486,9 +516,13 @@ function handleAssignmentTypeChange() {
 // Load all users for assignment
 function loadAllUsers() {
     const assignedToSelect = document.getElementById('assigned_to');
+    assignedToSelect.innerHTML = '<option value="">Loading users...</option>';
     
-    fetch('/ergon-site/api/users')
-        .then(response => response.json())
+    fetch('/ergon-site/api/users.php')
+        .then(response => {
+            if (!response.ok) throw new Error('HTTP ' + response.status);
+            return response.json();
+        })
         .then(data => {
             if (data.success && data.users) {
                 assignedToSelect.innerHTML = '<option value="">Select User</option>';
@@ -498,11 +532,13 @@ function loadAllUsers() {
                     option.textContent = user.name + (user.email ? ' (' + user.email + ')' : '');
                     assignedToSelect.appendChild(option);
                 });
+            } else {
+                assignedToSelect.innerHTML = '<option value="">No users found</option>';
             }
         })
         .catch(error => {
             console.error('Error loading users:', error);
-            assignedToSelect.innerHTML = '<option value="">Error loading users</option>';
+            assignedToSelect.innerHTML = '<option value="">Error: ' + error.message + '</option>';
         });
 }
 
@@ -652,7 +688,7 @@ function loadContacts() {
     const contactSelect = document.getElementById('contact_id');
     if (contactSelect.length > 1) return; // Already loaded
 
-    fetch('/ergon-site/api/contact-persons')
+    fetch('/ergon-site/api/contact-persons.php')
         .then(response => response.json())
         .then(data => {
             if (data.success && data.contacts) {
@@ -676,7 +712,7 @@ document.addEventListener('DOMContentLoaded', function() {
         contactSelect.addEventListener('change', function() {
             if (this.value) {
                 // Find selected contact and auto-fill fields
-                fetch('/ergon-site/api/contact-persons')
+                fetch('/ergon-site/api/contact-persons.php')
                     .then(response => response.json())
                     .then(data => {
                         if (data.success && data.contacts) {
