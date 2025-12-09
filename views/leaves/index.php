@@ -294,12 +294,12 @@ function toggleLeaveFilters() {
 
 function showRejectModal(leaveId) {
     document.getElementById('rejectForm').action = '/ergon-site/leaves/reject/' + leaveId;
-    document.getElementById('rejectModal').style.display = 'flex';
+    if (typeof showModalById === 'function') showModalById('rejectModal'); else document.getElementById('rejectModal').style.display = 'flex';
 }
 
 function closeRejectModal() {
-    document.getElementById('rejectModal').style.display = 'none';
-    document.getElementById('rejection_reason').value = '';
+    if (typeof hideModalById === 'function') hideModalById('rejectModal'); else document.getElementById('rejectModal').style.display = 'none';
+    var rr = document.getElementById('rejection_reason'); if (rr) rr.value = '';
 }
 
 // Close modal when clicking outside
@@ -358,3 +358,19 @@ document.addEventListener('click', function(e) {
 $content = ob_get_clean();
 include __DIR__ . '/../layouts/dashboard.php';
 ?>
+<script>
+// Defensive: ensure no modal remains open when arriving at this page
+document.addEventListener('DOMContentLoaded', function() {
+    const selectors = ['.modal', '.modal-overlay', '[id$="Modal"]'];
+    const els = document.querySelectorAll(selectors.join(','));
+    if (typeof hideModalById === 'function') {
+        els.forEach(el => { if (el.id) hideModalById(el.id); else el.style.display = 'none'; });
+    } else if (typeof hideClosestModal === 'function') {
+        els.forEach(el => hideClosestModal(el));
+    } else {
+        els.forEach(el => { try { el.style.display = 'none'; } catch(e){} });
+        document.body.classList.remove('modal-open');
+        document.body.style.overflow = '';
+    }
+});
+</script>

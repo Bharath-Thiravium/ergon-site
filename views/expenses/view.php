@@ -21,9 +21,12 @@ ob_start();
         $canApprove = $isPending && (($isOwner) || ($isAdmin && $isNotOwnExpense));
         ?>
         <?php if ($canApprove): ?>
-        <a href="/ergon-site/expenses/approve/<?= $expense['id'] ?>" class="btn btn--success">
-            <span>✅</span> Approve
-        </a>
+        <form method="POST" action="/ergon-site/expenses/approve/<?= $expense['id'] ?>" style="display:inline-block;">
+            <input type="number" step="0.01" name="approved_amount" value="<?= number_format($expense['amount'] ?? 0, 2, '.', '') ?>" class="form-control" style="display:inline-block; width:140px; margin-right:.5rem;" required />
+            <button type="submit" class="btn btn--success">
+                <span>✅</span> Approve
+            </button>
+        </form>
         <button class="btn btn--danger" onclick="showRejectModal(<?= $expense['id'] ?>)">
             <span>❌</span> Reject
         </button>
@@ -31,6 +34,16 @@ ob_start();
         <a href="/ergon-site/expenses" class="btn btn--secondary">
             <span>←</span> Back to Expenses
         </a>
+        <?php if (in_array($userRole, ['admin','owner']) && ($expense['status'] ?? '') === 'approved'): ?>
+        <form id="expensePaidForm" method="POST" action="/ergon-site/expenses/paid/<?= $expense['id'] ?>" enctype="multipart/form-data" style="display:inline-block; margin-left:.5rem;" onsubmit="return validateProofUpload();">
+            <label for="expense_proof_input" class="btn" style="display:inline-block; cursor:pointer;">
+                <span>📎</span> Upload Proof
+            </label>
+            <input id="expense_proof_input" type="file" name="proof" style="display:none;" accept="image/*,.pdf" required />
+            <span id="expense_proof_name" style="margin-left:.5rem; font-size:0.95rem; color:var(--text-secondary);"></span>
+            <button id="expense_proof_submit" type="submit" class="btn btn--primary" disabled style="margin-left:.5rem;">Mark Paid</button>
+        </form>
+        <?php endif; ?>
     </div>
 </div>
 
@@ -45,17 +58,23 @@ ob_start();
                     $statusClass = match($status) {
                         'approved' => 'success',
                         'rejected' => 'danger',
+                        'paid' => 'paid',
                         default => 'warning'
                     };
                     $statusIcon = match($status) {
                         'approved' => '✅',
                         'rejected' => '❌',
+                        'paid' => '✓',
                         default => '⏳'
                     };
                     ?>
                     <span class="badge badge--<?= $statusClass ?>"><?= $statusIcon ?> <?= ucfirst($status) ?></span>
                     <div class="amount-display">
-                        <span class="amount-text">₹<?= number_format($expense['amount'] ?? 0, 2) ?></span>
+                        <?php if (in_array($expense['status'] ?? '', ['approved', 'paid']) && !empty($approved['approved_amount'])): ?>
+                            <span class="amount-text" title="Approved Amount">₹<?= number_format($approved['approved_amount'], 2) ?></span>
+                        <?php else: ?>
+                            <span class="amount-text" title="Claimed Amount">₹<?= number_format($expense['amount'] ?? 0, 2) ?></span>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -73,7 +92,14 @@ ob_start();
                     <div class="detail-items">
                         <span><strong>Name:</strong> 👤 <?= htmlspecialchars($expense['user_name'] ?? 'Unknown') ?></span>
                         <span><strong>Category:</strong> 🏷️ <?= htmlspecialchars($expense['category'] ?? 'General') ?></span>
-                        <span><strong>Amount:</strong> 💰 ₹<?= number_format($expense['amount'] ?? 0, 2) ?></span>
+                        <span>
+                            <strong>Claimed:</strong> 💰 ₹<?= number_format($expense['amount'] ?? 0, 2) ?>
+                        </span>
+                        <?php if (in_array($expense['status'] ?? '', ['approved', 'paid']) && !empty($approved['approved_amount'])): ?>
+                        <span>
+                            <strong>Approved:</strong> 💵 ₹<?= number_format($approved['approved_amount'], 2) ?>
+                        </span>
+                        <?php endif; ?>
                     </div>
                 </div>
                 
@@ -101,15 +127,22 @@ ob_start();
             <?php if (!empty($expense['attachment'])): ?>
             <div class="detail-item">
                 <label>Receipt</label>
-                <div class="receipt-container">
-                    <img src="/ergon-site/storage/receipts/<?= htmlspecialchars($expense['attachment']) ?>" 
-                         alt="Receipt" 
-                         class="receipt-image" 
-                         onclick="openReceiptModal('/ergon-site/storage/receipts/<?= htmlspecialchars($expense['attachment']) ?>')">
-                    <a href="/ergon-site/storage/receipts/<?= htmlspecialchars($expense['attachment']) ?>" 
-                       target="_blank" 
-                       class="receipt-link">View Full Size</a>
-                </div>
+                <?php require_once __DIR__ . '/../../app/helpers/ProofHelper.php'; echo proof_preview_html('/ergon-site/storage/receipts/' . $expense['attachment'], 'Receipt'); ?>
+            </div>
+            <?php endif; ?>
+            <?php
+                // Check both approved_expenses and expenses tables for payment proof
+                $proofFile = null;
+                if (!empty($approved['payment_proof'])) {
+                    $proofFile = $approved['payment_proof'];
+                } elseif (!empty($expense['payment_proof'])) {
+                    $proofFile = $expense['payment_proof'];
+                }
+            ?>
+            <?php if (!empty($proofFile)): ?>
+            <div class="detail-item" style="margin-top:1rem;">
+                <label>Payment Proof</label>
+                <?php require_once __DIR__ . '/../../app/helpers/ProofHelper.php'; echo proof_preview_html('/ergon-site/storage/proofs/' . $proofFile, 'Payment Proof'); ?>
             </div>
             <?php endif; ?>
             <?php if (!empty($expense['approved_at'])): ?>
@@ -144,18 +177,7 @@ ob_start();
     </div>
 </div>
 
-<!-- Receipt Modal -->
-<div id="receiptModal" class="modal" style="display: none;">
-    <div class="modal-content modal-content--large">
-        <div class="modal-header">
-            <h3>📄 Receipt Image</h3>
-            <span class="close" onclick="closeReceiptModal()">&times;</span>
-        </div>
-        <div class="modal-body">
-            <img id="receiptImage" src="" alt="Receipt" class="receipt-full">
-        </div>
-    </div>
-</div>
+<?php include __DIR__ . '/../partials/proof_modal.php'; ?>
 
 <style>
 .expense-compact {
@@ -225,6 +247,11 @@ ob_start();
     background: #fef2f2;
     border-left-color: #dc2626;
     color: #dc2626;
+}
+
+.badge--paid {
+    /*background: #166534;*/
+    color: #3d8a36ff;
 }
 
 .details-compact {
@@ -387,22 +414,34 @@ ob_start();
 
 <script>
 function openReceiptModal(imageSrc) {
-    document.getElementById('receiptImage').src = imageSrc;
-    document.getElementById('receiptModal').style.display = 'block';
+    var img = document.getElementById('receiptImage');
+    if (img) img.src = imageSrc;
+    if (typeof showModalById === 'function') {
+        showModalById('receiptModal');
+    } else {
+        var m = document.getElementById('receiptModal'); if (m) m.style.display = 'block';
+        document.body.classList.add('modal-open'); document.body.style.overflow = 'hidden';
+    }
 }
 
 function closeReceiptModal() {
-    document.getElementById('receiptModal').style.display = 'none';
+    var img = document.getElementById('receiptImage'); if (img) img.src = '';
+    if (typeof hideModalById === 'function') {
+        hideModalById('receiptModal');
+    } else {
+        var m = document.getElementById('receiptModal'); if (m) m.style.display = 'none';
+        document.body.classList.remove('modal-open'); document.body.style.overflow = '';
+    }
 }
 
 function showRejectModal(expenseId) {
     document.getElementById('rejectForm').action = '/ergon-site/expenses/reject/' + expenseId;
-    document.getElementById('rejectModal').style.display = 'block';
+    if (typeof showModalById === 'function') showModalById('rejectModal'); else document.getElementById('rejectModal').style.display = 'block';
 }
 
 function closeRejectModal() {
-    document.getElementById('rejectModal').style.display = 'none';
-    document.getElementById('rejection_reason').value = '';
+    if (typeof hideModalById === 'function') hideModalById('rejectModal'); else document.getElementById('rejectModal').style.display = 'none';
+    var rr = document.getElementById('rejection_reason'); if (rr) rr.value = '';
 }
 
 window.onclick = function(event) {
@@ -416,6 +455,69 @@ window.onclick = function(event) {
         closeRejectModal();
     }
 }
+</script>
+
+<script>
+function validateProofUpload() {
+    var input = document.getElementById('expense_proof_input');
+    if (!input || !input.files || input.files.length === 0) {
+        alert('Please select a proof file before submitting.');
+        return false;
+    }
+    return true;
+}
+
+// Enable expense Mark Paid button only after a proof file is selected
+document.addEventListener('DOMContentLoaded', function() {
+    var input = document.getElementById('expense_proof_input');
+    var submitBtn = document.getElementById('expense_proof_submit');
+    var nameSpan = document.getElementById('expense_proof_name');
+    if (input) {
+        input.addEventListener('change', function() {
+            if (input.files && input.files.length > 0) {
+                submitBtn.disabled = false;
+                nameSpan.textContent = input.files[0].name;
+            } else {
+                submitBtn.disabled = true;
+                nameSpan.textContent = '';
+            }
+        });
+    }
+});
+</script>
+
+<script>
+// Show preview for selected proof (image preview or PDF icon)
+document.addEventListener('DOMContentLoaded', function() {
+    var input = document.getElementById('expense_proof_input');
+    var previewContainer = document.createElement('div');
+    previewContainer.style.marginTop = '0.75rem';
+    if (input) {
+        input.parentNode.insertBefore(previewContainer, input.nextSibling);
+        input.addEventListener('change', function() {
+            previewContainer.innerHTML = '';
+            if (input.files && input.files.length > 0) {
+                var file = input.files[0];
+                var reader = new FileReader();
+                if (file.type.startsWith('image/')) {
+                    reader.onload = function(e) {
+                        var img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.style.maxWidth = '200px';
+                        img.style.borderRadius = '6px';
+                        previewContainer.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                } else if (file.type === 'application/pdf') {
+                    var link = document.createElement('a');
+                    link.textContent = 'PDF selected: ' + file.name;
+                    link.href = '#';
+                    previewContainer.appendChild(link);
+                }
+            }
+        });
+    }
+});
 </script>
 
 <?php

@@ -29,20 +29,24 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Handle hover for disabled items
     document.addEventListener('mouseenter', function(e) {
-        const disabledItem = e.target.closest('.nav-dropdown-item--disabled, .sidebar__link--disabled');
-        if (disabledItem) {
-            const rect = disabledItem.getBoundingClientRect();
-            tooltip.style.top = (rect.bottom -10) + 'px';
-            tooltip.style.left = (rect.left +180) + 'px';
-            tooltip.style.right = 'auto';
-            tooltip.style.display = 'block';
+        if (e.target && e.target.closest) {
+            const disabledItem = e.target.closest('.nav-dropdown-item--disabled, .sidebar__link--disabled');
+            if (disabledItem) {
+                const rect = disabledItem.getBoundingClientRect();
+                tooltip.style.top = (rect.bottom -10) + 'px';
+                tooltip.style.left = (rect.left +180) + 'px';
+                tooltip.style.right = 'auto';
+                tooltip.style.display = 'block';
+            }
         }
     }, true);
     
     document.addEventListener('mouseleave', function(e) {
-        const disabledItem = e.target.closest('.nav-dropdown-item--disabled, .sidebar__link--disabled');
-        if (disabledItem) {
-            tooltip.style.display = 'none';
+        if (e.target && e.target.closest) {
+            const disabledItem = e.target.closest('.nav-dropdown-item--disabled, .sidebar__link--disabled');
+            if (disabledItem) {
+                tooltip.style.display = 'none';
+            }
         }
     }, true);
     

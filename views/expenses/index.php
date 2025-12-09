@@ -10,9 +10,9 @@ ob_start();
         <p>Track and manage employee expense claims</p>
     </div>
     <div class="page-actions">
-        <a href="/ergon-site/expenses/create" class="btn btn--primary">
+        <button onclick="showExpenseModal()" class="btn btn--primary">
             <span>💰</span> Submit Expense
-        </a>
+        </button>
     </div>
 </div>
 
@@ -137,12 +137,12 @@ ob_start();
                                     </svg>
                                 </a>
                                 <?php if (($expense['status'] ?? 'pending') === 'pending' && ($expense['user_id'] ?? 0) == ($_SESSION['user_id'] ?? 0)): ?>
-                                <a class="ab-btn ab-btn--edit" data-action="edit" data-module="expenses" data-id="<?= $expense['id'] ?>" title="Edit Expense">
+                                <button class="ab-btn ab-btn--edit" onclick="editExpense(<?= $expense['id'] ?>)" title="Edit Expense">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                         <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
                                         <path d="M15 5l4 4"/>
                                     </svg>
-                                </a>
+                                </button>
                                 <?php endif; ?>
                                 <?php 
                                 $userRole = $user_role ?? '';
@@ -191,9 +191,68 @@ ob_start();
     </div>
 </div>
 
+<style>
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000000;
+}
+.modal-content {
+    background: white;
+    border-radius: 8px;
+    width: 500px;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+.modal-header {
+    padding: 16px;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.modal-body {
+    padding: 16px;
+}
+.modal-body label {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 500;
+}
+.modal-body .form-input {
+    width: 100%;
+    margin-bottom: 12px;
+    padding: 8px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+}
+.modal-footer {
+    padding: 16px;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #6b7280;
+}
+</style>
+
 <!-- Rejection Modal -->
-<div id="rejectModal" class="modal" style="display: none; z-index: 99999; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); align-items: center; justify-content: center;">
-    <div class="modal-content" style="position: relative; margin: 0; max-width: 500px; width: 90%;">
+<div id="rejectModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content" style="max-width: 500px;">
         <div class="modal-header">
             <h3>Reject Expense Claim</h3>
             <span class="close" onclick="closeRejectModal()">&times;</span>
@@ -218,12 +277,12 @@ ob_start();
 <script>
 function showRejectModal(expenseId) {
     document.getElementById('rejectForm').action = '/ergon-site/expenses/reject/' + expenseId;
-    document.getElementById('rejectModal').style.display = 'flex';
+    if (typeof showModalById === 'function') showModalById('rejectModal'); else document.getElementById('rejectModal').style.display = 'flex';
 }
 
 function closeRejectModal() {
-    document.getElementById('rejectModal').style.display = 'none';
-    document.getElementById('rejection_reason').value = '';
+    if (typeof hideModalById === 'function') hideModalById('rejectModal'); else document.getElementById('rejectModal').style.display = 'none';
+    var rr = document.getElementById('rejection_reason'); if (rr) rr.value = '';
 }
 
 // Close modal when clicking outside
@@ -232,6 +291,155 @@ window.onclick = function(event) {
     if (event.target === modal) {
         closeRejectModal();
     }
+}
+</script>
+
+<!-- Expense Modal -->
+<div id="expenseModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="expenseModalTitle">💰 Submit Expense</h3>
+            <button class="modal-close" onclick="closeExpenseModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="expenseForm" enctype="multipart/form-data">
+                <input type="hidden" id="expense_id" name="expense_id">
+                <div style="display: flex; gap: 12px; margin-bottom: 12px;">
+                    <div style="flex: 1;">
+                        <label>Category *</label>
+                        <select id="category" name="category" class="form-input" required>
+                            <option value="">Select Category</option>
+                            <option value="travel">🚗 Travel & Transportation</option>
+                            <option value="food">🍽️ Food & Meals</option>
+                            <option value="accommodation">🏨 Accommodation</option>
+                            <option value="office_supplies">📋 Office Supplies</option>
+                            <option value="communication">📱 Communication</option>
+                            <option value="training">📚 Training & Development</option>
+                            <option value="medical">🏥 Medical Expenses</option>
+                            <option value="other">📦 Other</option>
+                        </select>
+                    </div>
+                    <div style="flex: 1;">
+                        <label>Project (Optional)</label>
+                        <select id="project_id" name="project_id" class="form-input">
+                            <option value="">Select Project</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 12px; margin-bottom: 12px;">
+                    <div style="flex: 1;">
+                        <label>Amount (₹) *</label>
+                        <input type="number" id="amount" name="amount" class="form-input" step="0.01" min="0.01" required>
+                    </div>
+                    <div style="flex: 1;">
+                        <label>Expense Date *</label>
+                        <input type="date" id="expense_date" name="expense_date" class="form-input" required>
+                    </div>
+                </div>
+                <label>Receipt (Optional)</label>
+                <input type="file" id="receipt" name="receipt" class="form-input" accept=".jpg,.jpeg,.png,.pdf" style="margin-bottom: 12px;">
+                <label>Description *</label>
+                <textarea id="description" name="description" class="form-input" rows="4" required></textarea>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn--secondary" onclick="closeExpenseModal()">Cancel</button>
+            <button class="btn btn--primary" onclick="submitExpenseForm()" id="expenseSubmitBtn">💸 Submit Expense</button>
+        </div>
+    </div>
+</div>
+
+<script>
+let isEditingExpense = false;
+
+function showExpenseModal() {
+    isEditingExpense = false;
+    document.getElementById('expenseModalTitle').textContent = '💰 Submit Expense';
+    document.getElementById('expenseSubmitBtn').textContent = '💸 Submit Expense';
+    document.getElementById('expenseForm').reset();
+    document.getElementById('expense_id').value = '';
+    document.getElementById('expense_date').value = new Date().toISOString().split('T')[0];
+    document.getElementById('expenseModal').style.display = 'flex';
+    loadProjects('project_id');
+}
+
+function editExpense(id) {
+    isEditingExpense = true;
+    document.getElementById('expenseModalTitle').textContent = '💰 Edit Expense';
+    document.getElementById('expenseSubmitBtn').textContent = '💾 Update Expense';
+    document.getElementById('expenseModal').style.display = 'flex';
+    
+    fetch(`/ergon-site/api/expense.php?id=${id}`)
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                const e = data.expense;
+                document.getElementById('expense_id').value = e.id;
+                document.getElementById('category').value = e.category;
+                document.getElementById('project_id').value = e.project_id || '';
+                document.getElementById('amount').value = e.amount;
+                document.getElementById('expense_date').value = e.expense_date;
+                document.getElementById('description').value = e.description;
+                loadProjects('project_id', e.project_id);
+            }
+        });
+}
+
+function closeExpenseModal() {
+    document.getElementById('expenseModal').style.display = 'none';
+}
+
+function loadProjects(selectId, selectedId = null) {
+    fetch('/ergon-site/api/projects.php')
+        .then(r => r.json())
+        .then(data => {
+            const select = document.getElementById(selectId);
+            select.innerHTML = '<option value="">Select Project</option>';
+            if (data.success && data.projects) {
+                data.projects.forEach(p => {
+                    const opt = document.createElement('option');
+                    opt.value = p.id;
+                    let text = p.project_name;
+                    if (p.department_name) text += ' - ' + p.department_name;
+                    if (p.description) text += ' (' + p.description + ')';
+                    opt.textContent = text;
+                    if (selectedId && p.id == selectedId) opt.selected = true;
+                    select.appendChild(opt);
+                });
+            }
+        });
+}
+
+function submitExpenseForm() {
+    const form = document.getElementById('expenseForm');
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+    
+    const btn = document.getElementById('expenseSubmitBtn');
+    btn.disabled = true;
+    btn.textContent = '⏳ Submitting...';
+    
+    const formData = new FormData(form);
+    const url = isEditingExpense ? `/ergon-site/expenses/edit/${formData.get('expense_id')}` : '/ergon-site/expenses/create';
+    
+    fetch(url, { method: 'POST', body: formData })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Error: ' + data.error);
+                btn.disabled = false;
+                btn.textContent = isEditingExpense ? '💾 Update Expense' : '💸 Submit Expense';
+            }
+        })
+        .catch(err => {
+            alert('Error: ' + err.message);
+            btn.disabled = false;
+            btn.textContent = isEditingExpense ? '💾 Update Expense' : '💸 Submit Expense';
+        });
 }
 </script>
 
@@ -248,8 +456,6 @@ document.addEventListener('click', function(e) {
     
     if (action === 'view' && module && id) {
         window.location.href = `/ergon-site/${module}/view/${id}`;
-    } else if (action === 'edit' && module && id) {
-        window.location.href = `/ergon-site/${module}/edit/${id}`;
     } else if (action === 'delete' && module && id && name) {
         deleteRecord(module, id, name);
     } else if (action === 'approve' && module && id) {

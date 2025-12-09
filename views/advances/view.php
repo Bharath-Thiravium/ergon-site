@@ -1,4 +1,3 @@
-<?php
 $title = 'Advance Request Details';
 $active_page = 'advances';
 ob_start();
@@ -17,13 +16,24 @@ ob_start();
         if ($canApprove): 
         ?>
         <form method="POST" action="/ergon-site/advances/approve/<?= $advance['id'] ?>" style="display: inline;">
-            <button type="submit" class="btn btn--success" onclick="return confirm('Are you sure you want to approve this advance request?')">
+            <input type="number" step="0.01" name="approved_amount" value="<?= number_format($advance['amount'] ?? 0, 2, '.', '') ?>" class="form-control" style="display:inline-block; width:140px; margin-right:.5rem;" required />
+            <button type="submit" class="btn btn--success">
                 <span>✅</span> Approve
             </button>
         </form>
         <button type="button" class="btn btn--danger" onclick="showRejectModal(<?= $advance['id'] ?>)">
             <span>❌</span> Reject
         </button>
+        <?php endif; ?>
+        <?php if (in_array($userRole, ['admin','owner']) && ($advance['status'] ?? '') === 'approved'): ?>
+        <form id="advancePaidForm" method="POST" action="/ergon-site/advances/paid/<?= $advance['id'] ?>" enctype="multipart/form-data" style="display:inline-block; margin-left:.5rem;">
+            <label for="advance_proof_input" class="btn" style="display:inline-block; cursor:pointer;">
+                <span>📎</span> Upload Proof
+            </label>
+            <input id="advance_proof_input" type="file" name="proof" style="display:none;" accept="image/*,.pdf" />
+            <span id="advance_proof_name" style="margin-left:.5rem; font-size:0.95rem; color:var(--text-secondary);"></span>
+            <button id="advance_proof_submit" type="submit" class="btn btn--primary" disabled style="margin-left:.5rem;">Mark Paid</button>
+        </form>
         <?php endif; ?>
         <a href="/ergon-site/advances" class="btn btn--secondary">
             <span>←</span> Back to Advances
@@ -51,8 +61,11 @@ ob_start();
                     };
                     ?>
                     <span class="badge badge--<?= $statusClass ?>"><?= $statusIcon ?> <?= ucfirst($status) ?></span>
-                    <div class="amount-display">
-                        <span class="amount-text">₹<?= number_format($advance['amount'] ?? 0, 2) ?></span>
+                        <div class="amount-display">
+                        <span class="amount-text">Requested: ₹<?= number_format($advance['amount'] ?? 0, 2) ?></span>
+                        <?php if (!empty($advance['approved_amount'])): ?>
+                            <span class="amount-text" style="margin-left:.5rem;">Approved: ₹<?= number_format($advance['approved_amount'], 2) ?></span>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -107,6 +120,12 @@ ob_start();
                     </div>
                 </div>
             </div>
+            <?php if (!empty($advance['payment_proof'])): ?>
+            <div class="detail-item" style="margin-top:1rem;">
+                <label>Payment Proof</label>
+                <?php require_once __DIR__ . '/../../app/helpers/ProofHelper.php'; echo proof_preview_html('/ergon-site/storage/proofs/' . $advance['payment_proof'], 'Payment Proof'); ?>
+            </div>
+            <?php endif; ?>
         </div>
     </div>
 </div>
@@ -334,31 +353,84 @@ ob_start();
 </style>
 
 <script>
+// Enable advance Mark Paid button only after a proof file is selected
+document.addEventListener('DOMContentLoaded', function() {
+    var input = document.getElementById('advance_proof_input');
+    var submitBtn = document.getElementById('advance_proof_submit');
+    var nameSpan = document.getElementById('advance_proof_name');
+    if (input) {
+        input.addEventListener('change', function() {
+            if (input.files && input.files.length > 0) {
+                submitBtn.disabled = false;
+                nameSpan.textContent = input.files[0].name;
+            } else {
+                submitBtn.disabled = true;
+                nameSpan.textContent = '';
+            }
+        });
+    }
+});
+</script>
+
+<script>
+// Show preview for selected advance proof (image preview or PDF icon)
+document.addEventListener('DOMContentLoaded', function() {
+    var input = document.getElementById('advance_proof_input');
+    var previewContainer = document.createElement('div');
+    previewContainer.style.marginTop = '0.75rem';
+    if (input) {
+        input.parentNode.insertBefore(previewContainer, input.nextSibling);
+        input.addEventListener('change', function() {
+            previewContainer.innerHTML = '';
+            if (input.files && input.files.length > 0) {
+                var file = input.files[0];
+                var reader = new FileReader();
+                if (file.type.startsWith('image/')) {
+                    reader.onload = function(e) {
+                        var img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.style.maxWidth = '200px';
+                        img.style.borderRadius = '6px';
+                        previewContainer.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                } else if (file.type === 'application/pdf') {
+                    var link = document.createElement('a');
+                    link.textContent = 'PDF selected: ' + file.name;
+                    link.href = '#';
+                    previewContainer.appendChild(link);
+                }
+            }
+        });
+    }
+});
+</script>
+
+<script>
 function showRejectModal(advanceId) {
-    const modal = document.getElementById('rejectModal');
     const form = document.getElementById('rejectForm');
     form.action = '/ergon-site/advances/reject/' + advanceId;
-    modal.style.display = 'flex';
+    if (typeof showModalById === 'function') showModalById('rejectModal'); else document.getElementById('rejectModal').style.display = 'flex';
 }
 
 function closeRejectModal() {
-    const modal = document.getElementById('rejectModal');
-    modal.style.display = 'none';
-    document.getElementById('rejection_reason').value = '';
+    if (typeof hideModalById === 'function') hideModalById('rejectModal'); else document.getElementById('rejectModal').style.display = 'none';
+    var rr = document.getElementById('rejection_reason'); if (rr) rr.value = '';
 }
 
 // Close modal when clicking outside
-document.getElementById('rejectModal').addEventListener('click', function(e) {
-    if (e.target === this) {
-        closeRejectModal();
-    }
-});
+var rejectModalEl = document.getElementById('rejectModal');
+if (rejectModalEl) {
+    rejectModalEl.addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeRejectModal();
+        }
+    });
+}
 
 // Close modal with Escape key
 document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        closeRejectModal();
-    }
+    if (e.key === 'Escape') closeRejectModal();
 });
 </script>
 
@@ -366,3 +438,6 @@ document.addEventListener('keydown', function(e) {
 $content = ob_get_clean();
 include __DIR__ . '/../layouts/dashboard.php';
 ?>
+
+<?php // include shared proof modal so openReceiptModal works on this page too
+include __DIR__ . '/../partials/proof_modal.php'; ?>

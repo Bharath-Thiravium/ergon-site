@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modal Z-Index Debug Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .debug-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .debug-panel h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        .element-info {
+            background: #f9f9f9;
+            padding: 10px;
+            margin: 10px 0;
+            border-left: 3px solid #3b82f6;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .error {
+            background: #fee;
+            border-left-color: #dc2626;
+        }
+        .success {
+            background: #efe;
+            border-left-color: #10b981;
+        }
+        .warning {
+            background: #fef3c7;
+            border-left-color: #f59e0b;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+        #results {
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-panel">
+        <h2>🔍 Modal Z-Index Debug Tool</h2>
+        <p>This tool will scan your page for modal and header z-index conflicts.</p>
+        <button onclick="runDiagnostics()">Run Diagnostics</button>
+        <button onclick="fixZIndexIssues()">Auto-Fix Z-Index</button>
+        <button onclick="clearResults()">Clear Results</button>
+    </div>
+
+    <div class="debug-panel">
+        <h2>📊 Diagnostic Results</h2>
+        <div id="results"></div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `element-info ${type}`;
+            div.textContent = message;
+            results.appendChild(div);
+        }
+
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+        }
+
+        function getComputedZIndex(element) {
+            const computed = window.getComputedStyle(element);
+            return {
+                zIndex: computed.zIndex,
+                position: computed.position,
+                display: computed.display
+            };
+        }
+
+        function runDiagnostics() {
+            clearResults();
+            log('=== Starting Modal Z-Index Diagnostics ===\n', 'info');
+
+            // Check header
+            const header = document.querySelector('.main-header');
+            if (header) {
+                const headerStyles = getComputedZIndex(header);
+                log(`Header (.main-header):\n  z-index: ${headerStyles.zIndex}\n  position: ${headerStyles.position}`, 
+                    headerStyles.zIndex === 'auto' || parseInt(headerStyles.zIndex) < 1000 ? 'success' : 'warning');
+            } else {
+                log('⚠️ Header (.main-header) not found on this page', 'warning');
+            }
+
+            // Check all modals
+            const modalSelectors = [
+                '#expenseModal',
+                '#advanceModal',
+                '#rejectModal',
+                '.modal-overlay',
+                '.modal',
+                '.dialog'
+            ];
+
+            let foundModals = 0;
+            modalSelectors.forEach(selector => {
+                const elements = document.querySelectorAll(selector);
+                elements.forEach((el, index) => {
+                    foundModals++;
+                    const styles = getComputedZIndex(el);
+                    const zIndexNum = parseInt(styles.zIndex);
+                    const isGood = zIndexNum >= 99999 || styles.zIndex === 'auto';
+                    
+                    log(`Modal ${selector}${elements.length > 1 ? ` [${index}]` : ''}:\n  z-index: ${styles.zIndex}\n  position: ${styles.position}\n  display: ${styles.display}`, 
+                        isGood ? 'success' : 'error');
+                });
+            });
+
+            if (foundModals === 0) {
+                log('ℹ️ No modals found on current page. Navigate to expenses or advances page.', 'warning');
+            }
+
+            // Check for conflicting z-index values
+            log('\n=== Checking for Z-Index Conflicts ===', 'info');
+            const allElements = document.querySelectorAll('*');
+            const highZIndex = [];
+            
+            allElements.forEach(el => {
+                const zIndex = window.getComputedStyle(el).zIndex;
+                if (zIndex !== 'auto' && parseInt(zIndex) >= 1000) {
+                    highZIndex.push({
+                        element: el.tagName + (el.id ? `#${el.id}` : '') + (el.className ? `.${el.className.split(' ')[0]}` : ''),
+                        zIndex: parseInt(zIndex)
+                    });
+                }
+            });
+
+            highZIndex.sort((a, b) => b.zIndex - a.zIndex);
+            
+            if (highZIndex.length > 0) {
+                log('\nElements with high z-index (sorted):', 'info');
+                highZIndex.slice(0, 10).forEach(item => {
+                    log(`  ${item.element}: ${item.zIndex}`, 'info');
+                });
+            }
+
+            log('\n=== Diagnostics Complete ===', 'success');
+        }
+
+        function fixZIndexIssues() {
+            clearResults();
+            log('=== Applying Z-Index Fixes ===\n', 'info');
+
+            let fixed = 0;
+
+            // Fix header
+            const header = document.querySelector('.main-header');
+            if (header) {
+                header.style.zIndex = '999';
+                log('✓ Fixed header z-index to 999', 'success');
+                fixed++;
+            }
+
+            // Fix modals
+            const modals = document.querySelectorAll('#expenseModal, #advanceModal, #rejectModal, .modal-overlay');
+            modals.forEach(modal => {
+                modal.style.zIndex = '99999';
+                const id = modal.id || modal.className;
+                log(`✓ Fixed ${id} z-index to 99999`, 'success');
+                fixed++;
+            });
+
+            if (fixed === 0) {
+                log('⚠️ No elements found to fix. Make sure you\'re on the right page.', 'warning');
+            } else {
+                log(`\n✅ Fixed ${fixed} elements. Test your modals now!`, 'success');
+            }
+        }
+
+        // Auto-run on load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                log('Debug tool loaded. Click "Run Diagnostics" to scan the page.', 'info');
+            }, 500);
+        });
+    </script>
+</body>
+</html>

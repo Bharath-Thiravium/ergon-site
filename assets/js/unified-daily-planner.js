@@ -176,7 +176,7 @@ window.openProgressModal = function(taskId, progress, status) {
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Update Progress - Task ${taskId}</h3>
-                <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">&times;</button>
+                <button class="modal-close" onclick="hideClosestModal(this)">&times;</button>
             </div>
             <div class="modal-body">
                 <label>Progress Percentage: <span id="progress-display-${taskId}">${progress}%</span></label>
@@ -199,7 +199,7 @@ window.openProgressModal = function(taskId, progress, status) {
                 </select>
             </div>
             <div class="modal-footer">
-                <button class="btn btn--secondary" onclick="this.closest('.modal-overlay').remove()">Cancel</button>
+                <button class="btn btn--secondary" onclick="hideClosestModal(this)">Cancel</button>
                 <button class="btn btn--primary" onclick="updateTaskProgress(${taskId})">Update</button>
             </div>
         </div>
@@ -275,7 +275,8 @@ window.updateTaskProgress = function(taskId) {
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
     
     // Close modal
-    document.querySelector('.modal-overlay')?.remove();
+    const __existingModal = document.querySelector('.modal-overlay');
+    if(__existingModal && typeof hideClosestModal === 'function') hideClosestModal(__existingModal);
     
     // Send update to server using the same endpoint as Task module with original task ID
     fetch('/ergon-site/tasks/update-status', {
@@ -381,7 +382,7 @@ function showNotification(message, type) {
     notification.innerHTML = `
         <div class="notification-content">
             <span class="notification-message">${message}</span>
-            <button class="notification-close" onclick="this.parentElement.parentElement.remove()">&times;</button>
+            <button class="notification-close" onclick="hideClosestModal(this)">&times;</button>
         </div>
     `;
     

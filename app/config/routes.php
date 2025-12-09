@@ -161,6 +161,14 @@ $router->get('/advances/approve/{id}', 'AdvanceController', 'approve');
 $router->post('/advances/approve/{id}', 'AdvanceController', 'approve');
 $router->get('/advances/reject/{id}', 'AdvanceController', 'reject');
 $router->post('/advances/reject/{id}', 'AdvanceController', 'reject');
+// Paid actions (upload proof and record payment) for advances and expenses
+$router->post('/advances/paid/{id}', 'AdvanceController', 'markPaid');
+$router->post('/expenses/paid/{id}', 'ExpenseController', 'markPaid');
+
+// Ledger viewing
+$router->get('/ledgers/user/{id}', 'LedgerController', 'userLedger');
+// Approved expenses admin listing
+$router->get('/approved-expenses', 'ApprovedExpensesController', 'index');
 
 // Reports
 $router->get('/reports', 'ReportsController', 'index');

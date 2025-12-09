@@ -99,12 +99,12 @@ ob_end_clean();
     /* Critical inline CSS to prevent FOUC and layout forcing */
     html{box-sizing:border-box}*,*:before,*:after{box-sizing:inherit}
     body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;margin:0;padding:0;background:#f8fafc;overflow-x:hidden}
-    .main-header{background:#000080;position:fixed;top:0;left:0;right:0;z-index:9999;width:100%;height:110px}
+    .main-header{background:#000080;position:fixed;top:0;left:0;right:0;z-index:1000;width:100%;height:110px}
     .header__top{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;height:60px}
     .header__nav-container{height:50px;/*border-top:1px solid rgba(255,255,255,0.1)*/}
     .main-content{margin:110px 0 0 0;padding:24px 24px 24px 0;background:#f8fafc;min-height:calc(100vh - 110px);width:100%;max-width:100vw;overflow-x:hidden;position:relative}
-    .sidebar{position:fixed;left:-280px;top:0;width:280px;height:100vh;background:#fff;z-index:9998;transition:left 0.3s ease}
-    .mobile-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:9997;display:none}
+    .sidebar{position:fixed;left:-280px;top:0;width:280px;height:100vh;background:#fff;z-index:998;transition:left 0.3s ease}
+    .mobile-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:997;display:none}
     
     /* Smart Attendance Button States - Enhanced Visibility */
     .btn--attendance-toggle{background:#10b981 !important;border:3px solid #059669 !important;color:#ffffff !important;font-weight:700 !important;text-shadow:0 2px 4px rgba(0,0,0,0.4) !important;box-shadow:0 4px 12px rgba(16,185,129,0.4) !important;transition:all 0.3s ease;min-height:44px !important;padding:8px 16px !important;border-radius:8px !important}
@@ -115,7 +115,7 @@ ob_end_clean();
     @keyframes pulse-red{0%,100%{box-shadow:0 4px 16px rgba(220,38,38,0.6)}50%{box-shadow:0 6px 20px rgba(220,38,38,0.8)}}
     
     /* Simple Message Modal */
-    .message-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:99999;display:none;align-items:center;justify-content:center}
+    .message-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000000;display:none;align-items:center;justify-content:center}
     .message-modal.show{display:flex}
     .message-content{background:#fff;border-radius:12px;padding:24px;max-width:400px;width:90%;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.3)}
     .message-icon{font-size:48px;margin-bottom:16px}
@@ -156,7 +156,7 @@ ob_end_clean();
     .control-btn{position:relative}
     
     /* Attendance Notification Styles */
-    .attendance-notification{position:fixed;top:20px;right:20px;background:#fff;border-radius:8px;padding:16px 20px;box-shadow:0 4px 20px rgba(0,0,0,0.15);z-index:99999;transform:translateX(100%);transition:transform 0.3s ease;max-width:350px;border-left:4px solid #10b981}
+    .attendance-notification{position:fixed;top:20px;right:20px;background:#fff;border-radius:8px;padding:16px 20px;box-shadow:0 4px 20px rgba(0,0,0,0.15);z-index:50000;transform:translateX(100%);transition:transform 0.3s ease;max-width:350px;border-left:4px solid #10b981}
     .attendance-notification.show{transform:translateX(0)}
     .attendance-notification.success{border-left-color:#10b981}
     .attendance-notification.error{border-left-color:#ef4444}
@@ -168,7 +168,7 @@ ob_end_clean();
     .attendance-notification.warning .notification-content i{color:#f59e0b}
     
     /* Mobile Dialog Styles */
-    .attendance-dialog-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:99999;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.3s ease}
+    .attendance-dialog-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000000;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.3s ease}
     .attendance-dialog-overlay.show{opacity:1}
     .attendance-dialog{background:#fff;border-radius:12px;padding:24px;max-width:320px;width:90%;text-align:center;transform:scale(0.9);transition:transform 0.3s ease}
     .attendance-dialog-overlay.show .attendance-dialog{transform:scale(1)}
@@ -201,6 +201,8 @@ ob_end_clean();
     <link href="/ergon-site/assets/css/mobile-dark-theme-fixes.css?v=<?= time() ?>" rel="stylesheet">
     <!-- Modal Dialog Fixes - Ensures dialog visibility -->
     <link href="/ergon-site/assets/css/modal-dialog-fixes.css?v=<?= time() ?>" rel="stylesheet">
+    <!-- Modal Z-Index Fix - High priority z-index overrides -->
+    <link href="/ergon-site/assets/css/modal-zindex-fix.css?v=<?= time() ?>" rel="stylesheet">
     <!-- Dashboard overrides loaded last to ensure overrides on compiled CSS in deployments -->
     <link href="/ergon-site/assets/css/ergon-overrides.css?v=<?= time() ?>" rel="stylesheet">
     <link href="/ergon-site/assets/css/access-denied.css?v=1.0" rel="stylesheet">
@@ -214,6 +216,8 @@ ob_end_clean();
 
     <script src="/ergon-site/assets/js/theme-switcher.js?v=1.0" defer></script>
     <script src="/ergon-site/assets/js/ergon-core.min.js?v=1.0" defer></script>
+    <script src="/ergon-site/assets/js/modal-utils.js?v=1.0" defer></script>
+    <script src="/ergon-site/assets/js/modal-inline-fix.js?v=1.0" defer></script>
     <script src="/ergon-site/assets/_archive_legacy/js/action-button-clean.js?v=1.0" defer></script>
     <script src="/ergon-site/assets/_archive_legacy/js/mobile-enhanced.js?v=1.0" defer></script>
     <script src="/ergon-site/assets/js/mobile-table-cards.js?v=1.0" defer></script>
@@ -1411,7 +1415,7 @@ ob_end_clean();
                     <i class="bi bi-${type === 'success' ? 'check-circle-fill' : 'exclamation-triangle-fill'}"></i>
                 </div>
                 <div class="dialog-message">${message}</div>
-                <button class="dialog-close" onclick="this.parentElement.parentElement.remove()">OK</button>
+                <button class="dialog-close" onclick="hideClosestModal(this)">OK</button>
             </div>
         `;
         

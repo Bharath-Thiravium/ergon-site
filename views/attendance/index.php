@@ -450,7 +450,7 @@ function markManualAttendance(userId, checkIn, checkOut) {
         <div class="modal-content">
             <div class="modal-header">
                 <h3>${hasCheckIn ? 'Edit Attendance' : 'Manual Attendance Entry'}</h3>
-                <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">&times;</button>
+                <button class="modal-close" onclick="hideClosestModal(this)">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
@@ -495,7 +495,7 @@ function markManualAttendance(userId, checkIn, checkOut) {
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn--secondary" onclick="this.closest('.modal-overlay').remove()">Cancel</button>
+                <button class="btn btn--secondary" onclick="hideClosestModal(this)">Cancel</button>
                 <button class="btn btn--primary" onclick="submitManualAttendance(${userId})">Submit</button>
             </div>
         </div>
@@ -621,7 +621,8 @@ function submitManualAttendance(userId) {
     .then(data => {
         if (data.success) {
             alert('Manual attendance entry submitted successfully!');
-            document.querySelector('.modal-overlay')?.remove();
+            const __existingModal = document.querySelector('.modal-overlay');
+            if(__existingModal && typeof hideClosestModal === 'function') hideClosestModal(__existingModal);
             location.reload();
         } else {
             alert('Error: ' + (data.message || data.error || 'Failed to submit'));
@@ -698,7 +699,7 @@ function generateAttendanceReport(userId) {
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Generate Attendance Report</h3>
-                <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">&times;</button>
+                <button class="modal-close" onclick="hideClosestModal(this)">&times;</button>
             </div>
             <div class="modal-body">
                 <label>Start Date:</label>
@@ -707,7 +708,7 @@ function generateAttendanceReport(userId) {
                 <input type="date" id="report-end-date" name="end_date" value="${defaultEndDate}" class="form-input">
             </div>
             <div class="modal-footer">
-                <button class="btn btn--secondary" onclick="this.closest('.modal-overlay').remove()">Cancel</button>
+                <button class="btn btn--secondary" onclick="hideClosestModal(this)">Cancel</button>
                 <button class="btn btn--primary" onclick="downloadAttendanceReport(${userId})">Generate Report</button>
             </div>
         </div>
@@ -793,7 +794,8 @@ function downloadAttendanceReport(userId) {
     }
     
     console.log('Generating report for user:', userId, 'from', startDate, 'to', endDate);
-    document.querySelector('.modal-overlay')?.remove();
+    const __existingModal = document.querySelector('.modal-overlay');
+    if(__existingModal && typeof hideClosestModal === 'function') hideClosestModal(__existingModal);
     
     const reportUrl = `/ergon-site/attendance/report?user_id=${userId}&start_date=${startDate}&end_date=${endDate}`;
     console.log('Report URL:', reportUrl);

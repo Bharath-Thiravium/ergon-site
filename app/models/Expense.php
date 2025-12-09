@@ -148,24 +148,34 @@ class Expense {
     public function getStats($user_id = null) {
         try {
             if ($user_id) {
+                // Total and pending/rejected counts come from expenses table.
                 $sql = "SELECT 
                             COUNT(*) as total,
                             SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending,
-                            SUM(CASE WHEN status = 'approved' THEN amount ELSE 0 END) as approved_amount,
                             SUM(CASE WHEN status = 'rejected' THEN 1 ELSE 0 END) as rejected
                         FROM expenses WHERE user_id = ?";
                 $stmt = $this->db->prepare($sql);
                 $stmt->execute([$user_id]);
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                // Approved amount should be taken from approved_expenses.approved_amount (keeps admin-approved separate from claimed amount)
+                $stmt2 = $this->db->prepare("SELECT COALESCE(SUM(approved_amount),0) as approved_amount FROM approved_expenses WHERE user_id = ?");
+                $stmt2->execute([$user_id]);
+                $row2 = $stmt2->fetch(PDO::FETCH_ASSOC);
+                $row['approved_amount'] = $row2['approved_amount'] ?? 0;
+                return $row;
             } else {
                 $sql = "SELECT 
                             COUNT(*) as total,
                             SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending,
-                            SUM(CASE WHEN status = 'approved' THEN amount ELSE 0 END) as approved_amount,
                             SUM(CASE WHEN status = 'rejected' THEN 1 ELSE 0 END) as rejected
                         FROM expenses";
                 $stmt = $this->db->query($sql);
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                $stmt2 = $this->db->query("SELECT COALESCE(SUM(approved_amount),0) as approved_amount FROM approved_expenses");
+                $row2 = $stmt2->fetch(PDO::FETCH_ASSOC);
+                $row['approved_amount'] = $row2['approved_amount'] ?? 0;
+                return $row;
             }
-            return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             error_log('Expense getStats error: ' . $e->getMessage());
             return ['total' => 0, 'pending' => 0, 'approved_amount' => 0, 'rejected' => 0];

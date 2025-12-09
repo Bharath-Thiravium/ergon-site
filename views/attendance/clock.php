@@ -246,7 +246,7 @@ function showErrorAlert(message) {
 function showModal(message, type, icon) {
     const existingModal = document.querySelector('.message-modal');
     if (existingModal) {
-        existingModal.remove();
+        if (typeof hideClosestModal === 'function') hideClosestModal(existingModal); else if (existingModal.parentNode) existingModal.parentNode.removeChild(existingModal);
     }
     
     const modal = document.createElement('div');
@@ -255,7 +255,7 @@ function showModal(message, type, icon) {
         <div class="message-content">
             <div class="message-icon">${icon}</div>
             <div class="message-text">${message}</div>
-            <button class="message-close" onclick="this.closest('.message-modal').remove()">OK</button>
+            <button class="message-close" onclick="hideClosestModal(this)">OK</button>
         </div>
     `;
     
@@ -264,7 +264,7 @@ function showModal(message, type, icon) {
     if (type === 'success') {
         setTimeout(() => {
             if (modal.parentNode) {
-                modal.remove();
+                if (typeof hideClosestModal === 'function') hideClosestModal(modal); else modal.parentNode.removeChild(modal);
             }
         }, 5000);
     }

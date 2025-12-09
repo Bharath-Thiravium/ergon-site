@@ -589,9 +589,9 @@ function showAddUserModal() {
     modal.className = 'modal-overlay';
     modal.innerHTML = `
         <div class="modal-content" style="width: 600px;">
-            <div class="modal-header">
+                <div class="modal-header">
                 <h3>👤 Add New User</h3>
-                <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">&times;</button>
+                <button class="modal-close" onclick="hideClosestModal(this)">&times;</button>
             </div>
             <div class="modal-body">
                 <form id="userForm">
@@ -707,8 +707,8 @@ function showAddUserModal() {
 
                 </form>
             </div>
-            <div class="modal-footer">
-                <button class="btn btn--secondary" onclick="this.closest('.modal-overlay').remove()">Cancel</button>
+                <div class="modal-footer">
+                <button class="btn btn--secondary" onclick="hideClosestModal(this)">Cancel</button>
                 <button class="btn btn--primary" onclick="submitUserForm()">Add User</button>
             </div>
         </div>
@@ -808,26 +808,26 @@ window.showEditUserModal = function(userId) {
     
     const modal = document.createElement('div');
     modal.className = 'modal-overlay';
-    modal.innerHTML = `<div class="modal-content" style="width:600px"><div class="modal-header"><h3>✏️ Edit User</h3><button class="modal-close" onclick="this.closest('.modal-overlay').remove()">&times;</button></div><div class="modal-body"><div style="text-align:center;padding:20px">Loading...</div></div><div class="modal-footer"><button class="btn btn--secondary" onclick="this.closest('.modal-overlay').remove()">Cancel</button></div></div>`;
+    modal.innerHTML = `<div class="modal-content" style="width:600px"><div class="modal-header"><h3>✏️ Edit User</h3><button class="modal-close" onclick="hideClosestModal(this)">&times;</button></div><div class="modal-body"><div style="text-align:center;padding:20px">Loading...</div></div><div class="modal-footer"><button class="btn btn--secondary" onclick="hideClosestModal(this)">Cancel</button></div></div>`;
     document.body.appendChild(modal);
     
     // Load data after modal is shown
     fetch(`/ergon-site/api/users/${userId}`)
     .then(response => response.json())
-    .then(data => {
+        .then(data => {
         if (!data.success) {
-            modal.remove();
+            if (typeof hideClosestModal === 'function') hideClosestModal(modal); else if (modal && modal.parentNode) modal.parentNode.removeChild(modal);
             alert('Failed to load user data');
             return;
         }
         
         const user = data.user;
         modal.querySelector('.modal-body').innerHTML = `<form id="userForm"><input type="hidden" name="user_id" value="${user.id}"><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div><label>Full Name *</label><input type="text" name="name" class="form-input" value="${user.name||''}" required></div><div><label>Email *</label><input type="email" name="email" class="form-input" value="${user.email||''}" required></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div><label>Phone</label><input type="tel" name="phone" class="form-input" value="${user.phone||''}"></div><div><label>Date of Birth</label><input type="date" name="date_of_birth" class="form-input" value="${user.date_of_birth||''}"></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div><label>Gender</label><select name="gender" class="form-input"><option value="">Select Gender</option><option value="male" ${user.gender==='male'?'selected':''}>Male</option><option value="female" ${user.gender==='female'?'selected':''}>Female</option><option value="other" ${user.gender==='other'?'selected':''}>Other</option></select></div><div><label>Role</label><select name="role" class="form-input"><option value="user" ${user.role==='user'?'selected':''}>User</option><option value="admin" ${user.role==='admin'?'selected':''}>Admin</option><option value="owner" ${user.role==='owner'?'selected':''}>Owner</option><option value="company_owner" ${user.role==='company_owner'?'selected':''}>Company Owner</option></select></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div><label>Department</label><select name="department_id" class="form-input"><option value="">Loading...</option></select></div><div><label>Designation</label><input type="text" name="designation" class="form-input" value="${user.designation||''}"></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div><label>Joining Date</label><input type="date" name="joining_date" class="form-input" value="${user.joining_date||''}"></div><div><label>Salary</label><input type="number" name="salary" class="form-input" step="0.01" value="${user.salary||''}"></div></div><div><label>Address</label><textarea name="address" class="form-input" rows="2">${user.address||''}</textarea></div><div><label>Emergency Contact</label><input type="text" name="emergency_contact" class="form-input" value="${user.emergency_contact||''}"></div><div><label>Status</label><select name="status" class="form-input"><option value="active" ${user.status==='active'?'selected':''}>Active</option><option value="inactive" ${user.status==='inactive'?'selected':''}>Inactive</option><option value="suspended" ${user.status==='suspended'?'selected':''}>Suspended</option><option value="terminated" ${user.status==='terminated'?'selected':''}>Terminated</option></select></div><div><label>Documents</label><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div><label style="font-size:0.9em;color:#666">Passport Photo</label><input type="file" name="passport_photo" class="form-input" accept=".jpg,.jpeg,.png,.pdf"></div><div><label style="font-size:0.9em;color:#666">Aadhar Card</label><input type="file" name="aadhar" class="form-input" accept=".jpg,.jpeg,.png,.pdf"></div><div><label style="font-size:0.9em;color:#666">PAN Card</label><input type="file" name="pan" class="form-input" accept=".jpg,.jpeg,.png,.pdf"></div><div><label style="font-size:0.9em;color:#666">Resume</label><input type="file" name="resume" class="form-input" accept=".pdf,.doc,.docx"></div><div><label style="font-size:0.9em;color:#666">Education Docs</label><input type="file" name="education_docs[]" class="form-input" multiple accept=".pdf,.jpg,.jpeg,.png"></div><div><label style="font-size:0.9em;color:#666">Experience Certs</label><input type="file" name="experience_certs[]" class="form-input" multiple accept=".pdf,.jpg,.jpeg,.png"></div></div><small style="color:#666;font-size:0.8em">Max 5MB per file. JPG/PNG for photos, PDF/DOC for documents.</small></div></form>`;
-        modal.querySelector('.modal-footer').innerHTML = `<button class="btn btn--secondary" onclick="this.closest('.modal-overlay').remove()">Cancel</button><button class="btn btn--primary" onclick="submitUserForm(true)">Update User</button>`;
+        modal.querySelector('.modal-footer').innerHTML = `<button class="btn btn--secondary" onclick="hideClosestModal(this)">Cancel</button><button class="btn btn--primary" onclick="submitUserForm(true)">Update User</button>`;
         loadDepartments(user.department_id);
     })
     .catch(error => {
-        modal.remove();
+        if (typeof hideClosestModal === 'function') hideClosestModal(modal); else if (modal && modal.parentNode) modal.parentNode.removeChild(modal);
         alert('Failed to load user data');
     });
 };
@@ -873,7 +873,8 @@ function submitUserForm(isEdit = false) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            document.querySelector('.modal-overlay')?.remove();
+            const __existingModal = document.querySelector('.modal-overlay');
+            if(__existingModal && typeof hideClosestModal === 'function') hideClosestModal(__existingModal);
             alert(isEdit ? 'User updated successfully!' : 'User created successfully!');
             location.reload();
         } else {

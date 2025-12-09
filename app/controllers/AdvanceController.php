@@ -26,6 +26,9 @@ class AdvanceController extends Controller {
                 status VARCHAR(20) DEFAULT 'pending',
                 approved_by INT NULL,
                 approved_at DATETIME NULL,
+                payment_proof VARCHAR(255) NULL,
+                paid_by INT NULL,
+                paid_at DATETIME NULL,
                 rejection_reason TEXT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 rejected_by INT NULL,
@@ -38,6 +41,11 @@ class AdvanceController extends Controller {
             } catch (Exception $e) {
                 // Column already exists, ignore error
             }
+            // Ensure payment columns exist
+            try { $db->exec("ALTER TABLE advances ADD COLUMN payment_proof VARCHAR(255) NULL"); } catch (Exception $e) {}
+            try { $db->exec("ALTER TABLE advances ADD COLUMN paid_by INT NULL"); } catch (Exception $e) {}
+            try { $db->exec("ALTER TABLE advances ADD COLUMN paid_at DATETIME NULL"); } catch (Exception $e) {}
+            try { $db->exec("ALTER TABLE advances ADD COLUMN approved_amount DECIMAL(10,2) NULL"); } catch (Exception $e) {}
             
             if ($role === 'user') {
                 $stmt = $db->prepare("SELECT a.*, u.name as user_name, u.role as user_role FROM advances a JOIN users u ON a.user_id = u.id WHERE a.user_id = ? ORDER BY a.created_at DESC");
@@ -221,6 +229,18 @@ class AdvanceController extends Controller {
                 exit;
             }
             
+            // If admin provided an approved amount, use it
+            // If admin provided an approved amount, store it in approved_amount (do not overwrite requested amount)
+            $approvedAmount = null;
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['approved_amount'])) {
+                $approvedAmount = floatval($_POST['approved_amount']);
+                if ($approvedAmount > 0) {
+                    try { $db->exec("ALTER TABLE advances ADD COLUMN approved_amount DECIMAL(10,2) NULL"); } catch (Exception $e) {}
+                    $stmt = $db->prepare("UPDATE advances SET approved_amount = ? WHERE id = ?");
+                    $stmt->execute([$approvedAmount, $id]);
+                }
+            }
+
             $stmt = $db->prepare("UPDATE advances SET status = 'approved', approved_by = ?, approved_at = NOW() WHERE id = ? AND status = 'pending'");
             $result = $stmt->execute([$_SESSION['user_id'], $id]);
             
@@ -240,6 +260,92 @@ class AdvanceController extends Controller {
         } catch (Exception $e) {
             error_log('Advance approve error: ' . $e->getMessage());
             header('Location: /ergon-site/advances?error=Failed to approve advance');
+        }
+        exit;
+    }
+
+    public function markPaid($id = null) {
+        $this->requireAuth();
+        if (!$id) {
+            header('Location: /ergon-site/advances?error=Invalid advance ID');
+            exit;
+        }
+
+        // Only admin/owner can mark paid
+        if (!in_array($_SESSION['role'] ?? 'user', ['admin','owner'])) {
+            header('Location: /ergon-site/advances?error=Unauthorized');
+            exit;
+        }
+
+        try {
+            require_once __DIR__ . '/../config/database.php';
+            require_once __DIR__ . '/../helpers/LedgerHelper.php';
+            $db = Database::connect();
+
+            $stmt = $db->prepare("SELECT * FROM advances WHERE id = ? AND status = 'approved'");
+            $stmt->execute([$id]);
+            $advance = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$advance) {
+                header('Location: /ergon-site/advances?error=Advance not found or not approved');
+                exit;
+            }
+
+            $proof = null;
+            // Server-side validation: require file, limit size to 5MB, allow jpeg/png/pdf
+            if (!isset($_FILES['proof']) || $_FILES['proof']['error'] !== 0) {
+                header('Location: /ergon-site/advances/view/' . $id . '?error=Proof file is required');
+                exit;
+            }
+
+            $allowedMime = ['image/jpeg', 'image/png', 'application/pdf'];
+            $maxSize = 5 * 1024 * 1024; // 5MB
+            $file = $_FILES['proof'];
+            if ($file['size'] > $maxSize) {
+                header('Location: /ergon-site/advances/view/' . $id . '?error=Proof file exceeds 5MB');
+                exit;
+            }
+
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mime = finfo_file($finfo, $file['tmp_name']);
+            finfo_close($finfo);
+            if (!in_array($mime, $allowedMime)) {
+                header('Location: /ergon-site/advances/view/' . $id . '?error=Invalid proof file type');
+                exit;
+            }
+
+            $uploadDir = __DIR__ . '/../../storage/proofs/';
+            if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
+            $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+            $filename = time() . '_' . bin2hex(random_bytes(6)) . '.' . $ext;
+            $uploadPath = $uploadDir . $filename;
+            if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
+                $proof = $filename;
+            } else {
+                header('Location: /ergon-site/advances/view/' . $id . '?error=Failed to save proof file');
+                exit;
+            }
+
+            $stmt = $db->prepare("UPDATE advances SET status = 'paid', payment_proof = ?, paid_by = ?, paid_at = NOW() WHERE id = ?");
+            $result = $stmt->execute([$proof, $_SESSION['user_id'], $id]);
+
+            if ($result) {
+                // Record ledger credit for the advance amount
+                // Use approved_amount if present else original amount
+                $ledgerAmount = floatval($advance['amount']);
+                try {
+                    $stmt2 = $db->prepare("SELECT approved_amount FROM advances WHERE id = ? LIMIT 1");
+                    $stmt2->execute([$id]);
+                    $row2 = $stmt2->fetch(PDO::FETCH_ASSOC);
+                    if ($row2 && $row2['approved_amount']) $ledgerAmount = floatval($row2['approved_amount']);
+                } catch (Exception $e) {}
+                LedgerHelper::recordEntry($advance['user_id'], 'advance', 'advance', $id, $ledgerAmount, 'credit');
+                header('Location: /ergon-site/advances?success=Advance marked as paid');
+            } else {
+                header('Location: /ergon-site/advances?error=Failed to mark paid');
+            }
+        } catch (Exception $e) {
+            error_log('Advance markPaid error: ' . $e->getMessage());
+            header('Location: /ergon-site/advances?error=Failed to mark paid');
         }
         exit;
     }

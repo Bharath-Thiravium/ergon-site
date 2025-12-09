@@ -27,6 +27,13 @@ ob_start();
             </div>
             
             <div class="form-group">
+                <label class="form-label">Project *</label>
+                <select name="project_id" id="project_id" class="form-control" required>
+                    <option value="">Select Project</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
                 <label class="form-label">Amount (₹) *</label>
                 <input type="number" name="amount" class="form-control" step="0.01" min="1" 
                        value="<?= htmlspecialchars($advance['amount'] ?? '') ?>" required>
@@ -39,7 +46,7 @@ ob_start();
             </div>
             
             <div class="form-group">
-                <label class="form-label">Expected Repayment Date</label>
+                <label class="form-label">Expected Repayment Date (Optional)</label>
                 <input type="date" name="repayment_date" class="form-control" 
                        value="<?= htmlspecialchars($advance['repayment_date'] ?? '') ?>">
             </div>
@@ -90,6 +97,29 @@ ob_start();
     border-color: #047857;
 }
 </style>
+
+<script>
+fetch('/ergon-site/api/projects.php')
+    .then(response => response.json())
+    .then(data => {
+        const projectSelect = document.getElementById('project_id');
+        if (data.success && data.projects) {
+            data.projects.forEach(project => {
+                const option = document.createElement('option');
+                option.value = project.id;
+                let text = project.project_name;
+                if (project.department_name) text += ' - ' + project.department_name;
+                if (project.description) text += ' (' + project.description + ')';
+                option.textContent = text;
+                if (project.id == '<?= $advance['project_id'] ?? '' ?>') {
+                    option.selected = true;
+                }
+                projectSelect.appendChild(option);
+            });
+        }
+    })
+    .catch(error => console.error('Error loading projects:', error));
+</script>
 
 <?php
 $content = ob_get_clean();

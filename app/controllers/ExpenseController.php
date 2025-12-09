@@ -25,6 +25,9 @@ class ExpenseController extends Controller {
                 description TEXT,
                 expense_date DATE NOT NULL DEFAULT (CURDATE()),
                 attachment VARCHAR(255) NULL,
+                payment_proof VARCHAR(255) NULL,
+                paid_by INT NULL,
+                paid_at DATETIME NULL,
                 status VARCHAR(20) NOT NULL DEFAULT 'pending',
                 approved_by INT NULL,
                 approved_at TIMESTAMP NULL,
@@ -41,6 +44,29 @@ class ExpenseController extends Controller {
                 $db->exec("ALTER TABLE expenses ADD COLUMN attachment VARCHAR(255) NULL");
                 error_log('Added attachment column to existing expenses table');
             }
+            try { $db->exec("ALTER TABLE expenses ADD COLUMN payment_proof VARCHAR(255) NULL"); } catch (Exception $e) {}
+            try { $db->exec("ALTER TABLE expenses ADD COLUMN paid_by INT NULL"); } catch (Exception $e) {}
+            try { $db->exec("ALTER TABLE expenses ADD COLUMN paid_at DATETIME NULL"); } catch (Exception $e) {}
+            try { $db->exec("ALTER TABLE expenses MODIFY COLUMN status ENUM('pending','approved','rejected','paid') DEFAULT 'pending'"); } catch (Exception $e) {}
+
+            // Create approved_expenses table to store approved/processed expense records separately
+            $db->exec("CREATE TABLE IF NOT EXISTS approved_expenses (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                expense_id INT NOT NULL,
+                user_id INT NOT NULL,
+                category VARCHAR(100) NOT NULL,
+                claimed_amount DECIMAL(10,2) NOT NULL,
+                approved_amount DECIMAL(10,2) NULL,
+                description TEXT,
+                approved_by INT NULL,
+                approved_at DATETIME NULL,
+                payment_proof VARCHAR(255) NULL,
+                paid_at DATETIME NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )");
+            // Ensure columns exist for backward compatibility
+            try { $db->exec("ALTER TABLE approved_expenses ADD COLUMN claimed_amount DECIMAL(10,2) NULL"); } catch (Exception $e) {}
+            try { $db->exec("ALTER TABLE approved_expenses ADD COLUMN approved_amount DECIMAL(10,2) NULL"); } catch (Exception $e) {}
             
         } catch (Exception $e) {
             error_log('Error ensuring expense tables: ' . $e->getMessage());
@@ -311,8 +337,16 @@ class ExpenseController extends Controller {
                 exit;
             }
             
+            // Fetch approved_expenses row if exists
+            require_once __DIR__ . '/../config/database.php';
+            $db = Database::connect();
+            $stmt = $db->prepare("SELECT * FROM approved_expenses WHERE expense_id = ? ORDER BY id DESC LIMIT 1");
+            $stmt->execute([$id]);
+            $approved = $stmt->fetch(PDO::FETCH_ASSOC);
+
             $data = [
                 'expense' => $expense,
+                'approved' => $approved,
                 'active_page' => 'expenses'
             ];
             
@@ -407,6 +441,15 @@ class ExpenseController extends Controller {
                 exit;
             }
             
+            // Capture approved_amount if provided; do NOT overwrite original claimed amount
+            $approvedAmount = null;
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['approved_amount'])) {
+                $approvedAmount = floatval($_POST['approved_amount']);
+                if ($approvedAmount <= 0) {
+                    $approvedAmount = null;
+                }
+            }
+
             // Simple approval without accounting integration
             $stmt = $db->prepare("UPDATE expenses SET status = 'approved', approved_by = ?, approved_at = NOW() WHERE id = ?");
             $result = $stmt->execute([$_SESSION['user_id'], $id]);
@@ -419,7 +462,52 @@ class ExpenseController extends Controller {
                 } catch (Exception $notifError) {
                     error_log('Expense approval notification error: ' . $notifError->getMessage());
                 }
-                
+                // Save approved expense separately (keep claimed_amount and approved_amount)
+                try {
+                    $claimed = floatval($expense['amount']);
+                    $approvedVal = $approvedAmount ?? $claimed;
+                    $insertApproved = $db->prepare("INSERT INTO approved_expenses (expense_id, user_id, category, amount, claimed_amount, approved_amount, description, approved_by, approved_at, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+                    $insertApproved->execute([
+                        $id,
+                        $expense['user_id'],
+                        $expense['category'],
+                        $approvedVal,
+                        $claimed,
+                        $approvedVal,
+                        $expense['description'],
+                        $_SESSION['user_id']
+                    ]);
+                } catch (Exception $ae) {
+                    error_log('Failed to insert approved_expenses: ' . $ae->getMessage());
+                }
+
+                // If category indicates deduction from advance, immediately mark as paid and debit ledger
+                try {
+                    require_once __DIR__ . '/../helpers/LedgerHelper.php';
+                    if (strtolower(trim($expense['category'] ?? '')) === strtolower('Deduct from Advance') || strtolower($expense['category'] ?? '') === strtolower('deduct_from_advance')) {
+                        // mark paid and create ledger debit entry
+                        $stmt = $db->prepare("UPDATE expenses SET status = 'paid', paid_by = ?, paid_at = NOW() WHERE id = ?");
+                        $stmt->execute([$_SESSION['user_id'], $id]);
+                        // Use the approved amount for ledger entries when available (do not assume claimed amount)
+                        $debitAmount = $approvedVal ?? floatval($expense['amount']);
+                        LedgerHelper::recordEntry($expense['user_id'], 'expense', 'expense', $id, floatval($debitAmount), 'debit');
+                        // update approved_expenses paid_at
+                        try {
+                            $db->prepare("UPDATE approved_expenses SET paid_at = NOW() WHERE expense_id = ?")->execute([$id]);
+                        } catch (Exception $u) {
+                            error_log('Failed to update approved_expenses paid_at: ' . $u->getMessage());
+                        }
+                        try {
+                            require_once __DIR__ . '/../helpers/NotificationHelper.php';
+                            NotificationHelper::notifyExpenseStatusChange($id, 'paid', $_SESSION['user_id']);
+                        } catch (Exception $notifError) {}
+                        header('Location: /ergon-site/expenses?success=Expense approved and deducted from advance');
+                        exit;
+                    }
+                } catch (Exception $e) {
+                    error_log('Expense post-approval processing error: ' . $e->getMessage());
+                }
+
                 // Try accounting integration but don't fail if it doesn't work
                 try {
                     require_once __DIR__ . '/../helpers/AccountingHelper.php';
@@ -433,7 +521,7 @@ class ExpenseController extends Controller {
                 } catch (Exception $accountingError) {
                     error_log('Accounting integration failed (non-critical): ' . $accountingError->getMessage());
                 }
-                
+
                 header('Location: /ergon-site/expenses?success=Expense approved successfully');
             } else {
                 header('Location: /ergon-site/expenses?error=Failed to approve expense');
@@ -510,6 +598,112 @@ class ExpenseController extends Controller {
             }
         } else {
             header('Location: /ergon-site/expenses?error=Rejection reason is required');
+        }
+        exit;
+    }
+
+    public function markPaid($id = null) {
+        AuthMiddleware::requireAuth();
+        if (!$id) {
+            header('Location: /ergon-site/expenses?error=Invalid expense ID');
+            exit;
+        }
+
+        // Only admin/owner can mark paid
+        if (!in_array($_SESSION['role'] ?? 'user', ['admin','owner'])) {
+            header('Location: /ergon-site/expenses?error=Unauthorized');
+            exit;
+        }
+
+        try {
+            require_once __DIR__ . '/../config/database.php';
+            require_once __DIR__ . '/../helpers/LedgerHelper.php';
+            $db = Database::connect();
+
+            $stmt = $db->prepare("SELECT * FROM expenses WHERE id = ? AND status = 'approved'");
+            $stmt->execute([$id]);
+            $expense = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$expense) {
+                header('Location: /ergon-site/expenses?error=Expense not found or not approved');
+                exit;
+            }
+
+            $proof = null;
+            
+            if (!isset($_FILES['proof']) || $_FILES['proof']['error'] !== 0) {
+                $errorMsg = !isset($_FILES['proof']) ? 'No file in request' : 'Upload error: ' . $_FILES['proof']['error'];
+                error_log("markPaid expense $id: $errorMsg");
+                header('Location: /ergon-site/expenses/view/' . $id . '?error=' . urlencode($errorMsg));
+                exit;
+            }
+
+            $file = $_FILES['proof'];
+            $allowedMime = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
+            $maxSize = 5 * 1024 * 1024;
+            
+            if ($file['size'] > $maxSize) {
+                error_log("markPaid expense $id: File too large (" . $file['size'] . " bytes)");
+                header('Location: /ergon-site/expenses/view/' . $id . '?error=File exceeds 5MB');
+                exit;
+            }
+
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mime = finfo_file($finfo, $file['tmp_name']);
+            finfo_close($finfo);
+            
+            if (!in_array($mime, $allowedMime)) {
+                error_log("markPaid expense $id: Invalid mime type: $mime");
+                header('Location: /ergon-site/expenses/view/' . $id . '?error=Invalid file type');
+                exit;
+            }
+
+            $uploadDir = __DIR__ . '/../../storage/proofs/';
+            if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
+            $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+            $filename = time() . '_' . bin2hex(random_bytes(6)) . '.' . $ext;
+            $uploadPath = $uploadDir . $filename;
+            
+            error_log("markPaid: Attempting to save file to: $uploadPath");
+            if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
+                $proof = $filename;
+                error_log("markPaid: File saved successfully as: $filename");
+            } else {
+                error_log("markPaid: Failed to move uploaded file");
+                header('Location: /ergon-site/expenses/view/' . $id . '?error=Failed to save proof file');
+                exit;
+            }
+
+            error_log("markPaid: Updating expenses table with proof: $proof");
+            $stmt = $db->prepare("UPDATE expenses SET status = 'paid', payment_proof = ?, paid_by = ?, paid_at = NOW() WHERE id = ?");
+            $result = $stmt->execute([$proof, $_SESSION['user_id'], $id]);
+            error_log("markPaid: Expenses table update result: " . ($result ? 'success' : 'failed'));
+
+            if ($result) {
+                // Update approved_expenses record with proof and paid_at if exists
+                try {
+                    $upd = $db->prepare("UPDATE approved_expenses SET payment_proof = ?, paid_at = NOW() WHERE expense_id = ?");
+                    $updResult = $upd->execute([$proof, $id]);
+                    error_log("markPaid: approved_expenses update result: " . ($updResult ? 'success' : 'failed'));
+                } catch (Exception $ue) {
+                    error_log('Failed to update approved_expenses with proof: ' . $ue->getMessage());
+                }
+                // Determine approved amount (from approved_expenses) and record ledger debit
+                try {
+                    $stmt2 = $db->prepare("SELECT approved_amount FROM approved_expenses WHERE expense_id = ? ORDER BY id DESC LIMIT 1");
+                    $stmt2->execute([$id]);
+                    $approvedRow = $stmt2->fetch(PDO::FETCH_ASSOC);
+                    $ledgerAmount = $approvedRow && $approvedRow['approved_amount'] ? floatval($approvedRow['approved_amount']) : floatval($expense['amount']);
+                } catch (Exception $le) {
+                    $ledgerAmount = floatval($expense['amount']);
+                }
+                LedgerHelper::recordEntry($expense['user_id'], 'expense', 'expense', $id, $ledgerAmount, 'debit');
+                header('Location: /ergon-site/expenses?success=Expense marked as paid');
+            } else {
+                header('Location: /ergon-site/expenses?error=Failed to mark paid');
+            }
+        } catch (Exception $e) {
+            error_log('Expense markPaid error: ' . $e->getMessage());
+            header('Location: /ergon-site/expenses/view/' . $id . '?error=' . urlencode($e->getMessage()));
         }
         exit;
     }

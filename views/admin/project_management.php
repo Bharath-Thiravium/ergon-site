@@ -129,7 +129,7 @@ function showAddProjectModal() {
         <div class="modal-content">
             <div class="modal-header">
                 <h3 id="modalTitle">📁 Add New Project</h3>
-                <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">&times;</button>
+                <button class="modal-close" onclick="hideClosestModal(this)">&times;</button>
             </div>
             <div class="modal-body">
                 <form id="projectForm">
@@ -171,7 +171,7 @@ function showAddProjectModal() {
                 </form>
             </div>
             <div class="modal-footer">
-                <button class="btn btn--secondary" onclick="this.closest('.modal-overlay').remove()">Cancel</button>
+                <button class="btn btn--secondary" onclick="hideClosestModal(this)">Cancel</button>
                 <button class="btn btn--primary" onclick="submitProjectForm()"><span id="submitText">Add Project</span></button>
             </div>
         </div>
@@ -192,6 +192,7 @@ function showAddProjectModal() {
                 align-items: center;
                 justify-content: center;
                 z-index: 10001;
+                padding-top: 80px;
             }
             .modal-content {
                 background: white;
@@ -283,7 +284,8 @@ function submitProjectForm() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            document.querySelector('.modal-overlay')?.remove();
+            const __existingModal = document.querySelector('.modal-overlay');
+            if(__existingModal && typeof hideClosestModal === 'function') hideClosestModal(__existingModal);
             location.reload();
         } else {
             alert('Failed to save project: ' + (data.error || 'Unknown error'));
