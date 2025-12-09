@@ -414,10 +414,10 @@ class AdvanceController extends Controller {
             $db = Database::connect();
             
             if ($_SESSION['role'] === 'user') {
-                $stmt = $db->prepare("SELECT a.*, u.name as user_name, u.role as user_role FROM advances a LEFT JOIN users u ON a.user_id = u.id WHERE a.id = ? AND a.user_id = ?");
+                $stmt = $db->prepare("SELECT a.*, u.name as user_name, u.role as user_role, p.name as project_name FROM advances a LEFT JOIN users u ON a.user_id = u.id LEFT JOIN projects p ON a.project_id = p.id WHERE a.id = ? AND a.user_id = ?");
                 $stmt->execute([$id, $_SESSION['user_id']]);
             } else {
-                $stmt = $db->prepare("SELECT a.*, u.name as user_name, u.role as user_role FROM advances a LEFT JOIN users u ON a.user_id = u.id WHERE a.id = ?");
+                $stmt = $db->prepare("SELECT a.*, u.name as user_name, u.role as user_role, p.name as project_name FROM advances a LEFT JOIN users u ON a.user_id = u.id LEFT JOIN projects p ON a.project_id = p.id WHERE a.id = ?");
                 $stmt->execute([$id]);
             }
             

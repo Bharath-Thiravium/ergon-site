@@ -56,12 +56,13 @@ class Expense {
                 return false;
             }
             
-            $sql = "INSERT INTO expenses (user_id, category, amount, description, expense_date, attachment, status, created_at) 
-                    VALUES (?, ?, ?, ?, ?, ?, 'pending', NOW())";
+            $sql = "INSERT INTO expenses (user_id, project_id, category, amount, description, expense_date, attachment, status, created_at) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', NOW())";
             $stmt = $this->db->prepare($sql);
             
             $params = [
                 $data['user_id'],
+                $data['project_id'] ?? null,
                 $data['category'],
                 $data['amount'],
                 $data['description'] ?? '',

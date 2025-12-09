@@ -338,15 +338,18 @@ class ExpenseController extends Controller {
         }
         
         try {
-            $expense = $this->expense->getById($id);
+            require_once __DIR__ . '/../config/database.php';
+            $db = Database::connect();
+            
+            $stmt = $db->prepare("SELECT e.*, u.name as user_name, p.name as project_name FROM expenses e LEFT JOIN users u ON e.user_id = u.id LEFT JOIN projects p ON e.project_id = p.id WHERE e.id = ?");
+            $stmt->execute([$id]);
+            $expense = $stmt->fetch(PDO::FETCH_ASSOC);
+            
             if (!$expense) {
                 header('Location: /ergon-site/expenses?error=not_found');
                 exit;
             }
             
-            // Fetch approved_expenses row if exists
-            require_once __DIR__ . '/../config/database.php';
-            $db = Database::connect();
             $stmt = $db->prepare("SELECT * FROM approved_expenses WHERE expense_id = ? ORDER BY id DESC LIMIT 1");
             $stmt->execute([$id]);
             $approved = $stmt->fetch(PDO::FETCH_ASSOC);

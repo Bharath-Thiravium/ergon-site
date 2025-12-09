@@ -1,3 +1,4 @@
+<?php
 $title = 'Advance Request Details';
 $active_page = 'advances';
 ob_start();
@@ -91,6 +92,9 @@ ob_start();
                     <div class="detail-items">
                         <span><strong>Name:</strong> 👤 <?= htmlspecialchars($advance['user_name'] ?? 'Unknown') ?></span>
                         <span><strong>Type:</strong> 🏷️ <?= htmlspecialchars($advance['type'] ?? 'General Advance') ?></span>
+                        <?php if (!empty($advance['project_name'])): ?>
+                        <span><strong>Project:</strong> 📁 <?= htmlspecialchars($advance['project_name']) ?></span>
+                        <?php endif; ?>
                         <span><strong>Amount:</strong> 💰 ₹<?= number_format($advance['amount'] ?? 0, 2) ?></span>
                     </div>
                 </div>

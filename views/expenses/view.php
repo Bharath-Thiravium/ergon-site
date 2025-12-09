@@ -92,6 +92,9 @@ ob_start();
                     <div class="detail-items">
                         <span><strong>Name:</strong> 👤 <?= htmlspecialchars($expense['user_name'] ?? 'Unknown') ?></span>
                         <span><strong>Category:</strong> 🏷️ <?= htmlspecialchars($expense['category'] ?? 'General') ?></span>
+                        <?php if (!empty($expense['project_name'])): ?>
+                        <span><strong>Project:</strong> 📁 <?= htmlspecialchars($expense['project_name']) ?></span>
+                        <?php endif; ?>
                         <span>
                             <strong>Claimed:</strong> 💰 ₹<?= number_format($expense['amount'] ?? 0, 2) ?>
                         </span>
