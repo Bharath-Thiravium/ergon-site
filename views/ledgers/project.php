@@ -14,26 +14,18 @@ ob_start();
     </div>
 </div>
 
-<div class="card">
-    <div class="card__header">
-        <h2 class="card__title">Filter by Project</h2>
-    </div>
-    <div class="card__body">
-        <form method="GET" style="display: flex; gap: 12px; align-items: end;">
-            <div style="flex: 1;">
-                <label>Select Project</label>
-                <select name="project_id" class="form-input" required>
-                    <option value="">All Projects</option>
-                    <?php foreach ($projects ?? [] as $p): ?>
-                        <option value="<?= $p['id'] ?>" <?= ($project_id ?? '') == $p['id'] ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($p['project_name']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-            <button type="submit" class="btn btn--primary">🔍 Filter</button>
-        </form>
-    </div>
+<div style="background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; box-shadow: var(--shadow-sm);">
+    <form method="GET" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+        <label style="font-size: 0.875rem; font-weight: 500; color: var(--text-primary); white-space: nowrap;">🔍 Project:</label>
+        <select name="project_id" class="form-control" onchange="this.form.submit()" style="flex: 1; min-width: 200px; padding: 8px 12px; font-size: 0.875rem;">
+            <option value="">All Projects</option>
+            <?php foreach ($projects ?? [] as $p): ?>
+                <option value="<?= $p['id'] ?>" <?= ($project_id ?? '') == $p['id'] ? 'selected' : '' ?>>
+                    <?= htmlspecialchars($p['project_name']) ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+    </form>
 </div>
 
 <?php if (isset($project_id) && $project_id): ?>
@@ -42,49 +34,101 @@ ob_start();
         <h2 class="card__title">Project: <?= htmlspecialchars($project_name ?? 'Unknown') ?></h2>
     </div>
     <div class="card__body">
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px;">
-            <!-- Budget Overview -->
-            <div style="background: #e7f3ff; padding: 16px; border-radius: 8px; border: 2px solid #007bff;">
-                <div style="font-weight: bold; color: #007bff; margin-bottom: 12px; font-size: 0.9rem;">💰 BUDGET OVERVIEW</div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                    <span style="color: #6c757d; font-size: 0.85rem;">Allocated:</span>
-                    <strong style="color: #212529;">₹<?= number_format($budget ?? 0, 2) ?></strong>
+        <div class="dashboard-grid" style="margin-bottom: 16px; margin-top: 0;">
+            <div class="stat-card">
+                <div class="stat-card__header">
+                    <div class="stat-card__title">
+                        <span class="stat-card__icon">💰</span>
+                        <span class="stat-card__label">Budget</span>
+                    </div>
                 </div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                    <span style="color: #6c757d; font-size: 0.85rem;">Utilized:</span>
-                    <strong style="color: #ffc107;">₹<?= number_format($total_debits ?? 0, 2) ?></strong>
-                </div>
-                <div style="display: flex; justify-content: space-between; padding-top: 8px; border-top: 1px solid #ccc;">
-                    <span style="color: #6c757d; font-size: 0.85rem;">Remaining:</span>
-                    <strong style="color: <?= ($balance_type ?? 'Credit') === 'Credit' ? '#28a745' : '#dc3545' ?>;">₹<?= number_format($balance_amount ?? 0, 2) ?> <?= $balance_type ?? 'Cr' ?></strong>
-                </div>
-                <div style="margin-top: 8px; font-size: 0.75rem; color: #6c757d; text-align: center;"><?= number_format($utilization ?? 0, 1) ?>% Utilized</div>
-            </div>
-            
-            <!-- Transaction Summary -->
-            <div style="background: #fff8e1; padding: 16px; border-radius: 8px; border: 2px solid #ffc107;">
-                <div style="font-weight: bold; color: #f57c00; margin-bottom: 12px; font-size: 0.9rem;">📊 TRANSACTIONS</div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                    <span style="color: #6c757d; font-size: 0.85rem;">Credits:</span>
-                    <strong style="color: #28a745;">₹<?= number_format($total_credits ?? 0, 2) ?></strong>
-                </div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                    <span style="color: #6c757d; font-size: 0.85rem;">Debits:</span>
-                    <strong style="color: #dc3545;">₹<?= number_format($total_debits ?? 0, 2) ?></strong>
-                </div>
-                <div style="display: flex; justify-content: space-between; padding-top: 8px; border-top: 1px solid #ccc;">
-                    <span style="color: #6c757d; font-size: 0.85rem;">Net:</span>
-                    <strong style="color: <?= ($net_balance_type ?? 'Credit') === 'Credit' ? '#28a745' : '#dc3545' ?>;">₹<?= number_format($net_balance_amount ?? 0, 2) ?> <?= $net_balance_type ?? 'Cr' ?></strong>
+                <div class="stat-card__body">
+                    <div class="stat-card__meta">
+                        <div>
+                            <small>Allocated</small>
+                            <div class="stat-card__meta-value">₹<?= number_format($budget ?? 0, 2) ?></div>
+                        </div>
+                        <div>
+                            <small>Utilized</small>
+                            <div class="stat-card__meta-value"><?= number_format($utilization ?? 0, 1) ?>%</div>
+                        </div>
+                    </div>
                 </div>
             </div>
             
-            <!-- Balance Summary -->
-            <div style="background: <?= ($balance_type ?? 'Credit') === 'Credit' ? '#d4edda' : '#f8d7da' ?>; padding: 16px; border-radius: 8px; border: 2px solid <?= ($balance_type ?? 'Credit') === 'Credit' ? '#28a745' : '#dc3545' ?>;">
-                <div style="font-weight: bold; color: <?= ($balance_type ?? 'Credit') === 'Credit' ? '#28a745' : '#dc3545' ?>; margin-bottom: 12px; font-size: 0.9rem;">⚖️ BALANCE STATUS</div>
-                <div style="text-align: center; margin: 20px 0;">
-                    <div style="font-size: 0.75rem; color: #6c757d; margin-bottom: 4px;">Current Balance</div>
-                    <div style="font-size: 2rem; font-weight: bold; color: <?= ($balance_type ?? 'Credit') === 'Credit' ? '#28a745' : '#dc3545' ?>;">₹<?= number_format($balance_amount ?? 0, 2) ?></div>
-                    <div style="font-size: 1rem; font-weight: bold; color: <?= ($balance_type ?? 'Credit') === 'Credit' ? '#28a745' : '#dc3545' ?>; margin-top: 4px;"><?= $balance_type ?? 'Credit' ?></div>
+            <div class="stat-card">
+                <div class="stat-card__header">
+                    <div class="stat-card__title">
+                        <span class="stat-card__icon">➕</span>
+                        <span class="stat-card__label">Credits</span>
+                    </div>
+                </div>
+                <div class="stat-card__body">
+                    <div class="stat-card__meta">
+                        <div>
+                            <small>Total</small>
+                            <div class="stat-card__meta-value" style="color: #059669;">₹<?= number_format($total_credits ?? 0, 2) ?></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-card__header">
+                    <div class="stat-card__title">
+                        <span class="stat-card__icon">➖</span>
+                        <span class="stat-card__label">Debits</span>
+                    </div>
+                </div>
+                <div class="stat-card__body">
+                    <div class="stat-card__meta">
+                        <div>
+                            <small>Total</small>
+                            <div class="stat-card__meta-value" style="color: #dc2626;">₹<?= number_format($total_debits ?? 0, 2) ?></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-card__header">
+                    <div class="stat-card__title">
+                        <span class="stat-card__icon">⚖️</span>
+                        <span class="stat-card__label">Net Balance</span>
+                    </div>
+                </div>
+                <div class="stat-card__body">
+                    <div class="stat-card__meta">
+                        <div>
+                            <small>Credits - Debits</small>
+                            <div class="stat-card__meta-value" style="color: <?= ($net_balance_type ?? 'Credit') === 'Credit' ? '#059669' : '#dc2626' ?>;">₹<?= number_format($net_balance_amount ?? 0, 2) ?></div>
+                        </div>
+                        <div>
+                            <small>Type</small>
+                            <div class="stat-card__meta-value"><?= $net_balance_type ?? 'Credit' ?></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-card__header">
+                    <div class="stat-card__title">
+                        <span class="stat-card__icon">💼</span>
+                        <span class="stat-card__label">Budget Balance</span>
+                    </div>
+                </div>
+                <div class="stat-card__body">
+                    <div class="stat-card__meta">
+                        <div>
+                            <small>Remaining</small>
+                            <div class="stat-card__meta-value" style="color: <?= ($balance_type ?? 'Credit') === 'Credit' ? '#059669' : '#dc2626' ?>;">₹<?= number_format($balance_amount ?? 0, 2) ?></div>
+                        </div>
+                        <div>
+                            <small>Status</small>
+                            <div class="stat-card__meta-value"><?= $balance_type ?? 'Credit' ?></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
