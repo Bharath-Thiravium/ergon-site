@@ -25,7 +25,7 @@ ob_start();
     </div>
 </div>
 
-<?php if (isset($project_id) && $project_id): ?>
+<?php if (isset($project_name)): ?>
 <div class="card">
     <div class="card__header">
         <h2 class="card__title">Project: <?= htmlspecialchars($project_name ?? 'Unknown') ?></h2>

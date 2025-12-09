@@ -60,8 +60,9 @@ class LedgerController extends Controller {
 
             $data = ['projects' => $projects, 'active_page' => 'ledgers'];
 
-            if (isset($_GET['project_id']) && is_numeric($_GET['project_id'])) {
-                $project_id = $_GET['project_id'];
+            $project_id = isset($_GET['project_id']) && is_numeric($_GET['project_id']) ? $_GET['project_id'] : null;
+            
+            if ($project_id) {
 
                 $stmt = $db->prepare("SELECT name as project_name, budget FROM projects WHERE id = ?");
                 $stmt->execute([$project_id]);
@@ -106,6 +107,61 @@ class LedgerController extends Controller {
 
                 $data['project_id'] = $project_id;
                 $data['project_name'] = $project['project_name'] ?? 'Unknown';
+                $data['budget'] = $budget;
+                $data['entries'] = $entries;
+                $data['total_credits'] = $total_credits;
+                $data['total_debits'] = $total_debits;
+                $data['balance_type'] = $balance_type;
+                $data['balance_amount'] = $balance_amount;
+                $data['net_balance_type'] = $net_balance_type;
+                $data['net_balance_amount'] = $net_balance_amount;
+                $data['budget_remaining'] = $budget_remaining;
+                $data['utilization'] = $budget > 0 ? ($total_debits / $budget) * 100 : 0;
+            } else {
+                // Show consolidated data for all projects
+                $stmt = $db->query("
+                    SELECT 'expense' as type, 'credit' as entry_type, e.id, e.user_id, u.name as user_name, e.description, 
+                           COALESCE(ae.approved_amount, e.amount) as amount, e.status, e.created_at, p.name as project_name
+                    FROM expenses e
+                    JOIN users u ON e.user_id = u.id
+                    LEFT JOIN projects p ON e.project_id = p.id
+                    LEFT JOIN approved_expenses ae ON e.id = ae.expense_id
+                    WHERE e.status IN ('approved', 'paid')
+                    UNION ALL
+                    SELECT 'expense' as type, 'debit' as entry_type, e.id, e.user_id, u.name as user_name, e.description, 
+                           COALESCE(ae.approved_amount, e.amount) as amount, e.status, e.created_at, p.name as project_name
+                    FROM expenses e
+                    JOIN users u ON e.user_id = u.id
+                    LEFT JOIN projects p ON e.project_id = p.id
+                    LEFT JOIN approved_expenses ae ON e.id = ae.expense_id
+                    WHERE e.status = 'paid'
+                    UNION ALL
+                    SELECT 'advance' as type, 'debit' as entry_type, a.id, a.user_id, u.name as user_name, a.reason as description, 
+                           COALESCE(a.approved_amount, a.amount) as amount, a.status, a.created_at, p.name as project_name
+                    FROM advances a
+                    JOIN users u ON a.user_id = u.id
+                    LEFT JOIN projects p ON a.project_id = p.id
+                    WHERE a.status = 'paid'
+                    ORDER BY created_at DESC
+                ");
+                $entries = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                $stmt = $db->query("SELECT COALESCE(SUM(budget), 0) as total_budget FROM projects");
+                $budget = $stmt->fetch(PDO::FETCH_ASSOC)['total_budget'];
+
+                $total_credits = array_sum(array_column(array_filter($entries, fn($e) => $e['entry_type'] === 'credit'), 'amount'));
+                $total_debits = array_sum(array_column(array_filter($entries, fn($e) => $e['entry_type'] === 'debit'), 'amount'));
+                $budget_remaining = $budget - $total_debits;
+                
+                $balance_type = $budget_remaining >= 0 ? 'Credit' : 'Debit';
+                $balance_amount = abs($budget_remaining);
+                
+                $net_balance_raw = $total_credits - $total_debits;
+                $net_balance_type = $net_balance_raw >= 0 ? 'Credit' : 'Debit';
+                $net_balance_amount = abs($net_balance_raw);
+
+                $data['project_id'] = null;
+                $data['project_name'] = 'All Projects';
                 $data['budget'] = $budget;
                 $data['entries'] = $entries;
                 $data['total_credits'] = $total_credits;
