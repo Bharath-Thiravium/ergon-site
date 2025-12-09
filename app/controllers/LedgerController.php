@@ -63,33 +63,47 @@ class LedgerController extends Controller {
             if (isset($_GET['project_id']) && is_numeric($_GET['project_id'])) {
                 $project_id = $_GET['project_id'];
 
-                $stmt = $db->prepare("SELECT name as project_name FROM projects WHERE id = ?");
+                $stmt = $db->prepare("SELECT name as project_name, budget FROM projects WHERE id = ?");
                 $stmt->execute([$project_id]);
                 $project = $stmt->fetch(PDO::FETCH_ASSOC);
 
                 $stmt = $db->prepare("
-                    SELECT 'expense' as type, e.id, e.user_id, u.name as user_name, e.description, e.amount, e.status, e.created_at
+                    SELECT 'expense' as type, 'credit' as entry_type, e.id, e.user_id, u.name as user_name, e.description, 
+                           COALESCE(ae.approved_amount, e.amount) as amount, e.status, e.created_at
                     FROM expenses e
                     JOIN users u ON e.user_id = u.id
+                    LEFT JOIN approved_expenses ae ON e.id = ae.expense_id
                     WHERE e.project_id = ? AND e.status IN ('approved', 'paid')
                     UNION ALL
-                    SELECT 'advance' as type, a.id, a.user_id, u.name as user_name, a.reason as description, a.amount, a.status, a.created_at
+                    SELECT 'expense' as type, 'debit' as entry_type, e.id, e.user_id, u.name as user_name, e.description, 
+                           COALESCE(ae.approved_amount, e.amount) as amount, e.status, e.created_at
+                    FROM expenses e
+                    JOIN users u ON e.user_id = u.id
+                    LEFT JOIN approved_expenses ae ON e.id = ae.expense_id
+                    WHERE e.project_id = ? AND e.status = 'paid'
+                    UNION ALL
+                    SELECT 'advance' as type, 'debit' as entry_type, a.id, a.user_id, u.name as user_name, a.reason as description, 
+                           COALESCE(a.approved_amount, a.amount) as amount, a.status, a.created_at
                     FROM advances a
                     JOIN users u ON a.user_id = u.id
-                    WHERE a.project_id = ? AND a.status IN ('approved', 'paid')
+                    WHERE a.project_id = ? AND a.status = 'paid'
                     ORDER BY created_at DESC
                 ");
-                $stmt->execute([$project_id, $project_id]);
+                $stmt->execute([$project_id, $project_id, $project_id]);
                 $entries = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                $total_expenses = array_sum(array_column(array_filter($entries, fn($e) => $e['type'] === 'expense'), 'amount'));
-                $total_advances = array_sum(array_column(array_filter($entries, fn($e) => $e['type'] === 'advance'), 'amount'));
+                $total_credits = array_sum(array_column(array_filter($entries, fn($e) => $e['entry_type'] === 'credit'), 'amount'));
+                $total_debits = array_sum(array_column(array_filter($entries, fn($e) => $e['entry_type'] === 'debit'), 'amount'));
+                $balance = $total_credits - $total_debits;
 
                 $data['project_id'] = $project_id;
                 $data['project_name'] = $project['project_name'] ?? 'Unknown';
+                $data['budget'] = $project['budget'] ?? 0;
                 $data['entries'] = $entries;
-                $data['total_expenses'] = $total_expenses;
-                $data['total_advances'] = $total_advances;
+                $data['total_credits'] = $total_credits;
+                $data['total_debits'] = $total_debits;
+                $data['balance'] = $balance;
+                $data['utilization'] = $data['budget'] > 0 ? ($total_debits / $data['budget']) * 100 : 0;
             }
 
             $this->view('ledgers/project', $data);

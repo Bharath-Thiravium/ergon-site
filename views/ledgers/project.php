@@ -41,10 +41,18 @@ ob_start();
     <div class="card__header">
         <h2 class="card__title">
             Project: <?= htmlspecialchars($project_name ?? 'Unknown') ?>
+            <?php if (isset($budget) && $budget > 0): ?>
+            <span style="font-size: 0.9rem; color: var(--text-secondary); margin-left: 1rem;">
+                Budget: ₹<?= number_format($budget, 2) ?> | 
+                Utilized: ₹<?= number_format($total_debits ?? 0, 2) ?> 
+                (<?= number_format($utilization ?? 0, 1) ?>%)
+            </span>
+            <?php endif; ?>
         </h2>
         <div class="card__actions">
-            <strong>Total Expenses: ₹<?= number_format($total_expenses ?? 0, 2) ?></strong>
-            <strong>Total Advances: ₹<?= number_format($total_advances ?? 0, 2) ?></strong>
+            <strong>Total Credits: ₹<?= number_format($total_credits ?? 0, 2) ?></strong>
+            <strong>Total Debits: ₹<?= number_format($total_debits ?? 0, 2) ?></strong>
+            <strong style="color: <?= ($balance ?? 0) >= 0 ? 'green' : 'red' ?>">Balance: ₹<?= number_format($balance ?? 0, 2) ?></strong>
         </div>
     </div>
     <div class="card__body">
@@ -59,7 +67,8 @@ ob_start();
                             <th>Employee</th>
                             <th>Type</th>
                             <th>Description</th>
-                            <th>Amount</th>
+                            <th>Credit</th>
+                            <th>Debit</th>
                             <th>Status</th>
                         </tr>
                     </thead>
@@ -74,10 +83,12 @@ ob_start();
                                 </span>
                             </td>
                             <td><?= htmlspecialchars($e['description']) ?></td>
-                            <td>₹<?= number_format($e['amount'], 2) ?></td>
+                            <td><?= $e['entry_type'] === 'credit' ? '₹' . number_format($e['amount'], 2) : '-' ?></td>
+                            <td><?= $e['entry_type'] === 'debit' ? '₹' . number_format($e['amount'], 2) : '-' ?></td>
                             <td>
                                 <span class="badge badge--<?= match($e['status']) {
                                     'approved' => 'success',
+                                    'paid' => 'success',
                                     'rejected' => 'danger',
                                     default => 'warning'
                                 } ?>">
