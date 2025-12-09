@@ -71,19 +71,19 @@ class LedgerController extends Controller {
                     SELECT 'expense' as type, e.id, e.user_id, u.name as user_name, e.description, e.amount, e.status, e.created_at
                     FROM expenses e
                     JOIN users u ON e.user_id = u.id
-                    WHERE e.project_id = ?
+                    WHERE e.project_id = ? AND e.status IN ('approved', 'paid')
                     UNION ALL
                     SELECT 'advance' as type, a.id, a.user_id, u.name as user_name, a.reason as description, a.amount, a.status, a.created_at
                     FROM advances a
                     JOIN users u ON a.user_id = u.id
-                    WHERE a.project_id = ?
+                    WHERE a.project_id = ? AND a.status IN ('approved', 'paid')
                     ORDER BY created_at DESC
                 ");
                 $stmt->execute([$project_id, $project_id]);
                 $entries = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                $total_expenses = array_sum(array_column(array_filter($entries, fn($e) => $e['type'] === 'expense' && $e['status'] === 'approved'), 'amount'));
-                $total_advances = array_sum(array_column(array_filter($entries, fn($e) => $e['type'] === 'advance' && $e['status'] === 'approved'), 'amount'));
+                $total_expenses = array_sum(array_column(array_filter($entries, fn($e) => $e['type'] === 'expense'), 'amount'));
+                $total_advances = array_sum(array_column(array_filter($entries, fn($e) => $e['type'] === 'advance'), 'amount'));
 
                 $data['project_id'] = $project_id;
                 $data['project_name'] = $project['project_name'] ?? 'Unknown';

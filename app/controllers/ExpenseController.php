@@ -187,6 +187,7 @@ class ExpenseController extends Controller {
             
             $data = [
                 'user_id' => $userId,
+                'project_id' => $_POST['project_id'] ?: null,
                 'category' => Security::sanitizeString($_POST['category']),
                 'amount' => $amount,
                 'description' => Security::sanitizeString($_POST['description'], 500),
@@ -219,9 +220,10 @@ class ExpenseController extends Controller {
                     require_once __DIR__ . '/../config/database.php';
                     $db = Database::connect();
                     
-                    $stmt = $db->prepare("INSERT INTO expenses (user_id, category, amount, description, expense_date, attachment, status, created_at) VALUES (?, ?, ?, ?, ?, ?, 'pending', NOW())");
+                    $stmt = $db->prepare("INSERT INTO expenses (user_id, project_id, category, amount, description, expense_date, attachment, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', NOW())");
                     $result = $stmt->execute([
                         $data['user_id'],
+                        $data['project_id'],
                         $data['category'],
                         $data['amount'],
                         $data['description'],
@@ -295,8 +297,10 @@ class ExpenseController extends Controller {
                     }
                 }
                 
-                $stmt = $db->prepare("UPDATE expenses SET category = ?, amount = ?, description = ?, expense_date = ?, attachment = ? WHERE id = ?");
+                header('Content-Type: application/json');
+                $stmt = $db->prepare("UPDATE expenses SET project_id = ?, category = ?, amount = ?, description = ?, expense_date = ?, attachment = ? WHERE id = ?");
                 $result = $stmt->execute([
+                    $_POST['project_id'] ?: null,
                     $_POST['category'] ?? $expense['category'],
                     floatval($_POST['amount'] ?? $expense['amount']),
                     $_POST['description'] ?? $expense['description'],
@@ -304,6 +308,9 @@ class ExpenseController extends Controller {
                     $attachment,
                     $id
                 ]);
+                
+                echo json_encode(['success' => $result]);
+                exit;
                 
                 if ($result) {
                     header('Location: /ergon-site/expenses?success=updated');

@@ -305,7 +305,7 @@ function editExpense(id) {
     document.getElementById('expenseSubmitBtn').textContent = '💾 Update Expense';
     showModal('expenseModal');
     
-    fetch(`/ergon-site/api/expense.php?id=${id}`)
+    fetch(`/ergon-site/api/expense?id=${id}`)
         .then(r => r.json())
         .then(data => {
             if (data.success) {
@@ -326,7 +326,7 @@ function closeExpenseModal() {
 }
 
 function loadProjects(selectId, selectedId = null) {
-    fetch('/ergon-site/api/projects.php')
+    fetch('/ergon-site/api/projects')
         .then(r => r.json())
         .then(data => {
             const select = document.getElementById(selectId);
@@ -358,7 +358,8 @@ function submitExpenseForm() {
     btn.textContent = '⏳ Submitting...';
     
     const formData = new FormData(form);
-    const url = isEditingExpense ? `/ergon-site/expenses/edit/${formData.get('expense_id')}` : '/ergon-site/expenses/create';
+    const expenseId = formData.get('expense_id');
+    const url = isEditingExpense && expenseId ? `/ergon-site/expenses/edit/${expenseId}` : '/ergon-site/expenses/create';
     
     fetch(url, { method: 'POST', body: formData })
         .then(r => r.json())

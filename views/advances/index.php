@@ -289,7 +289,7 @@ function editAdvance(id) {
     document.getElementById('advanceSubmitBtn').textContent = '💾 Update Request';
     showModal('advanceModal');
     
-    fetch(`/ergon-site/api/advance.php?id=${id}`)
+    fetch(`/ergon-site/api/advance?id=${id}`)
         .then(r => r.json())
         .then(data => {
             if (data.success) {
@@ -310,7 +310,7 @@ function closeAdvanceModal() {
 }
 
 function loadAdvanceProjects(selectId, selectedId = null) {
-    fetch('/ergon-site/api/projects.php')
+    fetch('/ergon-site/api/projects')
         .then(r => r.json())
         .then(data => {
             const select = document.getElementById(selectId);
@@ -342,7 +342,8 @@ function submitAdvanceForm() {
     btn.textContent = '⏳ Submitting...';
     
     const formData = new FormData(form);
-    const url = isEditingAdvance ? `/ergon-site/advances/edit/${formData.get('advance_id')}` : '/ergon-site/advances/create';
+    const advanceId = formData.get('advance_id');
+    const url = isEditingAdvance && advanceId ? `/ergon-site/advances/edit/${advanceId}` : '/ergon-site/advances/create';
     
     fetch(url, { method: 'POST', body: formData })
         .then(r => r.json())

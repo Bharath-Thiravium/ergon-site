@@ -280,6 +280,8 @@ $router->get('/attendance/service-history', 'AttendanceController', 'serviceHist
 // User Management API Routes
 $router->get('/api/departments', 'ApiController', 'departments');
 $router->get('/api/projects', 'ApiController', 'projects');
+$router->get('/api/expense', 'ApiController', 'getExpense');
+$router->get('/api/advance', 'ApiController', 'getAdvance');
 $router->get('/api/users/{id}', 'ApiController', 'getUser');
 
 // Unified Workflow API Routes

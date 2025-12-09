@@ -71,45 +71,44 @@ class AdvanceController extends Controller {
         $this->requireAuth();
         
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            header('Content-Type: application/json');
             try {
                 require_once __DIR__ . '/../config/database.php';
                 $db = Database::connect();
                 
-                $stmt = $db->prepare("INSERT INTO advances (user_id, type, amount, reason, requested_date, repayment_date, status, created_at) VALUES (?, ?, ?, ?, ?, ?, 'pending', NOW())");
+                $repaymentDate = !empty($_POST['repayment_date']) ? $_POST['repayment_date'] : null;
+                $stmt = $db->prepare("INSERT INTO advances (user_id, project_id, type, amount, reason, requested_date, repayment_date, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', NOW())");
                 $result = $stmt->execute([
                     $_SESSION['user_id'],
+                    $_POST['project_id'] ?: null,
                     trim($_POST['type'] ?? ''),
                     floatval($_POST['amount'] ?? 0),
                     trim($_POST['reason'] ?? ''),
                     date('Y-m-d'),
-                    $_POST['repayment_date'] ?? null
+                    $repaymentDate
                 ]);
                 
                 if ($result) {
                     $advanceId = $db->lastInsertId();
-                    $amount = floatval($_POST['amount'] ?? 0);
-                    
-                    // Create notification with advance ID
                     try {
                         require_once __DIR__ . '/../helpers/NotificationHelper.php';
                         NotificationHelper::notifyAdvanceRequest($advanceId, $_SESSION['user_id']);
                     } catch (Exception $notifError) {
                         error_log('Notification error (non-critical): ' . $notifError->getMessage());
                     }
-                    
-                    header('Location: /ergon-site/advances?success=1');
+                    echo json_encode(['success' => true]);
                 } else {
-                    header('Location: /ergon-site/advances/create?error=1');
+                    echo json_encode(['success' => false, 'error' => 'Failed to create advance']);
                 }
                 exit;
             } catch (Exception $e) {
                 error_log('Advance store error: ' . $e->getMessage());
-                header('Location: /ergon-site/advances/create?error=1');
+                echo json_encode(['success' => false, 'error' => $e->getMessage()]);
                 exit;
             }
         }
         
-        header('Location: /ergon-site/advances/create');
+        echo json_encode(['success' => false, 'error' => 'Invalid request']);
         exit;
     }
     
@@ -141,20 +140,19 @@ class AdvanceController extends Controller {
                     exit;
                 }
                 
-                $stmt = $db->prepare("UPDATE advances SET type = ?, amount = ?, reason = ?, repayment_date = ? WHERE id = ?");
+                header('Content-Type: application/json');
+                $repaymentDate = !empty($_POST['repayment_date']) ? $_POST['repayment_date'] : null;
+                $stmt = $db->prepare("UPDATE advances SET project_id = ?, type = ?, amount = ?, reason = ?, repayment_date = ? WHERE id = ?");
                 $result = $stmt->execute([
+                    $_POST['project_id'] ?: null,
                     trim($_POST['type'] ?? ''),
                     floatval($_POST['amount'] ?? 0),
                     trim($_POST['reason'] ?? ''),
-                    $_POST['repayment_date'] ?? null,
+                    $repaymentDate,
                     $id
                 ]);
                 
-                if ($result) {
-                    header('Location: /ergon-site/advances?success=Advance updated successfully');
-                } else {
-                    header('Location: /ergon-site/advances/edit/' . $id . '?error=Update failed');
-                }
+                echo json_encode(['success' => $result]);
                 exit;
             } catch (Exception $e) {
                 error_log('Advance edit error: ' . $e->getMessage());

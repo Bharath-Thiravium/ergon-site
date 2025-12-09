@@ -78,13 +78,71 @@ class ApiController extends Controller {
             require_once __DIR__ . '/../config/database.php';
             $db = Database::connect();
             
-            $stmt = $db->prepare("SELECT id, name, latitude, longitude FROM projects WHERE status = 'active' ORDER BY name");
+            $stmt = $db->prepare("SELECT p.id, p.name as project_name, p.description, p.department_id, d.name as department_name FROM projects p LEFT JOIN departments d ON p.department_id = d.id WHERE p.status = 'active' ORDER BY p.name");
             $stmt->execute();
             $projects = $stmt->fetchAll();
             
             echo json_encode(['success' => true, 'projects' => $projects]);
         } catch (Exception $e) {
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        }
+        exit;
+    }
+    
+    public function getExpense() {
+        $this->requireAuth();
+        header('Content-Type: application/json');
+        
+        $id = $_GET['id'] ?? null;
+        if (!$id) {
+            echo json_encode(['success' => false, 'error' => 'ID required']);
+            exit;
+        }
+        
+        try {
+            require_once __DIR__ . '/../config/database.php';
+            $db = Database::connect();
+            $stmt = $db->prepare("SELECT * FROM expenses WHERE id = ? AND user_id = ?");
+            $stmt->execute([$id, $_SESSION['user_id']]);
+            $expense = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if (!$expense) {
+                echo json_encode(['success' => false, 'error' => 'Expense not found']);
+                exit;
+            }
+            
+            echo json_encode(['success' => true, 'expense' => $expense]);
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'error' => 'Server error']);
+        }
+        exit;
+    }
+    
+    public function getAdvance() {
+        $this->requireAuth();
+        header('Content-Type: application/json');
+        
+        $id = $_GET['id'] ?? null;
+        if (!$id) {
+            echo json_encode(['success' => false, 'error' => 'ID required']);
+            exit;
+        }
+        
+        try {
+            require_once __DIR__ . '/../config/database.php';
+            $db = Database::connect();
+            $stmt = $db->prepare("SELECT * FROM advances WHERE id = ? AND user_id = ?");
+            $stmt->execute([$id, $_SESSION['user_id']]);
+            $advance = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if (!$advance) {
+                echo json_encode(['success' => false, 'error' => 'Advance not found']);
+                exit;
+            }
+            
+            echo json_encode(['success' => true, 'advance' => $advance]);
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'error' => 'Server error']);
         }
         exit;
     }
