@@ -306,7 +306,7 @@
 
 .modal .btn,
 .dialog .btn {
-  padding: 0.75rem 1.5rem !important;
+  padding: 0.5rem 1rem !important;
   border-radius: 6px !important;
   font-weight: 500 !important;
   text-decoration: none !important;
@@ -314,10 +314,11 @@
   align-items: center !important;
   gap: 0.5rem !important;
   transition: all 0.2s ease !important;
-  min-height: 44px !important;
+  min-height: 36px !important;
   justify-content: center !important;
   cursor: pointer !important;
   border: 1px solid transparent !important;
+  font-size: 0.875rem !important;
 }
 
 .modal .btn--primary,
@@ -403,19 +404,33 @@
    modals are centered, above headers, and visually consistent.
    No animations, low-cost rules for performance. */
 
+/* CRITICAL: Force header below modals */
+html body .main-header,
+html body header.main-header,
+body .main-header,
+body header.main-header,
+.main-header,
+header.main-header {
+  z-index: 1000 !important;
+}
+
 /* Full-screen overlay that centers modal content */
 .modal,
 .modal-overlay,
 .dialog,
 .dialog-overlay {
   position: fixed !important;
-  inset: 0 !important;
-  align-items: center !important;
+  top: 90px !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  align-items: flex-start !important;
   justify-content: center !important;
-  padding: 1rem !important;
+  padding: 2rem 1rem !important;
   box-sizing: border-box !important;
   background: rgba(0,0,0,0.45) !important;
   z-index: 9999999 !important;
+  overflow-y: auto !important;
 }
 
 /* Only show modal when explicitly displayed */
@@ -433,15 +448,15 @@
 .dialog .dialog-content {
   position: relative !important;
   width: 100% !important;
-  max-width: 920px !important;
-  max-height: calc(100vh - 48px) !important; /* leave small gap at top/bottom */
+  max-width: 600px !important;
+  max-height: calc(100vh - 180px) !important;
   overflow-y: auto !important;
   background: var(--bg-primary) !important;
   color: var(--text-primary) !important;
-  border-radius: 10px !important;
+  border-radius: 8px !important;
   border: 1px solid var(--border-color) !important;
-  box-shadow: 0 8px 24px rgba(2,6,23,0.12) !important;
-  padding: 0 !important; /* inner padding managed by .modal-body */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+  padding: 0 !important;
 }
 
 /* Larger variant when needed */
@@ -452,18 +467,19 @@
 /* Header / body / footer spacing inside modal content */
 .modal .modal-header,
 .dialog .modal-header {
-  padding: 1rem 1.25rem !important;
+  padding: 0.5rem 0.75rem !important;
   border-bottom: 1px solid var(--border-color) !important;
 }
 .modal .modal-body,
 .dialog .modal-body {
-  padding: 1rem 1.25rem !important;
+  padding: 0.5rem 0.75rem !important;
 }
 .modal .modal-footer,
 .dialog .modal-footer {
-  padding: 0.75rem 1.25rem !important;
+  padding: 0.5rem 0.75rem !important;
   border-top: 1px solid var(--border-color) !important;
   text-align: right !important;
+  gap: 0.5rem !important;
 }
 
 /* Close button anchored to top-right of modal-content */

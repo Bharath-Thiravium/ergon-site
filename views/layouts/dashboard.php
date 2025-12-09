@@ -199,10 +199,8 @@ ob_end_clean();
     <link href="/ergon-site/assets/_archive_legacy/css/management-mobile-fix.css?v=1.0" rel="stylesheet">
     <!-- Mobile Dark Theme Fixes - Critical for visibility -->
     <link href="/ergon-site/assets/css/mobile-dark-theme-fixes.css?v=<?= time() ?>" rel="stylesheet">
-    <!-- Modal Dialog Fixes - Ensures dialog visibility -->
-    <link href="/ergon-site/assets/css/modal-dialog-fixes.css?v=<?= time() ?>" rel="stylesheet">
-    <!-- Modal Z-Index Fix - High priority z-index overrides -->
-    <link href="/ergon-site/assets/css/modal-zindex-fix.css?v=<?= time() ?>" rel="stylesheet">
+    <!-- New Simplified Modal CSS -->
+    <link href="/ergon-site/assets/css/modal.css?v=<?= time() ?>" rel="stylesheet">
     <!-- Dashboard overrides loaded last to ensure overrides on compiled CSS in deployments -->
     <link href="/ergon-site/assets/css/ergon-overrides.css?v=<?= time() ?>" rel="stylesheet">
     <link href="/ergon-site/assets/css/access-denied.css?v=1.0" rel="stylesheet">
@@ -216,8 +214,8 @@ ob_end_clean();
 
     <script src="/ergon-site/assets/js/theme-switcher.js?v=1.0" defer></script>
     <script src="/ergon-site/assets/js/ergon-core.min.js?v=1.0" defer></script>
-    <script src="/ergon-site/assets/js/modal-utils.js?v=1.0" defer></script>
-    <script src="/ergon-site/assets/js/modal-inline-fix.js?v=1.0" defer></script>
+    <!-- New Simplified Modal JS -->
+    <script src="/ergon-site/assets/js/modal.js?v=1.0" defer></script>
     <script src="/ergon-site/assets/_archive_legacy/js/action-button-clean.js?v=1.0" defer></script>
     <script src="/ergon-site/assets/_archive_legacy/js/mobile-enhanced.js?v=1.0" defer></script>
     <script src="/ergon-site/assets/js/mobile-table-cards.js?v=1.0" defer></script>

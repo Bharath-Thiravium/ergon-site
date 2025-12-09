@@ -191,67 +191,10 @@ ob_start();
     </div>
 </div>
 
-<style>
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000000;
-}
-.modal-content {
-    background: white;
-    border-radius: 8px;
-    width: 500px;
-    max-width: 90vw;
-    max-height: 90vh;
-    overflow-y: auto;
-}
-.modal-header {
-    padding: 16px;
-    border-bottom: 1px solid #e5e7eb;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.modal-body {
-    padding: 16px;
-}
-.modal-body label {
-    display: block;
-    margin-bottom: 4px;
-    font-weight: 500;
-}
-.modal-body .form-input {
-    width: 100%;
-    margin-bottom: 12px;
-    padding: 8px;
-    border: 1px solid #d1d5db;
-    border-radius: 4px;
-}
-.modal-footer {
-    padding: 16px;
-    border-top: 1px solid #e5e7eb;
-    display: flex;
-    gap: 8px;
-    justify-content: flex-end;
-}
-.modal-close {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    color: #6b7280;
-}
-</style>
+
 
 <!-- Rejection Modal -->
-<div id="rejectModal" class="modal-overlay" style="display: none;">
+<div id="rejectModal" class="modal-overlay" data-visible="false">
     <div class="modal-content" style="max-width: 500px;">
         <div class="modal-header">
             <h3>Reject Expense Claim</h3>
@@ -277,25 +220,18 @@ ob_start();
 <script>
 function showRejectModal(expenseId) {
     document.getElementById('rejectForm').action = '/ergon-site/expenses/reject/' + expenseId;
-    if (typeof showModalById === 'function') showModalById('rejectModal'); else document.getElementById('rejectModal').style.display = 'flex';
+    const reasonField = document.getElementById('rejection_reason');
+    if (reasonField) reasonField.value = '';
+    showModal('rejectModal');
 }
 
 function closeRejectModal() {
-    if (typeof hideModalById === 'function') hideModalById('rejectModal'); else document.getElementById('rejectModal').style.display = 'none';
-    var rr = document.getElementById('rejection_reason'); if (rr) rr.value = '';
-}
-
-// Close modal when clicking outside
-window.onclick = function(event) {
-    const modal = document.getElementById('rejectModal');
-    if (event.target === modal) {
-        closeRejectModal();
-    }
+    hideModal('rejectModal');
 }
 </script>
 
 <!-- Expense Modal -->
-<div id="expenseModal" class="modal-overlay" style="display: none;">
+<div id="expenseModal" class="modal-overlay" data-visible="false">
     <div class="modal-content">
         <div class="modal-header">
             <h3 id="expenseModalTitle">💰 Submit Expense</h3>
@@ -359,7 +295,7 @@ function showExpenseModal() {
     document.getElementById('expenseForm').reset();
     document.getElementById('expense_id').value = '';
     document.getElementById('expense_date').value = new Date().toISOString().split('T')[0];
-    document.getElementById('expenseModal').style.display = 'flex';
+    showModal('expenseModal');
     loadProjects('project_id');
 }
 
@@ -367,7 +303,7 @@ function editExpense(id) {
     isEditingExpense = true;
     document.getElementById('expenseModalTitle').textContent = '💰 Edit Expense';
     document.getElementById('expenseSubmitBtn').textContent = '💾 Update Expense';
-    document.getElementById('expenseModal').style.display = 'flex';
+    showModal('expenseModal');
     
     fetch(`/ergon-site/api/expense.php?id=${id}`)
         .then(r => r.json())
@@ -386,7 +322,7 @@ function editExpense(id) {
 }
 
 function closeExpenseModal() {
-    document.getElementById('expenseModal').style.display = 'none';
+    hideModal('expenseModal');
 }
 
 function loadProjects(selectId, selectedId = null) {

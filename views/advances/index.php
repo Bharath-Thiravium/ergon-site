@@ -29,65 +29,7 @@ ob_start();
 </div>
 <?php endif; ?>
 
-<style>
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.modal-content {
-    background: white;
-    border-radius: 8px;
-    width: 500px;
-    max-width: 90vw;
-    max-height: 90vh;
-    overflow-y: auto;
-}
-.modal-header {
-    padding: 16px;
-    border-bottom: 1px solid #e5e7eb;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.modal-body {
-    padding: 16px;
-}
-.modal-body label {
-    display: block;
-    margin-bottom: 4px;
-    font-weight: 500;
-}
-.modal-body .form-input {
-    width: 100%;
-    margin-bottom: 12px;
-    padding: 8px;
-    border: 1px solid #d1d5db;
-    border-radius: 4px;
-}
-.modal-footer {
-    padding: 16px;
-    border-top: 1px solid #e5e7eb;
-    display: flex;
-    gap: 8px;
-    justify-content: flex-end;
-}
-.modal-close {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    color: #6b7280;
-}
-</style>
 
-<?php renderModalCSS(); ?>
 
 <div class="dashboard-grid">
     <div class="kpi-card">
@@ -255,12 +197,8 @@ function showRejectModal(advanceId) {
     const form = document.getElementById('rejectForm');
     if (form) {
         form.action = '/ergon-site/advances/reject/' + advanceId;
-        form.method = 'POST';
-        // Clear previous reason
         const reasonField = document.getElementById('rejection_reason');
-        if (reasonField) {
-            reasonField.value = '';
-        }
+        if (reasonField) reasonField.value = '';
     }
     showModal('rejectModal');
 }
@@ -290,7 +228,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <!-- Advance Modal -->
-<div id="advanceModal" class="modal-overlay" style="display: none;">
+<div id="advanceModal" class="modal-overlay" data-visible="false">
     <div class="modal-content">
         <div class="modal-header">
             <h3 id="advanceModalTitle">💳 Request Advance</h3>
@@ -299,26 +237,28 @@ document.addEventListener('DOMContentLoaded', function() {
         <div class="modal-body">
             <form id="advanceForm">
                 <input type="hidden" id="advance_id" name="advance_id">
-                <label>Advance Type *</label>
-                <select id="type" name="type" class="form-input" required>
+                <div style="display: flex; gap: 12px; margin-bottom: 12px;">
+                    <div style="flex: 1;">
+                        <label>Advance Type *</label>
+                        <select id="type" name="type" class="form-input" required>
                     <option value="">Select advance type</option>
                     <option value="Salary Advance">Salary Advance</option>
                     <option value="Travel Advance">Travel Advance</option>
                     <option value="Emergency Advance">Emergency Advance</option>
                     <option value="Project Advance">Project Advance</option>
-                </select>
-                
-                <label>Project *</label>
-                <select id="adv_project_id" name="project_id" class="form-input" required>
+                        </select>
+                    </div>
+                    <div style="flex: 1;">
+                        <label>Project *</label>
+                        <select id="adv_project_id" name="project_id" class="form-input" required>
                     <option value="">Select Project</option>
-                </select>
-                
+                        </select>
+                    </div>
+                </div>
                 <label>Amount (₹) *</label>
-                <input type="number" id="adv_amount" name="amount" class="form-input" step="0.01" min="1" required>
-                
+                <input type="number" id="adv_amount" name="amount" class="form-input" step="0.01" min="1" required style="margin-bottom: 12px;">
                 <label>Reason *</label>
-                <textarea id="reason" name="reason" class="form-input" rows="4" required></textarea>
-                
+                <textarea id="reason" name="reason" class="form-input" rows="4" required style="margin-bottom: 12px;"></textarea>
                 <label>Expected Repayment Date (Optional)</label>
                 <input type="date" id="repayment_date" name="repayment_date" class="form-input">
             </form>
@@ -339,7 +279,7 @@ function showAdvanceModal() {
     document.getElementById('advanceSubmitBtn').textContent = '➕ Submit Request';
     document.getElementById('advanceForm').reset();
     document.getElementById('advance_id').value = '';
-    document.getElementById('advanceModal').style.display = 'flex';
+    showModal('advanceModal');
     loadAdvanceProjects('adv_project_id');
 }
 
@@ -347,7 +287,7 @@ function editAdvance(id) {
     isEditingAdvance = true;
     document.getElementById('advanceModalTitle').textContent = '💳 Edit Advance';
     document.getElementById('advanceSubmitBtn').textContent = '💾 Update Request';
-    document.getElementById('advanceModal').style.display = 'flex';
+    showModal('advanceModal');
     
     fetch(`/ergon-site/api/advance.php?id=${id}`)
         .then(r => r.json())
@@ -366,7 +306,7 @@ function editAdvance(id) {
 }
 
 function closeAdvanceModal() {
-    document.getElementById('advanceModal').style.display = 'none';
+    hideModal('advanceModal');
 }
 
 function loadAdvanceProjects(selectId, selectedId = null) {
@@ -444,26 +384,7 @@ document.addEventListener('click', function(e) {
 });
 </script>
 
-<?php renderModalJS(); ?>
-
 <?php
 $content = ob_get_clean();
 include __DIR__ . '/../layouts/dashboard.php';
 ?>
-
-<script>
-// Defensive: ensure no modal remains open when arriving at this page
-document.addEventListener('DOMContentLoaded', function() {
-    const selectors = ['.modal', '.modal-overlay', '[id$="Modal"]'];
-    const els = document.querySelectorAll(selectors.join(','));
-    if (typeof hideModalById === 'function') {
-        els.forEach(el => { if (el.id) hideModalById(el.id); else el.style.display = 'none'; });
-    } else if (typeof hideClosestModal === 'function') {
-        els.forEach(el => hideClosestModal(el));
-    } else {
-        els.forEach(el => { try { el.style.display = 'none'; } catch(e){} });
-        document.body.classList.remove('modal-open');
-        document.body.style.overflow = '';
-    }
-});
-</script>
