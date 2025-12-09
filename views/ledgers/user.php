@@ -29,6 +29,7 @@ ob_start();
                             <th>Date</th>
                             <th>Type</th>
                             <th>Reference</th>
+                            <th>Description</th>
                             <th>Direction</th>
                             <th>Amount</th>
                             <th>Balance After</th>
@@ -40,6 +41,7 @@ ob_start();
                             <td><?= date('M d, Y H:i', strtotime($e['created_at'])) ?></td>
                             <td><?= htmlspecialchars($e['entry_type']) ?></td>
                             <td><?= htmlspecialchars($e['reference_type'] . ' #' . $e['reference_id']) ?></td>
+                            <td><?= htmlspecialchars($e['description'] ?? 'N/A') ?></td>
                             <td><?= htmlspecialchars($e['direction']) ?></td>
                             <td>₹<?= number_format($e['amount'],2) ?></td>
                             <td>₹<?= number_format($e['balance_after'],2) ?></td>

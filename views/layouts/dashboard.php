@@ -388,6 +388,10 @@ ob_end_clean();
                                 <span class="nav-icon">💳</span>
                                 Advances
                             </a>
+                            <a href="/ergon-site/ledgers/project" class="nav-dropdown-item <?= ($active_page ?? '') === 'ledgers' ? 'nav-dropdown-item--active' : '' ?>">
+                                <span class="nav-icon">📒</span>
+                                Ledgers
+                            </a>
                             <a href="/ergon-site/attendance" class="nav-dropdown-item <?= ($active_page ?? '') === 'attendance' ? 'nav-dropdown-item--active' : '' ?>">
                                 <span class="nav-icon">📍</span>
                                 Attendance
@@ -705,6 +709,10 @@ ob_end_clean();
                 <a href="/ergon-site/advances" class="sidebar__link <?= ($active_page ?? '') === 'advances' ? 'sidebar__link--active' : '' ?>">
                     <span class="sidebar__icon">💳</span>
                     Advances
+                </a>
+                <a href="/ergon-site/ledgers/project" class="sidebar__link <?= ($active_page ?? '') === 'ledgers' ? 'sidebar__link--active' : '' ?>">
+                    <span class="sidebar__icon">📒</span>
+                    Ledgers
                 </a>
                 <a href="/ergon-site/attendance" class="sidebar__link <?= ($active_page ?? '') === 'attendance' ? 'sidebar__link--active' : '' ?>">
                     <span class="sidebar__icon">📍</span>
