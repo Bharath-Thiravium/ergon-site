@@ -9,23 +9,20 @@ ob_start();
         <h1>📊 Project-wise Ledger</h1>
         <p>Consolidated financial transactions by project</p>
     </div>
-    <div class="page-actions">
+    <div class="page-actions" style="display: flex; gap: 8px; align-items: center;">
+        <form method="GET" style="display: flex; gap: 8px; align-items: center;">
+            <label style="font-size: 0.875rem; font-weight: 500; color: var(--text-primary); white-space: nowrap;">🔍</label>
+            <select name="project_id" class="form-control" onchange="this.form.submit()" style="min-width: 200px; padding: 8px 12px; font-size: 0.875rem;">
+                <option value="">All Projects</option>
+                <?php foreach ($projects ?? [] as $p): ?>
+                    <option value="<?= $p['id'] ?>" <?= ($project_id ?? '') == $p['id'] ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($p['project_name']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </form>
         <a href="/ergon-site/users" class="btn btn--secondary">← Back</a>
     </div>
-</div>
-
-<div style="background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; box-shadow: var(--shadow-sm);">
-    <form method="GET" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-        <label style="font-size: 0.875rem; font-weight: 500; color: var(--text-primary); white-space: nowrap;">🔍 Project:</label>
-        <select name="project_id" class="form-control" onchange="this.form.submit()" style="flex: 1; min-width: 200px; padding: 8px 12px; font-size: 0.875rem;">
-            <option value="">All Projects</option>
-            <?php foreach ($projects ?? [] as $p): ?>
-                <option value="<?= $p['id'] ?>" <?= ($project_id ?? '') == $p['id'] ? 'selected' : '' ?>>
-                    <?= htmlspecialchars($p['project_name']) ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-    </form>
 </div>
 
 <?php if (isset($project_id) && $project_id): ?>
