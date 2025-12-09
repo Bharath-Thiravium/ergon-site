@@ -94,16 +94,28 @@ class LedgerController extends Controller {
 
                 $total_credits = array_sum(array_column(array_filter($entries, fn($e) => $e['entry_type'] === 'credit'), 'amount'));
                 $total_debits = array_sum(array_column(array_filter($entries, fn($e) => $e['entry_type'] === 'debit'), 'amount'));
-                $balance = $total_credits - $total_debits;
+                $budget = $project['budget'] ?? 0;
+                $budget_remaining = $budget - $total_debits;
+                
+                $balance_type = $budget_remaining >= 0 ? 'Credit' : 'Debit';
+                $balance_amount = abs($budget_remaining);
+                
+                $net_balance_raw = $total_credits - $total_debits;
+                $net_balance_type = $net_balance_raw >= 0 ? 'Credit' : 'Debit';
+                $net_balance_amount = abs($net_balance_raw);
 
                 $data['project_id'] = $project_id;
                 $data['project_name'] = $project['project_name'] ?? 'Unknown';
-                $data['budget'] = $project['budget'] ?? 0;
+                $data['budget'] = $budget;
                 $data['entries'] = $entries;
                 $data['total_credits'] = $total_credits;
                 $data['total_debits'] = $total_debits;
-                $data['balance'] = $balance;
-                $data['utilization'] = $data['budget'] > 0 ? ($total_debits / $data['budget']) * 100 : 0;
+                $data['balance_type'] = $balance_type;
+                $data['balance_amount'] = $balance_amount;
+                $data['net_balance_type'] = $net_balance_type;
+                $data['net_balance_amount'] = $net_balance_amount;
+                $data['budget_remaining'] = $budget_remaining;
+                $data['utilization'] = $budget > 0 ? ($total_debits / $budget) * 100 : 0;
             }
 
             $this->view('ledgers/project', $data);

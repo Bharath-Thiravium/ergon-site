@@ -103,10 +103,11 @@ class ProjectManagementController extends Controller {
         try {
             $db = Database::connect();
             
-            $stmt = $db->prepare("INSERT INTO projects (name, description, latitude, longitude, checkin_radius, department_id, status) VALUES (?, ?, ?, ?, ?, ?, 'active')");
+            $stmt = $db->prepare("INSERT INTO projects (name, description, budget, latitude, longitude, checkin_radius, department_id, status) VALUES (?, ?, ?, ?, ?, ?, ?, 'active')");
             $result = $stmt->execute([
                 $_POST['name'],
                 $_POST['description'] ?? '',
+                !empty($_POST['budget']) ? $_POST['budget'] : null,
                 !empty($_POST['latitude']) ? $_POST['latitude'] : null,
                 !empty($_POST['longitude']) ? $_POST['longitude'] : null,
                 !empty($_POST['checkin_radius']) ? $_POST['checkin_radius'] : 100,
@@ -155,10 +156,11 @@ class ProjectManagementController extends Controller {
         try {
             $db = Database::connect();
             
-            $stmt = $db->prepare("UPDATE projects SET name = ?, description = ?, latitude = ?, longitude = ?, checkin_radius = ?, department_id = ?, status = ? WHERE id = ?");
+            $stmt = $db->prepare("UPDATE projects SET name = ?, description = ?, budget = ?, latitude = ?, longitude = ?, checkin_radius = ?, department_id = ?, status = ? WHERE id = ?");
             $result = $stmt->execute([
                 $_POST['name'],
                 $_POST['description'] ?? '',
+                !empty($_POST['budget']) ? $_POST['budget'] : null,
                 !empty($_POST['latitude']) ? $_POST['latitude'] : null,
                 !empty($_POST['longitude']) ? $_POST['longitude'] : null,
                 !empty($_POST['checkin_radius']) ? $_POST['checkin_radius'] : 100,

@@ -92,7 +92,7 @@ ob_start();
                         <td><?= date('M j, Y', strtotime($project['created_at'])) ?></td>
                         <td>
                             <div class="ab-container">
-                                <button class="ab-btn ab-btn--edit" onclick="editProject(<?= $project['id'] ?>, '<?= htmlspecialchars($project['name']) ?>', '<?= htmlspecialchars($project['description']) ?>', <?= $project['latitude'] ?? 'null' ?>, <?= $project['longitude'] ?? 'null' ?>, <?= $project['checkin_radius'] ?? 100 ?>, <?= $project['department_id'] ?? 'null' ?>, '<?= $project['status'] ?>')" title="Edit Project">
+                                <button class="ab-btn ab-btn--edit" onclick="editProject(<?= $project['id'] ?>, '<?= htmlspecialchars($project['name']) ?>', '<?= htmlspecialchars($project['description']) ?>', <?= $project['latitude'] ?? 'null' ?>, <?= $project['longitude'] ?? 'null' ?>, <?= $project['checkin_radius'] ?? 100 ?>, <?= $project['department_id'] ?? 'null' ?>, '<?= $project['status'] ?>', <?= $project['budget'] ?? 'null' ?>)" title="Edit Project">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                         <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
                                         <path d="M15 5l4 4"/>
@@ -152,6 +152,9 @@ function showAddProjectModal() {
                     <label>Description</label>
                     <textarea id="projectDescription" name="description" class="form-input" rows="3" placeholder="Project description"></textarea>
                     
+                    <label>Budget (₹)</label>
+                    <input type="number" id="projectBudget" name="budget" class="form-input" step="0.01" min="0" placeholder="Enter project budget">
+                    
                     <label>GPS Coordinates (for attendance)</label>
                     <div style="display: flex; gap: 8px;">
                         <input type="number" id="projectLatitude" name="latitude" class="form-input" step="any" placeholder="Latitude">
@@ -193,7 +196,7 @@ function showAddProjectModal() {
     showModal('projectModal');
 }
 
-function editProject(id, name, description, latitude, longitude, radius, deptId, status) {
+function editProject(id, name, description, latitude, longitude, radius, deptId, status, budget) {
     isEditing = true;
     showAddProjectModal();
     
@@ -214,6 +217,7 @@ function editProject(id, name, description, latitude, longitude, radius, deptId,
         document.getElementById('projectLongitude').value = longitude || '';
         document.getElementById('projectRadius').value = radius || 100;
         document.getElementById('projectDepartment').value = deptId || '';
+        document.getElementById('projectBudget').value = budget || '';
         document.getElementById('projectStatus').value = status;
         document.getElementById('statusGroup').style.display = 'block';
     }, 100);
