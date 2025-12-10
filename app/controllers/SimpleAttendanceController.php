@@ -165,8 +165,21 @@ class SimpleAttendanceController extends Controller {
                     }
                     
                     $currentTime = date('Y-m-d H:i:s');
-                    $stmt = $this->db->prepare("INSERT INTO attendance (user_id, check_in, latitude, longitude, created_at) VALUES (?, ?, ?, ?, ?)");
-                    $result = $stmt->execute([$userId, $currentTime, $latitude, $longitude, $currentTime]);
+                    // Check if latitude/longitude columns exist before using them
+                    try {
+                        $stmt = $this->db->query("SHOW COLUMNS FROM attendance LIKE 'latitude'");
+                        $hasLocationColumns = $stmt->rowCount() > 0;
+                    } catch (Exception $e) {
+                        $hasLocationColumns = false;
+                    }
+                    
+                    if ($hasLocationColumns) {
+                        $stmt = $this->db->prepare("INSERT INTO attendance (user_id, check_in, latitude, longitude, created_at) VALUES (?, ?, ?, ?, ?)");
+                        $result = $stmt->execute([$userId, $currentTime, $latitude, $longitude, $currentTime]);
+                    } else {
+                        $stmt = $this->db->prepare("INSERT INTO attendance (user_id, check_in, created_at) VALUES (?, ?, ?)");
+                        $result = $stmt->execute([$userId, $currentTime, $currentTime]);
+                    }
                     
                     echo json_encode([
                         'success' => $result,
@@ -256,6 +269,25 @@ class SimpleAttendanceController extends Controller {
                 INDEX idx_user_id (user_id),
                 INDEX idx_check_in_date (check_in)
             )", "Create table");
+            
+            // Add latitude and longitude columns if they don't exist
+            try {
+                $stmt = $db->query("SHOW COLUMNS FROM attendance LIKE 'latitude'");
+                if ($stmt->rowCount() == 0) {
+                    DatabaseHelper::safeExec($db, "ALTER TABLE attendance ADD COLUMN latitude DECIMAL(10, 8) NULL", "Add latitude column");
+                }
+            } catch (Exception $e) {
+                error_log('Add latitude column error: ' . $e->getMessage());
+            }
+            
+            try {
+                $stmt = $db->query("SHOW COLUMNS FROM attendance LIKE 'longitude'");
+                if ($stmt->rowCount() == 0) {
+                    DatabaseHelper::safeExec($db, "ALTER TABLE attendance ADD COLUMN longitude DECIMAL(11, 8) NULL", "Add longitude column");
+                }
+            } catch (Exception $e) {
+                error_log('Add longitude column error: ' . $e->getMessage());
+            }
             
         } catch (Exception $e) {
             error_log('ensureAttendanceTable error: ' . $e->getMessage());
