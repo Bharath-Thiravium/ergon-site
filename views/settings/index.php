@@ -31,12 +31,18 @@ ob_start();
                 </div>
                 <div class="form-group">
                     <label class="form-label">Attendance Radius (meters)</label>
-                    <input type="number" class="form-control" name="attendance_radius" value="<?= htmlspecialchars($settings['attendance_radius'] ?? '5') ?>" min="5" step="1">
-                    <small class="form-text">Minimum 5 meters required for attendance validation</small>
+                    <input type="number" class="form-control" name="attendance_radius" value="<?= htmlspecialchars($settings['attendance_radius'] ?? '50') ?>" min="5" max="1000" step="1">
+                    <small class="form-text">Between 5-1000 meters. Recommended: 50-100m for office locations.</small>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Office Location</label>
+                    <label class="form-label">Location Title</label>
+                    <input type="text" class="form-control" name="location_title" value="<?= htmlspecialchars($settings['location_title'] ?? 'Main Office') ?>" placeholder="Main Office">
+                    <small class="form-text">Display name for this attendance location</small>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Office Location Coordinates</label>
                     <div class="location-controls">
                         <button type="button" class="btn-location-small" onclick="getCurrentLocation()" title="Use Current Location">
                             📍
@@ -57,7 +63,12 @@ ob_start();
                         </div>
                     </div>
                 </div>
-                <button type="submit" class="btn btn--primary">Save Settings</button>
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    <button type="submit" class="btn btn--primary">Save Settings</button>
+                    <a href="/ergon-site/settings/location-diagnostic" class="btn btn--secondary">
+                        <span>🔍</span> Test Location
+                    </a>
+                </div>
             </form>
         </div>
     </div>
