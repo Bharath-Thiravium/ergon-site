@@ -353,12 +353,20 @@ class AttendanceController extends Controller {
         $userLng = floatval($_POST['longitude'] ?? 0);
         $projectId = intval($_POST['project_id'] ?? 0);
         
-        // Check location and get details
-        $locationInfo = $this->getLocationInfo($db, $userLat, $userLng, $projectId);
-        if (!$locationInfo) {
-            echo json_encode(['success' => false, 'error' => 'You are outside the allowed check-in area']);
+        // Validate GPS coordinates
+        if ($userLat == 0 || $userLng == 0) {
+            echo json_encode(['success' => false, 'error' => 'GPS location is required for attendance. Please enable location access and try again.']);
             return;
         }
+        
+        // Check location and get details
+        $locationValidation = $this->validateUserLocation($db, $userLat, $userLng, $projectId);
+        if (!$locationValidation['allowed']) {
+            echo json_encode(['success' => false, 'error' => $locationValidation['error']]);
+            return;
+        }
+        
+        $locationInfo = $locationValidation['location_info'];
         
         $currentTime = TimezoneHelper::nowIst();
         
@@ -394,10 +402,16 @@ class AttendanceController extends Controller {
         $userLat = floatval($_POST['latitude'] ?? 0);
         $userLng = floatval($_POST['longitude'] ?? 0);
         
+        // Validate GPS coordinates
+        if ($userLat == 0 || $userLng == 0) {
+            echo json_encode(['success' => false, 'error' => 'GPS location is required for attendance. Please enable location access and try again.']);
+            return;
+        }
+        
         // Check location for checkout
-        $locationInfo = $this->getLocationInfo($db, $userLat, $userLng, $attendance['project_id']);
-        if (!$locationInfo) {
-            echo json_encode(['success' => false, 'error' => 'You are outside the allowed check-out area']);
+        $locationValidation = $this->validateUserLocation($db, $userLat, $userLng, $attendance['project_id']);
+        if (!$locationValidation['allowed']) {
+            echo json_encode(['success' => false, 'error' => $locationValidation['error']]);
             return;
         }
         
@@ -501,34 +515,45 @@ class AttendanceController extends Controller {
         }
     }
     
-    private function getLocationInfo($db, $userLat, $userLng, $projectId = null) {
-        if ($userLat == 0 || $userLng == 0) {
-            return [
-                'type' => 'office',
-                'title' => 'Remote Location',
-                'radius' => 0,
-                'project_id' => null
-            ];
-        }
+    private function validateUserLocation($db, $userLat, $userLng, $projectId = null) {
+        // Log the validation attempt
+        error_log("[LOCATION_DEBUG] Validating location: User({$userLat}, {$userLng}), ProjectID: {$projectId}");
         
-        // Check if within any project radius
+        $allowedLocations = [];
+        $userLocation = "User Location: {$userLat}, {$userLng}";
+        
+        // Check if within any project radius first
         $stmt = $db->prepare("SELECT id, name, latitude, longitude, checkin_radius, location_title FROM projects WHERE latitude IS NOT NULL AND longitude IS NOT NULL AND status = 'active'");
         $stmt->execute();
         $projects = $stmt->fetchAll();
         
         foreach ($projects as $project) {
-            $distance = $this->calculateDistance($userLat, $userLng, $project['latitude'], $project['longitude']);
-            if ($distance <= $project['checkin_radius']) {
-                return [
-                    'type' => 'project',
-                    'title' => $project['location_title'] ?: $project['name'] . ' Site',
+            if ($project['latitude'] != 0 && $project['longitude'] != 0) {
+                $distance = $this->calculateDistance($userLat, $userLng, $project['latitude'], $project['longitude']);
+                $allowedLocations[] = [
+                    'name' => $project['location_title'] ?: $project['name'] . ' Site',
+                    'distance' => $distance,
                     'radius' => $project['checkin_radius'],
-                    'project_id' => $project['id']
+                    'coords' => "({$project['latitude']}, {$project['longitude']})"
                 ];
+                
+                error_log("[LOCATION_DEBUG] Project {$project['name']}: Distance={$distance}m, Allowed={$project['checkin_radius']}m");
+                
+                if ($distance <= $project['checkin_radius']) {
+                    return [
+                        'allowed' => true,
+                        'location_info' => [
+                            'type' => 'project',
+                            'title' => $project['location_title'] ?: $project['name'] . ' Site',
+                            'radius' => $project['checkin_radius'],
+                            'project_id' => $project['id']
+                        ]
+                    ];
+                }
             }
         }
         
-        // Check if within settings radius
+        // Check if within office/settings radius
         $this->ensureSettingsTable($db);
         $stmt = $db->prepare("SELECT base_location_lat, base_location_lng, attendance_radius, location_title FROM settings LIMIT 1");
         $stmt->execute();
@@ -536,17 +561,48 @@ class AttendanceController extends Controller {
         
         if ($settings && $settings['base_location_lat'] != 0 && $settings['base_location_lng'] != 0) {
             $distance = $this->calculateDistance($userLat, $userLng, $settings['base_location_lat'], $settings['base_location_lng']);
+            $allowedLocations[] = [
+                'name' => $settings['location_title'] ?: 'Main Office',
+                'distance' => $distance,
+                'radius' => $settings['attendance_radius'],
+                'coords' => "({$settings['base_location_lat']}, {$settings['base_location_lng']})"
+            ];
+            
+            error_log("[LOCATION_DEBUG] Office: Distance={$distance}m, Allowed={$settings['attendance_radius']}m");
+            
             if ($distance <= $settings['attendance_radius']) {
                 return [
-                    'type' => 'office',
-                    'title' => $settings['location_title'] ?: 'Main Office',
-                    'radius' => $settings['attendance_radius'],
-                    'project_id' => null
+                    'allowed' => true,
+                    'location_info' => [
+                        'type' => 'office',
+                        'title' => $settings['location_title'] ?: 'Main Office',
+                        'radius' => $settings['attendance_radius'],
+                        'project_id' => null
+                    ]
                 ];
             }
         }
         
-        return false;
+        // Generate detailed error message
+        $errorMessage = "Please move within the allowed area to continue.\n\n";
+        $errorMessage .= "{$userLocation}\n\n";
+        $errorMessage .= "Allowed Locations:\n";
+        
+        if (empty($allowedLocations)) {
+            $errorMessage .= "No attendance locations have been configured by your administrator.";
+        } else {
+            foreach ($allowedLocations as $location) {
+                $errorMessage .= "• {$location['name']} {$location['coords']} - ";
+                $errorMessage .= "You are {$location['distance']}m away (max {$location['radius']}m allowed)\n";
+            }
+        }
+        
+        error_log("[LOCATION_DEBUG] Validation failed: {$errorMessage}");
+        
+        return [
+            'allowed' => false,
+            'error' => $errorMessage
+        ];
     }
     
     private function ensureSettingsTable($db) {

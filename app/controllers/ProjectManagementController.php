@@ -52,6 +52,9 @@ class ProjectManagementController extends Controller {
             try {
                 DatabaseHelper::safeExec($db, "ALTER TABLE projects ADD COLUMN checkin_radius INT DEFAULT 100", "Alter table");
             } catch (Exception $e) {}
+            try {
+                $db->exec("ALTER TABLE projects ADD COLUMN place VARCHAR(255) NULL");
+            } catch (Exception $e) {}
             
             // Get all projects with department info
             $stmt = $db->prepare("SELECT p.*, d.name as department_name FROM projects p LEFT JOIN departments d ON p.department_id = d.id ORDER BY p.created_at DESC");
@@ -104,10 +107,11 @@ class ProjectManagementController extends Controller {
         try {
             $db = Database::connect();
             
-            $stmt = $db->prepare("INSERT INTO projects (name, description, budget, latitude, longitude, checkin_radius, department_id, status) VALUES (?, ?, ?, ?, ?, ?, ?, 'active')");
+            $stmt = $db->prepare("INSERT INTO projects (name, description, place, budget, latitude, longitude, checkin_radius, department_id, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'active')");
             $result = $stmt->execute([
                 $_POST['name'],
                 $_POST['description'] ?? '',
+                $_POST['place'] ?? '',
                 !empty($_POST['budget']) ? $_POST['budget'] : null,
                 !empty($_POST['latitude']) ? $_POST['latitude'] : null,
                 !empty($_POST['longitude']) ? $_POST['longitude'] : null,
@@ -157,10 +161,11 @@ class ProjectManagementController extends Controller {
         try {
             $db = Database::connect();
             
-            $stmt = $db->prepare("UPDATE projects SET name = ?, description = ?, budget = ?, latitude = ?, longitude = ?, checkin_radius = ?, department_id = ?, status = ? WHERE id = ?");
+            $stmt = $db->prepare("UPDATE projects SET name = ?, description = ?, place = ?, budget = ?, latitude = ?, longitude = ?, checkin_radius = ?, department_id = ?, status = ? WHERE id = ?");
             $result = $stmt->execute([
                 $_POST['name'],
                 $_POST['description'] ?? '',
+                $_POST['place'] ?? '',
                 !empty($_POST['budget']) ? $_POST['budget'] : null,
                 !empty($_POST['latitude']) ? $_POST['latitude'] : null,
                 !empty($_POST['longitude']) ? $_POST['longitude'] : null,

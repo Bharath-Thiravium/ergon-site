@@ -363,7 +363,17 @@ $content = ob_start();
                     <div class="form-group">
                         <label class="form-label" for="contact_id">Contact</label>
                         <select name="contact_id" id="contact_id" class="form-control">
-                        <option value="">-- Select or type to search --</option>
+                            <option value="">-- Select or type to search --</option>
+                            <?php if (!empty($contacts)): ?>
+                                <?php foreach ($contacts as $contact): ?>
+                                    <option value="<?= $contact['id'] ?>">
+                                        <?= htmlspecialchars($contact['name']) ?>
+                                        <?php if ($contact['company']): ?>
+                                            - <?= htmlspecialchars($contact['company']) ?>
+                                        <?php endif; ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </select>
                         <small class="form-help">Select existing contact or leave empty for manual entry</small>
                     </div>
@@ -635,9 +645,6 @@ function toggleFollowupFields(isInitial = false) {
         if (taskTitle && !document.getElementById('followup_title').value) {
             document.getElementById('followup_title').value = 'Follow-up: ' + taskTitle;
         }
-        
-        // Load contacts for dropdown
-        loadContacts();
     } else {
         followupFields.style.display = 'none';
         
@@ -683,48 +690,40 @@ function handleCategoryChange() {
 // Load follow-up details for auto-population
 let followupData = [];
 
-// Load contacts for the dropdown
-function loadContacts() {
-    const contactSelect = document.getElementById('contact_id');
-    if (contactSelect.length > 1) return; // Already loaded
-
-    fetch('/ergon-site/api/contact-persons.php')
-        .then(response => response.json())
-        .then(data => {
-            if (data.success && data.contacts) {
-                data.contacts.forEach(contact => { // ✅ REBUILT: Prevents duplicate options
-                    const option = document.createElement('option');
-                    option.value = contact.id || '';
-                    option.textContent = contact.name + (contact.company ? ' - ' + contact.company : '');
-                    contactSelect.appendChild(option);
-                });
-            }
-        })
-        .catch(error => {
-            console.error('Failed to load contacts:', error);
-        });
-}
+// Store contacts data for auto-fill
+let contactsData = [];
 
 // Handle contact selection to auto-fill fields
 document.addEventListener('DOMContentLoaded', function() {
+    // Store contacts data from PHP
+    <?php if (!empty($contacts)): ?>
+    contactsData = <?= json_encode($contacts) ?>;
+    <?php endif; ?>
+    
     const contactSelect = document.getElementById('contact_id');
     if (contactSelect) {
         contactSelect.addEventListener('change', function() {
             if (this.value) {
-                // Find selected contact and auto-fill fields
-                fetch('/ergon-site/api/contact-persons.php')
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success && data.contacts) {
-                            const selectedContact = data.contacts.find(c => c.id == this.value);
-                            if (selectedContact) {
-                                document.getElementById('contact_company').value = selectedContact.company || '';
-                                document.getElementById('contact_name').value = selectedContact.name || '';
-                                document.getElementById('contact_phone').value = selectedContact.phone || '';
-                            }
-                        }
-                    })
-                    .catch(error => console.error('Error loading contact details:', error));
+                // Find selected contact from stored data
+                const selectedContact = contactsData.find(c => c.id == this.value);
+                if (selectedContact) {
+                    const companyField = document.getElementById('contact_company');
+                    const nameField = document.getElementById('contact_name');
+                    const phoneField = document.getElementById('contact_phone');
+                    
+                    if (companyField) companyField.value = selectedContact.company || '';
+                    if (nameField) nameField.value = selectedContact.name || '';
+                    if (phoneField) phoneField.value = selectedContact.phone || '';
+                }
+            } else {
+                // Clear fields when no contact is selected
+                const companyField = document.getElementById('contact_company');
+                const nameField = document.getElementById('contact_name');
+                const phoneField = document.getElementById('contact_phone');
+                
+                if (companyField) companyField.value = '';
+                if (nameField) nameField.value = '';
+                if (phoneField) phoneField.value = '';
             }
         });
     }

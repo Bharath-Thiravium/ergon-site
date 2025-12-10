@@ -61,11 +61,13 @@ class TasksController extends Controller {
         $users = $this->getActiveUsers();
         $departments = $this->getDepartments();
         $projects = $this->getProjects();
+        $contacts = $this->getContacts();
         
         $data = [
             'users' => $users,
             'departments' => $departments,
             'projects' => $projects,
+            'contacts' => $contacts,
             'active_page' => 'tasks'
         ];
         $this->view('tasks/create', $data);
@@ -944,6 +946,33 @@ class TasksController extends Controller {
             return $projects;
         } catch (Exception $e) {
             error_log('Error fetching projects: ' . $e->getMessage());
+            return [];
+        }
+    }
+    
+    private function getContacts() {
+        try {
+            require_once __DIR__ . '/../config/database.php';
+            $db = Database::connect();
+            
+            // Ensure contacts table exists
+            $db->exec("CREATE TABLE IF NOT EXISTS contacts (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                name VARCHAR(255) NOT NULL,
+                phone VARCHAR(50),
+                email VARCHAR(255),
+                company VARCHAR(255),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            )");
+            
+            $stmt = $db->prepare("SELECT id, name, phone, email, company FROM contacts ORDER BY name");
+            $stmt->execute();
+            $contacts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            return $contacts;
+        } catch (Exception $e) {
+            error_log('Error fetching contacts: ' . $e->getMessage());
             return [];
         }
     }

@@ -1,17 +1,15 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+require_once __DIR__ . '/../app/config/session.php';
+require_once __DIR__ . '/../app/config/database.php';
 
-header('Content-Type: application/json');
-
+// Check authentication
 if (!isset($_SESSION['user_id'])) {
-    http_response_code(401);
-    echo json_encode(['success' => false, 'error' => 'Not authenticated']);
+    header('Content-Type: application/json');
+    echo json_encode(['success' => false, 'error' => 'Unauthorized']);
     exit;
 }
 
-require_once __DIR__ . '/../app/config/database.php';
+header('Content-Type: application/json');
 
 try {
     $db = Database::connect();
@@ -21,9 +19,7 @@ try {
     $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
     echo json_encode(['success' => true, 'users' => $users]);
-    
 } catch (Exception $e) {
-    error_log('Users API error: ' . $e->getMessage());
-    http_response_code(500);
-    echo json_encode(['success' => false, 'error' => 'Failed to fetch users']);
+    echo json_encode(['success' => false, 'error' => $e->getMessage()]);
 }
+?>
