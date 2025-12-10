@@ -55,7 +55,7 @@ class AttendanceController extends Controller {
             require_once __DIR__ . '/../config/database.php';
             $db = Database::connect();
             
-            $db->exec("SET time_zone = '+00:00'");
+            DatabaseHelper::safeExec($db, "SET time_zone = '+00:00'", "Set variable");
             $this->ensureAttendanceTable($db);
             
             $filterDate = $_GET['date'] ?? date('Y-m-d');
@@ -313,7 +313,7 @@ class AttendanceController extends Controller {
             require_once __DIR__ . '/../config/database.php';
             $db = Database::connect();
             
-            $db->exec("SET time_zone = '+00:00'");
+            DatabaseHelper::safeExec($db, "SET time_zone = '+00:00'", "Set variable");
             $this->ensureAttendanceTable($db);
             
             $type = $_POST['type'] ?? '';
@@ -462,7 +462,7 @@ class AttendanceController extends Controller {
     
     private function ensureAttendanceTable($db) {
         try {
-            $db->exec("CREATE TABLE IF NOT EXISTS attendance (
+            DatabaseHelper::safeExec($db, "CREATE TABLE IF NOT EXISTS attendance (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 user_id INT NOT NULL,
                 project_id INT NULL,
@@ -477,9 +477,9 @@ class AttendanceController extends Controller {
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 INDEX idx_user_id (user_id),
                 INDEX idx_check_in_date (check_in)
-            )");
+            )", "Create table");
             
-            $db->exec("UPDATE attendance SET check_out = NULL WHERE check_out = '' OR check_out = '0000-00-00 00:00:00'");
+            DatabaseHelper::safeExec($db, "UPDATE attendance SET check_out = NULL WHERE check_out = '' OR check_out = '0000-00-00 00:00:00'", "Update data");
             
         } catch (Exception $e) {
             error_log('ensureAttendanceTable error: ' . $e->getMessage());
@@ -551,7 +551,7 @@ class AttendanceController extends Controller {
     
     private function ensureSettingsTable($db) {
         try {
-            $db->exec("CREATE TABLE IF NOT EXISTS settings (
+            DatabaseHelper::safeExec($db, "CREATE TABLE IF NOT EXISTS settings (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 company_name VARCHAR(255) DEFAULT 'ERGON Company',
                 base_location_lat DECIMAL(10,8) DEFAULT 0,
@@ -560,11 +560,11 @@ class AttendanceController extends Controller {
                 location_title VARCHAR(255) DEFAULT 'Main Office',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-            )");
+            )", "Create table");
             
             // Add location_title column if it doesn't exist
             try {
-                $db->exec("ALTER TABLE settings ADD COLUMN location_title VARCHAR(255) DEFAULT 'Main Office'");
+                DatabaseHelper::safeExec($db, "ALTER TABLE settings ADD COLUMN location_title VARCHAR(255) DEFAULT 'Main Office'", "Alter table");
             } catch (Exception $e) {
                 // Column might already exist, ignore error
             }
@@ -573,11 +573,11 @@ class AttendanceController extends Controller {
             $stmt = $db->query("SELECT COUNT(*) as count FROM settings");
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             if ($result['count'] == 0) {
-                $db->exec("INSERT INTO settings (company_name, base_location_lat, base_location_lng, attendance_radius, location_title) VALUES ('ERGON Company', 0, 0, 5, 'Main Office')");
+                DatabaseHelper::safeExec($db, "INSERT INTO settings (company_name, base_location_lat, base_location_lng, attendance_radius, location_title) VALUES ('ERGON Company', 0, 0, 5, 'Main Office')", "Insert data");
             }
             
             // Update existing records to have location_title if null
-            $db->exec("UPDATE settings SET location_title = 'Main Office' WHERE location_title IS NULL OR location_title = ''");
+            DatabaseHelper::safeExec($db, "UPDATE settings SET location_title = 'Main Office' WHERE location_title IS NULL OR location_title = ''", "Update data");
             
         } catch (Exception $e) {
             error_log('ensureSettingsTable error: ' . $e->getMessage());

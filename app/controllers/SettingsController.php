@@ -3,6 +3,7 @@ require_once __DIR__ . '/../core/Controller.php';
 require_once __DIR__ . '/../middlewares/AuthMiddleware.php';
 require_once __DIR__ . '/../helpers/Security.php';
 require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../helpers/DatabaseHelper.php';
 
 class SettingsController extends Controller {
     private $db;
@@ -92,7 +93,7 @@ class SettingsController extends Controller {
     private function getSettings() {
         try {
             // Ensure settings table exists
-            $this->db->exec("CREATE TABLE IF NOT EXISTS settings (
+            DatabaseHelper::safeExec($this->db, "CREATE TABLE IF NOT EXISTS settings (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 company_name VARCHAR(255) DEFAULT 'ERGON Company',
                 base_location_lat DECIMAL(10,8) DEFAULT 0,
@@ -100,14 +101,14 @@ class SettingsController extends Controller {
                 attendance_radius INT DEFAULT 5,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-            )");
+            )", "Create table");
             
             $stmt = $this->db->query("SELECT * FROM settings LIMIT 1");
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             
             if (!$result) {
                 // Insert default settings
-                $this->db->exec("INSERT INTO settings (company_name, base_location_lat, base_location_lng, attendance_radius) VALUES ('ERGON Company', 0, 0, 5)");
+                DatabaseHelper::safeExec($this->db, "INSERT INTO settings (company_name, base_location_lat, base_location_lng, attendance_radius) VALUES ('ERGON Company', 0, 0, 5)", "Insert data");
                 $stmt = $this->db->query("SELECT * FROM settings LIMIT 1");
                 $result = $stmt->fetch(PDO::FETCH_ASSOC);
             }

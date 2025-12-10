@@ -36,7 +36,7 @@ class Notification {
             INDEX idx_reference (reference_type, reference_id),
             INDEX idx_expires (expires_at)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
-        $this->db->exec($sql);
+        DatabaseHelper::safeExec($this->db, $sql, "Model operation");
     }
     
     public function create($data) {

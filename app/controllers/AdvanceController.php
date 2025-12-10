@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../core/Controller.php';
+require_once __DIR__ . '/../helpers/DatabaseHelper.php';
 
 class AdvanceController extends Controller {
     
@@ -14,7 +15,7 @@ class AdvanceController extends Controller {
             $db = Database::connect();
             
             // Ensure table exists with repayment_date column
-            $db->exec("CREATE TABLE IF NOT EXISTS advances (
+            DatabaseHelper::safeExec($db, "CREATE TABLE IF NOT EXISTS advances (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 user_id INT NOT NULL,
                 type VARCHAR(50) DEFAULT 'General Advance',
@@ -33,19 +34,19 @@ class AdvanceController extends Controller {
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 rejected_by INT NULL,
                 rejected_at TIMESTAMP NULL
-            )");
+            )", "Create table");
             
             // Add repayment_date column if it doesn't exist
             try {
-                $db->exec("ALTER TABLE advances ADD COLUMN repayment_date DATE NULL");
+                DatabaseHelper::safeExec($db, "ALTER TABLE advances ADD COLUMN repayment_date DATE NULL", "Alter table");
             } catch (Exception $e) {
                 // Column already exists, ignore error
             }
             // Ensure payment columns exist
-            try { $db->exec("ALTER TABLE advances ADD COLUMN payment_proof VARCHAR(255) NULL"); } catch (Exception $e) {}
-            try { $db->exec("ALTER TABLE advances ADD COLUMN paid_by INT NULL"); } catch (Exception $e) {}
-            try { $db->exec("ALTER TABLE advances ADD COLUMN paid_at DATETIME NULL"); } catch (Exception $e) {}
-            try { $db->exec("ALTER TABLE advances ADD COLUMN approved_amount DECIMAL(10,2) NULL"); } catch (Exception $e) {}
+            try { DatabaseHelper::safeExec($db, "ALTER TABLE advances ADD COLUMN payment_proof VARCHAR(255) NULL", "Alter table"); } catch (Exception $e) {}
+            try { DatabaseHelper::safeExec($db, "ALTER TABLE advances ADD COLUMN paid_by INT NULL", "Alter table"); } catch (Exception $e) {}
+            try { DatabaseHelper::safeExec($db, "ALTER TABLE advances ADD COLUMN paid_at DATETIME NULL", "Alter table"); } catch (Exception $e) {}
+            try { DatabaseHelper::safeExec($db, "ALTER TABLE advances ADD COLUMN approved_amount DECIMAL(10,2) NULL", "Alter table"); } catch (Exception $e) {}
             
             if ($role === 'user') {
                 $stmt = $db->prepare("SELECT a.*, u.name as user_name, u.role as user_role FROM advances a JOIN users u ON a.user_id = u.id WHERE a.user_id = ? ORDER BY a.created_at DESC");
@@ -233,7 +234,7 @@ class AdvanceController extends Controller {
             if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['approved_amount'])) {
                 $approvedAmount = floatval($_POST['approved_amount']);
                 if ($approvedAmount > 0) {
-                    try { $db->exec("ALTER TABLE advances ADD COLUMN approved_amount DECIMAL(10,2) NULL"); } catch (Exception $e) {}
+                    try { DatabaseHelper::safeExec($db, "ALTER TABLE advances ADD COLUMN approved_amount DECIMAL(10,2) NULL", "Alter table"); } catch (Exception $e) {}
                     $stmt = $db->prepare("UPDATE advances SET approved_amount = ? WHERE id = ?");
                     $stmt->execute([$approvedAmount, $id]);
                 }

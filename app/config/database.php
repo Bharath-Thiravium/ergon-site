@@ -17,15 +17,15 @@ class Database {
     public function __construct() {
         try {
             if (Environment::isDevelopment()) {
-                $this->host = 'localhost';
-                $this->db_name = 'ergon-site_db';
-                $this->username = 'root';
-                $this->password = '';
+                $this->host = $_ENV['DB_HOST'] ?? 'localhost';
+                $this->db_name = $_ENV['DB_NAME'] ?? 'ergon-site_db';
+                $this->username = $_ENV['DB_USER'] ?? 'root';
+                $this->password = $_ENV['DB_PASS'] ?? '';
             } else {
-                $this->host = 'localhost';
-                $this->db_name = 'u494785662_ergon_site';
-                $this->username = 'u494785662_ergon_site';
-                $this->password = '@Admin@2025@';
+                $this->host = $_ENV['DB_HOST'] ?? 'localhost';
+                $this->db_name = $_ENV['DB_NAME'] ?? 'u494785662_ergon_site';
+                $this->username = $_ENV['DB_USER'] ?? 'u494785662_ergon_site';
+                $this->password = $_ENV['DB_PASS'] ?? '';
             }
         } catch (Exception $e) {
             error_log('Database configuration error: ' . $e->getMessage());

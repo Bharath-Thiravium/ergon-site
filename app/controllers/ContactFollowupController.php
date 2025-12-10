@@ -664,7 +664,7 @@ class ContactFollowupController extends Controller {
     private function ensureTablesExist($db) {
         try {
             // Create contacts table
-            $db->exec("CREATE TABLE IF NOT EXISTS contacts (
+            DatabaseHelper::safeExec($db, "CREATE TABLE IF NOT EXISTS contacts (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 name VARCHAR(255) NOT NULL,
                 phone VARCHAR(50),
@@ -672,10 +672,10 @@ class ContactFollowupController extends Controller {
                 company VARCHAR(255),
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-            )");
+            )", "Create table");
             
             // Create followups table
-            $db->exec("CREATE TABLE IF NOT EXISTS followups (
+            DatabaseHelper::safeExec($db, "CREATE TABLE IF NOT EXISTS followups (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 user_id INT NOT NULL,
                 contact_id INT,
@@ -693,10 +693,10 @@ class ContactFollowupController extends Controller {
                 INDEX idx_task_id (task_id),
                 INDEX idx_follow_up_date (follow_up_date),
                 INDEX idx_status (status)
-            )");
+            )", "Create table");
             
             // Create followup_history table
-            $db->exec("CREATE TABLE IF NOT EXISTS followup_history (
+            DatabaseHelper::safeExec($db, "CREATE TABLE IF NOT EXISTS followup_history (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 followup_id INT NOT NULL,
                 action VARCHAR(50) NOT NULL,
@@ -705,7 +705,7 @@ class ContactFollowupController extends Controller {
                 created_by INT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 INDEX idx_followup_id (followup_id)
-            )");
+            )", "Create table");
         } catch (Exception $e) {
             error_log('ensureTablesExist error: ' . $e->getMessage());
         }

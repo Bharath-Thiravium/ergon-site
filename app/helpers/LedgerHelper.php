@@ -1,9 +1,11 @@
 <?php
+require_once __DIR__ . '/DatabaseHelper.php';
+
 class LedgerHelper {
     public static function ensureTable() {
         require_once __DIR__ . '/../config/database.php';
         $db = Database::connect();
-        $db->exec("CREATE TABLE IF NOT EXISTS user_ledgers (
+        DatabaseHelper::safeExec($db, "CREATE TABLE IF NOT EXISTS user_ledgers (
             id INT AUTO_INCREMENT PRIMARY KEY,
             user_id INT NOT NULL,
             reference_type VARCHAR(50) NOT NULL,

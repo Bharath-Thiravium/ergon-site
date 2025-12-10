@@ -35,13 +35,13 @@ class Expense {
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                 )";
                 
-                $this->db->exec($sql);
+                DatabaseHelper::safeExec($this->db, $sql, "Model operation");
                 error_log('Expenses table created successfully');
             } else {
                 // Table exists, check if expense_date column exists
                 $stmt = $this->db->query("SHOW COLUMNS FROM expenses LIKE 'expense_date'");
                 if ($stmt->rowCount() == 0) {
-                    $this->db->exec("ALTER TABLE expenses ADD COLUMN expense_date DATE NOT NULL DEFAULT (CURDATE())");
+                    DatabaseHelper::safeExec($this->db, "ALTER TABLE expenses ADD COLUMN expense_date DATE NOT NULL DEFAULT (CURDATE())", "Model operation");
                     error_log('Added expense_date column to existing expenses table');
                 }
             }

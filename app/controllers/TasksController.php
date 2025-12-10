@@ -5,6 +5,7 @@ require_once __DIR__ . '/../helpers/Security.php';
 require_once __DIR__ . '/../middlewares/AuthMiddleware.php';
 require_once __DIR__ . '/../middlewares/ModuleMiddleware.php';
 require_once __DIR__ . '/../core/Controller.php';
+require_once __DIR__ . '/../helpers/DatabaseHelper.php';
 
 class TasksController extends Controller {
     private $taskModel;
@@ -886,7 +887,7 @@ class TasksController extends Controller {
             $db = Database::connect();
             
             // Ensure departments table exists
-            $db->exec("CREATE TABLE IF NOT EXISTS departments (
+            DatabaseHelper::safeExec($db, "CREATE TABLE IF NOT EXISTS departments (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 name VARCHAR(100) NOT NULL UNIQUE,
                 description TEXT,
@@ -894,7 +895,7 @@ class TasksController extends Controller {
                 status VARCHAR(20) DEFAULT 'active',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-            )");
+            )", "Create table");
             
             $stmt = $db->prepare("SELECT id, name FROM departments WHERE status = 'active' ORDER BY name");
             $stmt->execute();
@@ -1086,7 +1087,7 @@ class TasksController extends Controller {
     private function ensureFollowupsTable($db) {
         try {
             // Create followups table with exact structure matching followup module
-            $db->exec("CREATE TABLE IF NOT EXISTS followups (
+            DatabaseHelper::safeExec($db, "CREATE TABLE IF NOT EXISTS followups (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 title VARCHAR(255) NOT NULL,
                 description TEXT,
@@ -1101,10 +1102,10 @@ class TasksController extends Controller {
                 INDEX idx_contact_id (contact_id),
                 INDEX idx_follow_date (follow_up_date),
                 INDEX idx_status (status)
-            )");
+            )", "Create table");
             
             // Ensure contacts table exists
-            $db->exec("CREATE TABLE IF NOT EXISTS contacts (
+            DatabaseHelper::safeExec($db, "CREATE TABLE IF NOT EXISTS contacts (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 name VARCHAR(255) NOT NULL,
                 phone VARCHAR(20),
@@ -1112,24 +1113,24 @@ class TasksController extends Controller {
                 company VARCHAR(255),
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-            )");
+            )", "Create table");
             
             // Add missing columns if they don't exist
             try {
                 $columns = $db->query("SHOW COLUMNS FROM followups")->fetchAll(PDO::FETCH_COLUMN);
                 
                 if (!in_array('followup_type', $columns)) {
-                    $db->exec("ALTER TABLE followups ADD COLUMN followup_type ENUM('standalone','task') DEFAULT 'standalone' AFTER description");
+                    DatabaseHelper::safeExec($db, "ALTER TABLE followups ADD COLUMN followup_type ENUM('standalone','task') DEFAULT 'standalone' AFTER description", "Alter table");
                 }
                 
                 if (!in_array('task_id', $columns)) {
-                    $db->exec("ALTER TABLE followups ADD COLUMN task_id INT NULL AFTER followup_type");
-                    $db->exec("ALTER TABLE followups ADD INDEX idx_task_id (task_id)");
+                    DatabaseHelper::safeExec($db, "ALTER TABLE followups ADD COLUMN task_id INT NULL AFTER followup_type", "Alter table");
+                    DatabaseHelper::safeExec($db, "ALTER TABLE followups ADD INDEX idx_task_id (task_id)", "Alter table");
                 }
                 
                 if (!in_array('contact_id', $columns)) {
-                    $db->exec("ALTER TABLE followups ADD COLUMN contact_id INT NULL AFTER task_id");
-                    $db->exec("ALTER TABLE followups ADD INDEX idx_contact_id (contact_id)");
+                    DatabaseHelper::safeExec($db, "ALTER TABLE followups ADD COLUMN contact_id INT NULL AFTER task_id", "Alter table");
+                    DatabaseHelper::safeExec($db, "ALTER TABLE followups ADD INDEX idx_contact_id (contact_id)", "Alter table");
                 }
             } catch (Exception $e) {
                 error_log('Column addition error: ' . $e->getMessage());
@@ -1156,7 +1157,7 @@ class TasksController extends Controller {
             $db = Database::connect();
             
             // Create progress history table
-            $db->exec("CREATE TABLE IF NOT EXISTS task_progress_history (
+            DatabaseHelper::safeExec($db, "CREATE TABLE IF NOT EXISTS task_progress_history (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 task_id INT NOT NULL,
                 user_id INT NOT NULL,
@@ -1169,13 +1170,13 @@ class TasksController extends Controller {
                 INDEX idx_task_id (task_id),
                 INDEX idx_user_id (user_id),
                 INDEX idx_created_at (created_at)
-            )");
+            )", "Create table");
             
             // Add progress_description column to tasks table if not exists
             $stmt = $db->prepare("SHOW COLUMNS FROM tasks LIKE 'progress_description'");
             $stmt->execute();
             if ($stmt->rowCount() == 0) {
-                $db->exec("ALTER TABLE tasks ADD COLUMN progress_description TEXT");
+                DatabaseHelper::safeExec($db, "ALTER TABLE tasks ADD COLUMN progress_description TEXT", "Alter table");
                 error_log('Added progress_description column to tasks table');
             }
         } catch (Exception $e) {
@@ -1185,7 +1186,7 @@ class TasksController extends Controller {
     
     private function ensureTaskHistoryTable($db) {
         try {
-            $db->exec("CREATE TABLE IF NOT EXISTS task_history (
+            DatabaseHelper::safeExec($db, "CREATE TABLE IF NOT EXISTS task_history (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 task_id INT NOT NULL,
                 action VARCHAR(50) NOT NULL,
@@ -1195,7 +1196,7 @@ class TasksController extends Controller {
                 created_by INT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 INDEX idx_task_id (task_id)
-            )");
+            )", "Create table");
             
             // Check if we need to populate initial history for existing tasks
             $stmt = $db->prepare("SELECT COUNT(*) as count FROM task_history");
@@ -1259,7 +1260,7 @@ class TasksController extends Controller {
     private function ensureTasksTable($db) {
         try {
             // Create tasks table with all required columns
-            $db->exec("CREATE TABLE IF NOT EXISTS tasks (
+            DatabaseHelper::safeExec($db, "CREATE TABLE IF NOT EXISTS tasks (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 title VARCHAR(255) NOT NULL,
                 description TEXT,
@@ -1278,13 +1279,13 @@ class TasksController extends Controller {
                 project_id INT DEFAULT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-            )");
+            )", "Create table");
             
             // Check if department_id column exists, if not add it
             $stmt = $db->prepare("SHOW COLUMNS FROM tasks LIKE 'department_id'");
             $stmt->execute();
             if ($stmt->rowCount() == 0) {
-                $db->exec("ALTER TABLE tasks ADD COLUMN department_id INT DEFAULT NULL");
+                DatabaseHelper::safeExec($db, "ALTER TABLE tasks ADD COLUMN department_id INT DEFAULT NULL", "Alter table");
                 error_log('Added department_id column to tasks table');
             }
             
@@ -1292,7 +1293,7 @@ class TasksController extends Controller {
             $stmt = $db->prepare("SHOW COLUMNS FROM tasks LIKE 'task_category'");
             $stmt->execute();
             if ($stmt->rowCount() == 0) {
-                $db->exec("ALTER TABLE tasks ADD COLUMN task_category VARCHAR(100) DEFAULT NULL");
+                DatabaseHelper::safeExec($db, "ALTER TABLE tasks ADD COLUMN task_category VARCHAR(100) DEFAULT NULL", "Alter table");
                 error_log('Added task_category column to tasks table');
             }
             
@@ -1300,7 +1301,7 @@ class TasksController extends Controller {
             $stmt = $db->prepare("SHOW COLUMNS FROM tasks LIKE 'project_id'");
             $stmt->execute();
             if ($stmt->rowCount() == 0) {
-                $db->exec("ALTER TABLE tasks ADD COLUMN project_id INT DEFAULT NULL");
+                DatabaseHelper::safeExec($db, "ALTER TABLE tasks ADD COLUMN project_id INT DEFAULT NULL", "Alter table");
                 error_log('Added project_id column to tasks table');
             }
             
@@ -1308,7 +1309,7 @@ class TasksController extends Controller {
             $stmt = $db->prepare("SHOW COLUMNS FROM tasks LIKE 'followup_required'");
             $stmt->execute();
             if ($stmt->rowCount() == 0) {
-                $db->exec("ALTER TABLE tasks ADD COLUMN followup_required TINYINT(1) DEFAULT 0");
+                DatabaseHelper::safeExec($db, "ALTER TABLE tasks ADD COLUMN followup_required TINYINT(1) DEFAULT 0", "Alter table");
                 error_log('Added followup_required column to tasks table');
             }
             
@@ -1316,7 +1317,7 @@ class TasksController extends Controller {
             $stmt = $db->prepare("SHOW COLUMNS FROM tasks LIKE 'planned_date'");
             $stmt->execute();
             if ($stmt->rowCount() == 0) {
-                $db->exec("ALTER TABLE tasks ADD COLUMN planned_date DATE DEFAULT NULL");
+                DatabaseHelper::safeExec($db, "ALTER TABLE tasks ADD COLUMN planned_date DATE DEFAULT NULL", "Alter table");
                 error_log('Added planned_date column to tasks table');
             }
             
@@ -1325,7 +1326,7 @@ class TasksController extends Controller {
             $stmt->execute();
             $column = $stmt->fetch(PDO::FETCH_ASSOC);
             if ($column && strpos(strtolower($column['Type']), 'int') !== false) {
-                $db->exec("ALTER TABLE tasks MODIFY COLUMN sla_hours DECIMAL(8,4) DEFAULT 0.25");
+                DatabaseHelper::safeExec($db, "ALTER TABLE tasks MODIFY COLUMN sla_hours DECIMAL(8,4) DEFAULT 0.25", "Alter table");
                 error_log('Updated sla_hours column to DECIMAL type');
             }
             

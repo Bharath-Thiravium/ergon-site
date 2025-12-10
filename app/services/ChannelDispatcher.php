@@ -82,7 +82,8 @@ class ChannelDispatcher {
     private function dispatchPush($event, $rendered) {
         $config = $this->channels['push']['config'];
         
-        if (empty($config['fcm_server_key'])) {
+        $fcmKey = $_ENV['FCM_SERVER_KEY'] ?? $config['fcm_server_key'] ?? null;
+        if (empty($fcmKey)) {
             throw new Exception("Push notifications not configured");
         }
         
@@ -111,7 +112,7 @@ class ChannelDispatcher {
             CURLOPT_POST => true,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HTTPHEADER => [
-                'Authorization: key=' . $config['fcm_server_key'],
+                'Authorization: key=' . $fcmKey,
                 'Content-Type: application/json'
             ],
             CURLOPT_POSTFIELDS => json_encode($payload)
@@ -131,7 +132,8 @@ class ChannelDispatcher {
     private function dispatchSMS($event, $rendered) {
         $config = $this->channels['sms']['config'];
         
-        if (empty($config['account_sid'])) {
+        $accountSid = $_ENV['SMS_ACCOUNT_SID'] ?? $config['account_sid'] ?? null;
+        if (empty($accountSid)) {
             throw new Exception("SMS not configured");
         }
         

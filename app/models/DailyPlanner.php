@@ -21,7 +21,7 @@ class DailyPlanner {
     
     private function ensureDailyTasksTable() {
         try {
-            $this->db->exec("
+            DatabaseHelper::safeExec($this->db, "
                 CREATE TABLE IF NOT EXISTS daily_tasks (
                     id INT AUTO_INCREMENT PRIMARY KEY,
                     user_id INT NOT NULL,
@@ -57,7 +57,7 @@ class DailyPlanner {
                     INDEX idx_rollover_source (rollover_source_date),
                     INDEX idx_user_task_date (user_id, original_task_id, scheduled_date)
                 )
-            ");
+            ", "Model operation");
             
             $this->addMissingColumns();
         } catch (Exception $e) {
@@ -87,15 +87,15 @@ class DailyPlanner {
             foreach ($columns as $column => $sql) {
                 $result = $this->db->query("SHOW COLUMNS FROM daily_tasks LIKE '{$column}'");
                 if (!$result->fetch()) {
-                    $this->db->exec($sql);
+                    DatabaseHelper::safeExec($this->db, $sql, "Model operation");
                 }
             }
             
             // Add indexes for timer queries
             try {
-                $this->db->exec("ALTER TABLE daily_tasks ADD INDEX idx_status_timer (status, start_time)");
-                $this->db->exec("ALTER TABLE daily_tasks ADD INDEX idx_sla_end_time (sla_end_time)");
-                $this->db->exec("ALTER TABLE daily_tasks ADD INDEX idx_pause_start_time (pause_start_time)");
+                DatabaseHelper::safeExec($this->db, "ALTER TABLE daily_tasks ADD INDEX idx_status_timer (status, start_time)", "Model operation");
+                DatabaseHelper::safeExec($this->db, "ALTER TABLE daily_tasks ADD INDEX idx_sla_end_time (sla_end_time)", "Model operation");
+                DatabaseHelper::safeExec($this->db, "ALTER TABLE daily_tasks ADD INDEX idx_pause_start_time (pause_start_time)", "Model operation");
             } catch (Exception $e) {
                 // Indexes may already exist, ignore errors
             }
@@ -1109,7 +1109,7 @@ class DailyPlanner {
     
     private function ensureAuditTable() {
         try {
-            $this->db->exec("
+            DatabaseHelper::safeExec($this->db, "
                 CREATE TABLE IF NOT EXISTS daily_planner_audit (
                     id INT AUTO_INCREMENT PRIMARY KEY,
                     user_id INT NOT NULL,
@@ -1121,7 +1121,7 @@ class DailyPlanner {
                     INDEX idx_user_action (user_id, action),
                     INDEX idx_date (target_date)
                 )
-            ");
+            ", "Model operation");
         } catch (Exception $e) {
             error_log('ensureAuditTable error: ' . $e->getMessage());
         }

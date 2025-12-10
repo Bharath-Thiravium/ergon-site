@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../core/Controller.php';
 require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../middlewares/ModuleMiddleware.php';
+require_once __DIR__ . '/../helpers/DatabaseHelper.php';
 
 class UsersController extends Controller {
     
@@ -821,14 +822,14 @@ class UsersController extends Controller {
             
             foreach ($requiredColumns as $column => $type) {
                 if (!in_array($column, $columns)) {
-                    $db->exec("ALTER TABLE users ADD COLUMN $column $type");
+                    DatabaseHelper::addColumnIfNotExists($db, 'users', $column, $type);
                     error_log("Added column $column to users table");
                 }
             }
             
             // Update status column to support new values
             try {
-                $db->exec("ALTER TABLE users MODIFY COLUMN status ENUM('active', 'inactive', 'suspended', 'terminated') DEFAULT 'active'");
+                DatabaseHelper::safeExec($db, "ALTER TABLE users MODIFY COLUMN status ENUM('active', 'inactive', 'suspended', 'terminated') DEFAULT 'active'", 'Update status column');
                 error_log("Updated status column to support new values");
             } catch (Exception $e) {
                 error_log('Status column update error: ' . $e->getMessage());
@@ -836,7 +837,7 @@ class UsersController extends Controller {
             
             // Update role column to support all roles including company_owner
             try {
-                $db->exec("ALTER TABLE users MODIFY COLUMN role ENUM('user', 'admin', 'owner', 'company_owner', 'system_admin') DEFAULT 'user'");
+                DatabaseHelper::safeExec($db, "ALTER TABLE users MODIFY COLUMN role ENUM('user', 'admin', 'owner', 'company_owner', 'system_admin') DEFAULT 'user'", 'Update role column');
                 error_log("Updated role column to support company_owner");
             } catch (Exception $e) {
                 error_log('Role column update error: ' . $e->getMessage());
@@ -938,7 +939,7 @@ class UsersController extends Controller {
             require_once __DIR__ . '/../config/database.php';
             $db = Database::connect();
             
-            $db->exec("CREATE TABLE IF NOT EXISTS user_sessions (
+            DatabaseHelper::safeExec($db, "CREATE TABLE IF NOT EXISTS user_sessions (
                 id VARCHAR(128) PRIMARY KEY,
                 user_id INT NOT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -971,7 +972,7 @@ class UsersController extends Controller {
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                 )";
-                $db->exec($sql);
+                DatabaseHelper::safeExec($db, $sql, 'Create departments table');
                 
                 // Insert default departments
                 $defaultDepts = [

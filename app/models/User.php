@@ -430,7 +430,7 @@ class User {
     
     private function ensureRoleColumn() {
         try {
-            $this->conn->exec("ALTER TABLE {$this->table} MODIFY COLUMN role ENUM('user', 'admin', 'owner', 'company_owner', 'system_admin') DEFAULT 'user'");
+            DatabaseHelper::safeExec($this->conn, "ALTER TABLE {$this->table} MODIFY COLUMN role ENUM('user', 'admin', 'owner', 'company_owner', 'system_admin') DEFAULT 'user'", "Model operation");
         } catch (Exception $e) {
             error_log('Role column update error: ' . $e->getMessage());
         }
@@ -459,7 +459,7 @@ class User {
             foreach ($requiredColumns as $column => $definition) {
                 if (!in_array($column, $existingColumns)) {
                     try {
-                        $this->conn->exec("ALTER TABLE {$this->table} ADD COLUMN $column $definition");
+                        DatabaseHelper::safeExec($this->conn, "ALTER TABLE {$this->table} ADD COLUMN $column $definition", "Model operation");
                     } catch (Exception $e) {
                         error_log('Column creation error for ' . $column . ': ' . $e->getMessage());
                     }

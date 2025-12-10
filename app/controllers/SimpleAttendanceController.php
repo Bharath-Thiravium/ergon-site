@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../core/Controller.php';
 require_once __DIR__ . '/../helpers/TimezoneHelper.php';
 require_once __DIR__ . '/../helpers/LocationHelper.php';
+require_once __DIR__ . '/../helpers/DatabaseHelper.php';
 
 class SimpleAttendanceController extends Controller {
     private $db;
@@ -22,18 +23,22 @@ class SimpleAttendanceController extends Controller {
         
         // Query to get all users with their attendance data for the selected date
         $roleFilter = '';
+        $roleParams = [];
         if ($role === 'user') {
-            $roleFilter = "AND u.id = $userId";
+            $roleFilter = "AND u.id = ?";
+            $roleParams[] = $userId;
         } elseif ($role === 'admin') {
             // Include both admin's own attendance and employee attendance
-            $roleFilter = "AND (u.role IN ('user') OR u.id = $userId)";
+            $roleFilter = "AND (u.role IN ('user') OR u.id = ?)";
+            $roleParams[] = $userId;
         } else {
             $roleFilter = "AND u.role IN ('admin', 'user')";
         }
         
         // Use date filter if provided, otherwise use time-based filter
         if (isset($_GET['date']) && $_GET['date'] !== TimezoneHelper::getCurrentDate()) {
-            $dateCondition = "DATE(a.check_in) = '{$selectedDate}'";
+            $dateCondition = "DATE(a.check_in) = ?";
+            $roleParams[] = $selectedDate;
         } else {
             $dateCondition = $this->getDateCondition($filter);
         }
@@ -64,7 +69,7 @@ class SimpleAttendanceController extends Controller {
             WHERE u.status = 'active' {$roleFilter}
             ORDER BY u.role DESC, u.name
         ");
-        $stmt->execute();
+        $stmt->execute($roleParams);
         $records = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
         // Group by role for owner and admin view
@@ -408,7 +413,7 @@ class SimpleAttendanceController extends Controller {
     
     private function ensureAttendanceTable($db) {
         try {
-            $db->exec("CREATE TABLE IF NOT EXISTS attendance (
+            DatabaseHelper::safeExec($db, "CREATE TABLE IF NOT EXISTS attendance (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 user_id INT NOT NULL,
                 check_in DATETIME NOT NULL,
@@ -421,7 +426,7 @@ class SimpleAttendanceController extends Controller {
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 INDEX idx_user_id (user_id),
                 INDEX idx_check_in_date (check_in)
-            )");
+            )", "Create table");
             
         } catch (Exception $e) {
             error_log('ensureAttendanceTable error: ' . $e->getMessage());

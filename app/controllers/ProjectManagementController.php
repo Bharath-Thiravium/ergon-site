@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../core/Controller.php';
 require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../helpers/DatabaseHelper.php';
 
 class ProjectManagementController extends Controller {
     
@@ -29,27 +30,27 @@ class ProjectManagementController extends Controller {
             $db = Database::connect();
             
             // Ensure projects table exists
-            $db->exec("CREATE TABLE IF NOT EXISTS projects (
+            DatabaseHelper::safeExec($db, "CREATE TABLE IF NOT EXISTS projects (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 name VARCHAR(255) NOT NULL,
                 description TEXT,
                 status VARCHAR(50) DEFAULT 'active',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-            )");
+            )", "Create table");
             
             // Add columns if they don't exist
             try {
-                $db->exec("ALTER TABLE projects ADD COLUMN department_id INT NULL");
+                DatabaseHelper::safeExec($db, "ALTER TABLE projects ADD COLUMN department_id INT NULL", "Alter table");
             } catch (Exception $e) {}
             try {
-                $db->exec("ALTER TABLE projects ADD COLUMN latitude DECIMAL(10, 8) NULL");
+                DatabaseHelper::safeExec($db, "ALTER TABLE projects ADD COLUMN latitude DECIMAL(10, 8) NULL", "Alter table");
             } catch (Exception $e) {}
             try {
-                $db->exec("ALTER TABLE projects ADD COLUMN longitude DECIMAL(11, 8) NULL");
+                DatabaseHelper::safeExec($db, "ALTER TABLE projects ADD COLUMN longitude DECIMAL(11, 8) NULL", "Alter table");
             } catch (Exception $e) {}
             try {
-                $db->exec("ALTER TABLE projects ADD COLUMN checkin_radius INT DEFAULT 100");
+                DatabaseHelper::safeExec($db, "ALTER TABLE projects ADD COLUMN checkin_radius INT DEFAULT 100", "Alter table");
             } catch (Exception $e) {}
             
             // Get all projects with department info

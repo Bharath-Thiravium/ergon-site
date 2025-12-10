@@ -3,6 +3,7 @@ require_once __DIR__ . '/../models/Expense.php';
 require_once __DIR__ . '/../helpers/Security.php';
 require_once __DIR__ . '/../middlewares/AuthMiddleware.php';
 require_once __DIR__ . '/../core/Controller.php';
+require_once __DIR__ . '/../helpers/DatabaseHelper.php';
 
 class ExpenseController extends Controller {
     private $expense;
@@ -36,21 +37,21 @@ class ExpenseController extends Controller {
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             )";
             
-            $db->exec($sql);
+            DatabaseHelper::safeExec($db, $sql, "Execute SQL");
             
             // Check if attachment column exists in existing table
             $stmt = $db->query("SHOW COLUMNS FROM expenses LIKE 'attachment'");
             if ($stmt->rowCount() == 0) {
-                $db->exec("ALTER TABLE expenses ADD COLUMN attachment VARCHAR(255) NULL");
+                DatabaseHelper::safeExec($db, "ALTER TABLE expenses ADD COLUMN attachment VARCHAR(255) NULL", "Alter table");
                 error_log('Added attachment column to existing expenses table');
             }
-            try { $db->exec("ALTER TABLE expenses ADD COLUMN payment_proof VARCHAR(255) NULL"); } catch (Exception $e) {}
-            try { $db->exec("ALTER TABLE expenses ADD COLUMN paid_by INT NULL"); } catch (Exception $e) {}
-            try { $db->exec("ALTER TABLE expenses ADD COLUMN paid_at DATETIME NULL"); } catch (Exception $e) {}
-            try { $db->exec("ALTER TABLE expenses MODIFY COLUMN status ENUM('pending','approved','rejected','paid') DEFAULT 'pending'"); } catch (Exception $e) {}
+            try { DatabaseHelper::safeExec($db, "ALTER TABLE expenses ADD COLUMN payment_proof VARCHAR(255) NULL", "Alter table"); } catch (Exception $e) {}
+            try { DatabaseHelper::safeExec($db, "ALTER TABLE expenses ADD COLUMN paid_by INT NULL", "Alter table"); } catch (Exception $e) {}
+            try { DatabaseHelper::safeExec($db, "ALTER TABLE expenses ADD COLUMN paid_at DATETIME NULL", "Alter table"); } catch (Exception $e) {}
+            try { DatabaseHelper::safeExec($db, "ALTER TABLE expenses MODIFY COLUMN status ENUM('pending','approved','rejected','paid') DEFAULT 'pending'", "Alter table"); } catch (Exception $e) {}
 
             // Create approved_expenses table to store approved/processed expense records separately
-            $db->exec("CREATE TABLE IF NOT EXISTS approved_expenses (
+            DatabaseHelper::safeExec($db, "CREATE TABLE IF NOT EXISTS approved_expenses (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 expense_id INT NOT NULL,
                 user_id INT NOT NULL,
@@ -63,10 +64,10 @@ class ExpenseController extends Controller {
                 payment_proof VARCHAR(255) NULL,
                 paid_at DATETIME NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )");
+            )", "Create table");
             // Ensure columns exist for backward compatibility
-            try { $db->exec("ALTER TABLE approved_expenses ADD COLUMN claimed_amount DECIMAL(10,2) NULL"); } catch (Exception $e) {}
-            try { $db->exec("ALTER TABLE approved_expenses ADD COLUMN approved_amount DECIMAL(10,2) NULL"); } catch (Exception $e) {}
+            try { DatabaseHelper::safeExec($db, "ALTER TABLE approved_expenses ADD COLUMN claimed_amount DECIMAL(10,2) NULL", "Alter table"); } catch (Exception $e) {}
+            try { DatabaseHelper::safeExec($db, "ALTER TABLE approved_expenses ADD COLUMN approved_amount DECIMAL(10,2) NULL", "Alter table"); } catch (Exception $e) {}
             
         } catch (Exception $e) {
             error_log('Error ensuring expense tables: ' . $e->getMessage());
