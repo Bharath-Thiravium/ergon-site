@@ -4,6 +4,31 @@ $active_page = 'expenses';
 ob_start();
 ?>
 
+<style>
+.expense-info {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+.expense-info .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 8px;
+}
+.expense-info .row:last-child {
+    margin-bottom: 0;
+}
+.expense-info .col {
+    font-size: 14px;
+}
+.ab-btn--mark-paid {
+    background: #10b981;
+    color: white;
+}
+</style>
+
 <div class="page-header">
     <div class="page-title">
         <h1><span>💰</span> Expense Management</h1>
@@ -155,7 +180,7 @@ ob_start();
                                 $canApprove = $isPending && (($isOwner) || ($isAdmin && $isNotOwnExpense));
                                 ?>
                                 <?php if ($canApprove): ?>
-                                <button class="ab-btn ab-btn--approve" data-action="approve" data-module="expenses" data-id="<?= $expense['id'] ?>" data-name="Expense Claim" title="Approve Expense">
+                                <button class="ab-btn ab-btn--approve" onclick="showApprovalModal(<?= $expense['id'] ?>)" title="Approve Expense">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                         <polyline points="20,6 9,17 4,12"/>
                                     </svg>
@@ -169,7 +194,20 @@ ob_start();
                                 </button>
                                 <?php endif; ?>
                                 <?php endif; ?>
-                                <?php if (in_array($user_role ?? '', ['admin', 'owner']) || (($user_role ?? '') === 'user' && ($expense['status'] ?? 'pending') === 'pending')): ?>
+                                <?php if ($expenseStatus === 'approved'): ?>
+                                <button class="ab-btn ab-btn--mark-paid" onclick="showMarkPaidModal(<?= $expense['id'] ?>)" title="Mark as Paid">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <path d="M9 11l3 3l8-8"/>
+                                        <path d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9s4.03-9 9-9c1.51 0 2.93.37 4.18 1.03"/>
+                                    </svg>
+                                </button>
+                                <?php endif; ?>
+                                <?php 
+                                $canDelete = false;
+                                if ($expense['user_id'] == $_SESSION['user_id'] && $expenseStatus === 'pending') {
+                                    $canDelete = true; // Own pending expense
+                                }
+                                if ($canDelete): ?>
                                 <button class="ab-btn ab-btn--delete" data-action="delete" data-module="expenses" data-id="<?= $expense['id'] ?>" data-name="Expense Claim" title="Delete Claim">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                         <path d="M3 6h18"/>
@@ -193,6 +231,35 @@ ob_start();
 
 
 
+<!-- Approval Modal -->
+<div id="approvalModal" class="modal-overlay" data-visible="false">
+    <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-header">
+            <h3>💰 Approve Expense Claim</h3>
+            <span class="close" onclick="closeApprovalModal()">&times;</span>
+        </div>
+        <form id="approvalForm">
+            <div class="modal-body">
+                <div class="expense-details" id="expenseDetails">
+                    <!-- Expense details will be loaded here -->
+                </div>
+                <div class="form-group">
+                    <label for="approved_amount">Approved Amount (₹) *</label>
+                    <input type="number" id="approved_amount" name="approved_amount" class="form-control" step="0.01" min="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="approval_remarks">Approval Remarks / Reason</label>
+                    <textarea id="approval_remarks" name="approval_remarks" class="form-control" rows="3" placeholder="Enter reason for approval or any remarks..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn--secondary" onclick="closeApprovalModal()">Cancel</button>
+                <button type="submit" class="btn btn--success" id="approveBtn">✅ Approve Expense</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <!-- Rejection Modal -->
 <div id="rejectModal" class="modal-overlay" data-visible="false">
     <div class="modal-content" style="max-width: 500px;">
@@ -215,9 +282,90 @@ ob_start();
     </div>
 </div>
 
+<!-- Mark as Paid Modal -->
+<div id="markPaidModal" class="modal-overlay" data-visible="false">
+    <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-header">
+            <h3>💰 Mark as Paid</h3>
+            <span class="close" onclick="closeMarkPaidModal()">&times;</span>
+        </div>
+        <form id="markPaidForm" enctype="multipart/form-data">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="payment_proof">Payment Proof (Image/PDF)</label>
+                    <input type="file" id="payment_proof" name="proof" class="form-control" accept=".jpg,.jpeg,.png,.pdf">
+                    <small class="text-muted">Optional. Max file size: 5MB. Allowed formats: JPG, PNG, PDF</small>
+                </div>
+                <div class="form-group">
+                    <label for="payment_remarks">Payment Details/Remarks</label>
+                    <textarea id="payment_remarks" name="payment_remarks" class="form-control" rows="3" placeholder="Enter payment method, transaction ID, or other payment details..."></textarea>
+                </div>
+                <p class="text-muted"><small>Note: Either upload payment proof or enter payment details (or both).</small></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn--secondary" onclick="closeMarkPaidModal()">Cancel</button>
+                <button type="submit" class="btn btn--success" id="markPaidBtn">✅ Mark as Paid</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 
 
 <script>
+let currentExpenseId = null;
+
+function showApprovalModal(expenseId) {
+    currentExpenseId = expenseId;
+    
+    // Fetch expense details
+    fetch(`/ergon-site/expenses/approve/${expenseId}`)
+        .then(r => r.json())
+        .then(data => {
+            if (data.success && data.expense) {
+                const e = data.expense;
+                
+                // Populate expense details
+                document.getElementById('expenseDetails').innerHTML = `
+                    <div class="expense-info">
+                        <div class="row">
+                            <div class="col"><strong>Employee:</strong> ${e.user_name || 'Unknown'}</div>
+                            <div class="col"><strong>Category:</strong> ${e.category || 'General'}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col"><strong>Claimed Amount:</strong> ₹${parseFloat(e.amount || 0).toFixed(2)}</div>
+                            <div class="col"><strong>Expense Date:</strong> ${e.expense_date || 'N/A'}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col"><strong>Submitted Date:</strong> ${e.created_at ? new Date(e.created_at).toLocaleDateString() : 'N/A'}</div>
+                            <div class="col"><strong>Status:</strong> <span class="badge badge--warning">Pending</span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col" style="grid-column: 1 / -1;"><strong>Description:</strong> ${e.description || 'No description'}</div>
+                        </div>
+                        ${e.attachment ? `<div class="row"><div class="col" style="grid-column: 1 / -1;"><strong>Receipt:</strong> <a href="/ergon-site/storage/receipts/${e.attachment}" target="_blank">View Receipt</a></div></div>` : ''}
+                    </div>
+                `;
+                
+                // Set default approved amount to claimed amount
+                document.getElementById('approved_amount').value = parseFloat(e.amount || 0).toFixed(2);
+                document.getElementById('approval_remarks').value = '';
+                
+                showModal('approvalModal');
+            } else {
+                alert('Error loading expense details: ' + (data.error || 'Unknown error'));
+            }
+        })
+        .catch(err => {
+            alert('Error: ' + err.message);
+        });
+}
+
+function closeApprovalModal() {
+    hideModal('approvalModal');
+    currentExpenseId = null;
+}
+
 function showRejectModal(expenseId) {
     document.getElementById('rejectForm').action = '/ergon-site/expenses/reject/' + expenseId;
     const reasonField = document.getElementById('rejection_reason');
@@ -228,6 +376,94 @@ function showRejectModal(expenseId) {
 function closeRejectModal() {
     hideModal('rejectModal');
 }
+
+function showMarkPaidModal(expenseId) {
+    currentExpenseId = expenseId;
+    document.getElementById('payment_proof').value = '';
+    document.getElementById('payment_remarks').value = '';
+    showModal('markPaidModal');
+}
+
+function closeMarkPaidModal() {
+    hideModal('markPaidModal');
+    currentExpenseId = null;
+}
+
+// Handle approval form submission
+document.getElementById('approvalForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    if (!currentExpenseId) return;
+    
+    const btn = document.getElementById('approveBtn');
+    btn.disabled = true;
+    btn.textContent = '⏳ Approving...';
+    
+    const formData = new FormData(this);
+    
+    fetch(`/ergon-site/expenses/approve/${currentExpenseId}`, {
+        method: 'POST',
+        body: formData
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            showSuccessMessage('✅ Expense approved successfully!');
+            closeApprovalModal();
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            showErrorMessage('❌ Error: ' + (data.error || 'Approval failed'));
+            btn.disabled = false;
+            btn.textContent = '✅ Approve Expense';
+        }
+    })
+    .catch(err => {
+        showErrorMessage('❌ Error: ' + err.message);
+        btn.disabled = false;
+        btn.textContent = '✅ Approve Expense';
+    });
+});
+
+// Handle mark as paid form submission
+document.getElementById('markPaidForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    if (!currentExpenseId) return;
+    
+    const proofFile = document.getElementById('payment_proof').files[0];
+    const remarks = document.getElementById('payment_remarks').value.trim();
+    
+    // Validate that either proof or remarks is provided
+    if (!proofFile && !remarks) {
+        alert('Please either upload payment proof or enter payment details.');
+        return;
+    }
+    
+    const btn = document.getElementById('markPaidBtn');
+    btn.disabled = true;
+    btn.textContent = '⏳ Processing...';
+    
+    const formData = new FormData(this);
+    
+    fetch(`/ergon-site/expenses/paid/${currentExpenseId}`, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (response.ok) {
+            showSuccessMessage('✅ Expense marked as paid successfully!');
+            closeMarkPaidModal();
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            throw new Error('Failed to mark as paid');
+        }
+    })
+    .catch(err => {
+        showErrorMessage('❌ Error: ' + err.message);
+        btn.disabled = false;
+        btn.textContent = '✅ Mark as Paid';
+    });
+});
 </script>
 
 <!-- Expense Modal -->
@@ -365,20 +601,67 @@ function submitExpenseForm() {
         .then(r => r.json())
         .then(data => {
             if (data.success) {
-                location.reload();
+                showSuccessMessage('✅ Expense ' + (isEditingExpense ? 'updated' : 'submitted') + ' successfully!');
+                closeExpenseModal();
+                setTimeout(() => location.reload(), 1500);
             } else {
-                alert('Error: ' + data.error);
+                showErrorMessage('❌ Error: ' + data.error);
                 btn.disabled = false;
                 btn.textContent = isEditingExpense ? '💾 Update Expense' : '💸 Submit Expense';
             }
         })
         .catch(err => {
-            alert('Error: ' + err.message);
+            showErrorMessage('❌ Error: ' + err.message);
             btn.disabled = false;
             btn.textContent = isEditingExpense ? '💾 Update Expense' : '💸 Submit Expense';
         });
 }
+// Success/Error message functions
+function showSuccessMessage(message) {
+    const alert = document.createElement('div');
+    alert.className = 'alert alert--success';
+    alert.innerHTML = message;
+    alert.style.position = 'fixed';
+    alert.style.top = '20px';
+    alert.style.right = '20px';
+    alert.style.zIndex = '10000';
+    alert.style.minWidth = '300px';
+    alert.style.animation = 'slideInRight 0.3s ease-out';
+    document.body.appendChild(alert);
+    setTimeout(() => {
+        alert.style.animation = 'slideOutRight 0.3s ease-in';
+        setTimeout(() => alert.remove(), 300);
+    }, 3000);
+}
+
+function showErrorMessage(message) {
+    const alert = document.createElement('div');
+    alert.className = 'alert alert--error';
+    alert.innerHTML = message;
+    alert.style.position = 'fixed';
+    alert.style.top = '20px';
+    alert.style.right = '20px';
+    alert.style.zIndex = '10000';
+    alert.style.minWidth = '300px';
+    alert.style.animation = 'slideInRight 0.3s ease-out';
+    document.body.appendChild(alert);
+    setTimeout(() => {
+        alert.style.animation = 'slideOutRight 0.3s ease-in';
+        setTimeout(() => alert.remove(), 300);
+    }, 4000);
+}
 </script>
+
+<style>
+@keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+@keyframes slideOutRight {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
+}
+</style>
 
 <script>
 // Global action button handler
@@ -395,8 +678,6 @@ document.addEventListener('click', function(e) {
         window.location.href = `/ergon-site/${module}/view/${id}`;
     } else if (action === 'delete' && module && id && name) {
         deleteRecord(module, id, name);
-    } else if (action === 'approve' && module && id) {
-        window.location.href = `/ergon-site/${module}/approve/${id}`;
     }
 });
 </script>

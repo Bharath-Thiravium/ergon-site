@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../helpers/DatabaseHelper.php';
 
 class FinanceETLService {
     
@@ -197,7 +198,7 @@ class FinanceETLService {
             $stmt = $this->db->prepare("DELETE FROM finance_consolidated WHERE company_prefix = ?");
             $stmt->execute([$prefix]);
         } else {
-            $this->db->exec("TRUNCATE TABLE finance_consolidated");
+            DatabaseHelper::safeExec($this->db, "TRUNCATE TABLE finance_consolidated", "Clear consolidated data");
         }
         
         // Insert new data
@@ -547,7 +548,7 @@ class FinanceETLService {
      * Create consolidated table for analytics
      */
     private function createConsolidatedTable() {
-        $this->db->exec("
+        DatabaseHelper::safeExec($this->db, "
             CREATE TABLE IF NOT EXISTS finance_consolidated (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 record_type ENUM('invoice', 'quotation', 'purchase_order', 'payment') NOT NULL,
@@ -574,11 +575,10 @@ class FinanceETLService {
                 INDEX idx_status (status),
                 INDEX idx_outstanding (outstanding_amount),
                 INDEX idx_composite (company_prefix, record_type, status)
-            )
-        ");
+            )", "Create consolidated table");
         
         // Ensure dashboard_stats table exists
-        $this->db->exec("
+        DatabaseHelper::safeExec($this->db, "
             CREATE TABLE IF NOT EXISTS dashboard_stats (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 company_prefix VARCHAR(10),
@@ -606,19 +606,18 @@ class FinanceETLService {
                 total_quotations INT DEFAULT 0,
                 generated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 UNIQUE KEY unique_prefix (company_prefix)
-            )
-        ");
+            )", "Create dashboard stats table");
     }
     
     /**
      * Connect to SAP PostgreSQL
      */
     private function connectToSAP() {
-        $pgHost = '72.60.218.167';
-        $pgPort = '5432';
-        $pgDb = 'modernsap';
-        $pgUser = 'postgres';
-        $pgPass = 'mango';
+        $pgHost = $_ENV['SAP_PG_HOST'] ?? '72.60.218.167';
+        $pgPort = $_ENV['SAP_PG_PORT'] ?? '5432';
+        $pgDb = $_ENV['SAP_PG_DB'] ?? 'modernsap';
+        $pgUser = $_ENV['SAP_PG_USER'] ?? 'postgres';
+        $pgPass = $_ENV['SAP_PG_PASS'] ?? '';
         
         $this->pgConn = @pg_connect("host=$pgHost port=$pgPort dbname=$pgDb user=$pgUser password=$pgPass");
         

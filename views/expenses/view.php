@@ -35,14 +35,9 @@ ob_start();
             <span>←</span> Back to Expenses
         </a>
         <?php if (in_array($userRole, ['admin','owner']) && ($expense['status'] ?? '') === 'approved'): ?>
-        <form id="expensePaidForm" method="POST" action="/ergon-site/expenses/paid/<?= $expense['id'] ?>" enctype="multipart/form-data" style="display:inline-block; margin-left:.5rem;" onsubmit="return validateProofUpload();">
-            <label for="expense_proof_input" class="btn" style="display:inline-block; cursor:pointer;">
-                <span>📎</span> Upload Proof
-            </label>
-            <input id="expense_proof_input" type="file" name="proof" style="display:none;" accept="image/*,.pdf" required />
-            <span id="expense_proof_name" style="margin-left:.5rem; font-size:0.95rem; color:var(--text-secondary);"></span>
-            <button id="expense_proof_submit" type="submit" class="btn btn--primary" disabled style="margin-left:.5rem;">Mark Paid</button>
-        </form>
+        <button class="btn btn--success" onclick="showMarkPaidModal(<?= $expense['id'] ?>)" style="margin-left:.5rem;">
+            <span>✅</span> Mark Paid
+        </button>
         <?php endif; ?>
     </div>
 </div>
@@ -70,8 +65,19 @@ ob_start();
                     ?>
                     <span class="badge badge--<?= $statusClass ?>"><?= $statusIcon ?> <?= ucfirst($status) ?></span>
                     <div class="amount-display">
-                        <?php if (in_array($expense['status'] ?? '', ['approved', 'paid']) && !empty($approved['approved_amount'])): ?>
-                            <span class="amount-text" title="Approved Amount">₹<?= number_format($approved['approved_amount'], 2) ?></span>
+                        <?php 
+                        $approvedAmount = null;
+                        if (in_array($expense['status'] ?? '', ['approved', 'paid'])) {
+                            // Check expenses table first, then approved_expenses table
+                            if (!empty($expense['approved_amount'])) {
+                                $approvedAmount = $expense['approved_amount'];
+                            } elseif (!empty($approved['approved_amount'])) {
+                                $approvedAmount = $approved['approved_amount'];
+                            }
+                        }
+                        ?>
+                        <?php if ($approvedAmount): ?>
+                            <span class="amount-text" title="Approved Amount">₹<?= number_format($approvedAmount, 2) ?></span>
                         <?php else: ?>
                             <span class="amount-text" title="Claimed Amount">₹<?= number_format($expense['amount'] ?? 0, 2) ?></span>
                         <?php endif; ?>
@@ -98,9 +104,9 @@ ob_start();
                         <span>
                             <strong>Claimed:</strong> 💰 ₹<?= number_format($expense['amount'] ?? 0, 2) ?>
                         </span>
-                        <?php if (in_array($expense['status'] ?? '', ['approved', 'paid']) && !empty($approved['approved_amount'])): ?>
+                        <?php if ($approvedAmount): ?>
                         <span>
-                            <strong>Approved:</strong> 💵 ₹<?= number_format($approved['approved_amount'], 2) ?>
+                            <strong>Approved:</strong> 💵 ₹<?= number_format($approvedAmount, 2) ?>
                         </span>
                         <?php endif; ?>
                     </div>
@@ -114,6 +120,9 @@ ob_start();
                         <?php if (!empty($expense['approved_at'])): ?>
                         <span><strong><?= ($expense['status'] ?? 'pending') === 'approved' ? 'Approved' : 'Processed' ?>:</strong> 📅 <?= date('M d, Y', strtotime($expense['approved_at'])) ?></span>
                         <?php endif; ?>
+                        <?php if (!empty($expense['paid_at'])): ?>
+                        <span><strong>Paid:</strong> 📅 <?= date('M d, Y', strtotime($expense['paid_at'])) ?></span>
+                        <?php endif; ?>
                     </div>
                 </div>
                 
@@ -124,6 +133,15 @@ ob_start();
                         <span><strong>Status:</strong> 
                             <span class="badge badge--<?= $statusClass ?>"><?= $statusIcon ?> <?= ucfirst($status) ?></span>
                         </span>
+                        <?php if (!empty($expense['approval_remarks'])): ?>
+                        <span><strong>Approval Remarks:</strong> <?= nl2br(htmlspecialchars($expense['approval_remarks'])) ?></span>
+                        <?php endif; ?>
+                        <?php if (!empty($expense['rejection_reason'])): ?>
+                        <span><strong>Rejection Reason:</strong> <?= nl2br(htmlspecialchars($expense['rejection_reason'])) ?></span>
+                        <?php endif; ?>
+                        <?php if (!empty($expense['payment_remarks'])): ?>
+                        <span><strong>Payment Details:</strong> <?= nl2br(htmlspecialchars($expense['payment_remarks'])) ?></span>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -175,6 +193,34 @@ ob_start();
             <div class="modal-footer">
                 <button type="button" class="btn btn--secondary" onclick="closeRejectModal()">Cancel</button>
                 <button type="submit" class="btn btn--danger">Reject Expense</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Mark as Paid Modal -->
+<div id="markPaidModal" class="modal-overlay" data-visible="false">
+    <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-header">
+            <h3>💰 Mark as Paid</h3>
+            <span class="close" onclick="closeMarkPaidModal()">&times;</span>
+        </div>
+        <form id="markPaidForm" enctype="multipart/form-data">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="payment_proof">Payment Proof (Image/PDF)</label>
+                    <input type="file" id="payment_proof" name="proof" class="form-control" accept=".jpg,.jpeg,.png,.pdf">
+                    <small class="text-muted">Optional. Max file size: 5MB. Allowed formats: JPG, PNG, PDF</small>
+                </div>
+                <div class="form-group">
+                    <label for="payment_remarks">Payment Details/Remarks</label>
+                    <textarea id="payment_remarks" name="payment_remarks" class="form-control" rows="3" placeholder="Enter payment method, transaction ID, or other payment details..."></textarea>
+                </div>
+                <p class="text-muted"><small>Note: Either upload payment proof or enter payment details (or both).</small></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn--secondary" onclick="closeMarkPaidModal()">Cancel</button>
+                <button type="submit" class="btn btn--success" id="markPaidBtn">✅ Mark as Paid</button>
             </div>
         </form>
     </div>
@@ -413,9 +459,37 @@ ob_start();
     font-size: 0.875rem;
     resize: vertical;
 }
+
+@keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+@keyframes slideOutRight {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
+}
+
+.text-muted {
+    color: #6b7280;
+    font-size: 0.875rem;
+}
 </style>
 
 <script>
+let currentExpenseId = null;
+
+function showMarkPaidModal(expenseId) {
+    currentExpenseId = expenseId;
+    document.getElementById('payment_proof').value = '';
+    document.getElementById('payment_remarks').value = '';
+    showModal('markPaidModal');
+}
+
+function closeMarkPaidModal() {
+    hideModal('markPaidModal');
+    currentExpenseId = null;
+}
+
 function openReceiptModal(imageSrc) {
     var img = document.getElementById('receiptImage');
     if (img) img.src = imageSrc;
@@ -447,6 +521,8 @@ function closeRejectModal() {
     var rr = document.getElementById('rejection_reason'); if (rr) rr.value = '';
 }
 
+
+
 window.onclick = function(event) {
     const receiptModal = document.getElementById('receiptModal');
     const rejectModal = document.getElementById('rejectModal');
@@ -461,66 +537,81 @@ window.onclick = function(event) {
 </script>
 
 <script>
-function validateProofUpload() {
-    var input = document.getElementById('expense_proof_input');
-    if (!input || !input.files || input.files.length === 0) {
-        alert('Please select a proof file before submitting.');
-        return false;
+// Handle mark as paid form submission
+document.getElementById('markPaidForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    if (!currentExpenseId) return;
+    
+    const proofFile = document.getElementById('payment_proof').files[0];
+    const remarks = document.getElementById('payment_remarks').value.trim();
+    
+    // Validate that either proof or remarks is provided
+    if (!proofFile && !remarks) {
+        alert('Please either upload payment proof or enter payment details.');
+        return;
     }
-    return true;
+    
+    const btn = document.getElementById('markPaidBtn');
+    btn.disabled = true;
+    btn.textContent = '⏳ Processing...';
+    
+    const formData = new FormData(this);
+    
+    fetch(`/ergon-site/expenses/paid/${currentExpenseId}`, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (response.ok) {
+            showSuccessMessage('✅ Expense marked as paid successfully!');
+            closeMarkPaidModal();
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            throw new Error('Failed to mark as paid');
+        }
+    })
+    .catch(err => {
+        showErrorMessage('❌ Error: ' + err.message);
+        btn.disabled = false;
+        btn.textContent = '✅ Mark as Paid';
+    });
+});
+
+// Success/Error message functions
+function showSuccessMessage(message) {
+    const alert = document.createElement('div');
+    alert.className = 'alert alert--success';
+    alert.innerHTML = message;
+    alert.style.position = 'fixed';
+    alert.style.top = '20px';
+    alert.style.right = '20px';
+    alert.style.zIndex = '10000';
+    alert.style.minWidth = '300px';
+    alert.style.animation = 'slideInRight 0.3s ease-out';
+    document.body.appendChild(alert);
+    setTimeout(() => {
+        alert.style.animation = 'slideOutRight 0.3s ease-in';
+        setTimeout(() => alert.remove(), 300);
+    }, 3000);
 }
 
-// Enable expense Mark Paid button only after a proof file is selected
-document.addEventListener('DOMContentLoaded', function() {
-    var input = document.getElementById('expense_proof_input');
-    var submitBtn = document.getElementById('expense_proof_submit');
-    var nameSpan = document.getElementById('expense_proof_name');
-    if (input) {
-        input.addEventListener('change', function() {
-            if (input.files && input.files.length > 0) {
-                submitBtn.disabled = false;
-                nameSpan.textContent = input.files[0].name;
-            } else {
-                submitBtn.disabled = true;
-                nameSpan.textContent = '';
-            }
-        });
-    }
-});
-</script>
-
-<script>
-// Show preview for selected proof (image preview or PDF icon)
-document.addEventListener('DOMContentLoaded', function() {
-    var input = document.getElementById('expense_proof_input');
-    var previewContainer = document.createElement('div');
-    previewContainer.style.marginTop = '0.75rem';
-    if (input) {
-        input.parentNode.insertBefore(previewContainer, input.nextSibling);
-        input.addEventListener('change', function() {
-            previewContainer.innerHTML = '';
-            if (input.files && input.files.length > 0) {
-                var file = input.files[0];
-                var reader = new FileReader();
-                if (file.type.startsWith('image/')) {
-                    reader.onload = function(e) {
-                        var img = document.createElement('img');
-                        img.src = e.target.result;
-                        img.style.maxWidth = '200px';
-                        img.style.borderRadius = '6px';
-                        previewContainer.appendChild(img);
-                    };
-                    reader.readAsDataURL(file);
-                } else if (file.type === 'application/pdf') {
-                    var link = document.createElement('a');
-                    link.textContent = 'PDF selected: ' + file.name;
-                    link.href = '#';
-                    previewContainer.appendChild(link);
-                }
-            }
-        });
-    }
-});
+function showErrorMessage(message) {
+    const alert = document.createElement('div');
+    alert.className = 'alert alert--error';
+    alert.innerHTML = message;
+    alert.style.position = 'fixed';
+    alert.style.top = '20px';
+    alert.style.right = '20px';
+    alert.style.zIndex = '10000';
+    alert.style.minWidth = '300px';
+    alert.style.animation = 'slideInRight 0.3s ease-out';
+    document.body.appendChild(alert);
+    setTimeout(() => {
+        alert.style.animation = 'slideOutRight 0.3s ease-in';
+        setTimeout(() => alert.remove(), 300);
+    }, 4000);
+}
 </script>
 
 <?php

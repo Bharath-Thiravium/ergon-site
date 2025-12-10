@@ -14,7 +14,7 @@ header('Content-Type: application/json');
 try {
     $db = Database::connect();
     
-    $stmt = $db->prepare("SELECT id, name, email FROM users WHERE status = 'active' ORDER BY name");
+    $stmt = $db->prepare("SELECT id, name, email, role FROM users WHERE status = 'active' AND role != 'owner' ORDER BY name ASC");
     $stmt->execute();
     $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
     

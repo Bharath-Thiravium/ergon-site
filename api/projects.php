@@ -19,10 +19,10 @@ try {
     $departmentId = $_GET['department_id'] ?? null;
     
     if ($departmentId) {
-        $stmt = $db->prepare("SELECT p.id, p.name as project_name, p.description, p.department_id, d.name as department_name FROM projects p LEFT JOIN departments d ON p.department_id = d.id WHERE p.department_id = ? AND p.status = 'active' ORDER BY p.name ASC");
+        $stmt = $db->prepare("SELECT p.id, p.name, p.description, p.department_id, d.name as department_name FROM projects p LEFT JOIN departments d ON p.department_id = d.id WHERE p.department_id = ? AND p.status = 'active' ORDER BY p.name ASC");
         $stmt->execute([$departmentId]);
     } else {
-        $stmt = $db->query("SELECT p.id, p.name as project_name, p.description, p.department_id, d.name as department_name FROM projects p LEFT JOIN departments d ON p.department_id = d.id WHERE p.status = 'active' ORDER BY p.name ASC");
+        $stmt = $db->query("SELECT p.id, p.name, p.description, p.department_id, d.name as department_name FROM projects p LEFT JOIN departments d ON p.department_id = d.id WHERE p.status = 'active' ORDER BY p.name ASC");
     }
     
     $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);

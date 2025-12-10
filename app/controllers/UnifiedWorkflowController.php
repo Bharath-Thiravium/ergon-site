@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../core/Controller.php';
 require_once __DIR__ . '/../middlewares/AuthMiddleware.php';
+require_once __DIR__ . '/../helpers/DatabaseHelper.php';
 
 class UnifiedWorkflowController extends Controller {
     
@@ -302,11 +303,11 @@ class UnifiedWorkflowController extends Controller {
             
             $db->beginTransaction();
             
-            // Calculate SLA end time
+            // Calculate SLA end time based on actual SLA hours (not affected by page refresh)
             $slaEndTime = date('Y-m-d H:i:s', strtotime($now . ' +' . $task['sla_hours'] . ' hours'));
             
-            // Start the task with full SLA support
-            $stmt = $db->prepare("UPDATE daily_tasks SET status = 'in_progress', start_time = ?, sla_end_time = ?, resume_time = NULL, pause_start_time = NULL WHERE id = ?");
+            // Start the task with fixed SLA support
+            $stmt = $db->prepare("UPDATE daily_tasks SET status = 'in_progress', start_time = ?, sla_end_time = ?, resume_time = NULL, pause_start_time = NULL, active_seconds = 0, pause_duration = 0 WHERE id = ?");
             $result = $stmt->execute([$now, $slaEndTime, $taskId]);
             
             if ($result && $stmt->rowCount() > 0) {
@@ -380,8 +381,8 @@ class UnifiedWorkflowController extends Controller {
             $now = date('Y-m-d H:i:s');
             $status = $this->validateStatus('on_break');
             
-            // Update with pause start time and accumulated active seconds
-            $stmt = $db->prepare("UPDATE daily_tasks SET status = ?, pause_start_time = ?, active_seconds = active_seconds + ? WHERE id = ?");
+            // Update with pause start time and accumulated active seconds (fixed calculation)
+            $stmt = $db->prepare("UPDATE daily_tasks SET status = ?, pause_start_time = ?, active_seconds = active_seconds + ?, total_pause_duration = COALESCE(total_pause_duration, 0) WHERE id = ?");
             $result = $stmt->execute([$status, $now, max(0, $activeTime), $taskId]);
             
             if ($result && $stmt->rowCount() > 0) {
@@ -444,9 +445,9 @@ class UnifiedWorkflowController extends Controller {
             $now = date('Y-m-d H:i:s');
             $status = $this->validateStatus('in_progress');
             
-            // Update task status, add pause duration, set resume time
-            $stmt = $db->prepare("UPDATE daily_tasks SET status = ?, resume_time = ?, pause_duration = pause_duration + ?, pause_start_time = NULL WHERE id = ?");
-            $result = $stmt->execute([$status, $now, $additionalPauseDuration, $taskId]);
+            // Update task status, add pause duration, set resume time (fixed break time tracking)
+            $stmt = $db->prepare("UPDATE daily_tasks SET status = ?, resume_time = ?, total_pause_duration = COALESCE(total_pause_duration, 0) + ?, pause_start_time = NULL WHERE id = ?");
+            $result = $stmt->execute([$status, $now, max(0, $additionalPauseDuration), $taskId]);
             
             if ($result && $stmt->rowCount() > 0) {
                 $db->commit();
@@ -761,7 +762,7 @@ class UnifiedWorkflowController extends Controller {
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             )";
             
-            $db->exec($createSQL);
+            DatabaseHelper::safeExec($db, $createSQL, "Execute SQL");
             
             // Add missing columns if table already exists
             $this->addMissingColumns($db);
@@ -773,7 +774,7 @@ class UnifiedWorkflowController extends Controller {
                 $column = $stmt->fetch(PDO::FETCH_ASSOC);
                 
                 if ($column && (strpos($column['Type'], 'enum') !== false || strpos($column['Type'], 'varchar(20)') !== false)) {
-                    $db->exec("ALTER TABLE daily_tasks MODIFY COLUMN status VARCHAR(50) DEFAULT 'not_started'");
+                    DatabaseHelper::safeExec($db, "ALTER TABLE daily_tasks MODIFY COLUMN status VARCHAR(50) DEFAULT 'not_started'", "Alter table");
                     error_log('Modified status column to VARCHAR(50)');
                 }
             } catch (Exception $e) {
@@ -788,8 +789,8 @@ class UnifiedWorkflowController extends Controller {
             
             // Add indexes separately
             try {
-                $db->exec("CREATE INDEX IF NOT EXISTS idx_user_date ON daily_tasks (user_id, scheduled_date)");
-                $db->exec("CREATE INDEX IF NOT EXISTS idx_status ON daily_tasks (status)");
+                DatabaseHelper::safeExec($db, "CREATE INDEX IF NOT EXISTS idx_user_date ON daily_tasks (user_id, scheduled_date)", "Create index");
+                DatabaseHelper::safeExec($db, "CREATE INDEX IF NOT EXISTS idx_status ON daily_tasks (status)", "Create index");
             } catch (Exception $e) {
                 error_log('Index creation error (non-critical): ' . $e->getMessage());
             }
@@ -810,7 +811,7 @@ class UnifiedWorkflowController extends Controller {
                     status VARCHAR(50) DEFAULT 'not_started',
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )";
-                $db->exec($fallbackSQL);
+                DatabaseHelper::safeExec($db, $fallbackSQL, "Execute SQL");
                 error_log('Created daily_tasks table with fallback structure');
             } catch (Exception $e2) {
                 error_log('Fallback table creation also failed: ' . $e2->getMessage());
@@ -886,7 +887,7 @@ class UnifiedWorkflowController extends Controller {
     private function createDailyTasksFromRegular($db, $userId, $date, $existingStatuses = []) {
         try {
             // Ensure tasks have SLA hours
-            $db->exec("UPDATE tasks SET sla_hours = 1.0 WHERE sla_hours IS NULL OR sla_hours = 0");
+            DatabaseHelper::safeExec($db, "UPDATE tasks SET sla_hours = 1.0 WHERE sla_hours IS NULL OR sla_hours = 0", "Update data");
             
             // Get tasks for this user that are planned for the specific date
             // Carry forward is now handled separately before this method is called
@@ -997,7 +998,7 @@ class UnifiedWorkflowController extends Controller {
     private function createDailyTasksFromRegularWithoutCarryForward($db, $userId, $date, $existingStatuses = []) {
         try {
             // Ensure tasks have SLA hours
-            $db->exec("UPDATE tasks SET sla_hours = 1.0 WHERE sla_hours IS NULL OR sla_hours = 0");
+            DatabaseHelper::safeExec($db, "UPDATE tasks SET sla_hours = 1.0 WHERE sla_hours IS NULL OR sla_hours = 0", "Update data");
             
             // Get tasks for this user that are planned for the specific date (no carry forward)
             $stmt = $db->prepare("
@@ -1113,7 +1114,7 @@ class UnifiedWorkflowController extends Controller {
                     $stmt = $db->prepare("SHOW COLUMNS FROM daily_tasks LIKE ?");
                     $stmt->execute([$column]);
                     if (!$stmt->fetch()) {
-                        $db->exec("ALTER TABLE daily_tasks ADD COLUMN {$column} {$definition}");
+                        DatabaseHelper::safeExec($db, "ALTER TABLE daily_tasks ADD COLUMN {$column} {$definition}", "Alter table");
                         error_log("Added missing column: {$column}");
                     }
                 } catch (Exception $e) {
@@ -1127,7 +1128,7 @@ class UnifiedWorkflowController extends Controller {
     
     private function ensureSLAHistoryTable($db) {
         try {
-            $db->exec("
+            DatabaseHelper::safeExec($db, "
                 CREATE TABLE IF NOT EXISTS sla_history (
                     id INT AUTO_INCREMENT PRIMARY KEY,
                     daily_task_id INT NOT NULL,
@@ -1137,8 +1138,7 @@ class UnifiedWorkflowController extends Controller {
                     notes TEXT,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     INDEX idx_daily_task_id (daily_task_id)
-                )
-            ");
+                )", "Create SLA history table");
         } catch (Exception $e) {
             error_log('SLA history table creation error: ' . $e->getMessage());
         }

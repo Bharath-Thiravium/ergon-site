@@ -34,8 +34,15 @@ function closeDialog() {
 }
 
 function saveProgress() {
-    var progress = document.getElementById('progressSlider').value;
+    var progressSlider = document.getElementById('progressSlider');
     var descriptionEl = document.getElementById('progressDescription');
+    
+    if (!progressSlider || !currentTaskId) {
+        alert('Error: Missing required elements');
+        return;
+    }
+    
+    var progress = progressSlider.value;
     var description = descriptionEl ? descriptionEl.value.trim() : '';
     
     if (!description) {
@@ -46,9 +53,11 @@ function saveProgress() {
     
     // Show loading state
     var saveBtn = document.querySelector('#progressDialog .btn-primary');
-    var originalText = saveBtn.textContent;
-    saveBtn.textContent = 'Updating...';
-    saveBtn.disabled = true;
+    if (saveBtn) {
+        var originalText = saveBtn.textContent;
+        saveBtn.textContent = 'Updating...';
+        saveBtn.disabled = true;
+    }
     
     fetch('/ergon-site/tasks/update-status', {
         method: 'POST',
@@ -90,8 +99,10 @@ function saveProgress() {
     })
     .finally(() => {
         // Reset button state
-        saveBtn.textContent = originalText;
-        saveBtn.disabled = false;
+        if (saveBtn) {
+            saveBtn.textContent = originalText || 'Update Progress';
+            saveBtn.disabled = false;
+        }
     });
 }
 

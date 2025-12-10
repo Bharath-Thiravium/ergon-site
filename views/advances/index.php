@@ -68,7 +68,7 @@ ob_start();
                         <th>Type</th>
                         <th>Amount</th>
                         <th>Reason</th>
-                        <th>Repayment Date</th>
+                        <th>Approved Amount</th>
                         <th>Status</th>
                         <th>Requested</th>
                         <th>Actions</th>
@@ -102,7 +102,13 @@ ob_start();
                             <td><?= htmlspecialchars(!empty($advance['type']) ? $advance['type'] : 'General Advance') ?></td>
                             <td>₹<?= number_format($advance['amount'] ?? 0, 2) ?></td>
                             <td><?= htmlspecialchars($advance['reason'] ?? '') ?></td>
-                            <td><?= !empty($advance['repayment_date']) ? date('M d, Y', strtotime($advance['repayment_date'])) : 'N/A' ?></td>
+                            <td>
+                                <?php if (!empty($advance['approved_amount']) && in_array($advance['status'] ?? '', ['approved', 'paid'])): ?>
+                                    ₹<?= number_format($advance['approved_amount'], 2) ?>
+                                <?php else: ?>
+                                    <span class="text-muted">-</span>
+                                <?php endif; ?>
+                            </td>
                             <td>
                                 <?php 
                                 $advanceStatus = $advance['status'] ?? 'pending';
@@ -140,7 +146,7 @@ ob_start();
                                     $canApprove = $isPending && in_array($currentUserRole, ['owner', 'admin']);
                                     ?>
                                     <?php if ($canApprove): ?>
-                                    <button class="ab-btn ab-btn--approve" data-action="approve" data-module="advances" data-id="<?= $advance['id'] ?>" data-name="Advance Request" title="Approve Advance">
+                                    <button class="ab-btn ab-btn--approve" onclick="showApprovalModal(<?= $advance['id'] ?>)" title="Approve Advance">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                             <polyline points="20,6 9,17 4,12"/>
                                         </svg>
@@ -152,7 +158,15 @@ ob_start();
                                         </svg>
                                     </button>
                                     <?php endif; ?>
-                                    <?php if (in_array($user_role ?? '', ['admin', 'owner']) || (($user_role ?? '') === 'user' && ($advance['status'] ?? 'pending') === 'pending')): ?>
+                                    <?php if (($advance['status'] ?? 'pending') === 'approved'): ?>
+                                    <button class="ab-btn ab-btn--mark-paid" onclick="showMarkPaidModal(<?= $advance['id'] ?>)" title="Mark as Paid">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                            <path d="M9 11l3 3l8-8"/>
+                                            <path d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9s4.03-9 9-9c1.51 0 2.93.37 4.18 1.03"/>
+                                        </svg>
+                                    </button>
+                                    <?php endif; ?>
+                                    <?php if (($advance['user_id'] ?? 0) == ($_SESSION['user_id'] ?? 0) && ($advance['status'] ?? 'pending') === 'pending'): ?>
                                     <button class="ab-btn ab-btn--delete" data-action="delete" data-module="advances" data-id="<?= $advance['id'] ?>" data-name="Advance Request" title="Delete Request">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                             <path d="M3 6h18"/>
@@ -174,57 +188,274 @@ ob_start();
     </div>
 </div>
 
-<?php
-// Rejection Modal Content
-$rejectContent = '
-<form id="rejectForm" method="POST">
-    <div class="form-group">
-        <label for="rejection_reason">Reason for Rejection:</label>
-        <textarea id="rejection_reason" name="rejection_reason" class="form-control" rows="4" placeholder="Please provide a reason for rejecting this advance request..." required></textarea>
+<!-- Approval Modal -->
+<div id="approvalModal" class="modal-overlay" data-visible="false">
+    <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-header">
+            <h3>💳 Approve Advance Request</h3>
+            <span class="close" onclick="closeApprovalModal()">&times;</span>
+        </div>
+        <form id="approvalForm">
+            <div class="modal-body">
+                <div class="advance-details" id="advanceDetails">
+                    <!-- Advance details will be loaded here -->
+                </div>
+                <div class="form-group">
+                    <label for="approved_amount">Approved Amount (₹) *</label>
+                    <input type="number" id="approved_amount" name="approved_amount" class="form-control" step="0.01" min="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="approval_remarks">Approval Remarks / Notes</label>
+                    <textarea id="approval_remarks" name="approval_remarks" class="form-control" rows="3" placeholder="Enter reason for approval or any remarks..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn--secondary" onclick="closeApprovalModal()">Cancel</button>
+                <button type="submit" class="btn btn--success" id="approveBtn">✅ Approve Advance</button>
+            </div>
+        </form>
     </div>
-</form>';
+</div>
 
-$rejectFooter = '<button type="button" class="btn btn--secondary" onclick="closeModal(\'rejectModal\')">Cancel</button><button type="submit" form="rejectForm" class="btn btn--danger">Reject Advance</button>';
+<!-- Rejection Modal -->
+<div id="rejectModal" class="modal-overlay" data-visible="false">
+    <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-header">
+            <h3>Reject Advance Request</h3>
+            <span class="close" onclick="closeRejectModal()">&times;</span>
+        </div>
+        <form id="rejectForm" method="POST">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="rejection_reason">Reason for Rejection:</label>
+                    <textarea id="rejection_reason" name="rejection_reason" class="form-control" rows="4" placeholder="Please provide a reason for rejecting this advance request..." required></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn--secondary" onclick="closeRejectModal()">Cancel</button>
+                <button type="submit" class="btn btn--danger">Reject Advance</button>
+            </div>
+        </form>
+    </div>
+</div>
 
-// Render Modal
-renderModal('rejectModal', 'Reject Advance Request', $rejectContent, $rejectFooter, ['icon' => '❌']);
-?>
+<!-- Mark as Paid Modal -->
+<div id="markPaidModal" class="modal-overlay" data-visible="false">
+    <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-header">
+            <h3>💳 Mark as Paid</h3>
+            <span class="close" onclick="closeMarkPaidModal()">&times;</span>
+        </div>
+        <form id="markPaidForm" enctype="multipart/form-data">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="payment_proof">Payment Proof (Image/PDF)</label>
+                    <input type="file" id="payment_proof" name="proof" class="form-control" accept=".jpg,.jpeg,.png,.pdf">
+                    <small class="text-muted">Optional. Max file size: 5MB. Allowed formats: JPG, PNG, PDF</small>
+                </div>
+                <div class="form-group">
+                    <label for="payment_remarks">Payment Details/Remarks</label>
+                    <textarea id="payment_remarks" name="payment_remarks" class="form-control" rows="3" placeholder="Enter payment method, transaction ID, or other payment details..."></textarea>
+                </div>
+                <p class="text-muted"><small>Note: Either upload payment proof or enter payment details (or both).</small></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn--secondary" onclick="closeMarkPaidModal()">Cancel</button>
+                <button type="submit" class="btn btn--success" id="markPaidBtn">✅ Mark as Paid</button>
+            </div>
+        </form>
+    </div>
+</div>
 
 
 
 <script>
+let currentAdvanceId = null;
+
+function showApprovalModal(advanceId) {
+    currentAdvanceId = advanceId;
+    
+    // Fetch advance details
+    fetch(`/ergon-site/advances/approve/${advanceId}`)
+        .then(r => r.json())
+        .then(data => {
+            if (data.success && data.advance) {
+                const a = data.advance;
+                
+                // Populate advance details
+                document.getElementById('advanceDetails').innerHTML = `
+                    <div class="advance-info">
+                        <div class="row">
+                            <div class="col"><strong>Employee:</strong> ${a.user_name || 'Unknown'}</div>
+                            <div class="col"><strong>Type:</strong> ${a.type || 'General Advance'}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col"><strong>Requested Amount:</strong> ₹${parseFloat(a.amount || 0).toFixed(2)}</div>
+                            <div class="col"><strong>Requested Date:</strong> ${a.requested_date || 'N/A'}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col"><strong>Submitted Date:</strong> ${a.created_at ? new Date(a.created_at).toLocaleDateString() : 'N/A'}</div>
+                            <div class="col"><strong>Status:</strong> <span class="badge badge--warning">Pending</span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col" style="grid-column: 1 / -1;"><strong>Reason:</strong> ${a.reason || 'No reason provided'}</div>
+                        </div>
+                        ${a.repayment_date ? `<div class="row"><div class="col" style="grid-column: 1 / -1;"><strong>Expected Repayment:</strong> ${new Date(a.repayment_date).toLocaleDateString()}</div></div>` : ''}
+                    </div>
+                `;
+                
+                // Set default approved amount to requested amount
+                document.getElementById('approved_amount').value = parseFloat(a.amount || 0).toFixed(2);
+                document.getElementById('approval_remarks').value = '';
+                
+                showModal('approvalModal');
+            } else {
+                alert('Error loading advance details: ' + (data.error || 'Unknown error'));
+            }
+        })
+        .catch(err => {
+            alert('Error: ' + err.message);
+        });
+}
+
+function closeApprovalModal() {
+    hideModal('approvalModal');
+    currentAdvanceId = null;
+}
+
 function showRejectModal(advanceId) {
-    const form = document.getElementById('rejectForm');
-    if (form) {
-        form.action = '/ergon-site/advances/reject/' + advanceId;
-        const reasonField = document.getElementById('rejection_reason');
-        if (reasonField) reasonField.value = '';
-    }
+    document.getElementById('rejectForm').action = '/ergon-site/advances/reject/' + advanceId;
+    const reasonField = document.getElementById('rejection_reason');
+    if (reasonField) reasonField.value = '';
     showModal('rejectModal');
 }
 
-// Handle form submission validation
-document.addEventListener('DOMContentLoaded', function() {
-    const rejectForm = document.getElementById('rejectForm');
-    if (rejectForm) {
-        rejectForm.addEventListener('submit', function(e) {
-            const reason = document.getElementById('rejection_reason');
-            if (!reason || !reason.value.trim()) {
-                e.preventDefault();
-                alert('Please provide a reason for rejection.');
-                if (reason) reason.focus();
-                return false;
-            }
-            
-            // Show loading state
-            const submitBtn = rejectForm.querySelector('button[type="submit"]');
-            if (submitBtn) {
-                submitBtn.disabled = true;
-                submitBtn.textContent = 'Rejecting...';
-            }
-        });
-    }
+function closeRejectModal() {
+    hideModal('rejectModal');
+}
+
+function showMarkPaidModal(advanceId) {
+    currentAdvanceId = advanceId;
+    document.getElementById('payment_proof').value = '';
+    document.getElementById('payment_remarks').value = '';
+    showModal('markPaidModal');
+}
+
+function closeMarkPaidModal() {
+    hideModal('markPaidModal');
+    currentAdvanceId = null;
+}
+
+// Handle approval form submission
+document.getElementById('approvalForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    if (!currentAdvanceId) return;
+    
+    const btn = document.getElementById('approveBtn');
+    btn.disabled = true;
+    btn.textContent = '⏳ Approving...';
+    
+    const formData = new FormData(this);
+    
+    fetch(`/ergon-site/advances/approve/${currentAdvanceId}`, {
+        method: 'POST',
+        body: formData
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            showSuccessMessage('✅ Advance approved successfully!');
+            closeApprovalModal();
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            showErrorMessage('❌ Error: ' + (data.error || 'Approval failed'));
+            btn.disabled = false;
+            btn.textContent = '✅ Approve Advance';
+        }
+    })
+    .catch(err => {
+        showErrorMessage('❌ Error: ' + err.message);
+        btn.disabled = false;
+        btn.textContent = '✅ Approve Advance';
+    });
 });
+
+// Handle mark as paid form submission
+document.getElementById('markPaidForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    if (!currentAdvanceId) return;
+    
+    const proofFile = document.getElementById('payment_proof').files[0];
+    const remarks = document.getElementById('payment_remarks').value.trim();
+    
+    // Validate that either proof or remarks is provided
+    if (!proofFile && !remarks) {
+        alert('Please either upload payment proof or enter payment details.');
+        return;
+    }
+    
+    const btn = document.getElementById('markPaidBtn');
+    btn.disabled = true;
+    btn.textContent = '⏳ Processing...';
+    
+    const formData = new FormData(this);
+    
+    fetch(`/ergon-site/advances/paid/${currentAdvanceId}`, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (response.ok) {
+            showSuccessMessage('✅ Advance marked as paid successfully!');
+            closeMarkPaidModal();
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            throw new Error('Failed to mark as paid');
+        }
+    })
+    .catch(err => {
+        showErrorMessage('❌ Error: ' + err.message);
+        btn.disabled = false;
+        btn.textContent = '✅ Mark as Paid';
+    });
+});
+
+// Success/Error message functions
+function showSuccessMessage(message) {
+    const alert = document.createElement('div');
+    alert.className = 'alert alert--success';
+    alert.innerHTML = message;
+    alert.style.position = 'fixed';
+    alert.style.top = '20px';
+    alert.style.right = '20px';
+    alert.style.zIndex = '10000';
+    alert.style.minWidth = '300px';
+    alert.style.animation = 'slideInRight 0.3s ease-out';
+    document.body.appendChild(alert);
+    setTimeout(() => {
+        alert.style.animation = 'slideOutRight 0.3s ease-in';
+        setTimeout(() => alert.remove(), 300);
+    }, 3000);
+}
+
+function showErrorMessage(message) {
+    const alert = document.createElement('div');
+    alert.className = 'alert alert--error';
+    alert.innerHTML = message;
+    alert.style.position = 'fixed';
+    alert.style.top = '20px';
+    alert.style.right = '20px';
+    alert.style.zIndex = '10000';
+    alert.style.minWidth = '300px';
+    alert.style.animation = 'slideInRight 0.3s ease-out';
+    document.body.appendChild(alert);
+    setTimeout(() => {
+        alert.style.animation = 'slideOutRight 0.3s ease-in';
+        setTimeout(() => alert.remove(), 300);
+    }, 4000);
+}
 </script>
 
 <!-- Advance Modal -->
@@ -379,11 +610,42 @@ document.addEventListener('click', function(e) {
         window.location.href = `/ergon-site/${module}/view/${id}`;
     } else if (action === 'delete' && module && id && name) {
         deleteRecord(module, id, name);
-    } else if (action === 'approve' && module && id) {
-        window.location.href = `/ergon-site/${module}/approve/${id}`;
     }
 });
 </script>
+
+<style>
+.advance-info {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+.advance-info .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 8px;
+}
+.advance-info .row:last-child {
+    margin-bottom: 0;
+}
+.advance-info .col {
+    font-size: 14px;
+}
+.ab-btn--mark-paid {
+    background: #10b981;
+    color: white;
+}
+@keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+@keyframes slideOutRight {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
+}
+</style>
 
 <?php
 $content = ob_get_clean();

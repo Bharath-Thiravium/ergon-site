@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../core/Controller.php';
+require_once __DIR__ . '/../helpers/DatabaseHelper.php';
 
 class UnifiedAttendanceController extends Controller {
     private $db;
@@ -669,7 +670,7 @@ class UnifiedAttendanceController extends Controller {
             $stmt = $this->db->query("SHOW TABLES LIKE 'attendance'");
             if (!$stmt->fetch()) {
                 // Table doesn't exist, create it
-                $this->db->exec("
+                DatabaseHelper::safeExec($this->db, "
                     CREATE TABLE attendance (
                         id INT AUTO_INCREMENT PRIMARY KEY,
                         user_id INT NOT NULL,
@@ -683,8 +684,7 @@ class UnifiedAttendanceController extends Controller {
                         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                         INDEX idx_user_id (user_id),
                         INDEX idx_check_in_date (check_in)
-                    )
-                ");
+                    )", "Create attendance table");
             }
         } catch (Exception $e) {
             error_log('ensureAttendanceTable error: ' . $e->getMessage());
