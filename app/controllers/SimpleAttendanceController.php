@@ -142,6 +142,104 @@ class SimpleAttendanceController extends Controller {
         exit;
     }
     
+    public function clock() {
+        $this->requireAuth();
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            header('Content-Type: application/json');
+            
+            try {
+                $type = $_POST['type'] ?? '';
+                $userId = $_SESSION['user_id'];
+                $latitude = $_POST['latitude'] ?? null;
+                $longitude = $_POST['longitude'] ?? null;
+                
+                if ($type === 'in') {
+                    $currentDate = TimezoneHelper::getCurrentDate();
+                    $stmt = $this->db->prepare("SELECT id FROM attendance WHERE user_id = ? AND DATE(check_in) = ?");
+                    $stmt->execute([$userId, $currentDate]);
+                    
+                    if ($stmt->fetch()) {
+                        echo json_encode(['success' => false, 'error' => 'Already clocked in today']);
+                        exit;
+                    }
+                    
+                    $currentTime = date('Y-m-d H:i:s');
+                    $stmt = $this->db->prepare("INSERT INTO attendance (user_id, check_in, latitude, longitude, created_at) VALUES (?, ?, ?, ?, ?)");
+                    $result = $stmt->execute([$userId, $currentTime, $latitude, $longitude, $currentTime]);
+                    
+                    echo json_encode([
+                        'success' => $result,
+                        'message' => $result ? 'Clocked in successfully' : 'Failed to clock in'
+                    ]);
+                } elseif ($type === 'out') {
+                    $currentTime = date('Y-m-d H:i:s');
+                    $currentDate = TimezoneHelper::getCurrentDate();
+                    
+                    $stmt = $this->db->prepare("SELECT id FROM attendance WHERE user_id = ? AND DATE(check_in) = ? AND check_out IS NULL");
+                    $stmt->execute([$userId, $currentDate]);
+                    $attendance = $stmt->fetch();
+                    
+                    if (!$attendance) {
+                        echo json_encode(['success' => false, 'error' => 'No clock in record found for today']);
+                        exit;
+                    }
+                    
+                    $stmt = $this->db->prepare("UPDATE attendance SET check_out = ? WHERE id = ?");
+                    $result = $stmt->execute([$currentTime, $attendance['id']]);
+                    
+                    echo json_encode([
+                        'success' => $result,
+                        'message' => $result ? 'Clocked out successfully' : 'Failed to clock out'
+                    ]);
+                } else {
+                    echo json_encode(['success' => false, 'error' => 'Invalid action']);
+                }
+                
+            } catch (Exception $e) {
+                echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+            }
+            exit;
+        } else {
+            // Show clock page
+            $todayAttendance = null;
+            $onLeave = false;
+            
+            try {
+                $currentDate = TimezoneHelper::getCurrentDate();
+                
+                $stmt = $this->db->prepare("SELECT * FROM attendance WHERE user_id = ? AND DATE(check_in) = ?");
+                $stmt->execute([$_SESSION['user_id'], $currentDate]);
+                $todayAttendance = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                try {
+                    $stmt = $this->db->prepare("SELECT id FROM leaves WHERE user_id = ? AND status = 'approved' AND CURDATE() BETWEEN start_date AND end_date");
+                    $stmt->execute([$_SESSION['user_id']]);
+                    $onLeave = $stmt->fetch() ? true : false;
+                } catch (Exception $e) {
+                    $onLeave = false;
+                }
+                
+            } catch (Exception $e) {
+                error_log('Clock page error: ' . $e->getMessage());
+            }
+            
+            $attendanceStatus = [
+                'has_clocked_in' => $todayAttendance && $todayAttendance['check_in'] ? true : false,
+                'has_clocked_out' => $todayAttendance && $todayAttendance['check_out'] ? true : false,
+                'on_leave' => $onLeave,
+                'is_completed' => $todayAttendance && $todayAttendance['check_in'] && $todayAttendance['check_out'] ? true : false
+            ];
+            
+            $this->view('attendance/clock', [
+                'today_attendance' => $todayAttendance,
+                'on_leave' => $onLeave,
+                'attendance_status' => $attendanceStatus,
+                'active_page' => 'attendance'
+            ]);
+        }
+    }
+    
     private function ensureAttendanceTable($db) {
         try {
             DatabaseHelper::safeExec($db, "CREATE TABLE IF NOT EXISTS attendance (
