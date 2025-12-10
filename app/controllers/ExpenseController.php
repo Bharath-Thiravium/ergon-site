@@ -50,6 +50,7 @@ class ExpenseController extends Controller {
             try { DatabaseHelper::safeExec($db, "ALTER TABLE expenses ADD COLUMN paid_at DATETIME NULL", "Alter table"); } catch (Exception $e) {}
             try { DatabaseHelper::safeExec($db, "ALTER TABLE expenses ADD COLUMN approved_amount DECIMAL(10,2) NULL", "Alter table"); } catch (Exception $e) {}
             try { DatabaseHelper::safeExec($db, "ALTER TABLE expenses ADD COLUMN approval_remarks TEXT NULL", "Alter table"); } catch (Exception $e) {}
+            try { DatabaseHelper::safeExec($db, "ALTER TABLE expenses ADD COLUMN payment_remarks TEXT NULL", "Alter table"); } catch (Exception $e) {}
             try { DatabaseHelper::safeExec($db, "ALTER TABLE expenses MODIFY COLUMN status ENUM('pending','approved','rejected','paid') DEFAULT 'pending'", "Alter table"); } catch (Exception $e) {}
 
             // Create approved_expenses table to store approved/processed expense records separately
@@ -605,54 +606,54 @@ class ExpenseController extends Controller {
             }
 
             $proof = null;
+            $paymentRemarks = trim($_POST['payment_remarks'] ?? '');
             
-            if (!isset($_FILES['proof']) || $_FILES['proof']['error'] !== 0) {
-                $errorMsg = !isset($_FILES['proof']) ? 'No file in request' : 'Upload error: ' . $_FILES['proof']['error'];
-                error_log("markPaid expense $id: $errorMsg");
-                header('Location: /ergon-site/expenses/view/' . $id . '?error=' . urlencode($errorMsg));
+            // Validate that either proof or remarks is provided
+            $hasFile = isset($_FILES['proof']) && $_FILES['proof']['error'] === 0;
+            if (!$hasFile && empty($paymentRemarks)) {
+                header('Location: /ergon-site/expenses/view/' . $id . '?error=Either payment proof or payment details must be provided');
                 exit;
             }
 
-            $file = $_FILES['proof'];
-            $allowedMime = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
-            $maxSize = 5 * 1024 * 1024;
-            
-            if ($file['size'] > $maxSize) {
-                error_log("markPaid expense $id: File too large (" . $file['size'] . " bytes)");
-                header('Location: /ergon-site/expenses/view/' . $id . '?error=File exceeds 5MB');
-                exit;
+            // Handle file upload if provided
+            if ($hasFile) {
+                $file = $_FILES['proof'];
+                $allowedMime = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
+                $maxSize = 5 * 1024 * 1024;
+                
+                if ($file['size'] > $maxSize) {
+                    error_log("markPaid expense $id: File too large (" . $file['size'] . " bytes)");
+                    header('Location: /ergon-site/expenses/view/' . $id . '?error=File exceeds 5MB');
+                    exit;
+                }
+
+                $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                $mime = finfo_file($finfo, $file['tmp_name']);
+                finfo_close($finfo);
+                
+                if (!in_array($mime, $allowedMime)) {
+                    error_log("markPaid expense $id: Invalid mime type: $mime");
+                    header('Location: /ergon-site/expenses/view/' . $id . '?error=Invalid file type');
+                    exit;
+                }
+
+                $uploadDir = __DIR__ . '/../../storage/proofs/';
+                if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
+                $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+                $filename = time() . '_' . bin2hex(random_bytes(6)) . '.' . $ext;
+                $uploadPath = $uploadDir . $filename;
+                
+                if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
+                    $proof = $filename;
+                } else {
+                    header('Location: /ergon-site/expenses/view/' . $id . '?error=Failed to save proof file');
+                    exit;
+                }
             }
 
-            $finfo = finfo_open(FILEINFO_MIME_TYPE);
-            $mime = finfo_file($finfo, $file['tmp_name']);
-            finfo_close($finfo);
-            
-            if (!in_array($mime, $allowedMime)) {
-                error_log("markPaid expense $id: Invalid mime type: $mime");
-                header('Location: /ergon-site/expenses/view/' . $id . '?error=Invalid file type');
-                exit;
-            }
-
-            $uploadDir = __DIR__ . '/../../storage/proofs/';
-            if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
-            $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
-            $filename = time() . '_' . bin2hex(random_bytes(6)) . '.' . $ext;
-            $uploadPath = $uploadDir . $filename;
-            
-            error_log("markPaid: Attempting to save file to: $uploadPath");
-            if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
-                $proof = $filename;
-                error_log("markPaid: File saved successfully as: $filename");
-            } else {
-                error_log("markPaid: Failed to move uploaded file");
-                header('Location: /ergon-site/expenses/view/' . $id . '?error=Failed to save proof file');
-                exit;
-            }
-
-            error_log("markPaid: Updating expenses table with proof: $proof");
-            $stmt = $db->prepare("UPDATE expenses SET status = 'paid', payment_proof = ?, paid_by = ?, paid_at = NOW() WHERE id = ?");
-            $result = $stmt->execute([$proof, $_SESSION['user_id'], $id]);
-            error_log("markPaid: Expenses table update result: " . ($result ? 'success' : 'failed'));
+            // Update expense with payment details
+            $stmt = $db->prepare("UPDATE expenses SET status = 'paid', payment_proof = ?, payment_remarks = ?, paid_by = ?, paid_at = NOW() WHERE id = ?");
+            $result = $stmt->execute([$proof, $paymentRemarks, $_SESSION['user_id'], $id]);
 
             if ($result) {
                 // Update approved_expenses record with proof and paid_at if exists

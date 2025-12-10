@@ -23,10 +23,6 @@ ob_start();
 .expense-info .col {
     font-size: 14px;
 }
-.ab-btn--upload {
-    background: #3b82f6;
-    color: white;
-}
 .ab-btn--mark-paid {
     background: #10b981;
     color: white;
@@ -199,14 +195,7 @@ ob_start();
                                 <?php endif; ?>
                                 <?php endif; ?>
                                 <?php if ($expenseStatus === 'approved'): ?>
-                                <button class="ab-btn ab-btn--upload" onclick="showUploadProofModal(<?= $expense['id'] ?>)" title="Upload Proof">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                                        <polyline points="7,10 12,15 17,10"/>
-                                        <line x1="12" y1="15" x2="12" y2="3"/>
-                                    </svg>
-                                </button>
-                                <button class="ab-btn ab-btn--mark-paid" onclick="markExpenseClaim(<?= $expense['id'] ?>)" title="Mark as Expense Claim">
+                                <button class="ab-btn ab-btn--mark-paid" onclick="showMarkPaidModal(<?= $expense['id'] ?>)" title="Mark as Paid">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                         <path d="M9 11l3 3l8-8"/>
                                         <path d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9s4.03-9 9-9c1.51 0 2.93.37 4.18 1.03"/>
@@ -293,24 +282,29 @@ ob_start();
     </div>
 </div>
 
-<!-- Upload Proof Modal -->
-<div id="uploadProofModal" class="modal-overlay" data-visible="false">
+<!-- Mark as Paid Modal -->
+<div id="markPaidModal" class="modal-overlay" data-visible="false">
     <div class="modal-content" style="max-width: 500px;">
         <div class="modal-header">
-            <h3>📎 Upload Payment Proof</h3>
-            <span class="close" onclick="closeUploadProofModal()">&times;</span>
+            <h3>💰 Mark as Paid</h3>
+            <span class="close" onclick="closeMarkPaidModal()">&times;</span>
         </div>
-        <form id="uploadProofForm" enctype="multipart/form-data">
+        <form id="markPaidForm" enctype="multipart/form-data">
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="proof_file">Payment Proof (Image/PDF) *</label>
-                    <input type="file" id="proof_file" name="proof" class="form-control" accept=".jpg,.jpeg,.png,.pdf" required>
-                    <small class="text-muted">Max file size: 5MB. Allowed formats: JPG, PNG, PDF</small>
+                    <label for="payment_proof">Payment Proof (Image/PDF)</label>
+                    <input type="file" id="payment_proof" name="proof" class="form-control" accept=".jpg,.jpeg,.png,.pdf">
+                    <small class="text-muted">Optional. Max file size: 5MB. Allowed formats: JPG, PNG, PDF</small>
                 </div>
+                <div class="form-group">
+                    <label for="payment_remarks">Payment Details/Remarks</label>
+                    <textarea id="payment_remarks" name="payment_remarks" class="form-control" rows="3" placeholder="Enter payment method, transaction ID, or other payment details..."></textarea>
+                </div>
+                <p class="text-muted"><small>Note: Either upload payment proof or enter payment details (or both).</small></p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn--secondary" onclick="closeUploadProofModal()">Cancel</button>
-                <button type="submit" class="btn btn--primary" id="uploadProofBtn">📎 Upload Proof</button>
+                <button type="button" class="btn btn--secondary" onclick="closeMarkPaidModal()">Cancel</button>
+                <button type="submit" class="btn btn--success" id="markPaidBtn">✅ Mark as Paid</button>
             </div>
         </form>
     </div>
@@ -383,22 +377,16 @@ function closeRejectModal() {
     hideModal('rejectModal');
 }
 
-function showUploadProofModal(expenseId) {
+function showMarkPaidModal(expenseId) {
     currentExpenseId = expenseId;
-    document.getElementById('proof_file').value = '';
-    showModal('uploadProofModal');
+    document.getElementById('payment_proof').value = '';
+    document.getElementById('payment_remarks').value = '';
+    showModal('markPaidModal');
 }
 
-function closeUploadProofModal() {
-    hideModal('uploadProofModal');
+function closeMarkPaidModal() {
+    hideModal('markPaidModal');
     currentExpenseId = null;
-}
-
-function markExpenseClaim(expenseId) {
-    if (confirm('Mark this expense as paid? This action cannot be undone.')) {
-        // Redirect to mark paid functionality
-        window.location.href = `/ergon-site/expenses/view/${expenseId}?action=mark_paid`;
-    }
 }
 
 // Handle approval form submission
@@ -435,15 +423,24 @@ document.getElementById('approvalForm').addEventListener('submit', function(e) {
     });
 });
 
-// Handle upload proof form submission
-document.getElementById('uploadProofForm').addEventListener('submit', function(e) {
+// Handle mark as paid form submission
+document.getElementById('markPaidForm').addEventListener('submit', function(e) {
     e.preventDefault();
     
     if (!currentExpenseId) return;
     
-    const btn = document.getElementById('uploadProofBtn');
+    const proofFile = document.getElementById('payment_proof').files[0];
+    const remarks = document.getElementById('payment_remarks').value.trim();
+    
+    // Validate that either proof or remarks is provided
+    if (!proofFile && !remarks) {
+        alert('Please either upload payment proof or enter payment details.');
+        return;
+    }
+    
+    const btn = document.getElementById('markPaidBtn');
     btn.disabled = true;
-    btn.textContent = '⏳ Uploading...';
+    btn.textContent = '⏳ Processing...';
     
     const formData = new FormData(this);
     
@@ -453,16 +450,16 @@ document.getElementById('uploadProofForm').addEventListener('submit', function(e
     })
     .then(response => {
         if (response.ok) {
-            alert('Payment proof uploaded successfully!');
+            alert('Expense marked as paid successfully!');
             location.reload();
         } else {
-            throw new Error('Upload failed');
+            throw new Error('Failed to mark as paid');
         }
     })
     .catch(err => {
         alert('Error: ' + err.message);
         btn.disabled = false;
-        btn.textContent = '📎 Upload Proof';
+        btn.textContent = '✅ Mark as Paid';
     });
 });
 </script>
