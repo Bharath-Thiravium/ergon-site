@@ -851,7 +851,6 @@ function viewContact(contactId) {
     fetch(`/ergon-site/api/contacts/${contactId}`)
         .then(response => response.json())
         .then(data => {
-            console.log('API Response:', data);
             if (data.success && data.contact) {
                 const contact = data.contact;
                 document.getElementById('viewContactName').textContent = contact.name || 'N/A';
@@ -866,20 +865,14 @@ function viewContact(contactId) {
                     editContact(contactId);
                 };
                 const modal = document.getElementById('viewContactModal');
-                console.log('Modal element:', modal);
                 if (modal) {
                     modal.style.display = 'flex';
-                    console.log('Modal displayed');
-                } else {
-                    console.error('Modal not found');
                 }
             } else {
-                console.error('API Error:', data);
                 alert('Error: ' + (data.error || 'Contact not found'));
             }
         })
         .catch(error => {
-            console.error('Fetch error:', error);
             alert('Error loading contact details');
         });
 }
