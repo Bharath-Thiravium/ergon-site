@@ -48,6 +48,8 @@ class ExpenseController extends Controller {
             try { DatabaseHelper::safeExec($db, "ALTER TABLE expenses ADD COLUMN payment_proof VARCHAR(255) NULL", "Alter table"); } catch (Exception $e) {}
             try { DatabaseHelper::safeExec($db, "ALTER TABLE expenses ADD COLUMN paid_by INT NULL", "Alter table"); } catch (Exception $e) {}
             try { DatabaseHelper::safeExec($db, "ALTER TABLE expenses ADD COLUMN paid_at DATETIME NULL", "Alter table"); } catch (Exception $e) {}
+            try { DatabaseHelper::safeExec($db, "ALTER TABLE expenses ADD COLUMN approved_amount DECIMAL(10,2) NULL", "Alter table"); } catch (Exception $e) {}
+            try { DatabaseHelper::safeExec($db, "ALTER TABLE expenses ADD COLUMN approval_remarks TEXT NULL", "Alter table"); } catch (Exception $e) {}
             try { DatabaseHelper::safeExec($db, "ALTER TABLE expenses MODIFY COLUMN status ENUM('pending','approved','rejected','paid') DEFAULT 'pending'", "Alter table"); } catch (Exception $e) {}
 
             // Create approved_expenses table to store approved/processed expense records separately
@@ -434,7 +436,11 @@ class ExpenseController extends Controller {
         }
         
         if (!$id) {
-            header('Location: /ergon-site/expenses?error=Invalid expense ID');
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                echo json_encode(['success' => false, 'error' => 'Invalid expense ID']);
+            } else {
+                header('Location: /ergon-site/expenses?error=Invalid expense ID');
+            }
             exit;
         }
         
@@ -448,101 +454,60 @@ class ExpenseController extends Controller {
             $expense = $stmt->fetch(PDO::FETCH_ASSOC);
             
             if (!$expense) {
-                header('Location: /ergon-site/expenses?error=Expense not found or already processed');
+                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                    echo json_encode(['success' => false, 'error' => 'Expense not found or already processed']);
+                } else {
+                    header('Location: /ergon-site/expenses?error=Expense not found or already processed');
+                }
                 exit;
             }
             
-            // Capture approved_amount if provided; do NOT overwrite original claimed amount
-            $approvedAmount = null;
-            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['approved_amount'])) {
-                $approvedAmount = floatval($_POST['approved_amount']);
-                if ($approvedAmount <= 0) {
-                    $approvedAmount = null;
-                }
-            }
-
-            // Simple approval without accounting integration
-            $stmt = $db->prepare("UPDATE expenses SET status = 'approved', approved_by = ?, approved_at = NOW() WHERE id = ?");
-            $result = $stmt->execute([$_SESSION['user_id'], $id]);
-            
-            if ($result && $stmt->rowCount() > 0) {
-                // Create notification for user
-                try {
-                    require_once __DIR__ . '/../helpers/NotificationHelper.php';
-                    NotificationHelper::notifyExpenseStatusChange($id, 'approved', $_SESSION['user_id']);
-                } catch (Exception $notifError) {
-                    error_log('Expense approval notification error: ' . $notifError->getMessage());
-                }
-                // Save approved expense separately (keep claimed_amount and approved_amount)
-                try {
-                    $claimed = floatval($expense['amount']);
-                    $approvedVal = $approvedAmount ?? $claimed;
-                    $insertApproved = $db->prepare("INSERT INTO approved_expenses (expense_id, user_id, category, amount, claimed_amount, approved_amount, description, approved_by, approved_at, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
-                    $insertApproved->execute([
-                        $id,
-                        $expense['user_id'],
-                        $expense['category'],
-                        $approvedVal,
-                        $claimed,
-                        $approvedVal,
-                        $expense['description'],
-                        $_SESSION['user_id']
-                    ]);
-                } catch (Exception $ae) {
-                    error_log('Failed to insert approved_expenses: ' . $ae->getMessage());
-                }
-
-                // If category indicates deduction from advance, immediately mark as paid and debit ledger
-                try {
-                    require_once __DIR__ . '/../helpers/LedgerHelper.php';
-                    if (strtolower(trim($expense['category'] ?? '')) === strtolower('Deduct from Advance') || strtolower($expense['category'] ?? '') === strtolower('deduct_from_advance')) {
-                        // mark paid and create ledger debit entry
-                        $stmt = $db->prepare("UPDATE expenses SET status = 'paid', paid_by = ?, paid_at = NOW() WHERE id = ?");
-                        $stmt->execute([$_SESSION['user_id'], $id]);
-                        // Use the approved amount for ledger entries when available (do not assume claimed amount)
-                        $debitAmount = $approvedVal ?? floatval($expense['amount']);
-                        LedgerHelper::recordEntry($expense['user_id'], 'expense', 'expense', $id, floatval($debitAmount), 'debit');
-                        // update approved_expenses paid_at
-                        try {
-                            $db->prepare("UPDATE approved_expenses SET paid_at = NOW() WHERE expense_id = ?")->execute([$id]);
-                        } catch (Exception $u) {
-                            error_log('Failed to update approved_expenses paid_at: ' . $u->getMessage());
-                        }
-                        try {
-                            require_once __DIR__ . '/../helpers/NotificationHelper.php';
-                            NotificationHelper::notifyExpenseStatusChange($id, 'paid', $_SESSION['user_id']);
-                        } catch (Exception $notifError) {}
-                        header('Location: /ergon-site/expenses?success=Expense approved and deducted from advance');
-                        exit;
+            // Handle POST request for approval
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                header('Content-Type: application/json');
+                
+                $approvedAmount = isset($_POST['approved_amount']) && $_POST['approved_amount'] > 0 ? floatval($_POST['approved_amount']) : floatval($expense['amount']);
+                $approvalRemarks = trim($_POST['approval_remarks'] ?? '');
+                
+                // Update expense with approval details
+                $stmt = $db->prepare("UPDATE expenses SET status = 'approved', approved_by = ?, approved_at = NOW(), approved_amount = ?, approval_remarks = ? WHERE id = ?");
+                $result = $stmt->execute([$_SESSION['user_id'], $approvedAmount, $approvalRemarks, $id]);
+                
+                if ($result && $stmt->rowCount() > 0) {
+                    // Create notification for user
+                    try {
+                        require_once __DIR__ . '/../helpers/NotificationHelper.php';
+                        NotificationHelper::notifyExpenseStatusChange($id, 'approved', $_SESSION['user_id']);
+                    } catch (Exception $notifError) {
+                        error_log('Expense approval notification error: ' . $notifError->getMessage());
                     }
-                } catch (Exception $e) {
-                    error_log('Expense post-approval processing error: ' . $e->getMessage());
+                    
+                    echo json_encode(['success' => true, 'message' => 'Expense approved successfully']);
+                } else {
+                    echo json_encode(['success' => false, 'error' => 'Failed to approve expense']);
                 }
-
-                // Try accounting integration but don't fail if it doesn't work
-                try {
-                    require_once __DIR__ . '/../helpers/AccountingHelper.php';
-                    AccountingHelper::recordExpenseApproval(
-                        $id,
-                        $expense['amount'],
-                        $expense['category'],
-                        $expense['description'],
-                        $_SESSION['user_id']
-                    );
-                } catch (Exception $accountingError) {
-                    error_log('Accounting integration failed (non-critical): ' . $accountingError->getMessage());
-                }
-
-                header('Location: /ergon-site/expenses?success=Expense approved successfully');
-            } else {
-                header('Location: /ergon-site/expenses?error=Failed to approve expense');
+                exit;
             }
+            
+            // GET request - return expense data for modal
+            header('Content-Type: application/json');
+            echo json_encode([
+                'success' => true,
+                'expense' => $expense
+            ]);
+            exit;
+            
         } catch (Exception $e) {
             error_log('Expense approval error: ' . $e->getMessage());
-            header('Location: /ergon-site/expenses?error=Approval failed');
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                echo json_encode(['success' => false, 'error' => 'Approval failed']);
+            } else {
+                header('Location: /ergon-site/expenses?error=Approval failed');
+            }
         }
         exit;
     }
+
     
     public function reject($id = null) {
         if (session_status() === PHP_SESSION_NONE) {

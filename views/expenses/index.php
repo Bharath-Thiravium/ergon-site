@@ -4,6 +4,35 @@ $active_page = 'expenses';
 ob_start();
 ?>
 
+<style>
+.expense-info {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+.expense-info .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 8px;
+}
+.expense-info .row:last-child {
+    margin-bottom: 0;
+}
+.expense-info .col {
+    font-size: 14px;
+}
+.ab-btn--upload {
+    background: #3b82f6;
+    color: white;
+}
+.ab-btn--mark-paid {
+    background: #10b981;
+    color: white;
+}
+</style>
+
 <div class="page-header">
     <div class="page-title">
         <h1><span>💰</span> Expense Management</h1>
@@ -155,7 +184,7 @@ ob_start();
                                 $canApprove = $isPending && (($isOwner) || ($isAdmin && $isNotOwnExpense));
                                 ?>
                                 <?php if ($canApprove): ?>
-                                <button class="ab-btn ab-btn--approve" data-action="approve" data-module="expenses" data-id="<?= $expense['id'] ?>" data-name="Expense Claim" title="Approve Expense">
+                                <button class="ab-btn ab-btn--approve" onclick="showApprovalModal(<?= $expense['id'] ?>)" title="Approve Expense">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                         <polyline points="20,6 9,17 4,12"/>
                                     </svg>
@@ -169,7 +198,27 @@ ob_start();
                                 </button>
                                 <?php endif; ?>
                                 <?php endif; ?>
-                                <?php if (in_array($user_role ?? '', ['admin', 'owner']) || (($user_role ?? '') === 'user' && ($expense['status'] ?? 'pending') === 'pending')): ?>
+                                <?php if ($expenseStatus === 'approved'): ?>
+                                <button class="ab-btn ab-btn--upload" onclick="showUploadProofModal(<?= $expense['id'] ?>)" title="Upload Proof">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                        <polyline points="7,10 12,15 17,10"/>
+                                        <line x1="12" y1="15" x2="12" y2="3"/>
+                                    </svg>
+                                </button>
+                                <button class="ab-btn ab-btn--mark-paid" onclick="markExpenseClaim(<?= $expense['id'] ?>)" title="Mark as Expense Claim">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <path d="M9 11l3 3l8-8"/>
+                                        <path d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9s4.03-9 9-9c1.51 0 2.93.37 4.18 1.03"/>
+                                    </svg>
+                                </button>
+                                <?php endif; ?>
+                                <?php 
+                                $canDelete = false;
+                                if ($expense['user_id'] == $_SESSION['user_id'] && $expenseStatus === 'pending') {
+                                    $canDelete = true; // Own pending expense
+                                }
+                                if ($canDelete): ?>
                                 <button class="ab-btn ab-btn--delete" data-action="delete" data-module="expenses" data-id="<?= $expense['id'] ?>" data-name="Expense Claim" title="Delete Claim">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                         <path d="M3 6h18"/>
@@ -193,6 +242,35 @@ ob_start();
 
 
 
+<!-- Approval Modal -->
+<div id="approvalModal" class="modal-overlay" data-visible="false">
+    <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-header">
+            <h3>💰 Approve Expense Claim</h3>
+            <span class="close" onclick="closeApprovalModal()">&times;</span>
+        </div>
+        <form id="approvalForm">
+            <div class="modal-body">
+                <div class="expense-details" id="expenseDetails">
+                    <!-- Expense details will be loaded here -->
+                </div>
+                <div class="form-group">
+                    <label for="approved_amount">Approved Amount (₹) *</label>
+                    <input type="number" id="approved_amount" name="approved_amount" class="form-control" step="0.01" min="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="approval_remarks">Approval Remarks / Reason</label>
+                    <textarea id="approval_remarks" name="approval_remarks" class="form-control" rows="3" placeholder="Enter reason for approval or any remarks..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn--secondary" onclick="closeApprovalModal()">Cancel</button>
+                <button type="submit" class="btn btn--success" id="approveBtn">✅ Approve Expense</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <!-- Rejection Modal -->
 <div id="rejectModal" class="modal-overlay" data-visible="false">
     <div class="modal-content" style="max-width: 500px;">
@@ -215,9 +293,85 @@ ob_start();
     </div>
 </div>
 
+<!-- Upload Proof Modal -->
+<div id="uploadProofModal" class="modal-overlay" data-visible="false">
+    <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-header">
+            <h3>📎 Upload Payment Proof</h3>
+            <span class="close" onclick="closeUploadProofModal()">&times;</span>
+        </div>
+        <form id="uploadProofForm" enctype="multipart/form-data">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="proof_file">Payment Proof (Image/PDF) *</label>
+                    <input type="file" id="proof_file" name="proof" class="form-control" accept=".jpg,.jpeg,.png,.pdf" required>
+                    <small class="text-muted">Max file size: 5MB. Allowed formats: JPG, PNG, PDF</small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn--secondary" onclick="closeUploadProofModal()">Cancel</button>
+                <button type="submit" class="btn btn--primary" id="uploadProofBtn">📎 Upload Proof</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 
 
 <script>
+let currentExpenseId = null;
+
+function showApprovalModal(expenseId) {
+    currentExpenseId = expenseId;
+    
+    // Fetch expense details
+    fetch(`/ergon-site/expenses/approve/${expenseId}`)
+        .then(r => r.json())
+        .then(data => {
+            if (data.success && data.expense) {
+                const e = data.expense;
+                
+                // Populate expense details
+                document.getElementById('expenseDetails').innerHTML = `
+                    <div class="expense-info">
+                        <div class="row">
+                            <div class="col"><strong>Employee:</strong> ${e.user_name || 'Unknown'}</div>
+                            <div class="col"><strong>Category:</strong> ${e.category || 'General'}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col"><strong>Claimed Amount:</strong> ₹${parseFloat(e.amount || 0).toFixed(2)}</div>
+                            <div class="col"><strong>Expense Date:</strong> ${e.expense_date || 'N/A'}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col"><strong>Submitted Date:</strong> ${e.created_at ? new Date(e.created_at).toLocaleDateString() : 'N/A'}</div>
+                            <div class="col"><strong>Status:</strong> <span class="badge badge--warning">Pending</span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col" style="grid-column: 1 / -1;"><strong>Description:</strong> ${e.description || 'No description'}</div>
+                        </div>
+                        ${e.attachment ? `<div class="row"><div class="col" style="grid-column: 1 / -1;"><strong>Receipt:</strong> <a href="/ergon-site/storage/receipts/${e.attachment}" target="_blank">View Receipt</a></div></div>` : ''}
+                    </div>
+                `;
+                
+                // Set default approved amount to claimed amount
+                document.getElementById('approved_amount').value = parseFloat(e.amount || 0).toFixed(2);
+                document.getElementById('approval_remarks').value = '';
+                
+                showModal('approvalModal');
+            } else {
+                alert('Error loading expense details: ' + (data.error || 'Unknown error'));
+            }
+        })
+        .catch(err => {
+            alert('Error: ' + err.message);
+        });
+}
+
+function closeApprovalModal() {
+    hideModal('approvalModal');
+    currentExpenseId = null;
+}
+
 function showRejectModal(expenseId) {
     document.getElementById('rejectForm').action = '/ergon-site/expenses/reject/' + expenseId;
     const reasonField = document.getElementById('rejection_reason');
@@ -228,6 +382,89 @@ function showRejectModal(expenseId) {
 function closeRejectModal() {
     hideModal('rejectModal');
 }
+
+function showUploadProofModal(expenseId) {
+    currentExpenseId = expenseId;
+    document.getElementById('proof_file').value = '';
+    showModal('uploadProofModal');
+}
+
+function closeUploadProofModal() {
+    hideModal('uploadProofModal');
+    currentExpenseId = null;
+}
+
+function markExpenseClaim(expenseId) {
+    if (confirm('Mark this expense as paid? This action cannot be undone.')) {
+        // Redirect to mark paid functionality
+        window.location.href = `/ergon-site/expenses/view/${expenseId}?action=mark_paid`;
+    }
+}
+
+// Handle approval form submission
+document.getElementById('approvalForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    if (!currentExpenseId) return;
+    
+    const btn = document.getElementById('approveBtn');
+    btn.disabled = true;
+    btn.textContent = '⏳ Approving...';
+    
+    const formData = new FormData(this);
+    
+    fetch(`/ergon-site/expenses/approve/${currentExpenseId}`, {
+        method: 'POST',
+        body: formData
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            alert('Expense approved successfully!');
+            location.reload();
+        } else {
+            alert('Error: ' + (data.error || 'Approval failed'));
+            btn.disabled = false;
+            btn.textContent = '✅ Approve Expense';
+        }
+    })
+    .catch(err => {
+        alert('Error: ' + err.message);
+        btn.disabled = false;
+        btn.textContent = '✅ Approve Expense';
+    });
+});
+
+// Handle upload proof form submission
+document.getElementById('uploadProofForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    if (!currentExpenseId) return;
+    
+    const btn = document.getElementById('uploadProofBtn');
+    btn.disabled = true;
+    btn.textContent = '⏳ Uploading...';
+    
+    const formData = new FormData(this);
+    
+    fetch(`/ergon-site/expenses/markPaid/${currentExpenseId}`, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (response.ok) {
+            alert('Payment proof uploaded successfully!');
+            location.reload();
+        } else {
+            throw new Error('Upload failed');
+        }
+    })
+    .catch(err => {
+        alert('Error: ' + err.message);
+        btn.disabled = false;
+        btn.textContent = '📎 Upload Proof';
+    });
+});
 </script>
 
 <!-- Expense Modal -->
@@ -395,8 +632,6 @@ document.addEventListener('click', function(e) {
         window.location.href = `/ergon-site/${module}/view/${id}`;
     } else if (action === 'delete' && module && id && name) {
         deleteRecord(module, id, name);
-    } else if (action === 'approve' && module && id) {
-        window.location.href = `/ergon-site/${module}/approve/${id}`;
     }
 });
 </script>
