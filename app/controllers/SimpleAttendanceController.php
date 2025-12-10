@@ -186,6 +186,16 @@ class SimpleAttendanceController extends Controller {
             echo json_encode([
                 'success' => true,
                 'attendance' => $todayAttendance,
+                'on_leave' => $onLeave
+            ]);
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        }
+        exit;
+    }
+} json_encode([
+                'success' => true,
+                'attendance' => $todayAttendance,
                 'on_leave' => $onLeave,
                 'can_clock_in' => !$todayAttendance && !$onLeave,
                 'can_clock_out' => $todayAttendance && !$todayAttendance['check_out']
