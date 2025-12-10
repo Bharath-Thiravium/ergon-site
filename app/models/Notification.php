@@ -40,16 +40,14 @@ class Notification {
     }
     
     public function create($data) {
-        $stmt = $this->db->prepare("INSERT INTO notifications (sender_id, receiver_id, type, category, title, message, action_url, reference_type, reference_id, priority) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt = $this->db->prepare("INSERT INTO notifications (sender_id, receiver_id, module_name, action_type, message, link, reference_id, priority, is_read, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, 'delivered')");
         return $stmt->execute([
             $data['sender_id'],
             $data['receiver_id'],
-            $data['type'] ?? 'info',
-            $data['category'] ?? 'system',
-            $data['title'],
-            $data['message'],
+            $data['reference_type'] ?? 'system',
+            $data['category'] ?? 'notification',
+            ($data['title'] ?? '') . ': ' . ($data['message'] ?? ''),
             $data['action_url'] ?? null,
-            $data['reference_type'] ?? null,
             $data['reference_id'] ?? null,
             $data['priority'] ?? 1
         ]);
@@ -58,11 +56,13 @@ class Notification {
     public function getForUser($userId, $limit = 50) {
         $stmt = $this->db->prepare("
             SELECT n.*, COALESCE(u.name, 'System') as sender_name,
-                   n.reference_type as module_name,
-                   n.category as action_type
+                   n.message as title,
+                   n.message,
+                   n.module_name,
+                   n.action_type
             FROM notifications n 
             LEFT JOIN users u ON n.sender_id = u.id 
-            WHERE n.receiver_id = ? 
+            WHERE n.receiver_id = ? AND n.status != 'deleted'
             ORDER BY n.is_read ASC, n.created_at DESC 
             LIMIT ?
         ");
@@ -73,11 +73,16 @@ class Notification {
     public function getForDropdown($userId, $limit = 10) {
         $stmt = $this->db->prepare("
             SELECT n.*, COALESCE(u.name, 'System') as sender_name,
-                   n.reference_type as module_name,
-                   n.category as action_type
+                   n.message as title,
+                   n.message,
+                   n.module_name,
+                   n.action_type,
+                   n.link as action_url,
+                   n.reference_id,
+                   n.module_name as reference_type
             FROM notifications n 
             LEFT JOIN users u ON n.sender_id = u.id 
-            WHERE n.receiver_id = ? 
+            WHERE n.receiver_id = ? AND n.status != 'deleted'
             ORDER BY n.is_read ASC, n.created_at DESC 
             LIMIT ?
         ");
@@ -86,7 +91,7 @@ class Notification {
     }
     
     public function getUnreadCount($userId) {
-        $stmt = $this->db->prepare("SELECT COUNT(*) FROM notifications WHERE receiver_id = ? AND is_read = 0");
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM notifications WHERE receiver_id = ? AND is_read = 0 AND status != 'deleted'");
         $stmt->execute([$userId]);
         return $stmt->fetchColumn();
     }

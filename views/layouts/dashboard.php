@@ -957,8 +957,39 @@ ob_end_clean();
                         const title = escapeHtml(notif.title || 'Notification');
                         const message = escapeHtml(notif.message || '');
                         
+                        // Generate specific URL based on reference type and ID
+                        let viewUrl = '/ergon-site/notifications'; // Default fallback
+                        const referenceType = notif.module_name || notif.reference_type || '';
+                        const referenceId = notif.reference_id;
+                        
+                        if (notif.action_url) {
+                            viewUrl = notif.action_url;
+                        } else if (referenceType && referenceId && referenceId > 0) {
+                            switch (referenceType) {
+                                case 'task':
+                                case 'tasks':
+                                    viewUrl = `/ergon-site/tasks/view/${referenceId}`;
+                                    break;
+                                case 'leave':
+                                case 'leaves':
+                                    viewUrl = `/ergon-site/leaves/view/${referenceId}`;
+                                    break;
+                                case 'expense':
+                                case 'expenses':
+                                    viewUrl = `/ergon-site/expenses/view/${referenceId}`;
+                                    break;
+                                case 'advance':
+                                case 'advances':
+                                    viewUrl = `/ergon-site/advances/view/${referenceId}`;
+                                    break;
+                                default:
+                                    const pluralType = referenceType.endsWith('s') ? referenceType : referenceType + 's';
+                                    viewUrl = `/ergon-site/${pluralType}/view/${referenceId}`;
+                            }
+                        }
+                        
                         return `
-                            <a href="/ergon-site/notifications" class="notification-item">
+                            <a href="${viewUrl}" class="notification-item">
                                 <div class="notification-title">${title}</div>
                                 <div class="notification-message">${message}</div>
                                 <div class="notification-time">${time}</div>
@@ -1005,8 +1036,37 @@ ob_end_clean();
         return div.innerHTML;
     }
     
+    // Load notification count only (for badge update)
+    function loadNotificationCount() {
+        fetch('/ergon-site/api/notifications.php', {
+            credentials: 'same-origin',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const badge = document.getElementById('notificationBadge');
+                if (badge && data.unread_count !== undefined) {
+                    badge.textContent = data.unread_count;
+                    badge.style.display = data.unread_count > 0 ? 'inline-block' : 'none';
+                    if (data.unread_count > 0) {
+                        badge.classList.add('has-notifications');
+                    } else {
+                        badge.classList.remove('has-notifications');
+                    }
+                }
+            }
+        })
+        .catch(error => {
+            console.warn('Failed to load notification count:', error);
+        });
+    }
+    
     // Make globally available
     window.toggleNotifications = toggleNotifications;
+    window.loadNotificationCount = loadNotificationCount;
     
     // Global back button function
     function goBack() {
@@ -1024,6 +1084,7 @@ ob_end_clean();
     
     document.addEventListener('DOMContentLoaded', function() {
         checkAttendanceStatus();
+        loadNotificationCount();
 
         // Ensure profile button is clickable
         var profileBtn = document.getElementById('profileButton');
@@ -1034,6 +1095,9 @@ ob_end_clean();
                 toggleProfile();
             });
         }
+        
+        // Refresh notifications every 30 seconds
+        setInterval(loadNotificationCount, 30000);
     });
 
     function toggleProfile() {

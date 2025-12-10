@@ -94,26 +94,51 @@ ob_start();
                             if ($actionUrl) {
                                 $viewUrl = $actionUrl;
                             } elseif ($referenceType && !empty($referenceId) && is_numeric($referenceId) && $referenceId > 0) {
-                                switch ($referenceType) {
-                                    case 'task':
-                                    case 'tasks':
-                                        $viewUrl = "/ergon-site/tasks/view/{$referenceId}";
-                                        break;
-                                    case 'leave':
-                                    case 'leaves':
-                                        $viewUrl = "/ergon-site/leaves/view/{$referenceId}";
-                                        break;
-                                    case 'expense':
-                                    case 'expenses':
-                                        $viewUrl = "/ergon-site/expenses/view/{$referenceId}";
-                                        break;
-                                    case 'advance':
-                                    case 'advances':
-                                        $viewUrl = "/ergon-site/advances/view/{$referenceId}";
-                                        break;
-                                    default:
-                                        $pluralType = $referenceType . 's';
-                                        $viewUrl = "/ergon-site/{$pluralType}/view/{$referenceId}";
+                                // Validate that the referenced record exists before creating URL
+                                $recordExists = false;
+                                try {
+                                    $checkDb = Database::connect();
+                                    switch ($referenceType) {
+                                        case 'task':
+                                        case 'tasks':
+                                            $checkStmt = $checkDb->prepare("SELECT id FROM tasks WHERE id = ?");
+                                            $checkStmt->execute([$referenceId]);
+                                            $recordExists = $checkStmt->fetch() !== false;
+                                            $viewUrl = $recordExists ? "/ergon-site/tasks/view/{$referenceId}" : "/ergon-site/tasks";
+                                            break;
+                                        case 'leave':
+                                        case 'leaves':
+                                            $checkStmt = $checkDb->prepare("SELECT id FROM leaves WHERE id = ?");
+                                            $checkStmt->execute([$referenceId]);
+                                            $recordExists = $checkStmt->fetch() !== false;
+                                            $viewUrl = $recordExists ? "/ergon-site/leaves/view/{$referenceId}" : "/ergon-site/leaves";
+                                            break;
+                                        case 'expense':
+                                        case 'expenses':
+                                            $checkStmt = $checkDb->prepare("SELECT id FROM expenses WHERE id = ?");
+                                            $checkStmt->execute([$referenceId]);
+                                            $recordExists = $checkStmt->fetch() !== false;
+                                            $viewUrl = $recordExists ? "/ergon-site/expenses/view/{$referenceId}" : "/ergon-site/expenses";
+                                            break;
+                                        case 'advance':
+                                        case 'advances':
+                                            $checkStmt = $checkDb->prepare("SELECT id FROM advances WHERE id = ?");
+                                            $checkStmt->execute([$referenceId]);
+                                            $recordExists = $checkStmt->fetch() !== false;
+                                            $viewUrl = $recordExists ? "/ergon-site/advances/view/{$referenceId}" : "/ergon-site/advances";
+                                            break;
+                                        default:
+                                            $viewUrl = "/ergon-site/{$referenceType}";
+                                    }
+                                } catch (Exception $e) {
+                                    // If validation fails, redirect to module index
+                                    $moduleUrls = [
+                                        'leave' => '/ergon-site/leaves',
+                                        'expense' => '/ergon-site/expenses', 
+                                        'advance' => '/ergon-site/advances',
+                                        'task' => '/ergon-site/tasks'
+                                    ];
+                                    $viewUrl = $moduleUrls[$referenceType] ?? "/ergon-site/dashboard";
                                 }
                             } elseif ($referenceType) {
                                 $moduleUrls = [
