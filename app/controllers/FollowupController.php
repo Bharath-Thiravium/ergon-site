@@ -135,9 +135,126 @@ class FollowupController extends Controller {
         }
     }
     
-    public function viewFollowup($id) {
-        $data = ['followup' => [], 'active_page' => 'followups'];
+    public function view($id) {
+        try {
+            require_once __DIR__ . '/../config/database.php';
+            $pdo = Database::connect();
+            
+            $stmt = $pdo->prepare("
+                SELECT f.*, c.name as contact_name, c.company as contact_company, c.phone as contact_phone,
+                       u.name as user_name, t.title as task_title
+                FROM followups f 
+                LEFT JOIN contacts c ON f.contact_id = c.id 
+                LEFT JOIN users u ON f.user_id = u.id
+                LEFT JOIN tasks t ON f.task_id = t.id
+                WHERE f.id = ?
+            ");
+            $stmt->execute([$id]);
+            $followup = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if (!$followup) {
+                header('Location: /ergon-site/followups?error=Follow-up not found');
+                exit;
+            }
+            
+            $data = ['followup' => $followup, 'active_page' => 'followups'];
+        } catch (Exception $e) {
+            error_log('Followup view error: ' . $e->getMessage());
+            $data = ['followup' => [], 'active_page' => 'followups', 'error' => $e->getMessage()];
+        }
+        
         $this->view('followups/view', $data);
+    }
+    
+    public function edit($id) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            return $this->update($id);
+        }
+        
+        try {
+            require_once __DIR__ . '/../config/database.php';
+            $pdo = Database::connect();
+            
+            $stmt = $pdo->prepare("
+                SELECT f.*, c.name as contact_name, c.company as contact_company,
+                       u.name as user_name, t.title as task_title
+                FROM followups f 
+                LEFT JOIN contacts c ON f.contact_id = c.id 
+                LEFT JOIN users u ON f.user_id = u.id
+                LEFT JOIN tasks t ON f.task_id = t.id
+                WHERE f.id = ?
+            ");
+            $stmt->execute([$id]);
+            $followup = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if (!$followup) {
+                header('Location: /ergon-site/followups?error=Follow-up not found');
+                exit;
+            }
+            
+            // Get contacts and tasks for dropdowns
+            $contacts = $pdo->query("SELECT * FROM contacts ORDER BY name")->fetchAll(PDO::FETCH_ASSOC);
+            $tasks = $pdo->query("SELECT id, title, description, deadline as due_date FROM tasks WHERE status != 'completed' ORDER BY deadline ASC")->fetchAll(PDO::FETCH_ASSOC);
+            
+            $data = [
+                'followup' => $followup,
+                'contacts' => $contacts,
+                'tasks' => $tasks,
+                'active_page' => 'followups'
+            ];
+        } catch (Exception $e) {
+            error_log('Followup edit error: ' . $e->getMessage());
+            $data = [
+                'followup' => [],
+                'contacts' => [],
+                'tasks' => [],
+                'active_page' => 'followups',
+                'error' => $e->getMessage()
+            ];
+        }
+        
+        $this->view('followups/edit', $data);
+    }
+    
+    public function update($id) {
+        try {
+            require_once __DIR__ . '/../config/database.php';
+            $pdo = Database::connect();
+            
+            $title = trim($_POST['title'] ?? '');
+            $description = trim($_POST['description'] ?? '');
+            $followup_type = $_POST['followup_type'] ?? 'standalone';
+            $task_id = !empty($_POST['task_id']) ? intval($_POST['task_id']) : null;
+            $contact_id = !empty($_POST['contact_id']) ? intval($_POST['contact_id']) : null;
+            $follow_up_date = $_POST['follow_up_date'] ?? date('Y-m-d');
+            
+            if (empty($title)) {
+                header('Location: /ergon-site/followups/edit/' . $id . '?error=Title is required');
+                exit;
+            }
+            
+            $stmt = $pdo->prepare("UPDATE followups SET contact_id = ?, task_id = ?, title = ?, description = ?, followup_type = ?, follow_up_date = ?, updated_at = NOW() WHERE id = ?");
+            $result = $stmt->execute([
+                $contact_id,
+                $task_id,
+                $title,
+                $description,
+                $followup_type,
+                $follow_up_date,
+                $id
+            ]);
+            
+            if ($result) {
+                header('Location: /ergon-site/followups?success=Follow-up updated successfully');
+            } else {
+                header('Location: /ergon-site/followups/edit/' . $id . '?error=Failed to update follow-up');
+            }
+            exit;
+        } catch (Exception $e) {
+            error_log('Followup update error: ' . $e->getMessage());
+            header('Location: /ergon-site/followups/edit/' . $id . '?error=' . urlencode($e->getMessage()));
+            exit;
+        }
     }
     
     public function delete($id) {

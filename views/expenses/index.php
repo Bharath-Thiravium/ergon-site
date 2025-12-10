@@ -408,16 +408,17 @@ document.getElementById('approvalForm').addEventListener('submit', function(e) {
     .then(r => r.json())
     .then(data => {
         if (data.success) {
-            alert('Expense approved successfully!');
-            location.reload();
+            showSuccessMessage('✅ Expense approved successfully!');
+            closeApprovalModal();
+            setTimeout(() => location.reload(), 1500);
         } else {
-            alert('Error: ' + (data.error || 'Approval failed'));
+            showErrorMessage('❌ Error: ' + (data.error || 'Approval failed'));
             btn.disabled = false;
             btn.textContent = '✅ Approve Expense';
         }
     })
     .catch(err => {
-        alert('Error: ' + err.message);
+        showErrorMessage('❌ Error: ' + err.message);
         btn.disabled = false;
         btn.textContent = '✅ Approve Expense';
     });
@@ -450,14 +451,15 @@ document.getElementById('markPaidForm').addEventListener('submit', function(e) {
     })
     .then(response => {
         if (response.ok) {
-            alert('Expense marked as paid successfully!');
-            location.reload();
+            showSuccessMessage('✅ Expense marked as paid successfully!');
+            closeMarkPaidModal();
+            setTimeout(() => location.reload(), 1500);
         } else {
             throw new Error('Failed to mark as paid');
         }
     })
     .catch(err => {
-        alert('Error: ' + err.message);
+        showErrorMessage('❌ Error: ' + err.message);
         btn.disabled = false;
         btn.textContent = '✅ Mark as Paid';
     });
@@ -599,20 +601,67 @@ function submitExpenseForm() {
         .then(r => r.json())
         .then(data => {
             if (data.success) {
-                location.reload();
+                showSuccessMessage('✅ Expense ' + (isEditingExpense ? 'updated' : 'submitted') + ' successfully!');
+                closeExpenseModal();
+                setTimeout(() => location.reload(), 1500);
             } else {
-                alert('Error: ' + data.error);
+                showErrorMessage('❌ Error: ' + data.error);
                 btn.disabled = false;
                 btn.textContent = isEditingExpense ? '💾 Update Expense' : '💸 Submit Expense';
             }
         })
         .catch(err => {
-            alert('Error: ' + err.message);
+            showErrorMessage('❌ Error: ' + err.message);
             btn.disabled = false;
             btn.textContent = isEditingExpense ? '💾 Update Expense' : '💸 Submit Expense';
         });
 }
+// Success/Error message functions
+function showSuccessMessage(message) {
+    const alert = document.createElement('div');
+    alert.className = 'alert alert--success';
+    alert.innerHTML = message;
+    alert.style.position = 'fixed';
+    alert.style.top = '20px';
+    alert.style.right = '20px';
+    alert.style.zIndex = '10000';
+    alert.style.minWidth = '300px';
+    alert.style.animation = 'slideInRight 0.3s ease-out';
+    document.body.appendChild(alert);
+    setTimeout(() => {
+        alert.style.animation = 'slideOutRight 0.3s ease-in';
+        setTimeout(() => alert.remove(), 300);
+    }, 3000);
+}
+
+function showErrorMessage(message) {
+    const alert = document.createElement('div');
+    alert.className = 'alert alert--error';
+    alert.innerHTML = message;
+    alert.style.position = 'fixed';
+    alert.style.top = '20px';
+    alert.style.right = '20px';
+    alert.style.zIndex = '10000';
+    alert.style.minWidth = '300px';
+    alert.style.animation = 'slideInRight 0.3s ease-out';
+    document.body.appendChild(alert);
+    setTimeout(() => {
+        alert.style.animation = 'slideOutRight 0.3s ease-in';
+        setTimeout(() => alert.remove(), 300);
+    }, 4000);
+}
 </script>
+
+<style>
+@keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+@keyframes slideOutRight {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
+}
+</style>
 
 <script>
 // Global action button handler

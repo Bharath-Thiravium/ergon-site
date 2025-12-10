@@ -436,6 +436,14 @@ function filterByDate(selectedDate) {
     window.location.href = '/ergon-site/attendance?date=' + selectedDate + '&filter=' + currentFilter;
 }
 
+// Modal utility function
+function hideClosestModal(element) {
+    const modal = element.closest('.modal-overlay');
+    if (modal && modal.parentNode) {
+        modal.parentNode.removeChild(modal);
+    }
+}
+
 function markManualAttendance(userId, checkIn, checkOut) {
     const hasCheckIn = checkIn && checkIn !== '0000-00-00 00:00:00';
     const hasCheckOut = checkOut && checkOut !== '0000-00-00 00:00:00';

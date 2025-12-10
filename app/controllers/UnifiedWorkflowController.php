@@ -303,11 +303,11 @@ class UnifiedWorkflowController extends Controller {
             
             $db->beginTransaction();
             
-            // Calculate SLA end time
+            // Calculate SLA end time based on actual SLA hours (not affected by page refresh)
             $slaEndTime = date('Y-m-d H:i:s', strtotime($now . ' +' . $task['sla_hours'] . ' hours'));
             
-            // Start the task with full SLA support
-            $stmt = $db->prepare("UPDATE daily_tasks SET status = 'in_progress', start_time = ?, sla_end_time = ?, resume_time = NULL, pause_start_time = NULL WHERE id = ?");
+            // Start the task with fixed SLA support
+            $stmt = $db->prepare("UPDATE daily_tasks SET status = 'in_progress', start_time = ?, sla_end_time = ?, resume_time = NULL, pause_start_time = NULL, active_seconds = 0, pause_duration = 0 WHERE id = ?");
             $result = $stmt->execute([$now, $slaEndTime, $taskId]);
             
             if ($result && $stmt->rowCount() > 0) {
@@ -381,8 +381,8 @@ class UnifiedWorkflowController extends Controller {
             $now = date('Y-m-d H:i:s');
             $status = $this->validateStatus('on_break');
             
-            // Update with pause start time and accumulated active seconds
-            $stmt = $db->prepare("UPDATE daily_tasks SET status = ?, pause_start_time = ?, active_seconds = active_seconds + ? WHERE id = ?");
+            // Update with pause start time and accumulated active seconds (fixed calculation)
+            $stmt = $db->prepare("UPDATE daily_tasks SET status = ?, pause_start_time = ?, active_seconds = active_seconds + ?, total_pause_duration = COALESCE(total_pause_duration, 0) WHERE id = ?");
             $result = $stmt->execute([$status, $now, max(0, $activeTime), $taskId]);
             
             if ($result && $stmt->rowCount() > 0) {
@@ -445,9 +445,9 @@ class UnifiedWorkflowController extends Controller {
             $now = date('Y-m-d H:i:s');
             $status = $this->validateStatus('in_progress');
             
-            // Update task status, add pause duration, set resume time
-            $stmt = $db->prepare("UPDATE daily_tasks SET status = ?, resume_time = ?, pause_duration = pause_duration + ?, pause_start_time = NULL WHERE id = ?");
-            $result = $stmt->execute([$status, $now, $additionalPauseDuration, $taskId]);
+            // Update task status, add pause duration, set resume time (fixed break time tracking)
+            $stmt = $db->prepare("UPDATE daily_tasks SET status = ?, resume_time = ?, total_pause_duration = COALESCE(total_pause_duration, 0) + ?, pause_start_time = NULL WHERE id = ?");
+            $result = $stmt->execute([$status, $now, max(0, $additionalPauseDuration), $taskId]);
             
             if ($result && $stmt->rowCount() > 0) {
                 $db->commit();

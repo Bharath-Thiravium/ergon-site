@@ -852,6 +852,14 @@ function loadDepartments(selectedDept = null) {
 
 
 
+// Modal utility function
+function hideClosestModal(element) {
+    const modal = element.closest('.modal-overlay');
+    if (modal && modal.parentNode) {
+        modal.parentNode.removeChild(modal);
+    }
+}
+
 function submitUserForm(isEdit = false) {
     const form = document.getElementById('userForm');
     const formData = new FormData(form);

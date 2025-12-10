@@ -380,7 +380,9 @@ $router->get('/api/reminders/check', 'ContactFollowupController', 'checkReminder
 $router->get('/followups', 'FollowupController', 'index');
 $router->get('/followups/create', 'FollowupController', 'create');
 $router->post('/followups/create', 'FollowupController', 'create');
-$router->get('/followups/view/{id}', 'FollowupController', 'viewFollowup');
+$router->get('/followups/view/{id}', 'FollowupController', 'view');
+$router->get('/followups/edit/{id}', 'FollowupController', 'edit');
+$router->post('/followups/edit/{id}', 'FollowupController', 'edit');
 $router->post('/followups/delete/{id}', 'FollowupController', 'delete');
 
 // Legacy followup routes removed - use /contacts/followups instead

@@ -595,6 +595,7 @@ renderModal('updateProgressModal', 'Update Progress', $updateProgressContent, $u
 </div>
 
 <?php renderModalJS(); ?>
+<script src="/ergon-site/assets/js/sla-timer-fix.js"></script>
 <script src="/ergon-site/assets/js/task-timer.js"></script>
 <script src="/ergon-site/assets/js/unified-daily-planner.js"></script>
 <script src="/ergon-site/assets/js/timer-init.js"></script>

@@ -63,11 +63,11 @@ class Notification {
                    n.action_type
             FROM notifications n 
             LEFT JOIN users u ON n.sender_id = u.id 
-            WHERE n.receiver_id = ? AND n.status != 'deleted'
+            WHERE n.receiver_id = ? AND n.status != 'deleted' AND n.sender_id != ?
             ORDER BY n.is_read ASC, n.created_at DESC 
             LIMIT ?
         ");
-        $stmt->execute([$userId, $limit]);
+        $stmt->execute([$userId, $userId, $limit]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
@@ -83,17 +83,17 @@ class Notification {
                    n.module_name as reference_type
             FROM notifications n 
             LEFT JOIN users u ON n.sender_id = u.id 
-            WHERE n.receiver_id = ? AND n.status != 'deleted'
+            WHERE n.receiver_id = ? AND n.status != 'deleted' AND n.sender_id != ?
             ORDER BY n.is_read ASC, n.created_at DESC 
             LIMIT ?
         ");
-        $stmt->execute([$userId, $limit]);
+        $stmt->execute([$userId, $userId, $limit]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
     public function getUnreadCount($userId) {
-        $stmt = $this->db->prepare("SELECT COUNT(*) FROM notifications WHERE receiver_id = ? AND is_read = 0 AND status != 'deleted'");
-        $stmt->execute([$userId]);
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM notifications WHERE receiver_id = ? AND is_read = 0 AND status != 'deleted' AND sender_id != ?");
+        $stmt->execute([$userId, $userId]);
         return $stmt->fetchColumn();
     }
     

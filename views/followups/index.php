@@ -98,6 +98,12 @@ ob_start();
                         <?php endif; ?>
                         
                         <div class="followup-actions">
+                            <a href="/ergon-site/followups/view/<?= $followup['id'] ?>" class="btn btn--info btn--small">
+                                👁️ View
+                            </a>
+                            <a href="/ergon-site/followups/edit/<?= $followup['id'] ?>" class="btn btn--secondary btn--small">
+                                ✏️ Edit
+                            </a>
                             <?php if ($followup['status'] !== 'completed' && $followup['status'] !== 'cancelled'): ?>
                                 <button class="btn btn--success btn--small" onclick="completeFollowup(<?= $followup['id'] ?>)">
                                     ✅ Complete

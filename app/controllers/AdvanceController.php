@@ -203,14 +203,11 @@ class AdvanceController extends Controller {
         $this->requireAuth();
         
         if (!$id) {
-            header('Location: /ergon-site/advances?error=Invalid advance ID');
-            exit;
-        }
-        
-        // Check authorization - only admin/owner can approve
-        $currentUserRole = $_SESSION['role'] ?? 'user';
-        if (!in_array($currentUserRole, ['admin', 'owner'])) {
-            header('Location: /ergon-site/advances?error=Unauthorized access');
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                echo json_encode(['success' => false, 'error' => 'Invalid advance ID']);
+            } else {
+                header('Location: /ergon-site/advances?error=Invalid advance ID');
+            }
             exit;
         }
         
@@ -219,46 +216,71 @@ class AdvanceController extends Controller {
             $db = Database::connect();
             
             // Get advance details first
-            $stmt = $db->prepare("SELECT user_id FROM advances WHERE id = ? AND status = 'pending'");
+            $stmt = $db->prepare("SELECT a.*, u.name as user_name FROM advances a JOIN users u ON a.user_id = u.id WHERE a.id = ? AND a.status = 'pending'");
             $stmt->execute([$id]);
             $advance = $stmt->fetch(PDO::FETCH_ASSOC);
             
             if (!$advance) {
-                header('Location: /ergon-site/advances?error=Advance not found or already processed');
+                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                    echo json_encode(['success' => false, 'error' => 'Advance not found or already processed']);
+                } else {
+                    header('Location: /ergon-site/advances?error=Advance not found or already processed');
+                }
                 exit;
             }
             
-            // If admin provided an approved amount, use it
-            // If admin provided an approved amount, store it in approved_amount (do not overwrite requested amount)
-            $approvedAmount = null;
-            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['approved_amount'])) {
-                $approvedAmount = floatval($_POST['approved_amount']);
-                if ($approvedAmount > 0) {
-                    try { DatabaseHelper::safeExec($db, "ALTER TABLE advances ADD COLUMN approved_amount DECIMAL(10,2) NULL", "Alter table"); } catch (Exception $e) {}
-                    $stmt = $db->prepare("UPDATE advances SET approved_amount = ? WHERE id = ?");
-                    $stmt->execute([$approvedAmount, $id]);
-                }
-            }
-
-            $stmt = $db->prepare("UPDATE advances SET status = 'approved', approved_by = ?, approved_at = NOW() WHERE id = ? AND status = 'pending'");
-            $result = $stmt->execute([$_SESSION['user_id'], $id]);
-            
-            if ($result && $stmt->rowCount() > 0) {
-                // Create notification for user
-                try {
-                    require_once __DIR__ . '/../helpers/NotificationHelper.php';
-                    NotificationHelper::notifyAdvanceStatusChange($id, 'approved', $_SESSION['user_id']);
-                } catch (Exception $notifError) {
-                    error_log('Advance approval notification error: ' . $notifError->getMessage());
-                }
+            // Handle POST request for approval
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                header('Content-Type: application/json');
                 
-                header('Location: /ergon-site/advances?success=Advance approved successfully');
-            } else {
-                header('Location: /ergon-site/advances?error=Advance not found or already processed');
+                $approvedAmount = isset($_POST['approved_amount']) && $_POST['approved_amount'] > 0 ? floatval($_POST['approved_amount']) : floatval($advance['amount']);
+                $approvalRemarks = trim($_POST['approval_remarks'] ?? '');
+                
+                // Add approval_remarks column if it doesn't exist
+                try { DatabaseHelper::safeExec($db, "ALTER TABLE advances ADD COLUMN approval_remarks TEXT NULL", "Alter table"); } catch (Exception $e) {}
+                
+                // Update advance with approval details
+                $stmt = $db->prepare("UPDATE advances SET status = 'approved', approved_by = ?, approved_at = NOW(), approved_amount = ?, approval_remarks = ? WHERE id = ?");
+                $result = $stmt->execute([$_SESSION['user_id'], $approvedAmount, $approvalRemarks, $id]);
+                
+                if ($result && $stmt->rowCount() > 0) {
+                    // Create notification for user
+                    try {
+                        require_once __DIR__ . '/../helpers/NotificationHelper.php';
+                        NotificationHelper::notifyAdvanceStatusChange($id, 'approved', $_SESSION['user_id']);
+                    } catch (Exception $notifError) {
+                        error_log('Advance approval notification error: ' . $notifError->getMessage());
+                    }
+                    
+                    echo json_encode(['success' => true, 'message' => 'Advance approved successfully']);
+                } else {
+                    echo json_encode(['success' => false, 'error' => 'Failed to approve advance']);
+                }
+                exit;
             }
+            
+            // GET request - check if it's an AJAX request or direct browser access
+            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+                // AJAX request - return JSON for modal
+                header('Content-Type: application/json');
+                echo json_encode([
+                    'success' => true,
+                    'advance' => $advance
+                ]);
+                exit;
+            } else {
+                // Direct browser access - show approval page
+                $this->view('advances/approve', ['advance' => $advance, 'active_page' => 'advances']);
+                exit;
+            }
+            
         } catch (Exception $e) {
-            error_log('Advance approve error: ' . $e->getMessage());
-            header('Location: /ergon-site/advances?error=Failed to approve advance');
+            error_log('Advance approval error: ' . $e->getMessage());
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                echo json_encode(['success' => false, 'error' => 'Approval failed']);
+            } else {
+                header('Location: /ergon-site/advances?error=Approval failed');
+            }
         }
         exit;
     }
@@ -290,42 +312,55 @@ class AdvanceController extends Controller {
             }
 
             $proof = null;
-            // Server-side validation: require file, limit size to 5MB, allow jpeg/png/pdf
-            if (!isset($_FILES['proof']) || $_FILES['proof']['error'] !== 0) {
-                header('Location: /ergon-site/advances/view/' . $id . '?error=Proof file is required');
+            $paymentRemarks = trim($_POST['payment_remarks'] ?? '');
+            
+            // Validate that either proof or remarks is provided
+            $hasFile = isset($_FILES['proof']) && $_FILES['proof']['error'] === 0;
+            if (!$hasFile && empty($paymentRemarks)) {
+                header('Location: /ergon-site/advances/view/' . $id . '?error=Either payment proof or payment details must be provided');
                 exit;
             }
 
-            $allowedMime = ['image/jpeg', 'image/png', 'application/pdf'];
-            $maxSize = 5 * 1024 * 1024; // 5MB
-            $file = $_FILES['proof'];
-            if ($file['size'] > $maxSize) {
-                header('Location: /ergon-site/advances/view/' . $id . '?error=Proof file exceeds 5MB');
-                exit;
+            // Handle file upload if provided
+            if ($hasFile) {
+                $file = $_FILES['proof'];
+                $allowedMime = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
+                $maxSize = 5 * 1024 * 1024;
+                
+                if ($file['size'] > $maxSize) {
+                    header('Location: /ergon-site/advances/view/' . $id . '?error=File exceeds 5MB');
+                    exit;
+                }
+
+                $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                $mime = finfo_file($finfo, $file['tmp_name']);
+                finfo_close($finfo);
+                
+                if (!in_array($mime, $allowedMime)) {
+                    header('Location: /ergon-site/advances/view/' . $id . '?error=Invalid file type');
+                    exit;
+                }
+
+                $uploadDir = __DIR__ . '/../../storage/proofs/';
+                if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
+                $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+                $filename = time() . '_' . bin2hex(random_bytes(6)) . '.' . $ext;
+                $uploadPath = $uploadDir . $filename;
+                
+                if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
+                    $proof = $filename;
+                } else {
+                    header('Location: /ergon-site/advances/view/' . $id . '?error=Failed to save proof file');
+                    exit;
+                }
             }
 
-            $finfo = finfo_open(FILEINFO_MIME_TYPE);
-            $mime = finfo_file($finfo, $file['tmp_name']);
-            finfo_close($finfo);
-            if (!in_array($mime, $allowedMime)) {
-                header('Location: /ergon-site/advances/view/' . $id . '?error=Invalid proof file type');
-                exit;
-            }
+            // Add payment_remarks column if it doesn't exist
+            try { DatabaseHelper::safeExec($db, "ALTER TABLE advances ADD COLUMN payment_remarks TEXT NULL", "Alter table"); } catch (Exception $e) {}
 
-            $uploadDir = __DIR__ . '/../../storage/proofs/';
-            if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
-            $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
-            $filename = time() . '_' . bin2hex(random_bytes(6)) . '.' . $ext;
-            $uploadPath = $uploadDir . $filename;
-            if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
-                $proof = $filename;
-            } else {
-                header('Location: /ergon-site/advances/view/' . $id . '?error=Failed to save proof file');
-                exit;
-            }
-
-            $stmt = $db->prepare("UPDATE advances SET status = 'paid', payment_proof = ?, paid_by = ?, paid_at = NOW() WHERE id = ?");
-            $result = $stmt->execute([$proof, $_SESSION['user_id'], $id]);
+            // Update advance with payment details
+            $stmt = $db->prepare("UPDATE advances SET status = 'paid', payment_proof = ?, payment_remarks = ?, paid_by = ?, paid_at = NOW() WHERE id = ?");
+            $result = $stmt->execute([$proof, $paymentRemarks, $_SESSION['user_id'], $id]);
 
             if ($result) {
                 // Record ledger credit for the advance amount

@@ -284,6 +284,9 @@ class TasksController extends Controller {
                         ContactFollowupController::updateLinkedFollowupStatus($id, $taskData['status']);
                     }
                     
+                    // Sync with planner (daily_tasks table)
+                    $this->syncWithPlanner($db, $id, $taskData);
+                    
                     error_log('Task updated with ID: ' . $id . ', progress: ' . $taskData['progress'] . '%, planned_date: ' . ($taskData['planned_date'] ?? 'null'));
                     header('Location: /ergon-site/tasks?success=Task updated successfully');
                 } else {
@@ -1339,6 +1342,42 @@ class TasksController extends Controller {
     /**
      * Fallback method for static tasks when database is unavailable
      */
+    private function syncWithPlanner($db, $taskId, $taskData) {
+        try {
+            // Update daily_tasks table if it exists
+            $stmt = $db->prepare("UPDATE daily_tasks SET 
+                title = ?, 
+                description = ?, 
+                assigned_to = ?, 
+                status = ?, 
+                completed_percentage = ?, 
+                priority = ?,
+                planned_date = ?
+                WHERE original_task_id = ? OR task_id = ?");
+            $stmt->execute([
+                $taskData['title'],
+                $taskData['description'],
+                $taskData['assigned_to'],
+                $taskData['status'],
+                $taskData['progress'],
+                $taskData['priority'],
+                $taskData['planned_date'],
+                $taskId,
+                $taskId
+            ]);
+            
+            // If task was reassigned, update user assignment in planner
+            if (isset($taskData['assigned_to'])) {
+                $stmt = $db->prepare("UPDATE daily_tasks SET assigned_to = ? WHERE original_task_id = ? OR task_id = ?");
+                $stmt->execute([$taskData['assigned_to'], $taskId, $taskId]);
+            }
+            
+            error_log('Planner sync completed for task ID: ' . $taskId);
+        } catch (Exception $e) {
+            error_log('Planner sync error: ' . $e->getMessage());
+        }
+    }
+    
     private function getStaticTasks() {
         return [
             [
