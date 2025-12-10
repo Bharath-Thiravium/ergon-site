@@ -5,7 +5,9 @@ class DatabaseHelper
     public static function safeExec($db, $sql, $description = '')
     {
         try {
-            $db->exec($sql);
+            // Use prepare/execute for better security
+            $stmt = $db->prepare($sql);
+            $stmt->execute();
             if ($description) {
                 error_log("Database operation successful: $description");
             }
@@ -19,11 +21,11 @@ class DatabaseHelper
     public static function addColumnIfNotExists($db, $table, $column, $definition)
     {
         try {
-            $stmt = $db->prepare("SHOW COLUMNS FROM `$table` LIKE ?");
+            $stmt = $db->prepare("SHOW COLUMNS FROM `{$table}` LIKE ?");
             $stmt->execute([$column]);
             
             if ($stmt->rowCount() === 0) {
-                $sql = "ALTER TABLE `$table` ADD COLUMN `$column` $definition";
+                $sql = "ALTER TABLE `{$table}` ADD COLUMN `{$column}` {$definition}";
                 return self::safeExec($db, $sql, "Add column $column to $table");
             }
             return true;

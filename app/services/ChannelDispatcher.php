@@ -84,7 +84,7 @@ class ChannelDispatcher {
         
         $fcmKey = $_ENV['FCM_SERVER_KEY'] ?? $config['fcm_server_key'] ?? null;
         if (empty($fcmKey)) {
-            throw new Exception("Push notifications not configured");
+            throw new Exception("Push notifications not configured - FCM key missing");
         }
         
         $pushToken = $this->getUserPushToken($event['receiver_id']);
@@ -133,8 +133,9 @@ class ChannelDispatcher {
         $config = $this->channels['sms']['config'];
         
         $accountSid = $_ENV['SMS_ACCOUNT_SID'] ?? $config['account_sid'] ?? null;
-        if (empty($accountSid)) {
-            throw new Exception("SMS not configured");
+        $authToken = $_ENV['SMS_AUTH_TOKEN'] ?? $config['auth_token'] ?? null;
+        if (empty($accountSid) || empty($authToken)) {
+            throw new Exception("SMS not configured - credentials missing");
         }
         
         $userPhone = $this->getUserPhone($event['receiver_id']);
