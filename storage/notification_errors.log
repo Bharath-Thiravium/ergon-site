@@ -1605,3 +1605,59 @@ Stack trace:
 #1 C:\laragon\www\ergon-site\api\notifications.php(26): Notification->__construct()
 #2 {main}
   thrown in C:\laragon\www\ergon-site\app\models\Notification.php on line 39
+[10-Dec-2025 11:32:58 UTC] Notification API: User ID 1 accessing notifications
+[10-Dec-2025 11:32:58 UTC] PHP Fatal error:  Uncaught Error: Class "DatabaseHelper" not found in C:\laragon\www\ergon-site\app\models\Notification.php:39
+Stack trace:
+#0 C:\laragon\www\ergon-site\app\models\Notification.php(9): Notification->ensureTable()
+#1 C:\laragon\www\ergon-site\api\notifications.php(26): Notification->__construct()
+#2 {main}
+  thrown in C:\laragon\www\ergon-site\app\models\Notification.php on line 39
+[10-Dec-2025 11:33:28 UTC] Notification API: User ID 1 accessing notifications
+[10-Dec-2025 11:33:28 UTC] PHP Fatal error:  Uncaught Error: Class "DatabaseHelper" not found in C:\laragon\www\ergon-site\app\models\Notification.php:39
+Stack trace:
+#0 C:\laragon\www\ergon-site\app\models\Notification.php(9): Notification->ensureTable()
+#1 C:\laragon\www\ergon-site\api\notifications.php(26): Notification->__construct()
+#2 {main}
+  thrown in C:\laragon\www\ergon-site\app\models\Notification.php on line 39
+[10-Dec-2025 11:33:33 UTC] Notification API: User ID 1 accessing notifications
+[10-Dec-2025 11:33:33 UTC] PHP Fatal error:  Uncaught Error: Class "DatabaseHelper" not found in C:\laragon\www\ergon-site\app\models\Notification.php:39
+Stack trace:
+#0 C:\laragon\www\ergon-site\app\models\Notification.php(9): Notification->ensureTable()
+#1 C:\laragon\www\ergon-site\api\notifications.php(26): Notification->__construct()
+#2 {main}
+  thrown in C:\laragon\www\ergon-site\app\models\Notification.php on line 39
+[10-Dec-2025 11:34:03 UTC] Notification API: User ID 1 accessing notifications
+[10-Dec-2025 11:34:03 UTC] PHP Fatal error:  Uncaught Error: Class "DatabaseHelper" not found in C:\laragon\www\ergon-site\app\models\Notification.php:39
+Stack trace:
+#0 C:\laragon\www\ergon-site\app\models\Notification.php(9): Notification->ensureTable()
+#1 C:\laragon\www\ergon-site\api\notifications.php(26): Notification->__construct()
+#2 {main}
+  thrown in C:\laragon\www\ergon-site\app\models\Notification.php on line 39
+[10-Dec-2025 11:34:37 UTC] Notification API: User ID 1 accessing notifications
+[10-Dec-2025 11:34:37 UTC] PHP Fatal error:  Uncaught Error: Class "DatabaseHelper" not found in C:\laragon\www\ergon-site\app\models\Notification.php:39
+Stack trace:
+#0 C:\laragon\www\ergon-site\app\models\Notification.php(9): Notification->ensureTable()
+#1 C:\laragon\www\ergon-site\api\notifications.php(26): Notification->__construct()
+#2 {main}
+  thrown in C:\laragon\www\ergon-site\app\models\Notification.php on line 39
+[10-Dec-2025 11:35:07 UTC] Notification API: User ID 1 accessing notifications
+[10-Dec-2025 11:35:07 UTC] PHP Fatal error:  Uncaught Error: Class "DatabaseHelper" not found in C:\laragon\www\ergon-site\app\models\Notification.php:39
+Stack trace:
+#0 C:\laragon\www\ergon-site\app\models\Notification.php(9): Notification->ensureTable()
+#1 C:\laragon\www\ergon-site\api\notifications.php(26): Notification->__construct()
+#2 {main}
+  thrown in C:\laragon\www\ergon-site\app\models\Notification.php on line 39
+[10-Dec-2025 11:35:57 UTC] Notification API: User ID 1 accessing notifications
+[10-Dec-2025 11:35:57 UTC] PHP Fatal error:  Uncaught Error: Class "DatabaseHelper" not found in C:\laragon\www\ergon-site\app\models\Notification.php:39
+Stack trace:
+#0 C:\laragon\www\ergon-site\app\models\Notification.php(9): Notification->ensureTable()
+#1 C:\laragon\www\ergon-site\api\notifications.php(26): Notification->__construct()
+#2 {main}
+  thrown in C:\laragon\www\ergon-site\app\models\Notification.php on line 39
+[10-Dec-2025 11:36:28 UTC] Notification API: User ID 1 accessing notifications
+[10-Dec-2025 11:36:28 UTC] PHP Fatal error:  Uncaught Error: Class "DatabaseHelper" not found in C:\laragon\www\ergon-site\app\models\Notification.php:39
+Stack trace:
+#0 C:\laragon\www\ergon-site\app\models\Notification.php(9): Notification->ensureTable()
+#1 C:\laragon\www\ergon-site\api\notifications.php(26): Notification->__construct()
+#2 {main}
+  thrown in C:\laragon\www\ergon-site\app\models\Notification.php on line 39

@@ -444,7 +444,7 @@ document.getElementById('markPaidForm').addEventListener('submit', function(e) {
     
     const formData = new FormData(this);
     
-    fetch(`/ergon-site/expenses/markPaid/${currentExpenseId}`, {
+    fetch(`/ergon-site/expenses/paid/${currentExpenseId}`, {
         method: 'POST',
         body: formData
     })
