@@ -4,6 +4,7 @@ require_once __DIR__ . '/../helpers/Security.php';
 require_once __DIR__ . '/../middlewares/AuthMiddleware.php';
 require_once __DIR__ . '/../core/Controller.php';
 require_once __DIR__ . '/../helpers/DatabaseHelper.php';
+require_once __DIR__ . '/../config/environment.php';
 
 class ExpenseController extends Controller {
     private $expense;
@@ -217,7 +218,7 @@ class ExpenseController extends Controller {
                     error_log('Notification error (non-critical): ' . $notifError->getMessage());
                 }
                 
-                echo json_encode(['success' => true, 'message' => 'Expense claim submitted successfully', 'redirect' => '/ergon-site/expenses']);
+                echo json_encode(['success' => true, 'message' => 'Expense claim submitted successfully', 'redirect' => Environment::getBaseUrl() . '/expenses']);
             } else {
                 // Fallback: try direct database insertion
                 try {
@@ -236,7 +237,7 @@ class ExpenseController extends Controller {
                     ]);
                     
                     if ($result) {
-                        echo json_encode(['success' => true, 'message' => 'Expense claim submitted successfully', 'redirect' => '/ergon-site/expenses']);
+                        echo json_encode(['success' => true, 'message' => 'Expense claim submitted successfully', 'redirect' => Environment::getBaseUrl() . '/expenses']);
                     } else {
                         error_log('Direct expense insert failed: ' . implode(' - ', $stmt->errorInfo()));
                         echo json_encode(['success' => false, 'error' => 'Database error: Unable to save expense']);
@@ -258,7 +259,7 @@ class ExpenseController extends Controller {
         
         $id = Security::validateInt($id);
         if (!$id) {
-            header('Location: /ergon-site/expenses?error=invalid_id');
+            header('Location: ' . Environment::getBaseUrl() . '/expenses?error=invalid_id');
             exit;
         }
         
@@ -278,7 +279,7 @@ class ExpenseController extends Controller {
             $expense = $stmt->fetch(PDO::FETCH_ASSOC);
             
             if (!$expense) {
-                header('Location: /ergon-site/expenses?error=not_found');
+                header('Location: ' . Environment::getBaseUrl() . '/expenses?error=not_found');
                 exit;
             }
             
@@ -317,9 +318,9 @@ class ExpenseController extends Controller {
                 exit;
                 
                 if ($result) {
-                    header('Location: /ergon-site/expenses?success=updated');
+                    header('Location: ' . Environment::getBaseUrl() . '/expenses?success=updated');
                 } else {
-                    header('Location: /ergon-site/expenses/edit/' . $id . '?error=1');
+                    header('Location: ' . Environment::getBaseUrl() . '/expenses/edit/' . $id . '?error=1');
                 }
                 exit;
             }
@@ -327,7 +328,7 @@ class ExpenseController extends Controller {
             $this->view('expenses/edit', ['expense' => $expense, 'active_page' => 'expenses']);
         } catch (Exception $e) {
             error_log('Expense edit error: ' . $e->getMessage());
-            header('Location: /ergon-site/expenses?error=1');
+            header('Location: ' . Environment::getBaseUrl() . '/expenses?error=1');
             exit;
         }
     }
@@ -337,7 +338,7 @@ class ExpenseController extends Controller {
         
         $id = Security::validateInt($id);
         if (!$id) {
-            header('Location: /ergon-site/expenses?error=invalid_id');
+            header('Location: ' . Environment::getBaseUrl() . '/expenses?error=invalid_id');
             exit;
         }
         
@@ -350,7 +351,7 @@ class ExpenseController extends Controller {
             $expense = $stmt->fetch(PDO::FETCH_ASSOC);
             
             if (!$expense) {
-                header('Location: /ergon-site/expenses?error=not_found');
+                header('Location: ' . Environment::getBaseUrl() . '/expenses?error=not_found');
                 exit;
             }
             
@@ -367,7 +368,7 @@ class ExpenseController extends Controller {
             $this->view('expenses/view', $data);
         } catch (Exception $e) {
             error_log('Expense view error: ' . $e->getMessage());
-            header('Location: /ergon-site/expenses?error=view_failed');
+            header('Location: ' . Environment::getBaseUrl() . '/expenses?error=view_failed');
             exit;
         }
     }
@@ -440,7 +441,7 @@ class ExpenseController extends Controller {
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 echo json_encode(['success' => false, 'error' => 'Invalid expense ID']);
             } else {
-                header('Location: /ergon-site/expenses?error=Invalid expense ID');
+                header('Location: ' . Environment::getBaseUrl() . '/expenses?error=Invalid expense ID');
             }
             exit;
         }
@@ -458,7 +459,7 @@ class ExpenseController extends Controller {
                 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     echo json_encode(['success' => false, 'error' => 'Expense not found or already processed']);
                 } else {
-                    header('Location: /ergon-site/expenses?error=Expense not found or already processed');
+                    header('Location: ' . Environment::getBaseUrl() . '/expenses?error=Expense not found or already processed');
                 }
                 exit;
             }
@@ -503,7 +504,7 @@ class ExpenseController extends Controller {
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 echo json_encode(['success' => false, 'error' => 'Approval failed']);
             } else {
-                header('Location: /ergon-site/expenses?error=Approval failed');
+                header('Location: ' . Environment::getBaseUrl() . '/expenses?error=Approval failed');
             }
         }
         exit;
@@ -527,7 +528,7 @@ class ExpenseController extends Controller {
             $reason = $_POST['rejection_reason'];
             
             if (!$id) {
-                header('Location: /ergon-site/expenses?error=Invalid expense ID');
+                header('Location: ' . Environment::getBaseUrl() . '/expenses?error=Invalid expense ID');
                 exit;
             }
             
@@ -561,20 +562,20 @@ class ExpenseController extends Controller {
                     }
                     
                     $db->commit();
-                    header('Location: /ergon-site/expenses?success=Expense rejected successfully');
+                    header('Location: ' . Environment::getBaseUrl() . '/expenses?success=Expense rejected successfully');
                 } else {
                     $db->rollback();
-                    header('Location: /ergon-site/expenses?error=Expense not found');
+                    header('Location: ' . Environment::getBaseUrl() . '/expenses?error=Expense not found');
                 }
             } catch (Exception $e) {
                 if ($db->inTransaction()) {
                     $db->rollback();
                 }
                 error_log('Expense rejection error: ' . $e->getMessage());
-                header('Location: /ergon-site/expenses?error=Rejection failed: ' . $e->getMessage());
+                header('Location: ' . Environment::getBaseUrl() . '/expenses?error=Rejection failed: ' . $e->getMessage());
             }
         } else {
-            header('Location: /ergon-site/expenses?error=Rejection reason is required');
+            header('Location: ' . Environment::getBaseUrl() . '/expenses?error=Rejection reason is required');
         }
         exit;
     }
@@ -582,13 +583,13 @@ class ExpenseController extends Controller {
     public function markPaid($id = null) {
         AuthMiddleware::requireAuth();
         if (!$id) {
-            header('Location: /ergon-site/expenses?error=Invalid expense ID');
+            header('Location: ' . Environment::getBaseUrl() . '/expenses?error=Invalid expense ID');
             exit;
         }
 
         // Only admin/owner can mark paid
         if (!in_array($_SESSION['role'] ?? 'user', ['admin','owner'])) {
-            header('Location: /ergon-site/expenses?error=Unauthorized');
+            header('Location: ' . Environment::getBaseUrl() . '/expenses?error=Unauthorized');
             exit;
         }
 
@@ -601,7 +602,7 @@ class ExpenseController extends Controller {
             $stmt->execute([$id]);
             $expense = $stmt->fetch(PDO::FETCH_ASSOC);
             if (!$expense) {
-                header('Location: /ergon-site/expenses?error=Expense not found or not approved');
+                header('Location: ' . Environment::getBaseUrl() . '/expenses?error=Expense not found or not approved');
                 exit;
             }
 
@@ -611,7 +612,7 @@ class ExpenseController extends Controller {
             // Validate that either proof or remarks is provided
             $hasFile = isset($_FILES['proof']) && $_FILES['proof']['error'] === 0;
             if (!$hasFile && empty($paymentRemarks)) {
-                header('Location: /ergon-site/expenses/view/' . $id . '?error=Either payment proof or payment details must be provided');
+                header('Location: ' . Environment::getBaseUrl() . '/expenses/view/' . $id . '?error=Either payment proof or payment details must be provided');
                 exit;
             }
 
@@ -623,7 +624,7 @@ class ExpenseController extends Controller {
                 
                 if ($file['size'] > $maxSize) {
                     error_log("markPaid expense $id: File too large (" . $file['size'] . " bytes)");
-                    header('Location: /ergon-site/expenses/view/' . $id . '?error=File exceeds 5MB');
+                    header('Location: ' . Environment::getBaseUrl() . '/expenses/view/' . $id . '?error=File exceeds 5MB');
                     exit;
                 }
 
@@ -633,7 +634,7 @@ class ExpenseController extends Controller {
                 
                 if (!in_array($mime, $allowedMime)) {
                     error_log("markPaid expense $id: Invalid mime type: $mime");
-                    header('Location: /ergon-site/expenses/view/' . $id . '?error=Invalid file type');
+                    header('Location: ' . Environment::getBaseUrl() . '/expenses/view/' . $id . '?error=Invalid file type');
                     exit;
                 }
 
@@ -646,7 +647,7 @@ class ExpenseController extends Controller {
                 if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
                     $proof = $filename;
                 } else {
-                    header('Location: /ergon-site/expenses/view/' . $id . '?error=Failed to save proof file');
+                    header('Location: ' . Environment::getBaseUrl() . '/expenses/view/' . $id . '?error=Failed to save proof file');
                     exit;
                 }
             }
@@ -674,13 +675,13 @@ class ExpenseController extends Controller {
                     $ledgerAmount = floatval($expense['amount']);
                 }
                 LedgerHelper::recordEntry($expense['user_id'], 'expense', 'expense', $id, $ledgerAmount, 'debit');
-                header('Location: /ergon-site/expenses?success=Expense marked as paid');
+                header('Location: ' . Environment::getBaseUrl() . '/expenses?success=Expense marked as paid');
             } else {
-                header('Location: /ergon-site/expenses?error=Failed to mark paid');
+                header('Location: ' . Environment::getBaseUrl() . '/expenses?error=Failed to mark paid');
             }
         } catch (Exception $e) {
             error_log('Expense markPaid error: ' . $e->getMessage());
-            header('Location: /ergon-site/expenses/view/' . $id . '?error=' . urlencode($e->getMessage()));
+            header('Location: ' . Environment::getBaseUrl() . '/expenses/view/' . $id . '?error=' . urlencode($e->getMessage()));
         }
         exit;
     }

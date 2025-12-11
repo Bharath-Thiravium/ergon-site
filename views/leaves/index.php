@@ -229,15 +229,11 @@ ob_start();
                                 <?php 
                                 $sessionRole = $_SESSION['role'] ?? 'user';
                                 $canDelete = false;
-                                $isOwner = ($sessionRole === 'owner');
-                                $isAdmin = ($sessionRole === 'admin');
                                 $isOwnLeave = ($leave['user_id'] ?? 0) == ($_SESSION['user_id'] ?? 0);
                                 $isPending = strtolower($leave['status'] ?? 'pending') === 'pending';
                                 
-                                // Owners and admins can delete any leave, users can delete their own pending leaves
-                                if ($isOwner || $isAdmin) {
-                                    $canDelete = true;
-                                } elseif ($isOwnLeave && $isPending) {
+                                // Only requestor can delete their own pending leaves
+                                if ($isOwnLeave && $isPending) {
                                     $canDelete = true;
                                 }
                                 ?>

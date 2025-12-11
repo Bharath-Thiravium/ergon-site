@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../core/Controller.php';
 require_once __DIR__ . '/../helpers/DatabaseHelper.php';
+require_once __DIR__ . '/../config/environment.php';
 
 class AdvanceController extends Controller {
     
@@ -127,7 +128,7 @@ class AdvanceController extends Controller {
                 $advance = $stmt->fetch(PDO::FETCH_ASSOC);
                 
                 if (!$advance) {
-                    header('Location: /ergon-site/advances?error=Advance not found');
+                    header('Location: ' . Environment::getBaseUrl() . '/advances?error=Advance not found');
                     exit;
                 }
                 
@@ -137,7 +138,7 @@ class AdvanceController extends Controller {
                            $advance['status'] === 'pending';
                 
                 if (!$canEdit) {
-                    header('Location: /ergon-site/advances?error=Cannot edit this advance');
+                    header('Location: ' . Environment::getBaseUrl() . '/advances?error=Cannot edit this advance');
                     exit;
                 }
                 
@@ -157,7 +158,7 @@ class AdvanceController extends Controller {
                 exit;
             } catch (Exception $e) {
                 error_log('Advance edit error: ' . $e->getMessage());
-                header('Location: /ergon-site/advances/edit/' . $id . '?error=Update failed');
+                header('Location: ' . Environment::getBaseUrl() . '/advances/edit/' . $id . '?error=Update failed');
                 exit;
             }
         }
@@ -178,19 +179,19 @@ class AdvanceController extends Controller {
             $advance = $stmt->fetch(PDO::FETCH_ASSOC);
             
             if (!$advance) {
-                header('Location: /ergon-site/advances?error=Advance not found');
+                header('Location: ' . Environment::getBaseUrl() . '/advances?error=Advance not found');
                 exit;
             }
             
             if ($advance['status'] !== 'pending') {
-                header('Location: /ergon-site/advances?error=Cannot edit processed advance');
+                header('Location: ' . Environment::getBaseUrl() . '/advances?error=Cannot edit processed advance');
                 exit;
             }
             
             $this->view('advances/edit', ['advance' => $advance, 'active_page' => 'advances']);
         } catch (Exception $e) {
             error_log('Advance edit load error: ' . $e->getMessage());
-            header('Location: /ergon-site/advances?error=Failed to load advance');
+            header('Location: ' . Environment::getBaseUrl() . '/advances?error=Failed to load advance');
             exit;
         }
     }
@@ -206,7 +207,7 @@ class AdvanceController extends Controller {
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 echo json_encode(['success' => false, 'error' => 'Invalid advance ID']);
             } else {
-                header('Location: /ergon-site/advances?error=Invalid advance ID');
+                header('Location: ' . Environment::getBaseUrl() . '/advances?error=Invalid advance ID');
             }
             exit;
         }
@@ -224,7 +225,7 @@ class AdvanceController extends Controller {
                 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     echo json_encode(['success' => false, 'error' => 'Advance not found or already processed']);
                 } else {
-                    header('Location: /ergon-site/advances?error=Advance not found or already processed');
+                    header('Location: ' . Environment::getBaseUrl() . '/advances?error=Advance not found or already processed');
                 }
                 exit;
             }
@@ -279,7 +280,7 @@ class AdvanceController extends Controller {
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 echo json_encode(['success' => false, 'error' => 'Approval failed']);
             } else {
-                header('Location: /ergon-site/advances?error=Approval failed');
+                header('Location: ' . Environment::getBaseUrl() . '/advances?error=Approval failed');
             }
         }
         exit;
@@ -288,13 +289,13 @@ class AdvanceController extends Controller {
     public function markPaid($id = null) {
         $this->requireAuth();
         if (!$id) {
-            header('Location: /ergon-site/advances?error=Invalid advance ID');
+            header('Location: ' . Environment::getBaseUrl() . '/advances?error=Invalid advance ID');
             exit;
         }
 
         // Only admin/owner can mark paid
         if (!in_array($_SESSION['role'] ?? 'user', ['admin','owner'])) {
-            header('Location: /ergon-site/advances?error=Unauthorized');
+            header('Location: ' . Environment::getBaseUrl() . '/advances?error=Unauthorized');
             exit;
         }
 
@@ -307,7 +308,7 @@ class AdvanceController extends Controller {
             $stmt->execute([$id]);
             $advance = $stmt->fetch(PDO::FETCH_ASSOC);
             if (!$advance) {
-                header('Location: /ergon-site/advances?error=Advance not found or not approved');
+                header('Location: ' . Environment::getBaseUrl() . '/advances?error=Advance not found or not approved');
                 exit;
             }
 
@@ -317,7 +318,7 @@ class AdvanceController extends Controller {
             // Validate that either proof or remarks is provided
             $hasFile = isset($_FILES['proof']) && $_FILES['proof']['error'] === 0;
             if (!$hasFile && empty($paymentRemarks)) {
-                header('Location: /ergon-site/advances/view/' . $id . '?error=Either payment proof or payment details must be provided');
+                header('Location: ' . Environment::getBaseUrl() . '/advances/view/' . $id . '?error=Either payment proof or payment details must be provided');
                 exit;
             }
 
@@ -328,7 +329,7 @@ class AdvanceController extends Controller {
                 $maxSize = 5 * 1024 * 1024;
                 
                 if ($file['size'] > $maxSize) {
-                    header('Location: /ergon-site/advances/view/' . $id . '?error=File exceeds 5MB');
+                    header('Location: ' . Environment::getBaseUrl() . '/advances/view/' . $id . '?error=File exceeds 5MB');
                     exit;
                 }
 
@@ -337,7 +338,7 @@ class AdvanceController extends Controller {
                 finfo_close($finfo);
                 
                 if (!in_array($mime, $allowedMime)) {
-                    header('Location: /ergon-site/advances/view/' . $id . '?error=Invalid file type');
+                    header('Location: ' . Environment::getBaseUrl() . '/advances/view/' . $id . '?error=Invalid file type');
                     exit;
                 }
 
@@ -350,7 +351,7 @@ class AdvanceController extends Controller {
                 if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
                     $proof = $filename;
                 } else {
-                    header('Location: /ergon-site/advances/view/' . $id . '?error=Failed to save proof file');
+                    header('Location: ' . Environment::getBaseUrl() . '/advances/view/' . $id . '?error=Failed to save proof file');
                     exit;
                 }
             }
@@ -373,13 +374,13 @@ class AdvanceController extends Controller {
                     if ($row2 && $row2['approved_amount']) $ledgerAmount = floatval($row2['approved_amount']);
                 } catch (Exception $e) {}
                 LedgerHelper::recordEntry($advance['user_id'], 'advance', 'advance', $id, $ledgerAmount, 'credit');
-                header('Location: /ergon-site/advances?success=Advance marked as paid');
+                header('Location: ' . Environment::getBaseUrl() . '/advances?success=Advance marked as paid');
             } else {
-                header('Location: /ergon-site/advances?error=Failed to mark paid');
+                header('Location: ' . Environment::getBaseUrl() . '/advances?error=Failed to mark paid');
             }
         } catch (Exception $e) {
             error_log('Advance markPaid error: ' . $e->getMessage());
-            header('Location: /ergon-site/advances?error=Failed to mark paid');
+            header('Location: ' . Environment::getBaseUrl() . '/advances?error=Failed to mark paid');
         }
         exit;
     }
@@ -392,14 +393,14 @@ class AdvanceController extends Controller {
         $this->requireAuth();
         
         if (!$id) {
-            header('Location: /ergon-site/advances?error=Invalid advance ID');
+            header('Location: ' . Environment::getBaseUrl() . '/advances?error=Invalid advance ID');
             exit;
         }
         
         // Check authorization - only admin/owner can reject
         $currentUserRole = $_SESSION['role'] ?? 'user';
         if (!in_array($currentUserRole, ['admin', 'owner'])) {
-            header('Location: /ergon-site/advances?error=Unauthorized access');
+            header('Location: ' . Environment::getBaseUrl() . '/advances?error=Unauthorized access');
             exit;
         }
         
@@ -415,7 +416,7 @@ class AdvanceController extends Controller {
             $advance = $stmt->fetch(PDO::FETCH_ASSOC);
             
             if (!$advance) {
-                header('Location: /ergon-site/advances?error=Advance not found or already processed');
+                header('Location: ' . Environment::getBaseUrl() . '/advances?error=Advance not found or already processed');
                 exit;
             }
             
@@ -431,13 +432,13 @@ class AdvanceController extends Controller {
                     error_log('Advance rejection notification error: ' . $notifError->getMessage());
                 }
                 
-                header('Location: /ergon-site/advances?success=Advance rejected successfully');
+                header('Location: ' . Environment::getBaseUrl() . '/advances?success=Advance rejected successfully');
             } else {
-                header('Location: /ergon-site/advances?error=Advance not found or already processed');
+                header('Location: ' . Environment::getBaseUrl() . '/advances?error=Advance not found or already processed');
             }
         } catch (Exception $e) {
             error_log('Advance reject error: ' . $e->getMessage());
-            header('Location: /ergon-site/advances?error=Failed to reject advance');
+            header('Location: ' . Environment::getBaseUrl() . '/advances?error=Failed to reject advance');
         }
         exit;
     }
@@ -460,14 +461,14 @@ class AdvanceController extends Controller {
             $advance = $stmt->fetch(PDO::FETCH_ASSOC);
             
             if (!$advance) {
-                header('Location: /ergon-site/advances?error=not_found');
+                header('Location: ' . Environment::getBaseUrl() . '/advances?error=not_found');
                 exit;
             }
             
             $this->view('advances/view', ['advance' => $advance, 'active_page' => 'advances']);
         } catch (Exception $e) {
             error_log('Advance view error: ' . $e->getMessage());
-            header('Location: /ergon-site/advances?error=1');
+            header('Location: ' . Environment::getBaseUrl() . '/advances?error=1');
             exit;
         }
     }
