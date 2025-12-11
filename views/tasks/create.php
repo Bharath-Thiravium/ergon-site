@@ -470,21 +470,31 @@ function loadDepartmentsByProject() {
     if (departmentId) {
         // Load specific department for this project
         fetch(`/ergon-site/api/departments`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.success && data.departments) {
-                    deptSelect.innerHTML = '<option value="">Select Department</option>';
-                    const dept = data.departments.find(d => d.id == departmentId);
-                    if (dept) {
-                        const option = document.createElement('option');
-                        option.value = dept.id;
-                        option.textContent = dept.name;
-                        option.selected = true;
-                        deptSelect.appendChild(option);
-                        deptSelect.disabled = false;
-                        // Auto-load categories for this department
-                        loadTaskCategories();
+            .then(response => {
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                return response.text();
+            })
+            .then(text => {
+                try {
+                    const data = JSON.parse(text);
+                    if (data.success && data.departments) {
+                        deptSelect.innerHTML = '<option value="">Select Department</option>';
+                        const dept = data.departments.find(d => d.id == departmentId);
+                        if (dept) {
+                            const option = document.createElement('option');
+                            option.value = dept.id;
+                            option.textContent = dept.name;
+                            option.selected = true;
+                            deptSelect.appendChild(option);
+                            deptSelect.disabled = false;
+                            loadTaskCategories();
+                        }
+                    } else {
+                        throw new Error(data.error || 'No departments found');
                     }
+                } catch (e) {
+                    console.error('JSON parse error:', e, 'Response:', text);
+                    throw new Error('Invalid response format');
                 }
             })
             .catch(error => {
@@ -494,17 +504,28 @@ function loadDepartmentsByProject() {
     } else {
         // Load all departments if project doesn't have specific department
         fetch(`/ergon-site/api/departments`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.success && data.departments) {
-                    deptSelect.innerHTML = '<option value="">Select Department</option>';
-                    data.departments.forEach(dept => {
-                        const option = document.createElement('option');
-                        option.value = dept.id;
-                        option.textContent = dept.name;
-                        deptSelect.appendChild(option);
-                    });
-                    deptSelect.disabled = false;
+            .then(response => {
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                return response.text();
+            })
+            .then(text => {
+                try {
+                    const data = JSON.parse(text);
+                    if (data.success && data.departments) {
+                        deptSelect.innerHTML = '<option value="">Select Department</option>';
+                        data.departments.forEach(dept => {
+                            const option = document.createElement('option');
+                            option.value = dept.id;
+                            option.textContent = dept.name;
+                            deptSelect.appendChild(option);
+                        });
+                        deptSelect.disabled = false;
+                    } else {
+                        throw new Error(data.error || 'No departments found');
+                    }
+                } catch (e) {
+                    console.error('JSON parse error:', e, 'Response:', text);
+                    throw new Error('Invalid response format');
                 }
             })
             .catch(error => {
@@ -533,21 +554,27 @@ function loadTaskCategories() {
     fetch(`/ergon-site/api/task-categories?department_id=${deptId}`)
         .then(response => {
             if (!response.ok) throw new Error('HTTP ' + response.status);
-            return response.json();
+            return response.text();
         })
-        .then(data => {
-            categorySelect.innerHTML = '<option value="">Select Category</option>';
-            if (data.success && data.categories && data.categories.length > 0) {
-                data.categories.forEach(category => {
-                    const option = document.createElement('option');
-                    option.value = category.category_name;
-                    option.textContent = category.category_name;
-                    categorySelect.appendChild(option);
-                });
-                categorySelect.disabled = false;
-            } else {
-                categorySelect.innerHTML += '<option value="" disabled>No categories found</option>';
-                categorySelect.disabled = true;
+        .then(text => {
+            try {
+                const data = JSON.parse(text);
+                categorySelect.innerHTML = '<option value="">Select Category</option>';
+                if (data.success && data.categories && data.categories.length > 0) {
+                    data.categories.forEach(category => {
+                        const option = document.createElement('option');
+                        option.value = category.category_name;
+                        option.textContent = category.category_name;
+                        categorySelect.appendChild(option);
+                    });
+                    categorySelect.disabled = false;
+                } else {
+                    categorySelect.innerHTML += '<option value="" disabled>No categories found</option>';
+                    categorySelect.disabled = true;
+                }
+            } catch (e) {
+                console.error('JSON parse error:', e, 'Response:', text);
+                throw new Error('Invalid response format');
             }
         })
         .catch(error => {
