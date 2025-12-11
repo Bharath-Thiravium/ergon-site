@@ -158,7 +158,7 @@ ob_start();
                                         </svg>
                                     </button>
                                     <?php endif; ?>
-                                    <?php if (($advance['status'] ?? 'pending') === 'approved'): ?>
+                                    <?php if (($advance['status'] ?? 'pending') === 'approved' && ($advance['user_id'] ?? 0) != ($_SESSION['user_id'] ?? 0)): ?>
                                     <button class="ab-btn ab-btn--mark-paid" onclick="showMarkPaidModal(<?= $advance['id'] ?>)" title="Mark as Paid">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                             <path d="M9 11l3 3l8-8"/>

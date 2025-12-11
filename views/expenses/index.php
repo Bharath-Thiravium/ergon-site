@@ -194,7 +194,7 @@ ob_start();
                                 </button>
                                 <?php endif; ?>
                                 <?php endif; ?>
-                                <?php if ($expenseStatus === 'approved'): ?>
+                                <?php if ($expenseStatus === 'approved' && ($expense['user_id'] ?? 0) != ($_SESSION['user_id'] ?? 0)): ?>
                                 <button class="ab-btn ab-btn--mark-paid" onclick="showMarkPaidModal(<?= $expense['id'] ?>)" title="Mark as Paid">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                         <path d="M9 11l3 3l8-8"/>
