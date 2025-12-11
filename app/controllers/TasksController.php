@@ -246,11 +246,12 @@ class TasksController extends Controller {
                 $db = Database::connect();
                 $this->ensureTasksTable($db);
                 
-                // Get current task status before update for comparison
-                $stmt = $db->prepare("SELECT status FROM tasks WHERE id = ?");
+                // Get current task data before update for comparison
+                $stmt = $db->prepare("SELECT status, assigned_to FROM tasks WHERE id = ?");
                 $stmt->execute([$id]);
                 $oldTask = $stmt->fetch(PDO::FETCH_ASSOC);
                 $oldStatus = $oldTask ? $oldTask['status'] : null;
+                $oldAssignedTo = $oldTask ? $oldTask['assigned_to'] : null;
                 
                 $stmt = $db->prepare("UPDATE tasks SET title=?, description=?, assigned_to=?, task_type=?, priority=?, deadline=?, planned_date=?, status=?, progress=?, sla_hours=?, department_id=?, task_category=?, project_id=?, followup_required=?, updated_at=NOW() WHERE id=?");
                 $result = $stmt->execute([
@@ -287,6 +288,7 @@ class TasksController extends Controller {
                     }
                     
                     // Sync with planner (daily_tasks table)
+                    $taskData['old_assigned_to'] = $oldAssignedTo;
                     $this->syncWithPlanner($db, $id, $taskData);
                     
                     error_log('Task updated with ID: ' . $id . ', progress: ' . $taskData['progress'] . '%, planned_date: ' . ($taskData['planned_date'] ?? 'null'));
@@ -1376,35 +1378,72 @@ class TasksController extends Controller {
      */
     private function syncWithPlanner($db, $taskId, $taskData) {
         try {
-            // Update daily_tasks table if it exists
-            $stmt = $db->prepare("UPDATE daily_tasks SET 
-                title = ?, 
-                description = ?, 
-                assigned_to = ?, 
-                status = ?, 
-                completed_percentage = ?, 
-                priority = ?,
-                planned_date = ?
-                WHERE original_task_id = ? OR task_id = ?");
-            $stmt->execute([
-                $taskData['title'],
-                $taskData['description'],
-                $taskData['assigned_to'],
-                $taskData['status'],
-                $taskData['progress'],
-                $taskData['priority'],
-                $taskData['planned_date'],
-                $taskId,
-                $taskId
-            ]);
+            // Use old assigned user from taskData if available
+            $oldAssignedTo = $taskData['old_assigned_to'] ?? null;
             
-            // If task was reassigned, update user assignment in planner
-            if (isset($taskData['assigned_to'])) {
-                $stmt = $db->prepare("UPDATE daily_tasks SET assigned_to = ? WHERE original_task_id = ? OR task_id = ?");
-                $stmt->execute([$taskData['assigned_to'], $taskId, $taskId]);
+            // Check if task was reassigned to a different user
+            if ($oldAssignedTo && $oldAssignedTo != $taskData['assigned_to']) {
+                // Remove task from previous user's planner
+                $stmt = $db->prepare("DELETE FROM daily_tasks WHERE (original_task_id = ? OR task_id = ?) AND user_id = ?");
+                $stmt->execute([$taskId, $taskId, $oldAssignedTo]);
+                
+                // Add task to new user's planner if planned_date is set
+                if (!empty($taskData['planned_date'])) {
+                    $stmt = $db->prepare("INSERT INTO daily_tasks (user_id, task_id, original_task_id, title, description, scheduled_date, priority, status, completed_percentage, source_field, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'planned_date', NOW())");
+                    $stmt->execute([
+                        $taskData['assigned_to'],
+                        $taskId,
+                        $taskId,
+                        $taskData['title'],
+                        $taskData['description'],
+                        $taskData['planned_date'],
+                        $taskData['priority'],
+                        $taskData['status'],
+                        $taskData['progress']
+                    ]);
+                }
+            } else {
+                // Update existing entries for same user
+                $stmt = $db->prepare("UPDATE daily_tasks SET 
+                    title = ?, 
+                    description = ?, 
+                    user_id = ?, 
+                    status = ?, 
+                    completed_percentage = ?, 
+                    priority = ?,
+                    scheduled_date = COALESCE(?, scheduled_date)
+                    WHERE (original_task_id = ? OR task_id = ?) AND user_id = ?");
+                $stmt->execute([
+                    $taskData['title'],
+                    $taskData['description'],
+                    $taskData['assigned_to'],
+                    $taskData['status'],
+                    $taskData['progress'],
+                    $taskData['priority'],
+                    $taskData['planned_date'],
+                    $taskId,
+                    $taskId,
+                    $taskData['assigned_to']
+                ]);
+                
+                // If no existing entries were updated and planned_date is set, create new entry
+                if ($stmt->rowCount() == 0 && !empty($taskData['planned_date'])) {
+                    $stmt = $db->prepare("INSERT INTO daily_tasks (user_id, task_id, original_task_id, title, description, scheduled_date, priority, status, completed_percentage, source_field, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'planned_date', NOW())");
+                    $stmt->execute([
+                        $taskData['assigned_to'],
+                        $taskId,
+                        $taskId,
+                        $taskData['title'],
+                        $taskData['description'],
+                        $taskData['planned_date'],
+                        $taskData['priority'],
+                        $taskData['status'],
+                        $taskData['progress']
+                    ]);
+                }
             }
             
-            error_log('Planner sync completed for task ID: ' . $taskId);
+            error_log('Planner sync completed for task ID: ' . $taskId . ' (reassigned: ' . ($oldAssignedTo != $taskData['assigned_to'] ? 'yes' : 'no') . ')');
         } catch (Exception $e) {
             error_log('Planner sync error: ' . $e->getMessage());
         }
