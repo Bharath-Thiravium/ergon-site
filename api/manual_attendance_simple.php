@@ -13,6 +13,22 @@ if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['owner', 'admi
 
 $db = Database::connect();
 
+// Ensure attendance_logs table exists
+try {
+    $db->exec("CREATE TABLE IF NOT EXISTS attendance_logs (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        log_action VARCHAR(50) NOT NULL,
+        details TEXT,
+        created_by INT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        INDEX idx_user_id (user_id),
+        INDEX idx_action (log_action)
+    )");
+} catch (Exception $e) {
+    error_log('Failed to create attendance_logs table: ' . $e->getMessage());
+}
+
 try {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $userId = $_POST['user_id'] ?? null;
@@ -73,7 +89,7 @@ try {
         
         // Log the manual entry
         $stmt = $db->prepare("
-            INSERT INTO attendance_logs (user_id, action, details, created_by, created_at)
+            INSERT INTO attendance_logs (user_id, log_action, details, created_by, created_at)
             VALUES (?, 'manual_entry', ?, ?, NOW())
         ");
         $logDetails = "Manual {$entryType} for {$entryDate}. Reason: {$reason}. Notes: {$notes}";
@@ -96,7 +112,7 @@ try {
             FROM attendance_logs l
             JOIN users u ON l.user_id = u.id
             LEFT JOIN users c ON l.created_by = c.id
-            WHERE l.action = 'manual_entry'
+            WHERE l.log_action = 'manual_entry'
             ORDER BY l.created_at DESC
             LIMIT 10
         ");

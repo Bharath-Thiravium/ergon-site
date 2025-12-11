@@ -100,7 +100,20 @@ ob_start();
 
 <script>
 fetch('/ergon-site/api/projects.php')
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.text();
+    })
+    .then(text => {
+        try {
+            return JSON.parse(text);
+        } catch (e) {
+            console.error('Invalid JSON response:', text);
+            throw new Error('Invalid JSON response');
+        }
+    })
     .then(data => {
         const projectSelect = document.getElementById('project_id');
         if (data.success && data.projects) {

@@ -438,9 +438,19 @@ function filterByDate(selectedDate) {
 
 // Modal utility function
 function hideClosestModal(element) {
-    const modal = element.closest('.modal-overlay');
-    if (modal && modal.parentNode) {
+    const modal = element.closest ? element.closest('.modal-overlay') : element;
+    if (modal && modal.classList && modal.classList.contains('modal-overlay')) {
+        modal.remove();
+    } else if (modal && modal.parentNode) {
         modal.parentNode.removeChild(modal);
+    }
+}
+
+// Alternative modal close function
+function closeModal() {
+    const modal = document.querySelector('.modal-overlay');
+    if (modal) {
+        modal.remove();
     }
 }
 
@@ -458,7 +468,7 @@ function markManualAttendance(userId, checkIn, checkOut) {
         <div class="modal-content">
             <div class="modal-header">
                 <h3>${hasCheckIn ? 'Edit Attendance' : 'Manual Attendance Entry'}</h3>
-                <button class="modal-close" onclick="hideClosestModal(this)">&times;</button>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
@@ -503,7 +513,7 @@ function markManualAttendance(userId, checkIn, checkOut) {
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn--secondary" onclick="hideClosestModal(this)">Cancel</button>
+                <button class="btn btn--secondary" onclick="closeModal()">Cancel</button>
                 <button class="btn btn--primary" onclick="submitManualAttendance(${userId})">Submit</button>
             </div>
         </div>
@@ -629,8 +639,7 @@ function submitManualAttendance(userId) {
     .then(data => {
         if (data.success) {
             alert('Manual attendance entry submitted successfully!');
-            const __existingModal = document.querySelector('.modal-overlay');
-            if(__existingModal && typeof hideClosestModal === 'function') hideClosestModal(__existingModal);
+            closeModal();
             location.reload();
         } else {
             alert('Error: ' + (data.message || data.error || 'Failed to submit'));
@@ -707,7 +716,7 @@ function generateAttendanceReport(userId) {
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Generate Attendance Report</h3>
-                <button class="modal-close" onclick="hideClosestModal(this)">&times;</button>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
             </div>
             <div class="modal-body">
                 <label>Start Date:</label>
@@ -716,7 +725,7 @@ function generateAttendanceReport(userId) {
                 <input type="date" id="report-end-date" name="end_date" value="${defaultEndDate}" class="form-input">
             </div>
             <div class="modal-footer">
-                <button class="btn btn--secondary" onclick="hideClosestModal(this)">Cancel</button>
+                <button class="btn btn--secondary" onclick="closeModal()">Cancel</button>
                 <button class="btn btn--primary" onclick="downloadAttendanceReport(${userId})">Generate Report</button>
             </div>
         </div>
@@ -802,8 +811,7 @@ function downloadAttendanceReport(userId) {
     }
     
     console.log('Generating report for user:', userId, 'from', startDate, 'to', endDate);
-    const __existingModal = document.querySelector('.modal-overlay');
-    if(__existingModal && typeof hideClosestModal === 'function') hideClosestModal(__existingModal);
+    closeModal();
     
     const reportUrl = `/ergon-site/attendance/report?user_id=${userId}&start_date=${startDate}&end_date=${endDate}`;
     console.log('Report URL:', reportUrl);

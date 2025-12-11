@@ -541,8 +541,19 @@ function editExpense(id) {
     document.getElementById('expenseSubmitBtn').textContent = '💾 Update Expense';
     showModal('expenseModal');
     
-    fetch(`/ergon-site/api/expense?id=${id}`)
-        .then(r => r.json())
+    fetch(`/ergon-site/api/expense.php?id=${id}`)
+        .then(r => {
+            if (!r.ok) throw new Error('Network response was not ok');
+            return r.text();
+        })
+        .then(text => {
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                console.error('Invalid JSON response:', text);
+                throw new Error('Invalid JSON response');
+            }
+        })
         .then(data => {
             if (data.success) {
                 const e = data.expense;
@@ -562,8 +573,19 @@ function closeExpenseModal() {
 }
 
 function loadProjects(selectId, selectedId = null) {
-    fetch('/ergon-site/api/projects')
-        .then(r => r.json())
+    fetch('/ergon-site/api/projects.php')
+        .then(r => {
+            if (!r.ok) throw new Error('Network response was not ok');
+            return r.text();
+        })
+        .then(text => {
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                console.error('Invalid JSON response:', text);
+                throw new Error('Invalid JSON response');
+            }
+        })
         .then(data => {
             const select = document.getElementById(selectId);
             select.innerHTML = '<option value="">Select Project</option>';

@@ -495,8 +495,19 @@ function editAdvance(id) {
     document.getElementById('advanceModal').setAttribute('data-visible', 'true');
     document.getElementById('advanceModal').style.display = 'flex';
     
-    fetch(`/ergon-site/api/advance?id=${id}`)
-        .then(r => r.json())
+    fetch(`/ergon-site/api/advance.php?id=${id}`)
+        .then(r => {
+            if (!r.ok) throw new Error('Network response was not ok');
+            return r.text();
+        })
+        .then(text => {
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                console.error('Invalid JSON response:', text);
+                throw new Error('Invalid JSON response');
+            }
+        })
         .then(data => {
             if (data.success) {
                 const a = data.advance;
@@ -517,8 +528,19 @@ function closeAdvanceModal() {
 }
 
 function loadAdvanceProjects(selectId, selectedId = null) {
-    fetch('/ergon-site/api/projects')
-        .then(r => r.json())
+    fetch('/ergon-site/api/projects.php')
+        .then(r => {
+            if (!r.ok) throw new Error('Network response was not ok');
+            return r.text();
+        })
+        .then(text => {
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                console.error('Invalid JSON response:', text);
+                throw new Error('Invalid JSON response');
+            }
+        })
         .then(data => {
             const select = document.getElementById(selectId);
             select.innerHTML = '<option value="">Select Project</option>';
