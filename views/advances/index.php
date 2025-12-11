@@ -308,7 +308,8 @@ function showApprovalModal(advanceId) {
                 document.getElementById('approved_amount').value = parseFloat(a.amount || 0).toFixed(2);
                 document.getElementById('approval_remarks').value = '';
                 
-                showModal('approvalModal');
+                document.getElementById('approvalModal').setAttribute('data-visible', 'true');
+                document.getElementById('approvalModal').style.display = 'flex';
             } else {
                 alert('Error loading advance details: ' + (data.error || 'Unknown error'));
             }
@@ -319,7 +320,8 @@ function showApprovalModal(advanceId) {
 }
 
 function closeApprovalModal() {
-    hideModal('approvalModal');
+    document.getElementById('approvalModal').setAttribute('data-visible', 'false');
+    document.getElementById('approvalModal').style.display = 'none';
     currentAdvanceId = null;
 }
 
@@ -327,22 +329,26 @@ function showRejectModal(advanceId) {
     document.getElementById('rejectForm').action = '/ergon-site/advances/reject/' + advanceId;
     const reasonField = document.getElementById('rejection_reason');
     if (reasonField) reasonField.value = '';
-    showModal('rejectModal');
+    document.getElementById('rejectModal').setAttribute('data-visible', 'true');
+    document.getElementById('rejectModal').style.display = 'flex';
 }
 
 function closeRejectModal() {
-    hideModal('rejectModal');
+    document.getElementById('rejectModal').setAttribute('data-visible', 'false');
+    document.getElementById('rejectModal').style.display = 'none';
 }
 
 function showMarkPaidModal(advanceId) {
     currentAdvanceId = advanceId;
     document.getElementById('payment_proof').value = '';
     document.getElementById('payment_remarks').value = '';
-    showModal('markPaidModal');
+    document.getElementById('markPaidModal').setAttribute('data-visible', 'true');
+    document.getElementById('markPaidModal').style.display = 'flex';
 }
 
 function closeMarkPaidModal() {
-    hideModal('markPaidModal');
+    document.getElementById('markPaidModal').setAttribute('data-visible', 'false');
+    document.getElementById('markPaidModal').style.display = 'none';
     currentAdvanceId = null;
 }
 
@@ -510,7 +516,8 @@ function showAdvanceModal() {
     document.getElementById('advanceSubmitBtn').textContent = '➕ Submit Request';
     document.getElementById('advanceForm').reset();
     document.getElementById('advance_id').value = '';
-    showModal('advanceModal');
+    document.getElementById('advanceModal').setAttribute('data-visible', 'true');
+    document.getElementById('advanceModal').style.display = 'flex';
     loadAdvanceProjects('adv_project_id');
 }
 
@@ -518,7 +525,8 @@ function editAdvance(id) {
     isEditingAdvance = true;
     document.getElementById('advanceModalTitle').textContent = '💳 Edit Advance';
     document.getElementById('advanceSubmitBtn').textContent = '💾 Update Request';
-    showModal('advanceModal');
+    document.getElementById('advanceModal').setAttribute('data-visible', 'true');
+    document.getElementById('advanceModal').style.display = 'flex';
     
     fetch(`/ergon-site/api/advance?id=${id}`)
         .then(r => r.json())
@@ -537,7 +545,8 @@ function editAdvance(id) {
 }
 
 function closeAdvanceModal() {
-    hideModal('advanceModal');
+    document.getElementById('advanceModal').setAttribute('data-visible', 'false');
+    document.getElementById('advanceModal').style.display = 'none';
 }
 
 function loadAdvanceProjects(selectId, selectedId = null) {
