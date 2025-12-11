@@ -4321,3 +4321,137 @@ Stack trace:
 [11-Dec-2025 13:51:23 UTC] Database operation successful: Model operation
 [11-Dec-2025 13:51:42 UTC] Notification API: User ID 1 accessing notifications
 [11-Dec-2025 13:51:42 UTC] Database operation successful: Model operation
+[11-Dec-2025 13:51:53 UTC] Notification API: User ID 37 accessing notifications
+[11-Dec-2025 13:51:53 UTC] Database operation successful: Model operation
+[11-Dec-2025 13:52:12 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 13:52:12 UTC] Database operation successful: Model operation
+[11-Dec-2025 13:52:23 UTC] Notification API: User ID 37 accessing notifications
+[11-Dec-2025 13:52:23 UTC] Database operation successful: Model operation
+[11-Dec-2025 13:52:42 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 13:52:42 UTC] Database operation successful: Model operation
+[11-Dec-2025 13:52:53 UTC] Notification API: User ID 37 accessing notifications
+[11-Dec-2025 13:52:53 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:47:25 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 14:47:25 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:47:25 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 14:47:25 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:47:35 UTC] Notification API: User ID 37 accessing notifications
+[11-Dec-2025 14:47:35 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:47:53 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 14:47:53 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:47:54 UTC] Notification API: User ID 37 accessing notifications
+[11-Dec-2025 14:47:54 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:48:23 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 14:48:23 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:48:24 UTC] Notification API: User ID 37 accessing notifications
+[11-Dec-2025 14:48:24 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:48:43 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 14:48:43 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:48:47 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 14:48:47 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:48:54 UTC] Notification API: User ID 37 accessing notifications
+[11-Dec-2025 14:48:54 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:49:12 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 14:49:12 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:49:24 UTC] Notification API: User ID 37 accessing notifications
+[11-Dec-2025 14:49:24 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:49:42 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 14:49:42 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:50:12 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 14:50:12 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:50:33 UTC] Notification API: User ID 37 accessing notifications
+[11-Dec-2025 14:50:33 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:50:42 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 14:50:42 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:51:12 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 14:51:12 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:51:33 UTC] Notification API: User ID 37 accessing notifications
+[11-Dec-2025 14:51:33 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:51:42 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 14:51:42 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:52:12 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 14:52:12 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:52:33 UTC] Notification API: User ID 37 accessing notifications
+[11-Dec-2025 14:52:33 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:52:42 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 14:52:42 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:53:12 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 14:53:12 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:53:22 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 14:53:22 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:53:25 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 14:53:25 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:53:33 UTC] Notification API: User ID 37 accessing notifications
+[11-Dec-2025 14:53:33 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:53:42 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 14:53:42 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:54:12 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 14:54:12 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:54:33 UTC] Notification API: User ID 37 accessing notifications
+[11-Dec-2025 14:54:33 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:54:42 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 14:54:42 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:55:12 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 14:55:12 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:55:33 UTC] Notification API: User ID 37 accessing notifications
+[11-Dec-2025 14:55:33 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:55:42 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 14:55:42 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:56:33 UTC] Notification API: User ID 37 accessing notifications
+[11-Dec-2025 14:56:33 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:56:54 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 14:56:54 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:57:24 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 14:57:24 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:57:28 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 14:57:28 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:57:32 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 14:57:32 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:57:33 UTC] Notification API: User ID 37 accessing notifications
+[11-Dec-2025 14:57:33 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:57:35 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 14:57:35 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:57:42 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 14:57:42 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:57:45 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 14:57:45 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:57:46 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 14:57:47 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:57:57 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 14:57:57 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:57:59 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 14:57:59 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:58:15 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 14:58:15 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:58:33 UTC] Notification API: User ID 37 accessing notifications
+[11-Dec-2025 14:58:33 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:58:45 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 14:58:45 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:59:15 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 14:59:15 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:59:33 UTC] Notification API: User ID 37 accessing notifications
+[11-Dec-2025 14:59:33 UTC] Database operation successful: Model operation
+[11-Dec-2025 14:59:45 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 14:59:45 UTC] Database operation successful: Model operation
+[11-Dec-2025 15:00:15 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 15:00:15 UTC] Database operation successful: Model operation
+[11-Dec-2025 15:00:33 UTC] Notification API: User ID 37 accessing notifications
+[11-Dec-2025 15:00:33 UTC] Database operation successful: Model operation
+[11-Dec-2025 15:00:45 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 15:00:45 UTC] Database operation successful: Model operation
+[11-Dec-2025 15:00:45 UTC] Notification API: User ID 48 accessing notifications
+[11-Dec-2025 15:00:45 UTC] Database operation successful: Model operation
+[11-Dec-2025 15:00:49 UTC] Notification API: User ID 48 accessing notifications
+[11-Dec-2025 15:00:49 UTC] Database operation successful: Model operation
+[11-Dec-2025 15:01:15 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 15:01:15 UTC] Database operation successful: Model operation
+[11-Dec-2025 15:01:45 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 15:01:45 UTC] Database operation successful: Model operation
+[11-Dec-2025 15:02:15 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 15:02:15 UTC] Database operation successful: Model operation
+[11-Dec-2025 15:02:45 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 15:02:45 UTC] Database operation successful: Model operation
+[11-Dec-2025 15:03:15 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 15:03:15 UTC] Database operation successful: Model operation
+[11-Dec-2025 15:03:45 UTC] Notification API: User ID 1 accessing notifications
+[11-Dec-2025 15:03:45 UTC] Database operation successful: Model operation

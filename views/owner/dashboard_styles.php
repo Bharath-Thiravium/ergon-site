@@ -275,6 +275,43 @@
   font-size: var(--font-size-sm);
 }
 
+/* Approval Summary Alignment */
+.approval-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.approval-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: rgba(59, 130, 246, 0.05);
+  border: 1px solid rgba(59, 130, 246, 0.1);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.approval-item:hover {
+  background: rgba(59, 130, 246, 0.08);
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+.approval-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.approval-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+  min-width: 3rem;
+  text-align: right;
+}
+
 .btn {
   display: inline-flex;
   align-items: center;

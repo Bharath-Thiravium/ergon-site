@@ -88,6 +88,27 @@ body[data-user-role="company_owner"] .header-actions {
         <div class="kpi-card__label">Pending Expenses</div>
         <div class="kpi-card__status">Under Review</div>
     </div>
+    
+    <div class="kpi-card kpi-card--info">
+        <div class="kpi-card__header">
+            <div class="kpi-card__icon">💳</div>
+            <div class="kpi-card__trend">↗ +2%</div>
+        </div>
+        <div class="kpi-card__value"><?php
+            try {
+                if (!isset($db)) {
+                    require_once __DIR__ . '/../../app/config/database.php';
+                    $db = Database::connect();
+                }
+                $stmt = $db->query("SELECT COUNT(*) FROM advances WHERE status = 'pending'");
+                echo $stmt->fetchColumn();
+            } catch (Exception $e) {
+                echo '0';
+            }
+        ?></div>
+        <div class="kpi-card__label">Pending Advances</div>
+        <div class="kpi-card__status kpi-card__status--pending">Awaiting Approval</div>
+    </div>
 </div>
 
 <div class="dashboard-grid">
@@ -254,17 +275,19 @@ body[data-user-role="company_owner"] .header-actions {
             <h2 class="card__title">📊 Approval Summary</h2>
         </div>
         <div class="card__body">
-            <div class="form-group">
-                <div class="form-label">Leave Requests</div>
-                <div class="kpi-card__value"><?= htmlspecialchars($data['stats']['leave_requests'] ?? '3', ENT_QUOTES, 'UTF-8') ?></div>
-            </div>
-            <div class="form-group">
-                <div class="form-label">Expense Claims</div>
-                <div class="kpi-card__value"><?= htmlspecialchars($data['stats']['expense_claims'] ?? '5', ENT_QUOTES, 'UTF-8') ?></div>
-            </div>
-            <div class="form-group">
-                <div class="form-label">Advance Requests</div>
-                <div class="kpi-card__value"><?= htmlspecialchars($data['stats']['advance_requests'] ?? '2', ENT_QUOTES, 'UTF-8') ?></div>
+            <div class="approval-summary">
+                <div class="approval-item">
+                    <div class="approval-label">Leave Requests</div>
+                    <div class="approval-value"><?= htmlspecialchars($data['stats']['leave_requests'] ?? '3', ENT_QUOTES, 'UTF-8') ?></div>
+                </div>
+                <div class="approval-item">
+                    <div class="approval-label">Expense Claims</div>
+                    <div class="approval-value"><?= htmlspecialchars($data['stats']['expense_claims'] ?? '5', ENT_QUOTES, 'UTF-8') ?></div>
+                </div>
+                <div class="approval-item">
+                    <div class="approval-label">Advance Requests</div>
+                    <div class="approval-value"><?= htmlspecialchars($data['stats']['advance_requests'] ?? '2', ENT_QUOTES, 'UTF-8') ?></div>
+                </div>
             </div>
         </div>
     </div>

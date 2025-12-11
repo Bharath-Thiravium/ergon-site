@@ -9,7 +9,7 @@ $content = ob_start();
         <button type="button" class="btn-help" onclick="toggleHelpPanel()" title="Show Help">
             ❓ Help
         </button>
-        <a href="/ergon-site/tasks" class="btn-back">← Back</a>
+        <a href="javascript:history.back()" class="btn-back">← Back</a>
     </div>
 </div>
 
@@ -438,7 +438,7 @@ $content = ob_start();
             <button type="submit" class="btn-primary">
                 ✨ Update Task
             </button>
-            <a href="/ergon-site/tasks" class="btn-secondary">
+            <a href="javascript:history.back()" class="btn-secondary">
                 ❌ Cancel
             </a>
         </div>

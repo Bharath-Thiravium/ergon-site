@@ -86,7 +86,7 @@ class ExpenseController extends Controller {
             $role = $_SESSION['role'];
             
             if ($role === 'user') {
-                $expenses = $this->expense->getByUserId($user_id);
+                $expenses = $this->getExpensesForUser($user_id);
             } elseif ($role === 'admin') {
                 // Admin sees only user expenses and their own expenses
                 $expenses = $this->getExpensesForAdmin($user_id);
@@ -142,6 +142,20 @@ class ExpenseController extends Controller {
             }
         } catch (Exception $e) {
             error_log('Error creating test expense: ' . $e->getMessage());
+        }
+    }
+    
+    private function getExpensesForUser($userId) {
+        try {
+            require_once __DIR__ . '/../config/database.php';
+            $db = Database::connect();
+            
+            $stmt = $db->prepare("SELECT e.*, u.name as user_name, u.role as user_role FROM expenses e JOIN users u ON e.user_id = u.id WHERE e.user_id = ? AND e.status != 'paid' ORDER BY e.created_at DESC");
+            $stmt->execute([$userId]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            error_log('Error getting expenses for user: ' . $e->getMessage());
+            return [];
         }
     }
     
