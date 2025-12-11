@@ -257,6 +257,7 @@ $router->get('/api/tasks', 'ApiController', 'tasks');
 $router->post('/api/tasks/update', 'ApiController', 'updateTask');
 $router->get('/api/task-categories', 'ApiController', 'taskCategories');
 $router->get('/api/task-categories.php', 'ApiController', 'taskCategories');
+$router->get('/api/task-categories-by-department', 'ApiController', 'taskCategories');
 $router->get('/api/followup-details', 'ApiController', 'followupDetails');
 $router->get('/direct_followup_test.php', 'ApiController', 'followupDetails');
 $router->get('/check_reminders.php', 'FollowupController', 'checkReminders');

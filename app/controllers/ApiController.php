@@ -78,8 +78,18 @@ class ApiController extends Controller {
             require_once __DIR__ . '/../config/database.php';
             $db = Database::connect();
             
-            $stmt = $db->prepare("SELECT p.id, p.name as project_name, p.description, p.department_id, d.name as department_name FROM projects p LEFT JOIN departments d ON p.department_id = d.id WHERE p.status = 'active' ORDER BY p.name");
-            $stmt->execute();
+            $departmentId = $_GET['department_id'] ?? null;
+            
+            if ($departmentId) {
+                // Filter projects by department
+                $stmt = $db->prepare("SELECT p.id, p.name, p.description, p.department_id, d.name as department_name FROM projects p LEFT JOIN departments d ON p.department_id = d.id WHERE p.status = 'active' AND p.department_id = ? ORDER BY p.name");
+                $stmt->execute([$departmentId]);
+            } else {
+                // Get all active projects
+                $stmt = $db->prepare("SELECT p.id, p.name, p.description, p.department_id, d.name as department_name FROM projects p LEFT JOIN departments d ON p.department_id = d.id WHERE p.status = 'active' ORDER BY p.name");
+                $stmt->execute();
+            }
+            
             $projects = $stmt->fetchAll();
             
             echo json_encode(['success' => true, 'projects' => $projects]);
@@ -245,6 +255,104 @@ class ApiController extends Controller {
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
         exit;
+    }
+    
+    public function taskCategories() {
+        $this->requireAuth();
+        
+        header('Content-Type: application/json');
+        
+        try {
+            require_once __DIR__ . '/../config/database.php';
+            $db = Database::connect();
+            
+            $departmentId = $_GET['department_id'] ?? null;
+            
+            if (!$departmentId) {
+                echo json_encode(['success' => false, 'error' => 'Department ID required']);
+                exit;
+            }
+            
+            // Create task_categories table if it doesn't exist
+            $db->exec("CREATE TABLE IF NOT EXISTS task_categories (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                category_name VARCHAR(100) NOT NULL,
+                department_id INT NOT NULL,
+                description TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                INDEX idx_department (department_id)
+            )");
+            
+            // Check if we have categories for this department
+            $stmt = $db->prepare("SELECT COUNT(*) as count FROM task_categories WHERE department_id = ?");
+            $stmt->execute([$departmentId]);
+            $count = $stmt->fetch(PDO::FETCH_ASSOC)['count'];
+            
+            if ($count == 0) {
+                // Create default categories for this department
+                $this->createDefaultCategories($db, $departmentId);
+            }
+            
+            $stmt = $db->prepare("SELECT category_name, description FROM task_categories WHERE department_id = ? ORDER BY category_name");
+            $stmt->execute([$departmentId]);
+            $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            echo json_encode(['success' => true, 'categories' => $categories]);
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        }
+        exit;
+    }
+    
+    private function createDefaultCategories($db, $departmentId) {
+        // Get department name to create relevant categories
+        $stmt = $db->prepare("SELECT name FROM departments WHERE id = ?");
+        $stmt->execute([$departmentId]);
+        $dept = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if (!$dept) return;
+        
+        $deptName = strtolower($dept['name']);
+        $categories = [];
+        
+        // Define categories based on department type
+        if (strpos($deptName, 'hr') !== false || strpos($deptName, 'human') !== false) {
+            $categories = [
+                'Recruitment', 'Employee Onboarding', 'Performance Review', 'Training & Development',
+                'Policy Updates', 'Employee Relations', 'Compliance', 'Benefits Administration'
+            ];
+        } elseif (strpos($deptName, 'it') !== false || strpos($deptName, 'tech') !== false || strpos($deptName, 'information') !== false) {
+            $categories = [
+                'Software Development', 'System Maintenance', 'Bug Fixes', 'Security Updates',
+                'Database Management', 'Network Administration', 'User Support', 'Infrastructure'
+            ];
+        } elseif (strpos($deptName, 'finance') !== false || strpos($deptName, 'accounting') !== false) {
+            $categories = [
+                'Budget Planning', 'Financial Reporting', 'Invoice Processing', 'Audit Preparation',
+                'Tax Compliance', 'Expense Management', 'Financial Analysis', 'Accounts Reconciliation'
+            ];
+        } elseif (strpos($deptName, 'marketing') !== false || strpos($deptName, 'sales') !== false) {
+            $categories = [
+                'Campaign Planning', 'Content Creation', 'Lead Generation', 'Client Follow-up',
+                'Market Research', 'Brand Management', 'Social Media', 'Event Planning'
+            ];
+        } elseif (strpos($deptName, 'operations') !== false) {
+            $categories = [
+                'Process Improvement', 'Quality Control', 'Vendor Management', 'Logistics',
+                'Inventory Management', 'Customer Service', 'Operational Planning', 'Compliance'
+            ];
+        } else {
+            // Generic categories for other departments
+            $categories = [
+                'Planning', 'Execution', 'Review', 'Documentation',
+                'Communication', 'Analysis', 'Reporting', 'Follow-up'
+            ];
+        }
+        
+        $insertStmt = $db->prepare("INSERT INTO task_categories (category_name, department_id, description) VALUES (?, ?, ?)");
+        foreach ($categories as $category) {
+            $insertStmt->execute([$category, $departmentId, "Default category for {$dept['name']} department"]);
+        }
     }
     
     private function requireAuth() {

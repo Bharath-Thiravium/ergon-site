@@ -169,32 +169,30 @@ $content = ob_start();
                 <h3>⚙️ Task Configuration</h3>
                 <div class="form-grid">
                     <div class="form-group">
-                        <label for="department_id">🏢 Department</label>
-                        <select id="department_id" name="department_id" onchange="loadTaskCategories()">
-                            <option value="">Select Department</option>
-                            <?php if (!empty($departments)): ?>
-                                <?php foreach ($departments as $dept): ?>
-                                    <option value="<?= $dept['id'] ?>"><?= htmlspecialchars($dept['name']) ?></option>
+                        <label for="project_id">📁 Project *</label>
+                        <select id="project_id" name="project_id" onchange="loadDepartmentsByProject()" required>
+                            <option value="">Select Project First</option>
+                            <?php if (!empty($projects)): ?>
+                                <?php foreach ($projects as $project): ?>
+                                    <option value="<?= $project['id'] ?>" data-department="<?= $project['department_id'] ?? '' ?>"><?= htmlspecialchars($project['name']) ?></option>
                                 <?php endforeach; ?>
                             <?php endif; ?>
                         </select>
+                        <small class="field-hint">Select project first to filter departments and categories</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="department_id">🏢 Department</label>
+                        <select id="department_id" name="department_id" onchange="loadTaskCategories()" disabled>
+                            <option value="">Select Project First</option>
+                        </select>
+                        <small class="field-hint">Department will be filtered based on selected project</small>
                     </div>
                     <div class="form-group">
                         <label for="task_category">🏷️ Category</label>
-                        <select id="task_category" name="task_category" onchange="handleCategoryChange()">
-                            <option value="">Select Category</option>
+                        <select id="task_category" name="task_category" onchange="handleCategoryChange()" disabled>
+                            <option value="">Select Department First</option>
                         </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="project_id">📁 Project</label>
-                        <select id="project_id" name="project_id">
-                            <option value="">Select Project</option>
-                            <?php if (!empty($projects)): ?>
-                                <?php foreach ($projects as $project): ?>
-                                    <option value="<?= $project['id'] ?>"><?= htmlspecialchars($project['name']) ?></option>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </select>
+                        <small class="field-hint">Category will be filtered based on selected department</small>
                     </div>
                 </div>
                 <div class="form-grid">
@@ -447,26 +445,98 @@ function updateProgressValue(value) {
     }
 }
 
+// Load departments based on selected project
+function loadDepartmentsByProject() {
+    const projectSelect = document.getElementById('project_id');
+    const deptSelect = document.getElementById('department_id');
+    const categorySelect = document.getElementById('task_category');
+    const projectId = projectSelect.value;
+    
+    // Reset dependent dropdowns
+    deptSelect.innerHTML = '<option value="">Loading...</option>';
+    categorySelect.innerHTML = '<option value="">Select Department First</option>';
+    categorySelect.disabled = true;
+    
+    if (!projectId) {
+        deptSelect.innerHTML = '<option value="">Select Project First</option>';
+        deptSelect.disabled = true;
+        return;
+    }
+    
+    // Get department from selected project
+    const selectedOption = projectSelect.options[projectSelect.selectedIndex];
+    const departmentId = selectedOption.getAttribute('data-department');
+    
+    if (departmentId) {
+        // Load specific department for this project
+        fetch(`/ergon-site/api/departments`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.departments) {
+                    deptSelect.innerHTML = '<option value="">Select Department</option>';
+                    const dept = data.departments.find(d => d.id == departmentId);
+                    if (dept) {
+                        const option = document.createElement('option');
+                        option.value = dept.id;
+                        option.textContent = dept.name;
+                        option.selected = true;
+                        deptSelect.appendChild(option);
+                        deptSelect.disabled = false;
+                        // Auto-load categories for this department
+                        loadTaskCategories();
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error loading departments:', error);
+                deptSelect.innerHTML = '<option value="">Error loading departments</option>';
+            });
+    } else {
+        // Load all departments if project doesn't have specific department
+        fetch(`/ergon-site/api/departments`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.departments) {
+                    deptSelect.innerHTML = '<option value="">Select Department</option>';
+                    data.departments.forEach(dept => {
+                        const option = document.createElement('option');
+                        option.value = dept.id;
+                        option.textContent = dept.name;
+                        deptSelect.appendChild(option);
+                    });
+                    deptSelect.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error('Error loading departments:', error);
+                deptSelect.innerHTML = '<option value="">Error loading departments</option>';
+            });
+    }
+}
+
 // Load task categories based on selected department
 function loadTaskCategories() {
     const deptSelect = document.getElementById('department_id');
     const categorySelect = document.getElementById('task_category');
-    const projectSelect = document.getElementById('project_id');
     const deptId = deptSelect.value;
 
     // Clear existing options
-    categorySelect.innerHTML = '<option value="">Select Category</option>';
-    projectSelect.innerHTML = '<option value="">Select Project</option>';
+    categorySelect.innerHTML = '<option value="">Loading...</option>';
 
-    if (!deptId) return;
+    if (!deptId) {
+        categorySelect.innerHTML = '<option value="">Select Department First</option>';
+        categorySelect.disabled = true;
+        return;
+    }
 
     // Fetch categories for selected department via API
-    fetch(`/ergon-site/api/task-categories.php?department_id=${deptId}`)
+    fetch(`/ergon-site/api/task-categories?department_id=${deptId}`)
         .then(response => {
             if (!response.ok) throw new Error('HTTP ' + response.status);
             return response.json();
         })
         .then(data => {
+            categorySelect.innerHTML = '<option value="">Select Category</option>';
             if (data.success && data.categories && data.categories.length > 0) {
                 data.categories.forEach(category => {
                     const option = document.createElement('option');
@@ -474,39 +544,17 @@ function loadTaskCategories() {
                     option.textContent = category.category_name;
                     categorySelect.appendChild(option);
                 });
+                categorySelect.disabled = false;
             } else {
                 categorySelect.innerHTML += '<option value="" disabled>No categories found</option>';
+                categorySelect.disabled = true;
             }
         })
         .catch(error => {
             console.error('Error loading categories:', error);
-            categorySelect.innerHTML += '<option value="" disabled>Error loading categories</option>';
+            categorySelect.innerHTML = '<option value="" disabled>Error loading categories</option>';
+            categorySelect.disabled = true;
         });
-    
-    // Load projects filtered by department
-    loadProjectsByDepartment(deptId);
-}
-
-// Load projects filtered by department
-function loadProjectsByDepartment(deptId) {
-    const projectSelect = document.getElementById('project_id');
-    
-    fetch(`/ergon-site/api/projects.php?department_id=${deptId}`)
-        .then(response => {
-            if (!response.ok) throw new Error('HTTP ' + response.status);
-            return response.json();
-        })
-        .then(data => {
-            if (data.success && data.projects && data.projects.length > 0) {
-                data.projects.forEach(project => {
-                    const option = document.createElement('option');
-                    option.value = project.id;
-                    option.textContent = project.name;
-                    projectSelect.appendChild(option);
-                });
-            }
-        })
-        .catch(error => console.error('Error loading projects:', error));
 }
 
 // Handle assignment type change
@@ -834,11 +882,19 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('createTaskForm').addEventListener('submit', function(e) {
         const title = document.getElementById('title').value.trim();
         const assignedTo = document.getElementById('assigned_to').value;
+        const projectId = document.getElementById('project_id').value;
         const followupRequired = document.getElementById('followup_required').checked;
         
         if (!title) {
             e.preventDefault();
             alert('Please enter a task title');
+            return;
+        }
+        
+        if (!projectId) {
+            e.preventDefault();
+            alert('Please select a project');
+            document.getElementById('project_id').focus();
             return;
         }
         

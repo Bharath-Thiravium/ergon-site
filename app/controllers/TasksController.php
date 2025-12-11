@@ -939,7 +939,10 @@ class TasksController extends Controller {
             require_once __DIR__ . '/../config/database.php';
             $db = Database::connect();
             
-            $stmt = $db->prepare("SELECT id, name, status FROM projects WHERE status = 'active' ORDER BY name");
+            // Ensure projects table has department_id column
+            $this->ensureProjectsTable($db);
+            
+            $stmt = $db->prepare("SELECT p.id, p.name, p.status, p.department_id, d.name as department_name FROM projects p LEFT JOIN departments d ON p.department_id = d.id WHERE p.status = 'active' ORDER BY p.name");
             $stmt->execute();
             $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
@@ -1404,6 +1407,52 @@ class TasksController extends Controller {
             error_log('Planner sync completed for task ID: ' . $taskId);
         } catch (Exception $e) {
             error_log('Planner sync error: ' . $e->getMessage());
+        }
+    }
+    
+    private function ensureProjectsTable($db) {
+        try {
+            // Create projects table if it doesn't exist
+            DatabaseHelper::safeExec($db, "CREATE TABLE IF NOT EXISTS projects (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                name VARCHAR(255) NOT NULL,
+                description TEXT,
+                department_id INT DEFAULT NULL,
+                status ENUM('active','inactive','completed') DEFAULT 'active',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            )", "Create table");
+            
+            // Add department_id column if it doesn't exist
+            $stmt = $db->prepare("SHOW COLUMNS FROM projects LIKE 'department_id'");
+            $stmt->execute();
+            if ($stmt->rowCount() == 0) {
+                DatabaseHelper::safeExec($db, "ALTER TABLE projects ADD COLUMN department_id INT DEFAULT NULL", "Alter table");
+                error_log('Added department_id column to projects table');
+            }
+            
+            // Create some default projects if none exist
+            $stmt = $db->prepare("SELECT COUNT(*) as count FROM projects");
+            $stmt->execute();
+            $count = $stmt->fetch(PDO::FETCH_ASSOC)['count'];
+            
+            if ($count == 0) {
+                $defaultProjects = [
+                    ['name' => 'Website Development', 'description' => 'Company website development project', 'department_id' => 2],
+                    ['name' => 'HR System Implementation', 'description' => 'Human resources management system', 'department_id' => 1],
+                    ['name' => 'Marketing Campaign Q1', 'description' => 'First quarter marketing initiatives', 'department_id' => 4],
+                    ['name' => 'Financial Audit 2024', 'description' => 'Annual financial audit process', 'department_id' => 3],
+                    ['name' => 'Operations Optimization', 'description' => 'Streamline operational processes', 'department_id' => 5]
+                ];
+                
+                $insertStmt = $db->prepare("INSERT INTO projects (name, description, department_id, status) VALUES (?, ?, ?, 'active')");
+                foreach ($defaultProjects as $project) {
+                    $insertStmt->execute([$project['name'], $project['description'], $project['department_id']]);
+                }
+                error_log('Created default projects with department associations');
+            }
+        } catch (Exception $e) {
+            error_log('ensureProjectsTable error: ' . $e->getMessage());
         }
     }
     
