@@ -8,8 +8,15 @@
 define('APP_NAME', 'ergon');
 define('APP_VERSION', '1.0.0');
 // Environment-aware APP_URL
-$isProduction = strpos($_SERVER['HTTP_HOST'] ?? '', 'athenas.co.in') !== false;
-define('APP_URL', $isProduction ? 'https://athenas.co.in/ergon-site' : 'http://localhost/ergon-site');
+$host = $_SERVER['HTTP_HOST'] ?? '';
+$isProduction = strpos($host, 'bkgreenenergy.com') !== false || strpos($host, 'athenas.co.in') !== false;
+if (strpos($host, 'bkgreenenergy.com') !== false) {
+    define('APP_URL', 'https://bkgreenenergy.com/ergon-site');
+} elseif (strpos($host, 'athenas.co.in') !== false) {
+    define('APP_URL', 'https://athenas.co.in/ergon-site');
+} else {
+    define('APP_URL', 'http://localhost/ergon-site');
+}
 
 // Security Settings
 define('JWT_SECRET', 'your-secret-key-change-in-production');

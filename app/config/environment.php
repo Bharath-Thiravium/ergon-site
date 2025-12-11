@@ -14,12 +14,24 @@ class Environment {
             
             // Development indicators
             $devHosts = ['localhost', '127.0.0.1', 'ergon.test', 'ergon.local'];
+            $prodHosts = ['bkgreenenergy.com', 'athenas.co.in'];
             $isDev = false;
             
-            foreach ($devHosts as $devHost) {
-                if (strpos($host, $devHost) !== false) {
-                    $isDev = true;
+            // Check for production hosts first
+            foreach ($prodHosts as $prodHost) {
+                if (strpos($host, $prodHost) !== false) {
+                    $isDev = false;
                     break;
+                }
+            }
+            
+            // If not production, check for development hosts
+            if (!isset($isDev) || $isDev !== false) {
+                foreach ($devHosts as $devHost) {
+                    if (strpos($host, $devHost) !== false) {
+                        $isDev = true;
+                        break;
+                    }
                 }
             }
             
@@ -46,8 +58,11 @@ class Environment {
         $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
         $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
         
-        if (self::isDevelopment()) {
-            return $protocol . '://' . $host . '/ergon-site';
+        // Handle specific production domains
+        if (strpos($host, 'bkgreenenergy.com') !== false) {
+            return 'https://bkgreenenergy.com/ergon-site';
+        } elseif (strpos($host, 'athenas.co.in') !== false) {
+            return 'https://athenas.co.in/ergon-site';
         } else {
             return $protocol . '://' . $host . '/ergon-site';
         }
