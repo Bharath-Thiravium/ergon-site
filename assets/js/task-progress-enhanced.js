@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var progressSlider = document.getElementById('progressSlider');
     if (progressSlider) {
         progressSlider.oninput = function() {
-            document.getElementById('progressValue').textContent = this.value;
+            document.getElementById('progressValue').textContent = this.value + '%';
         };
     }
 });
