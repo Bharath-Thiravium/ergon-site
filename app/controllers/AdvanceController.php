@@ -50,7 +50,7 @@ class AdvanceController extends Controller {
             try { DatabaseHelper::safeExec($db, "ALTER TABLE advances ADD COLUMN approved_amount DECIMAL(10,2) NULL", "Alter table"); } catch (Exception $e) {}
             
             if ($role === 'user') {
-                $stmt = $db->prepare("SELECT a.*, u.name as user_name, u.role as user_role FROM advances a JOIN users u ON a.user_id = u.id WHERE a.user_id = ? AND a.status != 'paid' ORDER BY a.created_at DESC");
+                $stmt = $db->prepare("SELECT a.*, u.name as user_name, u.role as user_role FROM advances a JOIN users u ON a.user_id = u.id WHERE a.user_id = ? ORDER BY a.created_at DESC");
                 $stmt->execute([$user_id]);
             } else {
                 $stmt = $db->query("SELECT a.*, u.name as user_name, u.role as user_role FROM advances a JOIN users u ON a.user_id = u.id ORDER BY a.created_at DESC");
