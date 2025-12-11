@@ -41,14 +41,39 @@ class Notification {
     }
     
     public function create($data) {
-        $stmt = $this->db->prepare("INSERT INTO notifications (sender_id, receiver_id, module_name, action_type, message, link, reference_id, priority, is_read, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, 'delivered')");
+        // Check for duplicate notifications to prevent duplicates
+        $checkStmt = $this->db->prepare("
+            SELECT id FROM notifications 
+            WHERE sender_id = ? AND receiver_id = ? AND title = ? AND message = ? 
+            AND reference_type = ? AND reference_id = ? 
+            AND created_at > DATE_SUB(NOW(), INTERVAL 1 HOUR)
+        ");
+        $checkStmt->execute([
+            $data['sender_id'],
+            $data['receiver_id'],
+            $data['title'] ?? '',
+            $data['message'] ?? '',
+            $data['reference_type'] ?? null,
+            $data['reference_id'] ?? null
+        ]);
+        
+        if ($checkStmt->fetch()) {
+            return true; // Duplicate found, skip creation
+        }
+        
+        $stmt = $this->db->prepare("
+            INSERT INTO notifications (sender_id, receiver_id, type, category, title, message, action_url, reference_type, reference_id, priority, is_read) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)
+        ");
         return $stmt->execute([
             $data['sender_id'],
             $data['receiver_id'],
-            $data['reference_type'] ?? 'system',
-            $data['category'] ?? 'notification',
-            ($data['title'] ?? '') . ': ' . ($data['message'] ?? ''),
+            $data['type'] ?? 'info',
+            $data['category'] ?? 'system',
+            $data['title'] ?? '',
+            $data['message'] ?? '',
             $data['action_url'] ?? null,
+            $data['reference_type'] ?? null,
             $data['reference_id'] ?? null,
             $data['priority'] ?? 1
         ]);
@@ -56,14 +81,11 @@ class Notification {
     
     public function getForUser($userId, $limit = 50) {
         $stmt = $this->db->prepare("
-            SELECT n.*, COALESCE(u.name, 'System') as sender_name,
-                   n.message as title,
-                   n.message,
-                   n.module_name,
-                   n.action_type
+            SELECT DISTINCT n.*, COALESCE(u.name, 'System') as sender_name
             FROM notifications n 
             LEFT JOIN users u ON n.sender_id = u.id 
-            WHERE n.receiver_id = ? AND n.status != 'deleted' AND n.sender_id != ?
+            WHERE n.receiver_id = ? AND n.sender_id != ?
+            GROUP BY n.id, n.title, n.message, n.reference_type, n.reference_id
             ORDER BY n.is_read ASC, n.created_at DESC 
             LIMIT ?
         ");
@@ -92,7 +114,7 @@ class Notification {
     }
     
     public function getUnreadCount($userId) {
-        $stmt = $this->db->prepare("SELECT COUNT(*) FROM notifications WHERE receiver_id = ? AND is_read = 0 AND status != 'deleted' AND sender_id != ?");
+        $stmt = $this->db->prepare("SELECT COUNT(DISTINCT id) FROM notifications WHERE receiver_id = ? AND is_read = 0 AND sender_id != ?");
         $stmt->execute([$userId, $userId]);
         return $stmt->fetchColumn();
     }
