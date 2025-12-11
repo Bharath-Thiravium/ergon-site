@@ -96,17 +96,12 @@ class Notification {
     
     public function getForDropdown($userId, $limit = 10) {
         $stmt = $this->db->prepare("
-            SELECT n.*, COALESCE(u.name, 'System') as sender_name,
-                   n.message as title,
-                   n.message,
-                   n.module_name,
-                   n.action_type,
-                   n.link as action_url,
-                   n.reference_id,
-                   n.module_name as reference_type
+            SELECT DISTINCT n.*, COALESCE(u.name, 'System') as sender_name
             FROM notifications n 
             LEFT JOIN users u ON n.sender_id = u.id 
-            WHERE n.receiver_id = ? AND n.status != 'deleted' AND n.sender_id != ?
+            WHERE n.receiver_id = ? AND n.sender_id != ?
+            AND (n.message LIKE '%₹%' OR n.reference_type NOT IN ('advance', 'expense'))
+            GROUP BY n.id, n.title, n.message, n.reference_type, n.reference_id
             ORDER BY n.is_read ASC, n.created_at DESC 
             LIMIT ?
         ");
