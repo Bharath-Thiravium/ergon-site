@@ -17,22 +17,27 @@ class Environment {
             $prodHosts = ['bkgreenenergy.com', 'athenas.co.in'];
             $isDev = false;
             
-            // Check for production hosts first
-            foreach ($prodHosts as $prodHost) {
-                if (strpos($host, $prodHost) !== false) {
-                    $isDev = false;
+            // Check for development hosts first
+            foreach ($devHosts as $devHost) {
+                if (strpos($host, $devHost) !== false) {
+                    $isDev = true;
                     break;
                 }
             }
             
-            // If not production, check for development hosts
-            if (!isset($isDev) || $isDev !== false) {
-                foreach ($devHosts as $devHost) {
-                    if (strpos($host, $devHost) !== false) {
-                        $isDev = true;
+            // If not development, check for production hosts
+            if (!isset($isDev) || $isDev !== true) {
+                foreach ($prodHosts as $prodHost) {
+                    if (strpos($host, $prodHost) !== false) {
+                        $isDev = false;
                         break;
                     }
                 }
+            }
+            
+            // Default to development if no specific host match
+            if (!isset($isDev)) {
+                $isDev = true;
             }
             
             // Additional Hostinger detection

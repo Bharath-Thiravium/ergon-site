@@ -371,17 +371,17 @@ document.getElementById('approvalForm').addEventListener('submit', function(e) {
     .then(r => r.json())
     .then(data => {
         if (data.success) {
-            showSuccessMessage('✅ Advance approved successfully!');
+            showSuccess('Advance approved successfully!');
             closeApprovalModal();
-            setTimeout(() => location.reload(), 1500);
+            setTimeout(() => location.reload(), 2000);
         } else {
-            showErrorMessage('❌ Error: ' + (data.error || 'Approval failed'));
+            showError(data.error || 'Approval failed');
             btn.disabled = false;
             btn.textContent = '✅ Approve Advance';
         }
     })
     .catch(err => {
-        showErrorMessage('❌ Error: ' + err.message);
+        showError('Network error: ' + err.message);
         btn.disabled = false;
         btn.textContent = '✅ Approve Advance';
     });
@@ -414,54 +414,21 @@ document.getElementById('markPaidForm').addEventListener('submit', function(e) {
     })
     .then(response => {
         if (response.ok) {
-            showSuccessMessage('✅ Advance marked as paid successfully!');
+            showSuccess('Advance marked as paid successfully!');
             closeMarkPaidModal();
-            setTimeout(() => location.reload(), 1500);
+            setTimeout(() => location.reload(), 2000);
         } else {
             throw new Error('Failed to mark as paid');
         }
     })
     .catch(err => {
-        showErrorMessage('❌ Error: ' + err.message);
+        showError('Payment error: ' + err.message);
         btn.disabled = false;
         btn.textContent = '✅ Mark as Paid';
     });
 });
 
-// Success/Error message functions
-function showSuccessMessage(message) {
-    const alert = document.createElement('div');
-    alert.className = 'alert alert--success';
-    alert.innerHTML = message;
-    alert.style.position = 'fixed';
-    alert.style.top = '20px';
-    alert.style.right = '20px';
-    alert.style.zIndex = '10000';
-    alert.style.minWidth = '300px';
-    alert.style.animation = 'slideInRight 0.3s ease-out';
-    document.body.appendChild(alert);
-    setTimeout(() => {
-        alert.style.animation = 'slideOutRight 0.3s ease-in';
-        setTimeout(() => alert.remove(), 300);
-    }, 3000);
-}
-
-function showErrorMessage(message) {
-    const alert = document.createElement('div');
-    alert.className = 'alert alert--error';
-    alert.innerHTML = message;
-    alert.style.position = 'fixed';
-    alert.style.top = '20px';
-    alert.style.right = '20px';
-    alert.style.zIndex = '10000';
-    alert.style.minWidth = '300px';
-    alert.style.animation = 'slideInRight 0.3s ease-out';
-    document.body.appendChild(alert);
-    setTimeout(() => {
-        alert.style.animation = 'slideOutRight 0.3s ease-in';
-        setTimeout(() => alert.remove(), 300);
-    }, 4000);
-}
+// Using universal modal system from dashboard layout
 </script>
 
 <!-- Advance Modal -->
@@ -589,15 +556,17 @@ function submitAdvanceForm() {
         .then(r => r.json())
         .then(data => {
             if (data.success) {
-                location.reload();
+                showSuccess(isEditingAdvance ? 'Advance updated successfully!' : 'Advance request submitted successfully!');
+                closeAdvanceModal();
+                setTimeout(() => location.reload(), 2000);
             } else {
-                alert('Error: ' + data.error);
+                showError(data.error || 'Failed to process request');
                 btn.disabled = false;
                 btn.textContent = isEditingAdvance ? '💾 Update Request' : '➕ Submit Request';
             }
         })
         .catch(err => {
-            alert('Error: ' + err.message);
+            showError('Network error: ' + err.message);
             btn.disabled = false;
             btn.textContent = isEditingAdvance ? '💾 Update Request' : '➕ Submit Request';
         });

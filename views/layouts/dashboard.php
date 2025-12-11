@@ -114,17 +114,25 @@ ob_end_clean();
     .btn--attendance-toggle.state-leave{background:#f59e0b !important;border:3px solid #d97706 !important;color:#ffffff !important;opacity:1 !important;font-weight:700 !important;text-shadow:0 2px 4px rgba(0,0,0,0.4) !important}
     @keyframes pulse-red{0%,100%{box-shadow:0 4px 16px rgba(220,38,38,0.6)}50%{box-shadow:0 6px 20px rgba(220,38,38,0.8)}}
     
-    /* Simple Message Modal */
-    .message-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000000;display:none;align-items:center;justify-content:center}
-    .message-modal.show{display:flex}
-    .message-content{background:#fff;border-radius:12px;padding:24px;max-width:400px;width:90%;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.3)}
-    .message-icon{font-size:48px;margin-bottom:16px}
-    .message-text{font-size:16px;margin-bottom:20px;color:#333;line-height:1.5}
-    .message-close{background:#007bff;color:#fff;border:none;padding:10px 24px;border-radius:6px;cursor:pointer;font-size:14px;font-weight:600}
-    .message-close:hover{background:#0056b3}
-    .message-modal.success .message-icon{color:#28a745}
-    .message-modal.error .message-icon{color:#dc3545}
-    .message-modal.warning .message-icon{color:#ffc107}
+    /* Universal Message Modal */
+    .universal-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:1000000;display:none;align-items:center;justify-content:center}
+    .universal-modal.show{display:flex}
+    .universal-modal-content{background:#fff;border-radius:16px;padding:32px;max-width:420px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);transform:scale(0.9);transition:transform 0.2s ease}
+    .universal-modal.show .universal-modal-content{transform:scale(1)}
+    .universal-modal-icon{font-size:64px;margin-bottom:16px;line-height:1}
+    .universal-modal-title{font-size:20px;font-weight:700;margin-bottom:12px;color:#1f2937}
+    .universal-modal-message{font-size:16px;margin-bottom:24px;color:#4b5563;line-height:1.5}
+    .universal-modal-close{background:#3b82f6;color:#fff;border:none;padding:12px 32px;border-radius:8px;cursor:pointer;font-size:15px;font-weight:600;transition:background 0.2s ease}
+    .universal-modal-close:hover{background:#2563eb}
+    .universal-modal.success .universal-modal-icon{color:#10b981}
+    .universal-modal.success .universal-modal-close{background:#10b981}
+    .universal-modal.success .universal-modal-close:hover{background:#059669}
+    .universal-modal.error .universal-modal-icon{color:#ef4444}
+    .universal-modal.error .universal-modal-close{background:#ef4444}
+    .universal-modal.error .universal-modal-close:hover{background:#dc2626}
+    .universal-modal.warning .universal-modal-icon{color:#f59e0b}
+    .universal-modal.warning .universal-modal-close{background:#f59e0b}
+    .universal-modal.warning .universal-modal-close:hover{background:#d97706}
     
     /* Global Navigation Buttons - Desktop Only */
     .global-back-btn{position:fixed !important;top:400px !important;left:20px !important;right:auto !important;z-index:1000;background:rgba(255,255,255,0.95);color:#374151;border:1px solid rgba(0,0,0,0.1);border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.15);backdrop-filter:blur(10px);transition:all 0.2s ease}
@@ -285,12 +293,13 @@ ob_end_clean();
                     </a>
                 </div>
                 
-                <!-- Simple Message Modal -->
-                <div id="messageModal" class="message-modal">
-                    <div class="message-content">
-                        <div class="message-icon" id="messageIcon"></div>
-                        <div class="message-text" id="messageText"></div>
-                        <button class="message-close" onclick="closeMessageModal()">OK</button>
+                <!-- Universal Message Modal -->
+                <div id="universalModal" class="universal-modal">
+                    <div class="universal-modal-content">
+                        <div class="universal-modal-icon" id="universalIcon"></div>
+                        <div class="universal-modal-title" id="universalTitle"></div>
+                        <div class="universal-modal-message" id="universalMessage"></div>
+                        <button class="universal-modal-close" onclick="closeUniversalModal()">OK</button>
                     </div>
                 </div>
             </div>
@@ -1519,36 +1528,79 @@ ob_end_clean();
         }, 3000);
     }
     
-    // Simple Message Modal Functions
-    function showMessage(message, type = 'success') {
-        const modal = document.getElementById('messageModal');
-        const icon = document.getElementById('messageIcon');
-        const text = document.getElementById('messageText');
+    // Universal Message Modal Functions
+    function showUniversalModal(message, type = 'success', title = null) {
+        const modal = document.getElementById('universalModal');
+        const icon = document.getElementById('universalIcon');
+        const titleEl = document.getElementById('universalTitle');
+        const messageEl = document.getElementById('universalMessage');
         
-        if (!modal || !icon || !text) return;
+        if (!modal || !icon || !titleEl || !messageEl) return;
         
-        // Set icon based on type
-        const icons = {
-            success: '✅',
-            error: '❌',
-            warning: '⚠️',
-            info: 'ℹ️'
+        const config = {
+            success: { icon: '✅', title: title || 'Success!' },
+            error: { icon: '❌', title: title || 'Error!' },
+            warning: { icon: '⚠️', title: title || 'Warning!' },
+            info: { icon: 'ℹ️', title: title || 'Information' }
         };
         
-        icon.textContent = icons[type] || icons.success;
-        text.textContent = message;
-        modal.className = `message-modal ${type}`;
-        modal.style.display = 'flex';
+        const typeConfig = config[type] || config.success;
+        icon.textContent = typeConfig.icon;
+        titleEl.textContent = typeConfig.title;
+        messageEl.textContent = message;
+        modal.className = `universal-modal ${type} show`;
+        
+        // Auto close after 4 seconds for success, 6 seconds for others
+        const autoCloseTime = type === 'success' ? 4000 : 6000;
+        setTimeout(() => {
+            if (modal.classList.contains('show')) {
+                closeUniversalModal();
+            }
+        }, autoCloseTime);
+    }
+    
+    function closeUniversalModal() {
+        const modal = document.getElementById('universalModal');
+        if (modal) {
+            modal.classList.remove('show');
+            setTimeout(() => modal.style.display = 'none', 200);
+        }
+    }
+    
+    // Legacy function for backward compatibility
+    function showMessage(message, type = 'success', title = null) {
+        showUniversalModal(message, type, title);
     }
     
     function closeMessageModal() {
-        const modal = document.getElementById('messageModal');
-        if (modal) modal.style.display = 'none';
+        closeUniversalModal();
     }
     
     // Make functions globally available
     window.showMessage = showMessage;
+    window.showUniversalModal = showUniversalModal;
     window.closeMessageModal = closeMessageModal;
+    window.closeUniversalModal = closeUniversalModal;
+    
+    // Global success/error/warning functions
+    window.showSuccess = (message, title) => showUniversalModal(message, 'success', title);
+    window.showError = (message, title) => showUniversalModal(message, 'error', title);
+    window.showWarning = (message, title) => showUniversalModal(message, 'warning', title);
+    window.showInfo = (message, title) => showUniversalModal(message, 'info', title);
+    
+    // Close modal on escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeUniversalModal();
+        }
+    });
+    
+    // Close modal when clicking backdrop
+    document.addEventListener('click', function(e) {
+        if (e.target.id === 'universalModal') {
+            closeUniversalModal();
+        }
+    });
     
     // Check attendance status on page load - updated for smart button
     function checkAttendanceStatus() {
