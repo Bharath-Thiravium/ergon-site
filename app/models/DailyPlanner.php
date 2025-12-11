@@ -471,10 +471,10 @@ class DailyPlanner {
                 $this->logTimeAction($taskId, $userId, 'complete', $now, $activeTime);
             }
 
-            // Also update the main task if it exists
+            // Update linked task in tasks table
             if ($originalTaskId) {
-                $updateTaskStmt = $this->db->prepare("UPDATE tasks SET status = 'completed', progress = 100 WHERE id = ?");
-                $updateTaskStmt->execute([$originalTaskId]);
+                $updateTaskStmt = $this->db->prepare("UPDATE tasks SET status = 'completed', progress = ? WHERE id = ?");
+                $updateTaskStmt->execute([$percentage, $originalTaskId]);
             }
 
             $this->logTaskHistory($taskId, $userId, 'completed', '', $percentage . '%', 'Task completed with ' . $percentage . '% progress');

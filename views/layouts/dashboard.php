@@ -260,10 +260,24 @@ ob_end_clean();
                 <button class="control-btn" id="theme-toggle" title="Toggle Theme">
                     <i class="bi bi-<?= (isset($userPrefs['theme']) && $userPrefs['theme'] === 'dark') ? 'sun-fill' : 'moon-fill' ?>"></i>
                 </button>
+                <?php 
+                $notificationsDisabled = false;
+                try {
+                    $notificationsDisabled = ModuleManager::isModuleDisabled('notifications');
+                } catch (Exception $e) {
+                    // Silently fail - notifications will appear enabled
+                }
+                ?>
+                <?php if (!$notificationsDisabled): ?>
                 <button class="control-btn notification-btn" id="notificationBtn" onclick="toggleNotifications(event)" title="Notifications">
                     <i class="bi bi-bell-fill"></i>
                     <span class="notification-badge" id="notificationBadge" style="display:none;">0</span>
                 </button>
+                <?php else: ?>
+                <button class="control-btn" style="opacity: 0.5; cursor: not-allowed;" title="Notifications (Disabled)" onclick="return false;">
+                    <i class="bi bi-bell-slash"></i>
+                </button>
+                <?php endif; ?>
                 <button class="profile-btn" id="profileButton" type="button">
                     <span class="profile-avatar"><?= htmlspecialchars(strtoupper(substr($_SESSION['user_name'] ?? 'U', 0, 1)), ENT_QUOTES, 'UTF-8') ?></span>
                     <span class="profile-name"><?= htmlspecialchars($_SESSION['user_name'] ?? 'User', ENT_QUOTES, 'UTF-8') ?></span>
@@ -280,7 +294,7 @@ ob_end_clean();
                         Change Password
                     </a>
                     <div class="profile-menu-divider"></div>
-                    <?php if (isset($_SESSION['role']) && in_array($_SESSION['role'], ['owner', 'admin'])): ?>
+                    <?php if (isset($_SESSION['role']) && in_array($_SESSION['role'], ['owner', 'admin']) && !$systemAdminDisabled): ?>
                     <a href="/ergon-site/settings" class="profile-menu-item">
                         <span class="menu-icon"><i class="bi bi-gear-fill"></i></span>
                         System Settings
@@ -424,11 +438,18 @@ ob_end_clean();
                                 Reports
                                 <?php if ($reportsDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                             </a>
-                            <a href="/ergon-site/settings" class="nav-dropdown-item <?= ($active_page ?? '') === 'settings' ? 'nav-dropdown-item--active' : '' ?> <?= $analyticsDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
+                            <?php if (!$systemAdminDisabled): ?>
+                            <a href="/ergon-site/settings" class="nav-dropdown-item <?= ($active_page ?? '') === 'settings' ? 'nav-dropdown-item--active' : '' ?>">
                                 <span class="nav-icon">⚙️</span>
                                 Settings
-                                <?php if ($analyticsDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
                             </a>
+                            <?php else: ?>
+                            <span class="nav-dropdown-item nav-dropdown-item--disabled" style="opacity: 0.5; cursor: not-allowed;">
+                                <span class="nav-icon">⚙️</span>
+                                Settings
+                                <span class="premium-icon">🔒</span>
+                            </span>
+                            <?php endif; ?>
                         </div>
                     </div>
                     <?php else: // company_owner ?>
@@ -881,7 +902,9 @@ ob_end_clean();
     <div class="notification-dropdown" id="notificationDropdown">
         <div class="notification-header">
             <h3>Notifications</h3>
+            <?php if (!$notificationsDisabled): ?>
             <button type="button" class="view-all-link" id="viewAllNotificationsBtn" onclick="window.location.href='/ergon-site/notifications'">View All</button>
+            <?php endif; ?>
         </div>
         <div class="notification-list" id="notificationList">
             <div class="notification-loading">Loading notifications...</div>

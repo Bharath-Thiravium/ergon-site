@@ -16,6 +16,28 @@ require_once __DIR__ . '/../app/config/database.php';
 try {
     $db = Database::connect();
     
+    // Check if projects table exists, create if not
+    $stmt = $db->query("SHOW TABLES LIKE 'projects'");
+    if ($stmt->rowCount() == 0) {
+        $db->exec("CREATE TABLE IF NOT EXISTS projects (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(255) NOT NULL,
+            description TEXT,
+            department_id INT,
+            status ENUM('active', 'inactive', 'completed') DEFAULT 'active',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            INDEX idx_department (department_id),
+            INDEX idx_status (status)
+        )");
+        
+        // Insert default projects if none exist
+        $db->exec("INSERT INTO projects (name, description, status) VALUES 
+            ('General Project', 'Default project for general tasks', 'active'),
+            ('Internal Operations', 'Internal company operations and maintenance', 'active'),
+            ('Client Work', 'Client-related projects and deliverables', 'active')");
+    }
+    
     $departmentId = $_GET['department_id'] ?? null;
     
     if ($departmentId) {
@@ -31,6 +53,6 @@ try {
     
 } catch (Exception $e) {
     error_log('Projects API error: ' . $e->getMessage());
-    http_response_code(200);
-    echo json_encode(['success' => true, 'projects' => []]);
+    http_response_code(500);
+    echo json_encode(['success' => false, 'error' => 'Database error: ' . $e->getMessage()]);
 }

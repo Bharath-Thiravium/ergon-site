@@ -55,6 +55,9 @@ class ProjectManagementController extends Controller {
             try {
                 $db->exec("ALTER TABLE projects ADD COLUMN place VARCHAR(255) NULL");
             } catch (Exception $e) {}
+            try {
+                $db->exec("ALTER TABLE projects ADD COLUMN budget DECIMAL(15,2) NULL");
+            } catch (Exception $e) {}
             
             // Get all projects with department info
             $stmt = $db->prepare("SELECT p.*, d.name as department_name FROM projects p LEFT JOIN departments d ON p.department_id = d.id ORDER BY p.created_at DESC");

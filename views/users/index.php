@@ -813,7 +813,20 @@ window.showEditUserModal = function(userId) {
     
     // Load data after modal is shown
     fetch(`/ergon-site/api/users/${userId}`)
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        return response.text();
+    })
+    .then(text => {
+        try {
+            return JSON.parse(text);
+        } catch (e) {
+            console.error('JSON parse error:', e, 'Response:', text);
+            throw new Error('Invalid JSON response');
+        }
+    })
         .then(data => {
         if (!data.success) {
             if (typeof hideClosestModal === 'function') hideClosestModal(modal); else if (modal && modal.parentNode) modal.parentNode.removeChild(modal);
@@ -834,18 +847,41 @@ window.showEditUserModal = function(userId) {
 
 function loadDepartments(selectedDept = null) {
     fetch('/ergon-site/api/departments')
-    .then(response => response.json())
-    .then(data => {
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        return response.text();
+    })
+    .then(text => {
+        try {
+            const data = JSON.parse(text);
+            const deptSelect = document.querySelector('select[name="department_id"]');
+            if (data.success && data.departments) {
+                deptSelect.innerHTML = '<option value="">Select Department</option>';
+                data.departments.forEach(dept => {
+                    const option = document.createElement('option');
+                    option.value = dept.id;
+                    option.textContent = dept.name;
+                    if (selectedDept == dept.id) option.selected = true;
+                    deptSelect.appendChild(option);
+                });
+            } else {
+                deptSelect.innerHTML = '<option value="">Error loading departments</option>';
+            }
+        } catch (e) {
+            console.error('JSON parse error:', e, 'Response:', text);
+            const deptSelect = document.querySelector('select[name="department_id"]');
+            if (deptSelect) {
+                deptSelect.innerHTML = '<option value="">Error loading departments</option>';
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error loading departments:', error);
         const deptSelect = document.querySelector('select[name="department_id"]');
-        if (data.success && data.departments) {
-            deptSelect.innerHTML = '<option value="">Select Department</option>';
-            data.departments.forEach(dept => {
-                const option = document.createElement('option');
-                option.value = dept.id;
-                option.textContent = dept.name;
-                if (selectedDept == dept.id) option.selected = true;
-                deptSelect.appendChild(option);
-            });
+        if (deptSelect) {
+            deptSelect.innerHTML = '<option value="">Error: ' + error.message + '</option>';
         }
     });
 }

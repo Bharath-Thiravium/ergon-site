@@ -603,22 +603,28 @@ function loadAllUsers() {
     const assignedToSelect = document.getElementById('assigned_to');
     assignedToSelect.innerHTML = '<option value="">Loading users...</option>';
     
-    fetch('/ergon-site/api/users.php')
+    fetch('/ergon-site/api/users')
         .then(response => {
             if (!response.ok) throw new Error('HTTP ' + response.status);
-            return response.json();
+            return response.text();
         })
-        .then(data => {
-            if (data.success && data.users) {
-                assignedToSelect.innerHTML = '<option value="">Select User</option>';
-                data.users.forEach(user => {
-                    const option = document.createElement('option');
-                    option.value = user.id;
-                    option.textContent = user.name + (user.email ? ' (' + user.email + ')' : '');
-                    assignedToSelect.appendChild(option);
-                });
-            } else {
-                assignedToSelect.innerHTML = '<option value="">No users found</option>';
+        .then(text => {
+            try {
+                const data = JSON.parse(text);
+                if (data.success && data.users && data.users.length > 0) {
+                    assignedToSelect.innerHTML = '<option value="">Select User</option>';
+                    data.users.forEach(user => {
+                        const option = document.createElement('option');
+                        option.value = user.id;
+                        option.textContent = user.name + (user.email ? ' (' + user.email + ')' : '');
+                        assignedToSelect.appendChild(option);
+                    });
+                } else {
+                    assignedToSelect.innerHTML = '<option value="">No users found</option>';
+                }
+            } catch (e) {
+                console.error('JSON parse error:', e, 'Response:', text);
+                assignedToSelect.innerHTML = '<option value="">Error loading users</option>';
             }
         })
         .catch(error => {

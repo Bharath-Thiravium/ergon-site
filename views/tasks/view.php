@@ -106,7 +106,21 @@ ob_start();
                                 <span class="text-muted">No due date</span>
                             <?php endif; ?>
                         </span>
-                        <span><strong>SLA:</strong> ⏱️ <?= htmlspecialchars($task['sla_hours'] ?? '24') ?>h</span>
+                        <span><strong>SLA:</strong> ⏱️ 
+                            <?php 
+                            $slaHours = floatval($task['sla_hours'] ?? 24);
+                            if ($slaHours < 1) {
+                                $minutes = round($slaHours * 60);
+                                echo $minutes . ' min';
+                            } else if ($slaHours == floor($slaHours)) {
+                                echo intval($slaHours) . 'h';
+                            } else {
+                                $hours = floor($slaHours);
+                                $minutes = round(($slaHours - $hours) * 60);
+                                echo $hours . 'h ' . $minutes . 'm';
+                            }
+                            ?>
+                        </span>
                         <span><strong>Assigned for:</strong> 📅 <?= ($task['assigned_at'] ?? $task['created_at']) ? date('M d, Y', strtotime($task['assigned_at'] ?? $task['created_at'])) : 'N/A' ?></span>
                     </div>
                 </div>

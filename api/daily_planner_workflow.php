@@ -41,15 +41,20 @@ try {
     
     switch ($action) {
         case 'start':
-            if ($planner->startTask($task_id, $userId)) {
-                echo json_encode([
-                    'success' => true, // ✅ REBUILT: Consistent API response format.
-                    'status' => 'running',
-                    'label' => 'Break'
-                ]);
-            } else {
-                http_response_code(400);
-                echo json_encode(['error' => 'start failed']);
+            try {
+                if ($planner->startTask($task_id, $userId)) {
+                    echo json_encode([
+                        'success' => true,
+                        'status' => 'running',
+                        'label' => 'Break'
+                    ]);
+                } else {
+                    http_response_code(400);
+                    echo json_encode(['error' => 'Failed to start task']);
+                }
+            } catch (Exception $e) {
+                http_response_code(500);
+                echo json_encode(['error' => 'Start task error: ' . $e->getMessage()]);
             }
             break;
             
@@ -135,21 +140,24 @@ try {
             $is_overdue = false;
 
             if ($task['status'] === 'in_progress') {
-                if ($task['sla_end_time']) {
+                // Use remaining_sla_time if available (preserved from pause)
+                if ($task['remaining_sla_time'] > 0) {
+                    $remaining_seconds = $task['remaining_sla_time'];
+                } elseif ($task['sla_end_time']) {
                     $sla_end_timestamp = strtotime($task['sla_end_time']);
                     $remaining_seconds = $sla_end_timestamp - $now;
-                    
-                    if ($remaining_seconds <= 0) {
-                        $is_overdue = true;
-                        $remaining_seconds = 0;
-                        
-                        // Start overdue timer if not already started
-                        if (!$task['overdue_start_time']) {
-                            $planner->startOverdueTimer($taskId);
-                        }
-                    }
                 } else {
                     $remaining_seconds = ($task['sla_hours'] * 3600);
+                }
+                
+                if ($remaining_seconds <= 0) {
+                    $is_overdue = true;
+                    $remaining_seconds = 0;
+                    
+                    // Start overdue timer if not already started
+                    if (!$task['overdue_start_time']) {
+                        $planner->startOverdueTimer($taskId);
+                    }
                 }
             } elseif ($task['status'] === 'on_break') {
                 if ($task['pause_start_time']) {
@@ -158,9 +166,9 @@ try {
                         $current_pause_duration = $now - $pause_start_timestamp;
                     }
                 }
-                // Calculate remaining from SLA end time
-                $remaining_seconds = ($task['sla_end_time']) 
-                    ? max(0, strtotime($task['sla_end_time']) - $now) 
+                // Use saved remaining time during break
+                $remaining_seconds = $task['remaining_sla_time'] > 0 
+                    ? $task['remaining_sla_time'] 
                     : ($task['sla_hours'] * 3600);
             } elseif ($task['status'] === 'not_started') {
                 $remaining_seconds = ($task['sla_hours'] * 3600);

@@ -34,7 +34,11 @@ ob_start();
     <a href="/ergon-site/users" class="btn btn--secondary">👥 User Admins</a>
     <a href="/ergon-site/owner/approvals" class="btn btn--secondary">Review Approvals</a>
     <a href="/ergon-site/reports" class="btn btn--secondary <?= $reportsDisabled ? 'btn--disabled' : '' ?>" <?= $reportsDisabled ? 'onclick="return false;" style="opacity: 0.5; cursor: not-allowed;"' : '' ?>>View Reports<?= $reportsDisabled ? ' 🔒' : '' ?></a>
+    <?php if (!$systemAdminDisabled): ?>
     <a href="/ergon-site/settings" class="btn btn--secondary">System Settings</a>
+    <?php else: ?>
+    <span class="btn btn--secondary btn--disabled" style="opacity: 0.5; cursor: not-allowed;">System Settings 🔒</span>
+    <?php endif; ?>
 </div>
 
 <style>

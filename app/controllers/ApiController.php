@@ -70,10 +70,11 @@ class ApiController extends Controller {
         
         header('Content-Type: application/json');
         
-        // Check auth without redirect - for now, allow access if no session for testing
+        // Check auth
         if (!isset($_SESSION['user_id'])) {
-            // For debugging, let's allow this to work without authentication temporarily
-            error_log('departments API - No user_id in session, but proceeding for testing');
+            http_response_code(401);
+            echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+            exit;
         }
         
         try {
@@ -281,9 +282,32 @@ class ApiController extends Controller {
     }
     
     public function users() {
-        $this->requireAuth();
+        // Set session cookie parameters to match AuthMiddleware
+        if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+            $isSecure = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on';
+            $domain = $_SERVER['HTTP_HOST'];
+            session_set_cookie_params([
+                'lifetime' => 28800,
+                'path' => '/ergon-site/',
+                'domain' => $domain,
+                'secure' => $isSecure,
+                'httponly' => true,
+                'samesite' => 'Lax'
+            ]);
+        }
+        
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
         
         header('Content-Type: application/json');
+        
+        // Check auth
+        if (!isset($_SESSION['user_id'])) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+            exit;
+        }
         
         try {
             require_once __DIR__ . '/../config/database.php';
@@ -321,10 +345,11 @@ class ApiController extends Controller {
         
         header('Content-Type: application/json');
         
-        // Check auth without redirect - for now, allow access if no session for testing
+        // Check auth
         if (!isset($_SESSION['user_id'])) {
-            // For debugging, let's allow this to work without authentication temporarily
-            error_log('taskCategories API - No user_id in session, but proceeding for testing');
+            http_response_code(401);
+            echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+            exit;
         }
         
         try {
