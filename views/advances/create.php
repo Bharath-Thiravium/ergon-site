@@ -64,7 +64,7 @@ fetch('/ergon-site/api/projects.php')
             data.projects.forEach(project => {
                 const option = document.createElement('option');
                 option.value = project.id;
-                let text = project.project_name;
+                let text = project.name;
                 if (project.department_name) text += ' - ' + project.department_name;
                 if (project.description) text += ' (' + project.description + ')';
                 option.textContent = text;
