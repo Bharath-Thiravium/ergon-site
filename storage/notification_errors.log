@@ -25429,3 +25429,981 @@ Stack trace:
 [12-Dec-2025 13:34:07 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
 #1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
 #2 {main}
+[12-Dec-2025 13:34:37 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 13:34:37 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:34:37 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:34:37 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 13:35:07 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 13:35:07 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:35:07 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:35:07 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 13:35:07 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 13:35:07 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:35:07 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:35:07 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 13:35:37 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 13:35:37 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:35:37 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:35:37 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 13:36:07 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 13:36:07 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:36:07 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:36:07 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 13:36:08 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 13:36:08 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:36:08 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:36:08 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 13:36:37 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 13:36:37 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:36:37 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:36:37 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 13:37:07 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 13:37:07 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:37:07 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:37:07 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 13:37:09 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 13:37:09 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:37:09 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:37:09 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 13:37:37 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 13:37:37 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:37:37 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:37:37 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 13:38:14 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 13:38:14 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:38:14 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:38:14 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 13:38:14 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 13:38:14 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:38:14 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:38:14 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 13:38:42 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 13:38:42 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:38:42 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:38:42 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 13:39:11 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 13:39:11 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:39:11 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:39:11 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 13:39:12 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 13:39:12 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:39:12 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:39:12 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 13:39:42 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 13:39:42 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:39:42 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:39:42 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 13:40:12 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 13:40:12 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:40:12 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:40:12 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 13:40:12 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 13:40:12 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:40:12 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:40:12 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 13:40:42 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 13:40:42 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:40:42 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:40:42 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 13:41:13 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 13:41:13 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:41:13 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:41:13 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 13:41:13 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 13:41:13 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:41:13 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:41:13 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 13:41:43 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 13:41:43 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:41:43 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:41:43 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 13:42:13 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 13:42:13 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:42:13 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:42:13 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 13:42:14 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 13:42:14 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:42:14 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:42:14 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 13:42:43 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 13:42:43 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:42:43 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:42:43 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 13:43:13 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 13:43:13 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:43:13 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:43:13 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 13:43:15 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 13:43:15 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:43:15 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:43:15 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 13:43:43 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 13:43:43 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:43:43 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:43:43 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 13:44:13 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 13:44:13 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:44:13 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:44:13 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 13:44:16 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 13:44:16 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:44:16 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:44:16 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 13:44:43 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 13:44:43 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:44:43 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:44:43 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 13:45:13 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 13:45:13 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:45:13 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:45:13 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 13:45:17 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 13:45:17 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:45:17 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:45:17 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 13:45:43 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 13:45:43 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:45:43 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:45:43 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 13:46:13 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 13:46:13 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:46:13 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:46:13 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 13:46:18 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 13:46:18 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:46:18 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:46:18 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 13:46:43 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 13:46:43 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:46:43 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:46:43 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 13:47:13 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 13:47:13 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:47:13 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:47:13 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 13:47:19 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 13:47:19 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:47:19 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:47:19 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 13:47:43 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 13:47:43 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:47:43 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:47:43 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 13:48:14 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 13:48:14 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:48:14 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:48:14 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 13:48:20 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 13:48:20 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:48:20 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:48:20 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 13:48:44 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 13:48:44 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:48:44 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:48:44 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 13:49:14 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 13:49:14 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:49:14 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:49:14 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 13:49:21 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 13:49:21 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:49:21 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:49:21 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 13:49:44 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 13:49:44 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:49:44 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:49:44 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 13:50:14 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 13:50:14 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:50:14 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:50:14 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 13:50:22 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 13:50:22 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:50:22 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:50:22 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 13:50:44 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 13:50:44 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:50:44 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:50:44 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 13:51:14 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 13:51:14 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:51:14 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:51:14 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 13:51:23 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 13:51:23 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:51:23 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:51:23 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 13:51:44 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 13:51:44 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:51:44 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:51:44 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 13:52:14 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 13:52:14 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:52:14 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:52:14 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 13:52:24 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 13:52:24 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:52:24 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:52:24 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 13:52:44 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 13:52:44 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:52:44 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:52:44 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 13:53:15 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 13:53:15 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:53:15 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:53:15 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 13:53:25 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 13:53:25 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:53:25 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:53:25 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 13:53:45 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 13:53:45 UTC] Database operation successful: Model operation
+[12-Dec-2025 13:53:45 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 13:53:45 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:16:02 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:16:02 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:16:02 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:16:02 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:16:14 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:16:14 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:16:14 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:16:14 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:16:31 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:16:31 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:16:31 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:16:31 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:16:44 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:16:44 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:16:44 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:16:44 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:17:14 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:17:14 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:17:14 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:17:14 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:17:31 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:17:31 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:17:31 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:17:31 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:17:44 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:17:44 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:17:44 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:17:44 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:18:14 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:18:14 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:18:14 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:18:14 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:18:31 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:18:31 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:18:31 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:18:31 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:18:44 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:18:44 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:18:44 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:18:44 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:19:14 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:19:14 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:19:14 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:19:14 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:19:31 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:19:31 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:19:31 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:19:31 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:19:44 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:19:44 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:19:44 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:19:44 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:20:14 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:20:14 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:20:14 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:20:14 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:20:31 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:20:31 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:20:31 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:20:31 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:20:44 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:20:44 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:20:44 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:20:44 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:21:14 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:21:14 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:21:14 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:21:14 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:21:31 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:21:31 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:21:31 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:21:31 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:21:44 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:21:44 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:21:44 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:21:44 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:22:15 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:22:15 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:22:15 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:22:15 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:22:31 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:22:31 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:22:31 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:22:31 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:22:45 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:22:45 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:22:45 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:22:45 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:23:15 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:23:15 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:23:15 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:23:15 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:23:31 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:23:31 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:23:31 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:23:31 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:23:45 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:23:45 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:23:45 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:23:45 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:24:15 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:24:15 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:24:15 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:24:15 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:24:31 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:24:31 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:24:31 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:24:31 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:24:45 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:24:45 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:24:45 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:24:45 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:25:15 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:25:15 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:25:15 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:25:15 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:25:31 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:25:31 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:25:31 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:25:31 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:25:45 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:25:45 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:25:45 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:25:45 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:26:15 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:26:15 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:26:15 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:26:15 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:26:31 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:26:31 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:26:31 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:26:31 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:26:45 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:26:45 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:26:45 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:26:45 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:27:15 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:27:15 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:27:15 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:27:15 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:27:31 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:27:31 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:27:31 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:27:31 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:27:45 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:27:45 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:27:45 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:27:45 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:28:15 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:28:15 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:28:15 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:28:15 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:28:31 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:28:31 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:28:31 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:28:31 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:28:45 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:28:45 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:28:45 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:28:45 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:29:00 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:29:00 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:29:00 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:29:00 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:29:04 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:29:04 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:29:04 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:29:04 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:29:09 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:29:09 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:29:09 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:29:09 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:29:10 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:29:10 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:29:10 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:29:10 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:29:11 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:29:11 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:29:11 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:29:11 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:29:14 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:29:14 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:29:14 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:29:14 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:29:15 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:29:15 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:29:15 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:29:15 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:29:16 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:29:16 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:29:16 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:29:16 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:29:17 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:29:17 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:29:17 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:29:17 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:29:19 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:29:19 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:29:19 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:29:19 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:29:21 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:29:21 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:29:21 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:29:21 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:29:23 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:29:23 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:29:23 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:29:23 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:29:25 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:29:25 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:29:25 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:29:25 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:29:27 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:29:27 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:29:27 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:29:27 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:29:29 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:29:29 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:29:29 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:29:29 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:29:30 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:29:30 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:29:30 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:29:30 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:29:32 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:29:32 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:29:32 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:29:32 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:29:35 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:29:35 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:29:35 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:29:35 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:29:45 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:29:45 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:29:45 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:29:45 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:29:48 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:29:48 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:29:48 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:29:48 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:29:50 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:29:50 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:29:50 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:29:50 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:29:52 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:29:52 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:29:52 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:29:52 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:29:54 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:29:54 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:29:54 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:29:54 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:29:56 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:29:56 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:29:56 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:29:56 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:30:00 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:30:00 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:30:00 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:30:00 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:30:05 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:30:05 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:30:05 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:30:05 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:30:30 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:30:30 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:30:30 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:30:30 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:30:35 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:30:35 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:30:35 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:30:35 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:31:00 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:31:00 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:31:00 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:31:00 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:31:06 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:31:06 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:31:06 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:31:06 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:31:30 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:31:30 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:31:30 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:31:30 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:31:35 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:31:35 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:31:35 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:31:35 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:32:01 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:32:01 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:32:01 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:32:01 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:32:05 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:32:05 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:32:05 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:32:05 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:32:32 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:32:32 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:32:32 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:32:32 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:32:35 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:32:35 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:32:35 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:32:35 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:33:02 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:33:02 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:33:02 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:33:02 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:33:05 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:33:05 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:33:05 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:33:05 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:33:32 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:33:32 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:33:32 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:33:32 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:34:02 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:34:02 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:34:02 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:34:02 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:34:06 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:34:06 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:34:06 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:34:06 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:34:32 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:34:32 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:34:32 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:34:32 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:34:59 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:34:59 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:34:59 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:34:59 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:35:02 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:35:02 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:35:02 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:35:02 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:35:05 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:35:05 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:35:05 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:35:05 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:35:08 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:35:08 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:35:08 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:35:08 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:35:10 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:35:10 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:35:10 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:35:10 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:35:13 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:35:13 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:35:13 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:35:13 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:35:14 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:35:14 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:35:14 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:35:14 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:35:16 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:35:16 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:35:16 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:35:16 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:35:18 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:35:18 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:35:18 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:35:18 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:35:21 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:35:21 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:35:21 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:35:21 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:35:23 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:35:23 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:35:23 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:35:23 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:35:28 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:35:28 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:35:28 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:35:28 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:35:30 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:35:30 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:35:30 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:35:30 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:35:32 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:35:32 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:35:32 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:35:32 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:35:34 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:35:34 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:35:34 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:35:34 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:35:35 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:35:35 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:35:35 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:35:35 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:35:35 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:35:35 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:35:35 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:35:35 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:35:38 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:35:38 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:35:38 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:35:38 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:35:40 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:35:40 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:35:40 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:35:40 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:35:42 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:35:42 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:35:42 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:35:42 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:35:44 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:35:44 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:35:44 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:35:44 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
+[12-Dec-2025 14:36:05 UTC] Notification API: User ID 37 accessing notifications
+[12-Dec-2025 14:36:05 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:36:05 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:36:05 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(37, 10)
+#2 {main}
+[12-Dec-2025 14:36:14 UTC] Notification API: User ID 1 accessing notifications
+[12-Dec-2025 14:36:14 UTC] Database operation successful: Model operation
+[12-Dec-2025 14:36:14 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.title' in 'group statement' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[12-Dec-2025 14:36:14 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(66): Notification->getForDropdown(1, 10)
+#2 {main}
