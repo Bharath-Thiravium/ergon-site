@@ -642,6 +642,11 @@ function loadAllUsers() {
             if (data.success && data.users && data.users.length > 0) {
                 assignedToSelect.innerHTML = '<option value="">Select User</option>';
                 data.users.forEach(user => {
+                    // Skip specific owner IDs (production: 59, 1)
+                    if (user.id == 59 || user.id == 1) {
+                        return;
+                    }
+                    
                     // Skip owner/company_owner roles or users with owner-like names
                     if ((user.role && (user.role === 'owner' || user.role === 'company_owner')) ||
                         (user.name && (user.name.toLowerCase().includes('owner') || 
