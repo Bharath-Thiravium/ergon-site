@@ -214,6 +214,8 @@ ob_start();
                     <tr>
                         <th class="col-title">Employee</th>
                         <th class="col-assignment">Date & Status</th>
+                        <th class="col-location">Location</th>
+                        <th class="col-project">Project</th>
                         <th class="col-progress">Working Hours</th>
                         <th class="col-date">Check Times</th>
                         <?php if (in_array($user_role ?? '', ['owner', 'admin'])): ?>
@@ -224,7 +226,7 @@ ob_start();
                 <tbody>
                     <?php if (empty($attendance ?? [])): ?>
                     <tr>
-                        <td colspan="<?= in_array($user_role ?? '', ['owner', 'admin']) ? '5' : '4' ?>" class="text-center">
+                        <td colspan="<?= in_array($user_role ?? '', ['owner', 'admin']) ? '7' : '6' ?>" class="text-center">
                             <div class="empty-state">
                                 <div class="empty-icon">📍</div>
                                 <h3>No Attendance Records</h3>
@@ -247,6 +249,16 @@ ob_start();
                                     <div class="priority-badge">
                                         <span class="badge badge--<?= $record['status'] === 'Present' ? 'success' : 'danger' ?>"><?= $record['status'] ?? 'Absent' ?></span>
                                     </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="cell-meta">
+                                    <div class="cell-primary"><?= htmlspecialchars($record['location_display'] ?? '---') ?></div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="cell-meta">
+                                    <div class="cell-primary"><?= htmlspecialchars($record['project_name'] ?? '----') ?></div>
                                 </div>
                             </td>
                             <td>
@@ -298,7 +310,7 @@ ob_start();
                         <!-- Employee Users Section -->
                         <?php if (!empty($attendance['user'])): ?>
                         <tr class="group-header">
-                            <td colspan="<?= in_array($user_role ?? '', ['owner', 'admin']) ? '5' : '4' ?>" style="background: #f8fafc; font-weight: 600; color: #374151; padding: 0.75rem 1rem; border-top: 2px solid #e5e7eb;">
+                            <td colspan="<?= in_array($user_role ?? '', ['owner', 'admin']) ? '7' : '6' ?>" style="background: #f8fafc; font-weight: 600; color: #374151; padding: 0.75rem 1rem; border-top: 2px solid #e5e7eb;">
                                 <span>👥</span> Employee Users
                             </td>
                         </tr>
@@ -314,6 +326,16 @@ ob_start();
                                     <div class="priority-badge">
                                         <span class="badge badge--<?= $record['status'] === 'Present' ? 'success' : 'danger' ?>"><?= $record['status'] ?? 'Absent' ?></span>
                                     </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="cell-meta">
+                                    <div class="cell-primary"><?= htmlspecialchars($record['location_display'] ?? '---') ?></div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="cell-meta">
+                                    <div class="cell-primary"><?= htmlspecialchars($record['project_name'] ?? '----') ?></div>
                                 </div>
                             </td>
                             <td>
@@ -371,6 +393,16 @@ ob_start();
                                     <div class="priority-badge">
                                         <span class="badge badge--<?= $record['status'] === 'Present' ? 'success' : 'danger' ?>"><?= $record['status'] ?? 'Present' ?></span>
                                     </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="cell-meta">
+                                    <div class="cell-primary"><?= htmlspecialchars($record['location_display'] ?? '---') ?></div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="cell-meta">
+                                    <div class="cell-primary"><?= htmlspecialchars($record['project_name'] ?? '----') ?></div>
                                 </div>
                             </td>
                             <td>
