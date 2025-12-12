@@ -642,9 +642,11 @@ function loadAllUsers() {
             if (data.success && data.users && data.users.length > 0) {
                 assignedToSelect.innerHTML = '<option value="">Select User</option>';
                 data.users.forEach(user => {
-                    // Skip users with IDs 1, 50, 70 (known owners) or owner/company_owner roles
-                    if (user.id == 1 || user.id == 50 || user.id == 70 || 
-                        (user.role && (user.role === 'owner' || user.role === 'company_owner'))) {
+                    // Skip owner/company_owner roles or users with owner-like names
+                    if ((user.role && (user.role === 'owner' || user.role === 'company_owner')) ||
+                        (user.name && (user.name.toLowerCase().includes('owner') || 
+                                      user.name.toLowerCase().includes('admin') && user.email && user.email.includes('ergon'))) ||
+                        (user.email && (user.email.includes('owner') || user.email.includes('admin@ergon')))) {
                         return;
                     }
                     const option = document.createElement('option');
