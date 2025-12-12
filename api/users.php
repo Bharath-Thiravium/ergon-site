@@ -1,4 +1,5 @@
 <?php
+<?php
 require_once __DIR__ . '/../app/config/session.php';
 require_once __DIR__ . '/../app/config/database.php';
 
@@ -14,7 +15,8 @@ header('Content-Type: application/json');
 try {
     $db = Database::connect();
     
-    $stmt = $db->prepare("SELECT id, name, email, role FROM users WHERE status = 'active' AND role != 'owner' ORDER BY name ASC");
+    // Get all active users
+    $stmt = $db->prepare("SELECT id, name, email FROM users WHERE status = 'active' ORDER BY name ASC");
     $stmt->execute();
     $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
     

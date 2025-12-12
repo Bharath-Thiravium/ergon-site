@@ -142,6 +142,57 @@ class SimpleAttendanceController extends Controller {
         exit;
     }
     
+    public function manual() {
+        $this->requireAuth();
+        
+        if (!in_array($_SESSION['role'], ['admin', 'owner'])) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'Access denied']);
+            exit;
+        }
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            try {
+                $userId = intval($_POST['user_id']);
+                $checkIn = $_POST['check_in'] ?? null;
+                $checkOut = $_POST['check_out'] ?? null;
+                $date = $_POST['date'] ?? date('Y-m-d');
+                
+                // Always check for existing record first
+                $stmt = $this->db->prepare("SELECT id FROM attendance WHERE user_id = ? AND DATE(check_in) = ?");
+                $stmt->execute([$userId, $date]);
+                $existing = $stmt->fetch();
+                
+                if ($existing) {
+                    // Update existing record
+                    $stmt = $this->db->prepare("UPDATE attendance SET check_in = ?, check_out = ?, manual_entry = 1, updated_at = NOW() WHERE id = ?");
+                    $stmt->execute([
+                        $date . ' ' . $checkIn,
+                        $checkOut ? $date . ' ' . $checkOut : null,
+                        $existing['id']
+                    ]);
+                } else {
+                    // Create new record only if none exists
+                    $stmt = $this->db->prepare("INSERT INTO attendance (user_id, check_in, check_out, status, location_name, manual_entry, created_at) VALUES (?, ?, ?, 'present', 'Manual Entry', 1, NOW())");
+                    $stmt->execute([
+                        $userId,
+                        $date . ' ' . $checkIn,
+                        $checkOut ? $date . ' ' . $checkOut : null
+                    ]);
+                }
+                
+                header('Content-Type: application/json');
+                echo json_encode(['success' => true, 'message' => 'Manual attendance recorded']);
+                exit;
+                
+            } catch (Exception $e) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+                exit;
+            }
+        }
+    }
+    
     public function clock() {
         $this->requireAuth();
         
@@ -334,6 +385,45 @@ class SimpleAttendanceController extends Controller {
             'total_minutes' => $remainingMinutes,
             'present_days' => $presentDays
         ];
+    }
+    
+    public function delete() {
+        $this->requireAuth();
+        
+        if (!in_array($_SESSION['role'], ['admin', 'owner'])) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'Access denied']);
+            exit;
+        }
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            try {
+                $attendanceId = intval($_POST['id'] ?? 0);
+                
+                if ($attendanceId <= 0) {
+                    throw new Exception('Invalid attendance ID');
+                }
+                
+                $stmt = $this->db->prepare("DELETE FROM attendance WHERE id = ?");
+                $result = $stmt->execute([$attendanceId]);
+                
+                if ($result && $stmt->rowCount() > 0) {
+                    header('Content-Type: application/json');
+                    echo json_encode(['success' => true, 'message' => 'Attendance record deleted successfully']);
+                } else {
+                    throw new Exception('Attendance record not found or could not be deleted');
+                }
+                
+            } catch (Exception $e) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+            }
+            exit;
+        }
+        
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'message' => 'Invalid request method']);
+        exit;
     }
 }
 ?>
