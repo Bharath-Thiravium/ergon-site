@@ -1,78 +1,76 @@
 <?php
-session_start();
 require_once __DIR__ . '/app/config/database.php';
-
-// Check if user is logged in
-if (!isset($_SESSION['user_id'])) {
-    echo "Please login first to create test attendance.";
-    exit;
-}
 
 try {
     $db = Database::connect();
     
-    $userId = $_SESSION['user_id'];
+    // Create attendance record for Nelson today
     $today = date('Y-m-d');
-    $checkInTime = $today . ' 08:30:00';
+    $checkInTime = $today . ' 17:30:33';
     
-    // Check if attendance already exists for today
-    $stmt = $db->prepare("SELECT id FROM attendance WHERE user_id = ? AND DATE(check_in) = ?");
-    $stmt->execute([$userId, $today]);
+    // First check if Nelson already has attendance today
+    $stmt = $db->prepare("SELECT * FROM attendance WHERE user_id = 37 AND DATE(check_in) = ?");
+    $stmt->execute([$today]);
     $existing = $stmt->fetch();
     
-    if ($existing) {
-        echo "Attendance record already exists for today. Updating location data...<br>";
-        
-        // Update existing record with proper location data
-        $stmt = $db->prepare("UPDATE attendance SET location_display = 'ERGON Company', location_name = 'ERGON Company', project_name = '----' WHERE user_id = ? AND DATE(check_in) = ?");
-        $result = $stmt->execute([$userId, $today]);
-        
-        if ($result) {
-            echo "✅ Updated existing attendance record with location data!<br>";
-        } else {
-            echo "❌ Failed to update existing record.<br>";
+    if (!$existing) {
+        // Create new attendance record for Nelson
+        $stmt = $db->prepare("INSERT INTO attendance (user_id, check_in, location_name, location_display, project_name, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
+        if ($stmt->execute([37, $checkInTime, 'Main Office', 'ERGON Company', 'Project Alpha'])) {
+            echo "✅ Created attendance record for Nelson\n";
         }
     } else {
-        echo "Creating new attendance record for today...<br>";
-        
-        // Create new attendance record
-        $stmt = $db->prepare("INSERT INTO attendance (user_id, check_in, location_name, location_display, project_name, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
-        $result = $stmt->execute([
-            $userId,
-            $checkInTime,
-            'ERGON Company',
-            'ERGON Company',
-            '----'
-        ]);
-        
-        if ($result) {
-            echo "✅ Created new attendance record successfully!<br>";
-            echo "User ID: $userId<br>";
-            echo "Check In: $checkInTime<br>";
-            echo "Location: ERGON Company<br>";
-        } else {
-            echo "❌ Failed to create attendance record.<br>";
+        // Update existing record
+        $stmt = $db->prepare("UPDATE attendance SET location_display = 'ERGON Company', project_name = 'Project Alpha' WHERE id = ?");
+        if ($stmt->execute([$existing['id']])) {
+            echo "✅ Updated existing attendance record for Nelson\n";
         }
     }
     
-    // Verify the record
-    $stmt = $db->prepare("SELECT * FROM attendance WHERE user_id = ? AND DATE(check_in) = ?");
-    $stmt->execute([$userId, $today]);
-    $record = $stmt->fetch(PDO::FETCH_ASSOC);
+    // Update ALL attendance records to ensure they have location and project data
+    $stmt = $db->prepare("
+        UPDATE attendance 
+        SET 
+            location_display = COALESCE(
+                NULLIF(location_display, ''),
+                CASE 
+                    WHEN location_name IS NOT NULL AND location_name != '' AND location_name != 'Office' THEN location_name
+                    ELSE 'ERGON Company'
+                END
+            ),
+            project_name = COALESCE(
+                NULLIF(project_name, ''),
+                'Project Alpha'
+            )
+        WHERE check_in IS NOT NULL
+    ");
     
-    if ($record) {
-        echo "<br><strong>Current Record:</strong><br>";
-        echo "ID: " . $record['id'] . "<br>";
-        echo "Check In: " . $record['check_in'] . "<br>";
-        echo "Check Out: " . ($record['check_out'] ?: 'Not set') . "<br>";
-        echo "Location Name: " . ($record['location_name'] ?: 'NULL') . "<br>";
-        echo "Location Display: " . ($record['location_display'] ?: 'NULL') . "<br>";
-        echo "Project Name: " . ($record['project_name'] ?: 'NULL') . "<br>";
-        
-        echo "<br><strong>✅ Test attendance record is ready! Please refresh the attendance page.</strong>";
+    if ($stmt->execute()) {
+        echo "✅ Updated " . $stmt->rowCount() . " attendance records with location/project data\n";
     }
     
+    // Show current attendance for today
+    echo "\n=== Today's attendance after update ===\n";
+    $stmt = $db->prepare("
+        SELECT u.name, u.role, a.check_in, a.location_display, a.project_name
+        FROM users u
+        LEFT JOIN attendance a ON u.id = a.user_id AND DATE(a.check_in) = ?
+        WHERE u.status = 'active'
+        ORDER BY u.role DESC, u.name
+    ");
+    $stmt->execute([$today]);
+    $results = $stmt->fetchAll();
+    
+    foreach ($results as $result) {
+        $status = $result['check_in'] ? 'Present' : 'Absent';
+        $location = $result['location_display'] ?: '---';
+        $project = $result['project_name'] ?: '----';
+        echo "{$result['name']} ({$result['role']}): $status - Location: $location, Project: $project\n";
+    }
+    
+    echo "\n✅ Test attendance created and all records updated!\n";
+    
 } catch (Exception $e) {
-    echo "Error: " . $e->getMessage();
+    echo "❌ Error: " . $e->getMessage() . "\n";
 }
 ?>
