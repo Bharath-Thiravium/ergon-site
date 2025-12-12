@@ -53,8 +53,6 @@ class Task {
     }
     
     public function updateProgress($taskId, $userId, $progress, $description = null) {
-        $this->conn->beginTransaction();
-        
         try {
             // Get current progress and status for history
             $query = "SELECT progress, status FROM tasks WHERE id = ?";
@@ -76,19 +74,19 @@ class Task {
             $stmt->execute([$progress, $newStatus, $description, $taskId]);
             
             // Insert progress history record
-            $query = "INSERT INTO task_progress_history (task_id, user_id, progress_from, progress_to, description, status_from, status_to) 
-                      VALUES (?, ?, ?, ?, ?, ?, ?)";
+            $query = "INSERT INTO task_progress_history (task_id, user_id, progress_from, progress_to, description, status_from, status_to, created_at) 
+                      VALUES (?, ?, ?, ?, ?, ?, ?, NOW())";
             $stmt = $this->conn->prepare($query);
             $stmt->execute([$taskId, $userId, $oldProgress, $progress, $description, $oldStatus, $newStatus]);
             
-            $this->conn->commit();
             return true;
         } catch (Exception $e) {
-            $this->conn->rollback();
             error_log('Progress update error: ' . $e->getMessage());
             return false;
         }
     }
+    
+
     
     public function getProgressHistory($taskId) {
         $query = "SELECT h.*, u.name as user_name 

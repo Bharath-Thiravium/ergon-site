@@ -71,20 +71,44 @@ function saveProgress() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
+            // Update progress in task list if present
             var container = document.querySelector('[data-task-id="' + currentTaskId + '"]');
             if (container) {
                 var fill = container.querySelector('.progress-fill');
                 var percentage = container.querySelector('.progress-percentage');
                 var statusEl = container.querySelector('.progress-status');
                 
-                fill.style.width = progress + '%';
-                fill.style.background = getProgressColor(progress);
-                percentage.textContent = progress + '%';
+                if (fill) fill.style.width = progress + '%';
+                if (fill) fill.style.background = getProgressColor(progress);
+                if (percentage) percentage.textContent = progress + '%';
                 
                 var status = progress >= 100 ? 'completed' : progress > 0 ? 'in_progress' : 'assigned';
                 var icon = status === 'completed' ? '✅' : status === 'in_progress' ? '⚡' : '📋';
-                statusEl.textContent = icon + ' ' + status.replace('_', ' ');
+                if (statusEl) statusEl.textContent = icon + ' ' + status.replace('_', ' ');
             }
+            
+            // Update mini progress bar on view page
+            var miniProgressFill = document.querySelector('.progress-fill-mini');
+            var miniProgressText = document.querySelector('.progress-text');
+            if (miniProgressFill) {
+                miniProgressFill.style.width = progress + '%';
+                var progressRange = progress == 0 ? '0' : progress >= 100 ? '100' : progress >= 75 ? '75-99' : progress >= 50 ? '50-74' : progress >= 25 ? '25-49' : '1-24';
+                miniProgressFill.setAttribute('data-progress', progressRange);
+            }
+            if (miniProgressText) miniProgressText.textContent = progress + '%';
+            
+            // Update status badge on view page
+            var statusBadges = document.querySelectorAll('.badge');
+            statusBadges.forEach(badge => {
+                if (badge.textContent.includes('Assigned') || badge.textContent.includes('In Progress') || badge.textContent.includes('Completed')) {
+                    var status = progress >= 100 ? 'completed' : progress > 0 ? 'in_progress' : 'assigned';
+                    var icon = status === 'completed' ? '✅' : status === 'in_progress' ? '⚡' : '📋';
+                    var statusText = status === 'completed' ? 'Completed' : status === 'in_progress' ? 'In Progress' : 'Assigned';
+                    badge.textContent = icon + ' ' + statusText;
+                    badge.className = 'badge badge--' + (status === 'completed' ? 'success' : status === 'in_progress' ? 'info' : 'warning');
+                }
+            });
+            
             closeDialog();
             
             // Show success message
@@ -122,7 +146,7 @@ function showProgressHistory(taskId) {
             document.getElementById('progressHistoryContent').innerHTML = data.html;
             document.getElementById('progressHistoryDialog').style.display = 'flex';
         } else {
-            alert('Error loading progress history');
+            alert('Error loading progress history: ' + (data.error || 'Unknown error'));
         }
     })
     .catch(error => {
