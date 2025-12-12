@@ -79,7 +79,7 @@ class TasksController extends Controller {
             $db = Database::connect();
             $this->ensureTasksTable($db);
             
-            $stmt = $db->prepare("SELECT id, name, email FROM users WHERE status = 'active' ORDER BY name");
+            $stmt = $db->prepare("SELECT id, name, email FROM users WHERE status = 'active' AND role IN ('admin', 'user') ORDER BY name");
             $stmt->execute();
             $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
             

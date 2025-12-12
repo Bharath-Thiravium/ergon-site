@@ -603,7 +603,7 @@ function loadAllUsers() {
     const assignedToSelect = document.getElementById('assigned_to');
     assignedToSelect.innerHTML = '<option value="">Loading users...</option>';
     
-    fetch('/ergon-site/api/users')
+    fetch('/ergon-site/api/users?v=' + Date.now())
         .then(response => {
             if (!response.ok) throw new Error('HTTP ' + response.status);
             return response.text();
@@ -614,6 +614,11 @@ function loadAllUsers() {
                 if (data.success && data.users && data.users.length > 0) {
                     assignedToSelect.innerHTML = '<option value="">Select User</option>';
                     data.users.forEach(user => {
+                        // Skip users with IDs 1, 50, 70 (known owners) or owner/company_owner roles
+                        if (user.id == 1 || user.id == 50 || user.id == 70 || 
+                            (user.role && (user.role === 'owner' || user.role === 'company_owner'))) {
+                            return;
+                        }
                         const option = document.createElement('option');
                         option.value = user.id;
                         option.textContent = user.name + (user.email ? ' (' + user.email + ')' : '');

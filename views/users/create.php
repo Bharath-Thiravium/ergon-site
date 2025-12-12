@@ -67,10 +67,7 @@ if (isset($_GET['success'])): ?>
                     <select name="role" class="form-control" required>
                         <option value="user" <?= ($old_data['role'] ?? 'user') === 'user' ? 'selected' : '' ?>>User</option>
                         <option value="admin" <?= ($old_data['role'] ?? '') === 'admin' ? 'selected' : '' ?>>Admin</option>
-                        <?php if (in_array($_SESSION['role'] ?? '', ['owner', 'admin'])): ?>
-                        <option value="owner" <?= ($old_data['role'] ?? '') === 'owner' ? 'selected' : '' ?>>Owner</option>
-                        <option value="company_owner" <?= ($old_data['role'] ?? '') === 'company_owner' ? 'selected' : '' ?>>Company Owner</option>
-                        <?php endif; ?>
+
                     </select>
                 </div>
                 <div class="form-group">

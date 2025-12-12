@@ -1,7 +1,12 @@
 <?php
-<?php
+// Prevent any output before JSON
+ob_start();
+
 require_once __DIR__ . '/../app/config/session.php';
 require_once __DIR__ . '/../app/config/database.php';
+
+// Clear any previous output
+ob_clean();
 
 // Check authentication
 if (!isset($_SESSION['user_id'])) {
@@ -15,8 +20,8 @@ header('Content-Type: application/json');
 try {
     $db = Database::connect();
     
-    // Get all active users
-    $stmt = $db->prepare("SELECT id, name, email FROM users WHERE status = 'active' ORDER BY name ASC");
+    // Get active users excluding owners and company owners
+    $stmt = $db->prepare("SELECT id, name, email, role FROM users WHERE status = 'active' AND role IN ('admin', 'user') ORDER BY name ASC");
     $stmt->execute();
     $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
