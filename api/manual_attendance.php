@@ -39,6 +39,11 @@ try {
         
         $db->beginTransaction();
         
+        // First, always check for existing record for this user and date
+        $stmt = $db->prepare("SELECT id, check_in, check_out FROM attendance WHERE user_id = ? AND DATE(check_in) = ?");
+        $stmt->execute([$userId, $entryDate]);
+        $existing = $stmt->fetch(PDO::FETCH_ASSOC);
+        
         if ($entryType === 'full_day') {
             if (!$clockInTime || !$clockOutTime) {
                 throw new Exception('Clock in and out times required for full day entry');
@@ -46,16 +51,12 @@ try {
             $clockInDateTime = $entryDate . ' ' . $clockInTime . ':00';
             $clockOutDateTime = $entryDate . ' ' . $clockOutTime . ':00';
             
-            $stmt = $db->prepare("SELECT id FROM attendance WHERE user_id = ? AND date = ?");
-            $stmt->execute([$userId, $entryDate]);
-            $existing = $stmt->fetch(PDO::FETCH_ASSOC);
-            
             if ($existing) {
                 $stmt = $db->prepare("UPDATE attendance SET check_in = ?, check_out = ?, manual_entry = 1, edit_reason = ?, edited_by = ?, updated_at = NOW() WHERE id = ?");
                 $stmt->execute([$clockInDateTime, $clockOutDateTime, "$reason: $notes", $_SESSION['user_id'], $existing['id']]);
             } else {
-                $stmt = $db->prepare("INSERT INTO attendance (user_id, date, check_in, check_out, status, manual_entry, edit_reason, created_at) VALUES (?, ?, ?, ?, 'present', 1, ?, NOW())");
-                $stmt->execute([$userId, $entryDate, $clockInDateTime, $clockOutDateTime, "$reason: $notes"]);
+                $stmt = $db->prepare("INSERT INTO attendance (user_id, check_in, check_out, status, manual_entry, edit_reason, created_at) VALUES (?, ?, ?, 'present', 1, ?, NOW())");
+                $stmt->execute([$userId, $clockInDateTime, $clockOutDateTime, "$reason: $notes"]);
             }
         } else {
             if (!$entryTime) {
@@ -64,22 +65,18 @@ try {
             $entryDateTime = $entryDate . ' ' . $entryTime . ':00';
             
             if ($entryType === 'clock_in') {
-                $stmt = $db->prepare("SELECT id FROM attendance WHERE user_id = ? AND date = ?");
-                $stmt->execute([$userId, $entryDate]);
-                $existing = $stmt->fetch(PDO::FETCH_ASSOC);
-                
                 if ($existing) {
                     $stmt = $db->prepare("UPDATE attendance SET check_in = ?, manual_entry = 1, edit_reason = ?, edited_by = ?, updated_at = NOW() WHERE id = ?");
                     $stmt->execute([$entryDateTime, "$reason: $notes", $_SESSION['user_id'], $existing['id']]);
                 } else {
-                    $stmt = $db->prepare("INSERT INTO attendance (user_id, date, check_in, status, manual_entry, edit_reason, created_at) VALUES (?, ?, ?, 'present', 1, ?, NOW())");
-                    $stmt->execute([$userId, $entryDate, $entryDateTime, "$reason: $notes"]);
+                    $stmt = $db->prepare("INSERT INTO attendance (user_id, check_in, status, manual_entry, edit_reason, created_at) VALUES (?, ?, 'present', 1, ?, NOW())");
+                    $stmt->execute([$userId, $entryDateTime, "$reason: $notes"]);
                 }
             } else if ($entryType === 'clock_out') {
-                $stmt = $db->prepare("UPDATE attendance SET check_out = ?, manual_entry = 1, edit_reason = ?, edited_by = ?, updated_at = NOW() WHERE user_id = ? AND date = ?");
-                $stmt->execute([$entryDateTime, "$reason: $notes", $_SESSION['user_id'], $userId, $entryDate]);
-                
-                if ($stmt->rowCount() === 0) {
+                if ($existing) {
+                    $stmt = $db->prepare("UPDATE attendance SET check_out = ?, manual_entry = 1, edit_reason = ?, edited_by = ?, updated_at = NOW() WHERE id = ?");
+                    $stmt->execute([$entryDateTime, "$reason: $notes", $_SESSION['user_id'], $existing['id']]);
+                } else {
                     throw new Exception('No check-in record found. Please add check-in first.');
                 }
             } else {

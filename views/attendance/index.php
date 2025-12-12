@@ -827,7 +827,7 @@ function deleteAttendanceRecord(attendanceId) {
         fetch('/ergon-site/attendance/delete', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `attendance_id=${attendanceId}`
+            body: `id=${attendanceId}`
         })
         .then(response => response.json())
         .then(data => {

@@ -676,6 +676,48 @@ class AttendanceController extends Controller {
         ];
     }
     
+    public function delete() {
+        $this->requireAuth();
+        
+        if (!in_array($_SESSION['role'], ['admin', 'owner'])) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'Access denied']);
+            exit;
+        }
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            try {
+                require_once __DIR__ . '/../config/database.php';
+                $db = Database::connect();
+                
+                $attendanceId = intval($_POST['id'] ?? 0);
+                
+                if ($attendanceId <= 0) {
+                    throw new Exception('Invalid attendance ID');
+                }
+                
+                $stmt = $db->prepare("DELETE FROM attendance WHERE id = ?");
+                $result = $stmt->execute([$attendanceId]);
+                
+                if ($result && $stmt->rowCount() > 0) {
+                    header('Content-Type: application/json');
+                    echo json_encode(['success' => true, 'message' => 'Attendance record deleted successfully']);
+                } else {
+                    throw new Exception('Attendance record not found or could not be deleted');
+                }
+                
+            } catch (Exception $e) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+            }
+            exit;
+        }
+        
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'message' => 'Invalid request method']);
+        exit;
+    }
+    
     public function serviceHistory() {
         $this->requireAuth();
         $this->view('attendance/service_history', ['active_page' => 'attendance']);

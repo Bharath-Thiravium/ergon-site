@@ -50,38 +50,39 @@ try {
         
         $db->beginTransaction();
         
+        // Check for existing record first
+        $stmt = $db->prepare("SELECT id FROM attendance WHERE user_id = ? AND DATE(check_in) = ?");
+        $stmt->execute([$userId, $entryDate]);
+        $existing = $stmt->fetch(PDO::FETCH_ASSOC);
+        
         if ($entryType === 'full_day') {
             $clockInDateTime = $entryDate . ' ' . $clockInTime . ':00';
             $clockOutDateTime = $entryDate . ' ' . $clockOutTime . ':00';
             
-            $stmt = $db->prepare("
-                INSERT INTO attendance (user_id, check_in, check_out, date, status)
-                VALUES (?, ?, ?, ?, 'present')
-                ON DUPLICATE KEY UPDATE 
-                check_in = VALUES(check_in), 
-                check_out = VALUES(check_out)
-            ");
-            $stmt->execute([$userId, $clockInDateTime, $clockOutDateTime, $entryDate]);
+            if ($existing) {
+                $stmt = $db->prepare("UPDATE attendance SET check_in = ?, check_out = ? WHERE id = ?");
+                $stmt->execute([$clockInDateTime, $clockOutDateTime, $existing['id']]);
+            } else {
+                $stmt = $db->prepare("INSERT INTO attendance (user_id, check_in, check_out, status) VALUES (?, ?, ?, 'present')");
+                $stmt->execute([$userId, $clockInDateTime, $clockOutDateTime]);
+            }
             
         } else {
             $entryDateTime = $entryDate . ' ' . $entryTime . ':00';
             
             if ($entryType === 'clock_in') {
-                $stmt = $db->prepare("
-                    INSERT INTO attendance (user_id, check_in, date, status)
-                    VALUES (?, ?, ?, 'present')
-                    ON DUPLICATE KEY UPDATE check_in = VALUES(check_in)
-                ");
-                $stmt->execute([$userId, $entryDateTime, $entryDate]);
+                if ($existing) {
+                    $stmt = $db->prepare("UPDATE attendance SET check_in = ? WHERE id = ?");
+                    $stmt->execute([$entryDateTime, $existing['id']]);
+                } else {
+                    $stmt = $db->prepare("INSERT INTO attendance (user_id, check_in, status) VALUES (?, ?, 'present')");
+                    $stmt->execute([$userId, $entryDateTime]);
+                }
             } else {
-                $stmt = $db->prepare("
-                    UPDATE attendance 
-                    SET check_out = ? 
-                    WHERE user_id = ? AND date = ?
-                ");
-                $result = $stmt->execute([$entryDateTime, $userId, $entryDate]);
-                
-                if ($stmt->rowCount() === 0) {
+                if ($existing) {
+                    $stmt = $db->prepare("UPDATE attendance SET check_out = ? WHERE id = ?");
+                    $stmt->execute([$entryDateTime, $existing['id']]);
+                } else {
                     throw new Exception('No clock-in record found');
                 }
             }
