@@ -25,9 +25,17 @@ class AttendanceController extends Controller {
             require_once __DIR__ . '/../config/database.php';
             $db = Database::connect();
             
+            // Get available projects for fallback
+            $projectStmt = $db->prepare("SELECT name, place FROM projects WHERE status = 'active' ORDER BY name ASC LIMIT 1");
+            $projectStmt->execute();
+            $defaultProject = $projectStmt->fetch(PDO::FETCH_ASSOC);
+            
+            $defaultProjectName = $defaultProject['name'] ?? '----';
+            $defaultLocation = $defaultProject['place'] ?? '---';
+            
             $dateCondition = $this->getDateCondition($filter);
             
-            $stmt = $db->prepare("SELECT a.*, u.name as user_name, CASE WHEN a.location_display IS NOT NULL AND a.location_display != '' THEN a.location_display WHEN p.location_title IS NOT NULL AND p.location_title != '' THEN p.location_title WHEN p.name IS NOT NULL AND p.name != '' THEN CONCAT(p.name, ' Site') WHEN a.location_name IS NOT NULL AND a.location_name != '' AND a.location_name != 'Office' THEN a.location_name WHEN a.check_in IS NOT NULL THEN 'ERGON Company' ELSE '---' END as location_display, CASE WHEN a.project_name IS NOT NULL AND a.project_name != '' THEN a.project_name WHEN p.name IS NOT NULL AND p.name != '' THEN p.name WHEN a.check_in IS NOT NULL THEN '----' ELSE '----' END as project_name, COALESCE(d.name, 'Not Assigned') as department, CASE WHEN a.check_in IS NOT NULL AND a.check_out IS NOT NULL THEN CONCAT(FLOOR(TIMESTAMPDIFF(MINUTE, a.check_in, a.check_out) / 60), 'h ', MOD(TIMESTAMPDIFF(MINUTE, a.check_in, a.check_out), 60), 'm') ELSE '0h 0m' END as working_hours FROM attendance a LEFT JOIN users u ON a.user_id = u.id LEFT JOIN departments d ON u.department_id = d.id LEFT JOIN projects p ON a.project_id = p.id WHERE a.user_id = ? AND $dateCondition ORDER BY a.check_in DESC");
+            $stmt = $db->prepare("SELECT a.*, u.name as user_name, CASE WHEN a.location_display IS NOT NULL AND a.location_display != '' THEN a.location_display WHEN p.place IS NOT NULL AND p.place != '' THEN p.place WHEN p.name IS NOT NULL AND p.name != '' THEN CONCAT(p.name, ' Site') WHEN a.location_name IS NOT NULL AND a.location_name != '' AND a.location_name != 'Office' THEN a.location_name WHEN a.check_in IS NOT NULL THEN '$defaultLocation' ELSE '---' END as location_display, CASE WHEN a.project_name IS NOT NULL AND a.project_name != '' THEN a.project_name WHEN p.name IS NOT NULL AND p.name != '' THEN p.name WHEN a.check_in IS NOT NULL THEN '$defaultProjectName' ELSE '----' END as project_name, COALESCE(d.name, 'Not Assigned') as department, CASE WHEN a.check_in IS NOT NULL AND a.check_out IS NOT NULL THEN CONCAT(FLOOR(TIMESTAMPDIFF(MINUTE, a.check_in, a.check_out) / 60), 'h ', MOD(TIMESTAMPDIFF(MINUTE, a.check_in, a.check_out), 60), 'm') ELSE '0h 0m' END as working_hours FROM attendance a LEFT JOIN users u ON a.user_id = u.id LEFT JOIN departments d ON u.department_id = d.id LEFT JOIN projects p ON a.project_id = p.id WHERE a.user_id = ? AND $dateCondition ORDER BY a.check_in DESC");
             $stmt->execute([$_SESSION['user_id']]);
             $attendance = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
@@ -40,14 +48,14 @@ class AttendanceController extends Controller {
                     $project = $updateStmt->fetch(PDO::FETCH_ASSOC);
                     
                     if ($project) {
-                        $record['location_display'] = $project['place'] ?: 'ERGON Company';
-                        $record['project_name'] = $project['name'] ?: '----';
+                        $record['location_display'] = $project['place'] ?: $defaultLocation;
+                        $record['project_name'] = $project['name'] ?: $defaultProjectName;
                         error_log("[ATTENDANCE_FIX] Updated record: Location={$record['location_display']}, Project={$record['project_name']}");
                     }
                 } else {
-                    // No project_id, use company defaults
-                    $record['location_display'] = 'ERGON Company';
-                    $record['project_name'] = '----';
+                    // No project_id, use project defaults
+                    $record['location_display'] = $defaultLocation;
+                    $record['project_name'] = $defaultProjectName;
                 }
             }
             
@@ -91,6 +99,14 @@ class AttendanceController extends Controller {
             
             $roleFilter = ($role === 'owner') ? "u.role IN ('admin', 'user', 'owner')" : "u.role = 'user'";
             
+            // Get available projects for fallback
+            $projectStmt = $db->prepare("SELECT name, place FROM projects WHERE status = 'active' ORDER BY name ASC LIMIT 1");
+            $projectStmt->execute();
+            $defaultProject = $projectStmt->fetch(PDO::FETCH_ASSOC);
+            
+            $defaultProjectName = $defaultProject['name'] ?? '----';
+            $defaultLocation = $defaultProject['place'] ?? '---';
+            
             // Get users with attendance including location data from projects table
             $stmt = $db->prepare("
                 SELECT 
@@ -108,13 +124,13 @@ class AttendanceController extends Controller {
                         WHEN p.location_title IS NOT NULL AND p.location_title != '' THEN p.location_title
                         WHEN p.name IS NOT NULL AND p.name != '' THEN CONCAT(p.name, ' Site')
                         WHEN a.location_name IS NOT NULL AND a.location_name != '' AND a.location_name != 'Office' THEN a.location_name
-                        WHEN a.check_in IS NOT NULL THEN 'ERGON Company'
+                        WHEN a.check_in IS NOT NULL THEN '$defaultLocation'
                         ELSE '---'
                     END as location_display,
                     CASE 
                         WHEN a.project_name IS NOT NULL AND a.project_name != '' THEN a.project_name
                         WHEN p.name IS NOT NULL AND p.name != '' THEN p.name
-                        WHEN a.check_in IS NOT NULL THEN '----'
+                        WHEN a.check_in IS NOT NULL THEN '$defaultProjectName'
                         ELSE '----'
                     END as project_name,
                     CASE 

@@ -47,7 +47,8 @@ class SettingsController extends Controller {
                     'office_latitude' => floatval($_POST['office_latitude'] ?? 0),
                     'office_longitude' => floatval($_POST['office_longitude'] ?? 0),
                     'attendance_radius' => max(5, min(1000, intval($_POST['attendance_radius'] ?? 50))),
-                    'location_title' => trim($_POST['location_title'] ?? 'Main Office')
+                    'location_title' => trim($_POST['location_title'] ?? 'Main Office'),
+                    'office_address' => trim($_POST['office_address'] ?? '')
                 ];
                 
                 $result = $this->updateSettings($settings);
@@ -112,9 +113,15 @@ class SettingsController extends Controller {
                 base_location_lat DECIMAL(10,8) DEFAULT 0,
                 base_location_lng DECIMAL(11,8) DEFAULT 0,
                 attendance_radius INT DEFAULT 5,
+                office_address TEXT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             )", "Create table");
+            
+            // Add address column if it doesn't exist
+            try {
+                DatabaseHelper::safeExec($this->db, "ALTER TABLE settings ADD COLUMN office_address TEXT NULL", "Alter table");
+            } catch (Exception $e) {}
             
             $stmt = $this->db->query("SELECT * FROM settings LIMIT 1");
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -168,6 +175,7 @@ class SettingsController extends Controller {
                         base_location_lng = ?, 
                         attendance_radius = ?,
                         location_title = ?,
+                        office_address = ?,
                         updated_at = NOW()
                         WHERE id = ?";
                 
@@ -178,18 +186,20 @@ class SettingsController extends Controller {
                     $settings['office_longitude'],
                     $settings['attendance_radius'],
                     $settings['location_title'] ?? 'Main Office',
+                    $settings['office_address'],
                     $result['id']
                 ]);
             } else {
                 // Insert new record
-                $sql = "INSERT INTO settings (company_name, base_location_lat, base_location_lng, attendance_radius, location_title) VALUES (?, ?, ?, ?, ?)";
+                $sql = "INSERT INTO settings (company_name, base_location_lat, base_location_lng, attendance_radius, location_title, office_address) VALUES (?, ?, ?, ?, ?, ?)";
                 $stmt = $this->db->prepare($sql);
                 $success = $stmt->execute([
                     $settings['company_name'],
                     $settings['office_latitude'],
                     $settings['office_longitude'],
                     $settings['attendance_radius'],
-                    $settings['location_title'] ?? 'Main Office'
+                    $settings['location_title'] ?? 'Main Office',
+                    $settings['office_address']
                 ]);
             }
             

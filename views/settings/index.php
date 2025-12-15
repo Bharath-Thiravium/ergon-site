@@ -42,6 +42,12 @@ ob_start();
                 </div>
 
                 <div class="form-group">
+                    <label class="form-label">Office Address</label>
+                    <textarea class="form-control" name="office_address" rows="3" placeholder="Enter office address..."><?= htmlspecialchars($settings['office_address'] ?? '') ?></textarea>
+                    <small class="form-text">Complete office address for reports and documentation</small>
+                </div>
+
+                <div class="form-group">
                     <label class="form-label">Office Location Coordinates</label>
                     <div class="location-controls">
                         <button type="button" class="btn-location-small" onclick="getCurrentLocation()" title="Use Current Location">
@@ -116,6 +122,7 @@ function getCurrentLocation() {
                 document.getElementById('office_longitude').value = lng.toFixed(6);
                 
                 updatePreviewMap(lat, lng);
+                reverseGeocode(lat, lng);
             },
             function(error) {
                 alert('Error getting location: ' + error.message);
@@ -134,7 +141,7 @@ function reverseGeocode(lat, lng) {
         })
         .then(data => {
             if (data.display_name) {
-                const addressField = document.getElementById('office_address');
+                const addressField = document.querySelector('textarea[name="office_address"]');
                 if (addressField) {
                     addressField.value = data.display_name;
                 }
@@ -142,7 +149,7 @@ function reverseGeocode(lat, lng) {
         })
         .catch(error => {
             console.warn('Reverse geocoding failed:', error);
-            const addressField = document.getElementById('office_address');
+            const addressField = document.querySelector('textarea[name="office_address"]');
             if (addressField) {
                 addressField.value = `${lat}, ${lng}`;
             }
@@ -176,6 +183,7 @@ function initPreviewMap() {
             const pos = e.target.getLatLng();
             document.getElementById('office_latitude').value = pos.lat.toFixed(6);
             document.getElementById('office_longitude').value = pos.lng.toFixed(6);
+            reverseGeocode(pos.lat, pos.lng);
         });
         
         console.log('Preview map initialized successfully');
