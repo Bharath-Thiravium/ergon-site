@@ -215,22 +215,19 @@ class SimpleAttendanceController extends Controller {
                         exit;
                     }
                     
-                    $currentTime = date('Y-m-d H:i:s');
-                    // Check if latitude/longitude columns exist before using them
-                    try {
-                        $stmt = $this->db->query("SHOW COLUMNS FROM attendance LIKE 'latitude'");
-                        $hasLocationColumns = $stmt->rowCount() > 0;
-                    } catch (Exception $e) {
-                        $hasLocationColumns = false;
+                    // Validate GPS coordinates
+                    if (!$latitude || !$longitude) {
+                        echo json_encode(['success' => false, 'error' => 'GPS location is required for attendance']);
+                        exit;
                     }
                     
-                    if ($hasLocationColumns) {
-                        $stmt = $this->db->prepare("INSERT INTO attendance (user_id, check_in, latitude, longitude, created_at) VALUES (?, ?, ?, ?, ?)");
-                        $result = $stmt->execute([$userId, $currentTime, $latitude, $longitude, $currentTime]);
-                    } else {
-                        $stmt = $this->db->prepare("INSERT INTO attendance (user_id, check_in, created_at) VALUES (?, ?, ?)");
-                        $result = $stmt->execute([$userId, $currentTime, $currentTime]);
-                    }
+                    $currentTime = date('Y-m-d H:i:s');
+                    
+                    // Check for project match based on GPS coordinates
+                    $projectId = $this->getProjectIdByGPS($latitude, $longitude);
+                    
+                    $stmt = $this->db->prepare("INSERT INTO attendance (user_id, project_id, check_in, latitude, longitude, location_name, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)");
+                    $result = $stmt->execute([$userId, $projectId, $currentTime, $latitude, $longitude, 'Office', $currentTime]);
                     
                     echo json_encode([
                         'success' => $result,
@@ -358,6 +355,40 @@ class SimpleAttendanceController extends Controller {
             default:
                 return "DATE(a.check_in) = CURDATE()";
         }
+    }
+    
+    private function getProjectIdByGPS($latitude, $longitude) {
+        try {
+            $stmt = $this->db->prepare("SELECT id, latitude, longitude, checkin_radius FROM projects WHERE latitude IS NOT NULL AND longitude IS NOT NULL AND status = 'active'");
+            $stmt->execute();
+            $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            foreach ($projects as $project) {
+                if ($project['latitude'] != 0 && $project['longitude'] != 0) {
+                    $distance = $this->calculateDistance($latitude, $longitude, $project['latitude'], $project['longitude']);
+                    
+                    if ($distance <= $project['checkin_radius']) {
+                        return $project['id'];
+                    }
+                }
+            }
+        } catch (Exception $e) {
+            error_log('GPS project matching error: ' . $e->getMessage());
+        }
+        
+        return null; // No project match found
+    }
+    
+    private function calculateDistance($lat1, $lng1, $lat2, $lng2) {
+        $earthRadius = 6371000; // Earth radius in meters
+        
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLng = deg2rad($lng2 - $lng1);
+        
+        $a = sin($dLat/2) * sin($dLat/2) + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * sin($dLng/2) * sin($dLng/2);
+        $c = 2 * atan2(sqrt($a), sqrt(1-$a));
+        
+        return $earthRadius * $c; // Distance in meters
     }
     
     private function calculateUserStats($attendance) {
