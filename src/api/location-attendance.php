@@ -58,6 +58,7 @@ try {
                 'distance' => round($distance, 2),
                 'allowed_radius' => $settings['attendance_radius'],
                 'project_name' => $settings['location_title'] ?: 'Main Office'
+                // No project_id assigned for office location - only assign when GPS matches specific project
             ]);
             exit;
         }

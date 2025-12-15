@@ -143,19 +143,41 @@ class UnifiedAttendanceController extends Controller {
                 return ['success' => false, 'error' => 'You are on approved leave today'];
             }
             
-            // Insert attendance record
+            // Check for project match based on GPS coordinates
+            $projectId = null;
+            $locationName = 'Office';
+            
+            if ($latitude && $longitude) {
+                // Check all active projects for GPS coordinate match
+                $stmt = $this->db->prepare("SELECT id, name, latitude, longitude, checkin_radius, location_title FROM projects WHERE latitude IS NOT NULL AND longitude IS NOT NULL AND status = 'active'");
+                $stmt->execute();
+                $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                
+                foreach ($projects as $project) {
+                    $distance = $this->calculateDistance($latitude, $longitude, $project['latitude'], $project['longitude']);
+                    if ($distance <= $project['checkin_radius']) {
+                        $projectId = $project['id'];
+                        $locationName = $project['location_title'] ?: $project['name'];
+                        break; // Use first matching project
+                    }
+                }
+            }
+            
+            // Insert attendance record - only assign project_id if GPS coordinates match a project
             $stmt = $this->db->prepare("
-                INSERT INTO attendance (user_id, check_in, created_at) 
-                VALUES (?, NOW(), NOW())
+                INSERT INTO attendance (user_id, check_in, latitude, longitude, location_name, project_id, created_at) 
+                VALUES (?, NOW(), ?, ?, ?, ?, NOW())
             ");
             
-            $result = $stmt->execute([$userId]);
+            $result = $stmt->execute([$userId, $latitude, $longitude, $locationName, $projectId]);
             
             if ($result) {
                 return [
                     'success' => true,
                     'message' => 'Clocked in successfully',
-                    'time' => date('H:i:s')
+                    'time' => date('H:i:s'),
+                    'project_id' => $projectId,
+                    'location' => $locationName
                 ];
             }
             
