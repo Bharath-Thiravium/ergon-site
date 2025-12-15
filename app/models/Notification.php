@@ -86,7 +86,7 @@ class Notification {
             LEFT JOIN users u ON n.sender_id = u.id 
             WHERE n.receiver_id = ? AND n.sender_id != ?
             AND (n.message LIKE '%₹%' OR n.reference_type NOT IN ('advance', 'expense'))
-            GROUP BY n.id, n.title, n.message, n.reference_type, n.reference_id
+            GROUP BY n.id
             ORDER BY n.is_read ASC, n.created_at DESC 
             LIMIT ?
         ");
@@ -101,7 +101,7 @@ class Notification {
             LEFT JOIN users u ON n.sender_id = u.id 
             WHERE n.receiver_id = ? AND n.sender_id != ?
             AND (n.message LIKE '%₹%' OR n.reference_type NOT IN ('advance', 'expense'))
-            GROUP BY n.id, n.title, n.message, n.reference_type, n.reference_id
+            GROUP BY n.id
             ORDER BY n.is_read ASC, n.created_at DESC 
             LIMIT ?
         ");
