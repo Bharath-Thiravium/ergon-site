@@ -557,7 +557,7 @@ class AttendanceController extends Controller {
         }
         
         // Check system settings (main office) if no project match
-        $stmt = $db->prepare("SELECT base_location_lat, base_location_lng, attendance_radius, location_title FROM settings LIMIT 1");
+        $stmt = $db->prepare("SELECT base_location_lat, base_location_lng, attendance_radius, location_title, office_address FROM settings LIMIT 1");
         $stmt->execute();
         $settings = $stmt->fetch(PDO::FETCH_ASSOC);
         
@@ -565,13 +565,17 @@ class AttendanceController extends Controller {
             $distance = $this->calculateDistance($userLat, $userLng, $settings['base_location_lat'], $settings['base_location_lng']);
             
             if ($distance <= $settings['attendance_radius']) {
-                $mainOfficeProjectId = $this->getOrCreateMainOfficeProject($db, $settings);
+                // Find existing project by location_title
+                $stmt = $db->prepare("SELECT id FROM projects WHERE name = ? AND status = 'active'");
+                $stmt->execute([$settings['location_title'] ?: 'Main Office']);
+                $existingProject = $stmt->fetch(PDO::FETCH_ASSOC);
+                
                 return [
                     'allowed' => true,
                     'location_info' => [
-                        'project_id' => $mainOfficeProjectId,
-                        'location_name' => $settings['location_title'] ?: 'Main Office',
-                        'location_display' => $settings['location_title'] ?: 'Main Office',
+                        'project_id' => $existingProject ? $existingProject['id'] : null,
+                        'location_name' => $settings['office_address'] ?: ($settings['location_title'] ?: 'Main Office'),
+                        'location_display' => $settings['office_address'] ?: ($settings['location_title'] ?: 'Main Office'),
                         'project_name' => $settings['location_title'] ?: 'Main Office'
                     ]
                 ];

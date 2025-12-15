@@ -379,7 +379,7 @@ class SimpleAttendanceController extends Controller {
             }
             
             // If no project match, check system settings (main office)
-            $stmt = $this->db->prepare("SELECT base_location_lat, base_location_lng, attendance_radius FROM settings LIMIT 1");
+            $stmt = $this->db->prepare("SELECT base_location_lat, base_location_lng, attendance_radius, location_title FROM settings LIMIT 1");
             $stmt->execute();
             $settings = $stmt->fetch(PDO::FETCH_ASSOC);
             
@@ -387,8 +387,12 @@ class SimpleAttendanceController extends Controller {
                 $distance = $this->calculateDistance($latitude, $longitude, $settings['base_location_lat'], $settings['base_location_lng']);
                 
                 if ($distance <= $settings['attendance_radius']) {
-                    // Return a special project ID for main office (create if doesn't exist)
-                    return $this->getOrCreateMainOfficeProject();
+                    // Find existing project by location_title
+                    $stmt = $this->db->prepare("SELECT id FROM projects WHERE name = ? AND status = 'active'");
+                    $stmt->execute([$settings['location_title'] ?: 'Main Office']);
+                    $existingProject = $stmt->fetch(PDO::FETCH_ASSOC);
+                    
+                    return $existingProject ? $existingProject['id'] : null;
                 }
             }
         } catch (Exception $e) {
