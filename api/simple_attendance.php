@@ -66,9 +66,10 @@ try {
                 }
             }
             
-            // Insert attendance record - only assign project_id if GPS coordinates match a project
+            // Insert attendance record - EXPLICITLY set project_id to NULL if no GPS match
+            $finalProjectId = $projectId ?: null;
             $stmt = $db->prepare("INSERT INTO attendance (user_id, check_in, latitude, longitude, location_name, project_id, status) VALUES (?, ?, ?, ?, ?, ?, 'present')");
-            $stmt->execute([$userId, $datetime, $latitude, $longitude, $locationName, $projectId]);
+            $stmt->execute([$userId, $datetime, $latitude, $longitude, $locationName, $finalProjectId]);
             
             echo json_encode(['success' => true, 'message' => 'User clocked in successfully', 'project_id' => $projectId, 'location' => $locationName]);
             break;

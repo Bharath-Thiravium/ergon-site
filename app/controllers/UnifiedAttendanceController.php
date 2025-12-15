@@ -163,13 +163,16 @@ class UnifiedAttendanceController extends Controller {
                 }
             }
             
-            // Insert attendance record - only assign project_id if GPS coordinates match a project
+            // Insert attendance record - EXPLICITLY set project_id to NULL if no GPS match
             $stmt = $this->db->prepare("
                 INSERT INTO attendance (user_id, check_in, latitude, longitude, location_name, project_id, created_at) 
                 VALUES (?, NOW(), ?, ?, ?, ?, NOW())
             ");
             
-            $result = $stmt->execute([$userId, $latitude, $longitude, $locationName, $projectId]);
+            // Ensure project_id is explicitly NULL if no match found
+            $finalProjectId = $projectId ?: null;
+            
+            $result = $stmt->execute([$userId, $latitude, $longitude, $locationName, $finalProjectId]);
             
             if ($result) {
                 return [

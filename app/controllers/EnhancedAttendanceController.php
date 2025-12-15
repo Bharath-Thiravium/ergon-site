@@ -363,7 +363,7 @@ class EnhancedAttendanceController extends Controller {
             }
         }
         
-        // Insert attendance record - only assign project_id if GPS coordinates match a project
+        // Insert attendance record - EXPLICITLY set project_id to NULL if no GPS match
         $stmt = $this->db->prepare("
             INSERT INTO attendance (user_id, shift_id, check_in, latitude, longitude, 
                                   location_name, project_id, ip_address, device_info, status, created_at) 
@@ -373,9 +373,12 @@ class EnhancedAttendanceController extends Controller {
         $deviceInfo = $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown';
         $ipAddress = $_SERVER['REMOTE_ADDR'] ?? 'Unknown';
         
+        // Ensure project_id is explicitly NULL if no match found
+        $finalProjectId = $projectId ?: null;
+        
         $result = $stmt->execute([
             $userId, $shift['id'] ?? null, $latitude, $longitude, 
-            $locationName, $projectId, $ipAddress, $deviceInfo, $status
+            $locationName, $finalProjectId, $ipAddress, $deviceInfo, $status
         ]);
         
         if ($result) {
