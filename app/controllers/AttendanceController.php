@@ -556,17 +556,67 @@ class AttendanceController extends Controller {
             }
         }
         
-        // Allow attendance but don't assign any project_id if no GPS match
+        // Check system settings (main office) if no project match
+        $stmt = $db->prepare("SELECT base_location_lat, base_location_lng, attendance_radius, location_title FROM settings LIMIT 1");
+        $stmt->execute();
+        $settings = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($settings && $settings['base_location_lat'] != 0 && $settings['base_location_lng'] != 0) {
+            $distance = $this->calculateDistance($userLat, $userLng, $settings['base_location_lat'], $settings['base_location_lng']);
+            
+            if ($distance <= $settings['attendance_radius']) {
+                $mainOfficeProjectId = $this->getOrCreateMainOfficeProject($db, $settings);
+                return [
+                    'allowed' => true,
+                    'location_info' => [
+                        'project_id' => $mainOfficeProjectId,
+                        'location_name' => $settings['location_title'] ?: 'Main Office',
+                        'location_display' => $settings['location_title'] ?: 'Main Office',
+                        'project_name' => $settings['location_title'] ?: 'Main Office'
+                    ]
+                ];
+            }
+        }
+        
+        // Not within any allowed location
         return [
-            'allowed' => true,
+            'allowed' => false,
             'location_info' => [
                 'project_id' => null,
-                'location_name' => 'Office',
-                'location_display' => 'Office',
+                'location_name' => 'Unknown Location',
+                'location_display' => 'Unknown Location',
                 'project_name' => null
             ]
         ];
-
+    }
+    
+    private function getOrCreateMainOfficeProject($db, $settings) {
+        try {
+            $stmt = $db->prepare("SELECT id FROM projects WHERE name = ? AND status = 'active'");
+            $stmt->execute([$settings['location_title'] ?: 'Main Office']);
+            $project = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($project) {
+                return $project['id'];
+            }
+            
+            $stmt = $db->prepare("
+                INSERT INTO projects (name, description, latitude, longitude, checkin_radius, status, place, created_at) 
+                VALUES (?, 'Main office location for general attendance', ?, ?, ?, 'active', ?, NOW())
+            ");
+            $stmt->execute([
+                $settings['location_title'] ?: 'Main Office',
+                $settings['base_location_lat'],
+                $settings['base_location_lng'],
+                $settings['attendance_radius'],
+                $settings['location_title'] ?: 'Main Office'
+            ]);
+            
+            return $db->lastInsertId();
+        } catch (Exception $e) {
+            error_log('Main office project creation error: ' . $e->getMessage());
+            return null;
+        }
     }
     
     private function ensureSettingsTable($db) {

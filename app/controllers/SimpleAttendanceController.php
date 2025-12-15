@@ -363,6 +363,7 @@ class SimpleAttendanceController extends Controller {
     
     private function getProjectIdByGPS($latitude, $longitude) {
         try {
+            // First check project locations
             $stmt = $this->db->prepare("SELECT id, latitude, longitude, checkin_radius FROM projects WHERE latitude IS NOT NULL AND longitude IS NOT NULL AND status = 'active'");
             $stmt->execute();
             $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -376,11 +377,63 @@ class SimpleAttendanceController extends Controller {
                     }
                 }
             }
+            
+            // If no project match, check system settings (main office)
+            $stmt = $this->db->prepare("SELECT base_location_lat, base_location_lng, attendance_radius FROM settings LIMIT 1");
+            $stmt->execute();
+            $settings = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($settings && $settings['base_location_lat'] != 0 && $settings['base_location_lng'] != 0) {
+                $distance = $this->calculateDistance($latitude, $longitude, $settings['base_location_lat'], $settings['base_location_lng']);
+                
+                if ($distance <= $settings['attendance_radius']) {
+                    // Return a special project ID for main office (create if doesn't exist)
+                    return $this->getOrCreateMainOfficeProject();
+                }
+            }
         } catch (Exception $e) {
             error_log('GPS project matching error: ' . $e->getMessage());
         }
         
-        return null; // No project match found
+        return null; // No match found
+    }
+    
+    private function getOrCreateMainOfficeProject() {
+        try {
+            // Check if main office project exists
+            $stmt = $this->db->prepare("SELECT id FROM projects WHERE name = 'Main Office' AND status = 'active'");
+            $stmt->execute();
+            $project = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($project) {
+                return $project['id'];
+            }
+            
+            // Create main office project if it doesn't exist
+            $stmt = $this->db->prepare("SELECT base_location_lat, base_location_lng, attendance_radius, location_title FROM settings LIMIT 1");
+            $stmt->execute();
+            $settings = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($settings) {
+                $stmt = $this->db->prepare("
+                    INSERT INTO projects (name, description, latitude, longitude, checkin_radius, status, place, created_at) 
+                    VALUES (?, 'Main office location for general attendance', ?, ?, ?, 'active', ?, NOW())
+                ");
+                $stmt->execute([
+                    $settings['location_title'] ?: 'Main Office',
+                    $settings['base_location_lat'],
+                    $settings['base_location_lng'],
+                    $settings['attendance_radius'],
+                    $settings['location_title'] ?: 'Main Office'
+                ]);
+                
+                return $this->db->lastInsertId();
+            }
+        } catch (Exception $e) {
+            error_log('Main office project creation error: ' . $e->getMessage());
+        }
+        
+        return null;
     }
     
     private function calculateDistance($lat1, $lng1, $lat2, $lng2) {
