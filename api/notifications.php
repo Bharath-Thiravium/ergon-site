@@ -13,12 +13,9 @@ try {
     }
     
     if (!isset($_SESSION['user_id'])) {
-        error_log('Notification API: User not logged in');
         echo json_encode(['success' => true, 'notifications' => [], 'unread_count' => 0]);
         exit;
     }
-    
-    error_log('Notification API: User ID ' . $_SESSION['user_id'] . ' accessing notifications');
     
     require_once __DIR__ . '/../app/config/database.php';
     require_once __DIR__ . '/../app/models/Notification.php';

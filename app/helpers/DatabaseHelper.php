@@ -8,7 +8,8 @@ class DatabaseHelper
             // Use prepare/execute for better security
             $stmt = $db->prepare($sql);
             $stmt->execute();
-            if ($description) {
+            // Only log table creation and schema changes, not routine operations
+            if ($description && (strpos($description, 'Create') !== false || strpos($description, 'Add column') !== false)) {
                 error_log("Database operation successful: $description");
             }
             return true;
