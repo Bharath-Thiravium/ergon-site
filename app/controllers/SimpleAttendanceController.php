@@ -53,8 +53,16 @@ class SimpleAttendanceController extends Controller {
                 a.check_in,
                 a.check_out,
                 a.project_id,
-                COALESCE(p.name, '----') as project_name,
-                COALESCE(p.place, 'Office') as location_display,
+                CASE 
+                    WHEN p.name IS NOT NULL THEN p.name
+                    WHEN a.check_in IS NOT NULL THEN (SELECT location_title FROM settings LIMIT 1)
+                    ELSE '----'
+                END as project_name,
+                CASE 
+                    WHEN p.place IS NOT NULL THEN p.place
+                    WHEN a.check_in IS NOT NULL THEN (SELECT office_address FROM settings LIMIT 1)
+                    ELSE 'Office'
+                END as location_display,
                 CASE 
                     WHEN a.check_in IS NOT NULL THEN 'Present'
                     ELSE 'Absent'
@@ -387,12 +395,8 @@ class SimpleAttendanceController extends Controller {
                 $distance = $this->calculateDistance($latitude, $longitude, $settings['base_location_lat'], $settings['base_location_lng']);
                 
                 if ($distance <= $settings['attendance_radius']) {
-                    // Find existing project by location_title
-                    $stmt = $this->db->prepare("SELECT id FROM projects WHERE name = ? AND status = 'active'");
-                    $stmt->execute([$settings['location_title']]);
-                    $existingProject = $stmt->fetch(PDO::FETCH_ASSOC);
-                    
-                    return $existingProject ? $existingProject['id'] : null;
+                    // Use settings-based attendance without project_id
+                    return null; // No project_id for settings-based attendance
                 }
             }
         } catch (Exception $e) {

@@ -565,15 +565,11 @@ class AttendanceController extends Controller {
             $distance = $this->calculateDistance($userLat, $userLng, $settings['base_location_lat'], $settings['base_location_lng']);
             
             if ($distance <= $settings['attendance_radius']) {
-                // Find existing project by location_title
-                $stmt = $db->prepare("SELECT id FROM projects WHERE name = ? AND status = 'active'");
-                $stmt->execute([$settings['location_title']]);
-                $existingProject = $stmt->fetch(PDO::FETCH_ASSOC);
-                
+                // Use settings data directly without requiring project entry
                 return [
                     'allowed' => true,
                     'location_info' => [
-                        'project_id' => $existingProject ? $existingProject['id'] : null,
+                        'project_id' => null, // No project_id for settings-based attendance
                         'location_name' => $settings['office_address'],
                         'location_display' => $settings['office_address'],
                         'project_name' => $settings['location_title']
