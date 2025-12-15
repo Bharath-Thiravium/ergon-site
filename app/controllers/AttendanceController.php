@@ -567,16 +567,16 @@ class AttendanceController extends Controller {
             if ($distance <= $settings['attendance_radius']) {
                 // Find existing project by location_title
                 $stmt = $db->prepare("SELECT id FROM projects WHERE name = ? AND status = 'active'");
-                $stmt->execute([$settings['location_title'] ?: 'Main Office']);
+                $stmt->execute([$settings['location_title']]);
                 $existingProject = $stmt->fetch(PDO::FETCH_ASSOC);
                 
                 return [
                     'allowed' => true,
                     'location_info' => [
                         'project_id' => $existingProject ? $existingProject['id'] : null,
-                        'location_name' => $settings['office_address'] ?: ($settings['location_title'] ?: 'Main Office'),
-                        'location_display' => $settings['office_address'] ?: ($settings['location_title'] ?: 'Main Office'),
-                        'project_name' => $settings['location_title'] ?: 'Main Office'
+                        'location_name' => $settings['office_address'],
+                        'location_display' => $settings['office_address'],
+                        'project_name' => $settings['location_title']
                     ]
                 ];
             }

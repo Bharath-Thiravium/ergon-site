@@ -389,7 +389,7 @@ class SimpleAttendanceController extends Controller {
                 if ($distance <= $settings['attendance_radius']) {
                     // Find existing project by location_title
                     $stmt = $this->db->prepare("SELECT id FROM projects WHERE name = ? AND status = 'active'");
-                    $stmt->execute([$settings['location_title'] ?: 'Main Office']);
+                    $stmt->execute([$settings['location_title']]);
                     $existingProject = $stmt->fetch(PDO::FETCH_ASSOC);
                     
                     return $existingProject ? $existingProject['id'] : null;
