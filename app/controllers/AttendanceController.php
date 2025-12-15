@@ -370,19 +370,17 @@ class AttendanceController extends Controller {
         $locationInfo = $locationValidation['location_info'];
         $currentTime = TimezoneHelper::nowIst();
         
-        $stmt = $db->prepare("INSERT INTO attendance (user_id, project_id, check_in, location_name, location_display, project_name, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt = $db->prepare("INSERT INTO attendance (user_id, project_id, check_in, location_name, created_at) VALUES (?, ?, ?, ?, ?)");
         $result = $stmt->execute([
             $userId, 
             $locationInfo['project_id'], 
             $currentTime, 
             $locationInfo['location_name'],
-            $locationInfo['location_display'],
-            $locationInfo['project_name'],
             $currentTime
         ]);
         
         if ($result) {
-            echo json_encode(['success' => true, 'message' => 'Clocked in successfully from ' . $locationInfo['location_display']]);
+            echo json_encode(['success' => true, 'message' => 'Clocked in successfully from ' . ($locationInfo['location_display'] ?? $locationInfo['location_name'])]);
         } else {
             echo json_encode(['success' => false, 'error' => 'Failed to clock in']);
         }
