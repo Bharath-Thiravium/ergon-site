@@ -253,12 +253,12 @@ ob_start();
                             </td>
                             <td>
                                 <div class="cell-meta">
-                                    <div class="cell-primary"><?= $record['check_in'] ? 'ERGON Company' : '---' ?></div>
+                                    <div class="cell-primary"><?= $record['location_display'] ?? ($record['check_in'] ? 'ERGON Company' : '---') ?></div>
                                 </div>
                             </td>
                             <td>
                                 <div class="cell-meta">
-                                    <div class="cell-primary"><?= $record['check_in'] ? 'Project Alpha' : '----' ?></div>
+                                    <div class="cell-primary"><?= $record['project_name'] ?? ($record['check_in'] ? '----' : '----') ?></div>
                                 </div>
                             </td>
                             <td>
@@ -330,12 +330,12 @@ ob_start();
                             </td>
                             <td>
                                 <div class="cell-meta">
-                                    <div class="cell-primary"><?= $record['check_in'] ? 'ERGON Company' : '---' ?></div>
+                                    <div class="cell-primary"><?= $record['location_display'] ?? ($record['check_in'] ? 'ERGON Company' : '---') ?></div>
                                 </div>
                             </td>
                             <td>
                                 <div class="cell-meta">
-                                    <div class="cell-primary"><?= $record['check_in'] ? 'Project Alpha' : '----' ?></div>
+                                    <div class="cell-primary"><?= $record['project_name'] ?? ($record['check_in'] ? '----' : '----') ?></div>
                                 </div>
                             </td>
                             <td>
@@ -397,12 +397,12 @@ ob_start();
                             </td>
                             <td>
                                 <div class="cell-meta">
-                                    <div class="cell-primary"><?= $record['check_in'] ? 'ERGON Company' : '---' ?></div>
+                                    <div class="cell-primary"><?= $record['location_display'] ?? ($record['check_in'] ? 'ERGON Company' : '---') ?></div>
                                 </div>
                             </td>
                             <td>
                                 <div class="cell-meta">
-                                    <div class="cell-primary"><?= $record['check_in'] ? 'Project Alpha' : '----' ?></div>
+                                    <div class="cell-primary"><?= $record['project_name'] ?? ($record['check_in'] ? '----' : '----') ?></div>
                                 </div>
                             </td>
                             <td>
