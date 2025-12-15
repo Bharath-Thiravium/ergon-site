@@ -22,8 +22,19 @@ try {
         $stmt->execute([$projectId]);
         echo "✅ Attendance linked: " . $stmt->rowCount() . " rows<br>";
         
-        // 4. Clear hardcoded values
-        $stmt = $db->prepare("UPDATE attendance SET location_display = NULL, project_name = NULL");
+        // 4. Add missing columns if needed
+        try {
+            $db->exec("ALTER TABLE attendance ADD COLUMN location_display VARCHAR(255) NULL");
+            echo "✅ Added location_display column<br>";
+        } catch (Exception $e) {}
+        
+        try {
+            $db->exec("ALTER TABLE attendance ADD COLUMN project_name VARCHAR(255) NULL");
+            echo "✅ Added project_name column<br>";
+        } catch (Exception $e) {}
+        
+        // 5. Clear any existing hardcoded values
+        $stmt = $db->prepare("UPDATE attendance SET location_display = NULL, project_name = NULL WHERE location_display IS NOT NULL OR project_name IS NOT NULL");
         $stmt->execute();
         echo "✅ Cleared old data: " . $stmt->rowCount() . " rows<br>";
     }
