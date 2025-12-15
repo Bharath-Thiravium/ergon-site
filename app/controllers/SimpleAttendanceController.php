@@ -52,6 +52,9 @@ class SimpleAttendanceController extends Controller {
                 a.id as attendance_id,
                 a.check_in,
                 a.check_out,
+                a.project_id,
+                COALESCE(p.name, '----') as project_name,
+                COALESCE(p.place, 'Office') as location_display,
                 CASE 
                     WHEN a.check_in IS NOT NULL THEN 'Present'
                     ELSE 'Absent'
@@ -66,6 +69,7 @@ class SimpleAttendanceController extends Controller {
                 END as working_hours
             FROM users u
             LEFT JOIN attendance a ON u.id = a.user_id AND {$dateCondition}
+            LEFT JOIN projects p ON a.project_id = p.id
             WHERE u.status = 'active' {$roleFilter}
             ORDER BY u.role DESC, u.name
         ");
