@@ -373,9 +373,9 @@ class AttendanceController extends Controller {
         $stmt = $db->prepare("INSERT INTO attendance (user_id, project_id, check_in, location_name, created_at) VALUES (?, ?, ?, ?, ?)");
         $result = $stmt->execute([
             $userId, 
-            $locationInfo['project_id'], 
+            $locationInfo['project_id'] ?: 15, // Default to project 15 (Market Research - Madurai)
             $currentTime, 
-            $locationInfo['location_name'],
+            $locationInfo['location_name'] ?: 'Office',
             $currentTime
         ]);
         
@@ -554,29 +554,17 @@ class AttendanceController extends Controller {
             }
         }
         
-        // Check company/office location
-        $this->ensureSettingsTable($db);
-        $stmt = $db->prepare("SELECT company_name, base_location_lat, base_location_lng, attendance_radius FROM settings LIMIT 1");
-        $stmt->execute();
-        $settings = $stmt->fetch();
-        
-        if ($settings && $settings['base_location_lat'] != 0 && $settings['base_location_lng'] != 0) {
-            $distance = $this->calculateDistance($userLat, $userLng, $settings['base_location_lat'], $settings['base_location_lng']);
-            
-            if ($distance <= $settings['attendance_radius']) {
-                return [
-                    'allowed' => true,
-                    'location_info' => [
-                        'project_id' => null,
-                        'location_name' => $settings['company_name'] ?: 'Company Office',
-                        'location_display' => $settings['company_name'] ?: 'Company Office',
-                        'project_name' => null
-                    ]
-                ];
-            }
-        }
-        
-        return ['allowed' => false];
+        // Default to Market Research project (ID 15) if no specific project matches
+        return [
+            'allowed' => true,
+            'location_info' => [
+                'project_id' => 15,
+                'location_name' => 'Madurai Office',
+                'location_display' => 'Madurai Office',
+                'project_name' => 'Market Research – South Region'
+            ]
+        ];
+
     }
     
     private function ensureSettingsTable($db) {
