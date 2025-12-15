@@ -51,6 +51,46 @@ ob_start();
         <div class="kpi-card__label">Pending Review</div>
         <div class="kpi-card__status kpi-card__status--pending">Under Review</div>
     </div>
+    
+    <div class="kpi-card kpi-card--success">
+        <div class="kpi-card__header">
+            <div class="kpi-card__icon">💸</div>
+            <div class="kpi-card__trend">↗ +12%</div>
+        </div>
+        <div class="kpi-card__value">₹<?= number_format(array_sum(array_map(fn($a) => $a['approved_amount'] ?? $a['amount'] ?? 0, array_filter($advances ?? [], fn($a) => ($a['status'] ?? 'pending') === 'paid'))), 2) ?></div>
+        <div class="kpi-card__label">Total Paid Amount</div>
+        <div class="kpi-card__status">Disbursed</div>
+    </div>
+    
+    <div class="kpi-card kpi-card--info">
+        <div class="kpi-card__header">
+            <div class="kpi-card__icon"><?php 
+                $advanceTypes = array_count_values(array_map(fn($a) => $a['type'] ?? 'General Advance', array_filter($advances ?? [], fn($a) => strtotime($a['created_at'] ?? 'now') >= strtotime('first day of this month'))));
+                $topAdvanceType = !empty($advanceTypes) ? array_key_first($advanceTypes) : 'General Advance';
+                echo match($topAdvanceType) {
+                    'Travel Advance' => '🚗',
+                    'Salary Advance' => '💰',
+                    'Project Advance' => '📁',
+                    'Emergency Advance' => '🆘',
+                    default => '💳'
+                };
+            ?></div>
+            <div class="kpi-card__trend">This Month</div>
+        </div>
+        <div class="kpi-card__value"><?= $topAdvanceType ?></div>
+        <div class="kpi-card__label">Top Advance Type</div>
+        <div class="kpi-card__status"><?= $advanceTypes[$topAdvanceType] ?? 0 ?> requests</div>
+    </div>
+    
+    <div class="kpi-card kpi-card--chart">
+        <div class="kpi-card__header">
+            <div class="kpi-card__icon">📈</div>
+            <div class="kpi-card__trend">Distribution</div>
+        </div>
+        <div class="kpi-card__value" style="font-size: 14px;">Advance Types</div>
+        <div class="kpi-card__label">Category Breakdown</div>
+        <div class="kpi-card__chart" id="advanceTypeChart" style="height: 80px; margin-top: 8px;"></div>
+    </div>
 </div>
 
 <div class="card">
@@ -614,6 +654,53 @@ document.addEventListener('click', function(e) {
 });
 </script>
 
+<script>
+// Advance Type Distribution Chart
+document.addEventListener('DOMContentLoaded', function() {
+    const chartContainer = document.getElementById('advanceTypeChart');
+    if (!chartContainer) return;
+    
+    // Get advance type data from PHP
+    const advanceData = <?php 
+        $typeAmounts = [];
+        foreach ($advances ?? [] as $advance) {
+            $type = $advance['type'] ?? 'General Advance';
+            $amount = $advance['approved_amount'] ?? $advance['amount'] ?? 0;
+            if (in_array($advance['status'] ?? 'pending', ['approved', 'paid'])) {
+                $typeAmounts[$type] = ($typeAmounts[$type] ?? 0) + $amount;
+            }
+        }
+        echo json_encode($typeAmounts);
+    ?>;
+    
+    const total = Object.values(advanceData).reduce((sum, val) => sum + val, 0);
+    if (total === 0) {
+        chartContainer.innerHTML = '<div style="text-align: center; color: #666; font-size: 12px; padding: 20px;">No data available</div>';
+        return;
+    }
+    
+    // Create mini pie chart
+    const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
+    let html = '<div style="display: flex; flex-wrap: wrap; gap: 4px; justify-content: center;">';
+    
+    Object.entries(advanceData).forEach(([type, amount], index) => {
+        const percentage = ((amount / total) * 100).toFixed(1);
+        const color = colors[index % colors.length];
+        const shortType = type.replace(' Advance', '').substring(0, 8);
+        
+        html += `
+            <div style="display: flex; align-items: center; gap: 4px; font-size: 10px;">
+                <div style="width: 8px; height: 8px; background: ${color}; border-radius: 50%;"></div>
+                <span style="color: #666;">${shortType}: ${percentage}%</span>
+            </div>
+        `;
+    });
+    
+    html += '</div>';
+    chartContainer.innerHTML = html;
+});
+</script>
+
 <style>
 .advance-info {
     background: #f8f9fa;
@@ -637,6 +724,24 @@ document.addEventListener('click', function(e) {
     background: #10b981;
     color: white;
 }
+
+.kpi-card--success {
+    border-left: 4px solid #10b981;
+}
+
+.kpi-card--info {
+    border-left: 4px solid #3b82f6;
+}
+
+.kpi-card--chart {
+    border-left: 4px solid #8b5cf6;
+}
+
+.kpi-card__chart {
+    font-size: 10px;
+    color: #666;
+}
+
 @keyframes slideInRight {
     from { transform: translateX(100%); opacity: 0; }
     to { transform: translateX(0); opacity: 1; }

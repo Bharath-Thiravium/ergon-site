@@ -1,7 +1,8 @@
 <?php
 /**
- * Task History Helper
- * Provides methods for other modules to log task-related activities
+ * Enhanced Task History Helper
+ * Provides comprehensive methods for logging detailed task-related activities
+ * Supports progress tracking, status changes, assignments, and user actions
  */
 
 class TaskHistoryHelper {
@@ -33,7 +34,7 @@ class TaskHistoryHelper {
     }
     
     /**
-     * Log general task action
+     * Log general task action with enhanced details
      */
     public static function logTaskAction($taskId, $action, $oldValue = '', $newValue = '', $notes = '', $userId = null) {
         try {
@@ -56,13 +57,21 @@ class TaskHistoryHelper {
             $createdBy = $userId ?? ($_SESSION['user_id'] ?? 1);
             $timestamp = date('Y-m-d H:i:s');
             
-            $enhancedNotes = $notes . ($notes ? ' | ' : '') . 'Logged at: ' . $timestamp;
+            // Enhanced notes with more context
+            $enhancedNotes = $notes;
+            if ($action && $oldValue && $newValue && $oldValue !== $newValue) {
+                $enhancedNotes = ($notes ? $notes . ' | ' : '') . sprintf('Changed from "%s" to "%s"', $oldValue, $newValue);
+            } elseif ($action && $newValue && !$oldValue) {
+                $enhancedNotes = ($notes ? $notes . ' | ' : '') . sprintf('Set to "%s"', $newValue);
+            }
+            
+            $enhancedNotes .= ($enhancedNotes ? ' | ' : '') . 'Logged at: ' . $timestamp;
             
             $stmt = $db->prepare("INSERT INTO task_history (task_id, action, old_value, new_value, notes, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())");
             $result = $stmt->execute([$taskId, $action, $oldValue, $newValue, $enhancedNotes, $createdBy]);
             
             if ($result) {
-                error_log("Task history logged: Task {$taskId} - {$action}");
+                error_log("Enhanced task history logged: Task {$taskId} - {$action} - {$enhancedNotes}");
             }
             
             return $result;
@@ -70,6 +79,27 @@ class TaskHistoryHelper {
             error_log('TaskHistoryHelper::logTaskAction error: ' . $e->getMessage());
             return false;
         }
+    }
+    
+    /**
+     * Log task comment or note
+     */
+    public static function logTaskComment($taskId, $comment, $userId = null) {
+        return self::logTaskAction($taskId, 'commented', '', 'Comment added', $comment, $userId);
+    }
+    
+    /**
+     * Log task completion
+     */
+    public static function logTaskCompletion($taskId, $completionNotes = '', $userId = null) {
+        return self::logTaskAction($taskId, 'completed', 'in_progress', 'completed', $completionNotes ?: 'Task marked as completed', $userId);
+    }
+    
+    /**
+     * Log task cancellation
+     */
+    public static function logTaskCancellation($taskId, $reason = '', $userId = null) {
+        return self::logTaskAction($taskId, 'cancelled', '', 'cancelled', $reason ?: 'Task cancelled', $userId);
     }
 }
 ?>

@@ -726,6 +726,9 @@ class ContactFollowupController extends Controller {
                 
                 if ($result) {
                     error_log("Successfully updated linked task {$taskId} status from {$oldStatus} to {$status}");
+                    
+                    // Sync with Daily Planner
+                    $this->syncWithDailyPlanner($db, $taskId, $status, $newProgress);
                 }
             }
         } catch (Exception $e) {
@@ -742,6 +745,29 @@ class ContactFollowupController extends Controller {
             'cancelled' => 'danger',
             default => 'secondary'
         };
+    }
+    
+    /**
+     * Sync task status changes with Daily Planner
+     */
+    private function syncWithDailyPlanner($db, $taskId, $status, $progress) {
+        try {
+            // Update all daily_tasks entries that reference this task
+            $stmt = $db->prepare("
+                UPDATE daily_tasks 
+                SET status = ?, completed_percentage = ?, 
+                    completion_time = CASE WHEN ? = 'completed' THEN NOW() ELSE completion_time END,
+                    updated_at = NOW()
+                WHERE original_task_id = ? OR task_id = ?
+            ");
+            $result = $stmt->execute([$status, $progress, $status, $taskId, $taskId]);
+            
+            if ($result && $stmt->rowCount() > 0) {
+                error_log("Successfully synced task {$taskId} with Daily Planner: {$stmt->rowCount()} entries updated");
+            }
+        } catch (Exception $e) {
+            error_log('Sync with Daily Planner error: ' . $e->getMessage());
+        }
     }
     
     /**

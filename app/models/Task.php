@@ -79,6 +79,9 @@ class Task {
             $stmt = $this->conn->prepare($query);
             $stmt->execute([$taskId, $userId, $oldProgress, $progress, $description, $oldStatus, $newStatus]);
             
+            // Sync with Daily Planner
+            $this->syncWithDailyPlanner($taskId, $newStatus, $progress);
+            
             return true;
         } catch (Exception $e) {
             error_log('Progress update error: ' . $e->getMessage());
@@ -136,7 +139,7 @@ class Task {
             SET title = ?, description = ?, status = ?, priority = ?, progress = ? 
             WHERE id = ?
         ");
-        return $stmt->execute([
+        $result = $stmt->execute([
             $data['title'],
             $data['description'],
             $data['status'],
@@ -144,11 +147,30 @@ class Task {
             $data['progress'] ?? 0,
             $id
         ]);
+        
+        if ($result) {
+            // Sync with Daily Planner
+            $this->syncWithDailyPlanner($id, $data['status'], $data['progress'] ?? 0);
+        }
+        
+        return $result;
     }
     
     public function updateStatus($id, $status) {
         $stmt = $this->conn->prepare("UPDATE tasks SET status = ? WHERE id = ?");
-        return $stmt->execute([$status, $id]);
+        $result = $stmt->execute([$status, $id]);
+        
+        if ($result) {
+            // Get current progress for sync
+            $progressStmt = $this->conn->prepare("SELECT progress FROM tasks WHERE id = ?");
+            $progressStmt->execute([$id]);
+            $progress = $progressStmt->fetchColumn() ?: 0;
+            
+            // Sync with Daily Planner
+            $this->syncWithDailyPlanner($id, $status, $progress);
+        }
+        
+        return $result;
     }
     
     public function delete($id) {
@@ -173,6 +195,30 @@ class Task {
         $stmt = $this->conn->prepare($query);
         $stmt->execute([$departmentId, $departmentId]);
         return $stmt->fetchAll();
+    }
+    
+    /**
+     * Sync task status and progress changes with Daily Planner
+     */
+    private function syncWithDailyPlanner($taskId, $status, $progress) {
+        try {
+            // Update all daily_tasks entries that reference this task
+            $query = "
+                UPDATE daily_tasks 
+                SET status = ?, completed_percentage = ?, 
+                    completion_time = CASE WHEN ? = 'completed' THEN NOW() ELSE completion_time END,
+                    updated_at = NOW()
+                WHERE original_task_id = ? OR task_id = ?
+            ";
+            $stmt = $this->conn->prepare($query);
+            $result = $stmt->execute([$status, $progress, $status, $taskId, $taskId]);
+            
+            if ($result && $stmt->rowCount() > 0) {
+                error_log("Successfully synced task {$taskId} with Daily Planner: {$stmt->rowCount()} entries updated");
+            }
+        } catch (Exception $e) {
+            error_log('Sync with Daily Planner error: ' . $e->getMessage());
+        }
     }
 }
 ?>

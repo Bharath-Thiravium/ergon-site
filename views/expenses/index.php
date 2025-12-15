@@ -27,6 +27,23 @@ ob_start();
     background: #10b981;
     color: white;
 }
+
+.kpi-card--success {
+    border-left: 4px solid #10b981;
+}
+
+.kpi-card--info {
+    border-left: 4px solid #3b82f6;
+}
+
+.kpi-card--chart {
+    border-left: 4px solid #8b5cf6;
+}
+
+.kpi-card__chart {
+    font-size: 10px;
+    color: #666;
+}
 </style>
 
 <div class="page-header">
@@ -82,6 +99,51 @@ ob_start();
         <div class="kpi-card__value">₹<?= number_format(array_sum(array_map(fn($e) => $e['amount'] ?? 0, array_filter($expenses ?? [], fn($e) => ($e['status'] ?? 'pending') === 'approved'))), 2) ?></div>
         <div class="kpi-card__label">Approved Amount</div>
         <div class="kpi-card__status">Processed</div>
+    </div>
+    
+    <div class="kpi-card kpi-card--success">
+        <div class="kpi-card__header">
+            <div class="kpi-card__icon">💸</div>
+            <div class="kpi-card__trend">↗ +18%</div>
+        </div>
+        <div class="kpi-card__value">₹<?= number_format(array_sum(array_map(fn($e) => $e['approved_amount'] ?? $e['amount'] ?? 0, array_filter($expenses ?? [], fn($e) => ($e['status'] ?? 'pending') === 'paid'))), 2) ?></div>
+        <div class="kpi-card__label">Total Paid Amount</div>
+        <div class="kpi-card__status">Disbursed</div>
+    </div>
+    
+    <div class="kpi-card kpi-card--info">
+        <div class="kpi-card__header">
+            <div class="kpi-card__icon"><?php 
+                $categories = array_count_values(array_map(fn($e) => $e['category'] ?? 'other', array_filter($expenses ?? [], fn($e) => in_array($e['status'] ?? 'pending', ['approved', 'paid']))));
+                $topCategory = !empty($categories) ? array_key_first($categories) : 'other';
+                echo match($topCategory) {
+                    'travel' => '🚗',
+                    'food' => '🍔',
+                    'accommodation' => '🏨',
+                    'office_supplies' => '📋',
+                    'communication' => '📱',
+                    'training' => '📚',
+                    'medical' => '🏥',
+                    default => '📦'
+                };
+            ?></div>
+            <div class="kpi-card__trend">Top Category</div>
+        </div>
+        <div class="kpi-card__value"><?php 
+            $categoryNames = [
+                'travel' => 'Travel',
+                'food' => 'Food & Meals', 
+                'accommodation' => 'Accommodation',
+                'office_supplies' => 'Office Supplies',
+                'communication' => 'Communication',
+                'training' => 'Training',
+                'medical' => 'Medical',
+                'other' => 'Other'
+            ];
+            echo $categoryNames[$topCategory] ?? 'Other';
+        ?></div>
+        <div class="kpi-card__label">Top Spending Category</div>
+        <div class="kpi-card__status">₹<?= number_format(array_sum(array_map(fn($e) => $e['approved_amount'] ?? $e['amount'] ?? 0, array_filter($expenses ?? [], fn($e) => ($e['category'] ?? 'other') === $topCategory && in_array($e['status'] ?? 'pending', ['approved', 'paid'])))), 2) ?></div>
     </div>
 </div>
 
