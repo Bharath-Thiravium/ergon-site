@@ -370,12 +370,14 @@ class AttendanceController extends Controller {
         $locationInfo = $locationValidation['location_info'];
         $currentTime = TimezoneHelper::nowIst();
         
-        $stmt = $db->prepare("INSERT INTO attendance (user_id, project_id, check_in, location_name, created_at) VALUES (?, ?, ?, ?, ?)");
+        $stmt = $db->prepare("INSERT INTO attendance (user_id, project_id, check_in, location_name, latitude, longitude, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)");
         $result = $stmt->execute([
             $userId, 
-            $locationInfo['project_id'] ?: 15, // Default to project 15 (Market Research - Madurai)
+            $locationInfo['project_id'], // Only assign if GPS matches a project location
             $currentTime, 
             $locationInfo['location_name'] ?: 'Office',
+            $userLat,
+            $userLng,
             $currentTime
         ]);
         
@@ -554,14 +556,14 @@ class AttendanceController extends Controller {
             }
         }
         
-        // Default to Market Research project (ID 15) if no specific project matches
+        // Allow attendance but don't assign any project_id if no GPS match
         return [
             'allowed' => true,
             'location_info' => [
-                'project_id' => 15,
-                'location_name' => 'Madurai Office',
-                'location_display' => 'Madurai Office',
-                'project_name' => 'Market Research – South Region'
+                'project_id' => null,
+                'location_name' => 'Office',
+                'location_display' => 'Office',
+                'project_name' => null
             ]
         ];
 
