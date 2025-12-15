@@ -55,12 +55,12 @@ class SimpleAttendanceController extends Controller {
                 a.project_id,
                 CASE 
                     WHEN p.name IS NOT NULL THEN p.name
-                    WHEN a.check_in IS NOT NULL THEN (SELECT location_title FROM settings LIMIT 1)
+                    WHEN a.check_in IS NOT NULL AND a.project_id IS NULL THEN (SELECT location_title FROM settings LIMIT 1)
                     ELSE '----'
                 END as project_name,
                 CASE 
                     WHEN p.place IS NOT NULL THEN p.place
-                    WHEN a.check_in IS NOT NULL THEN (SELECT office_address FROM settings LIMIT 1)
+                    WHEN a.check_in IS NOT NULL AND a.project_id IS NULL THEN (SELECT office_address FROM settings LIMIT 1)
                     ELSE 'Office'
                 END as location_display,
                 CASE 
