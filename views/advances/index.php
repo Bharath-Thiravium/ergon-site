@@ -2,6 +2,7 @@
 $title = 'Advance Requests';
 $active_page = 'advances';
 include __DIR__ . '/../shared/modal_component.php';
+require_once __DIR__ . '/../../app/helpers/AdvanceDistributionHelper.php';
 ob_start();
 ?>
 
@@ -31,66 +32,80 @@ ob_start();
 
 
 
+<?php
+// Calculate finance totals
+$financeTotals = AdvanceDistributionHelper::getFinanceTotals($advances ?? []);
+
+// Calculate distributions for each card
+$totalRequestedDistribution = AdvanceDistributionHelper::getStatusDistributionByAmount($advances ?? []);
+$pendingApprovalDistribution = AdvanceDistributionHelper::getTypeDistributionByAmount($advances ?? [], 'pending');
+$approvedUnpaidDistribution = AdvanceDistributionHelper::getTypeDistributionByAmount($advances ?? [], 'approved');
+$totalPaidDistribution = AdvanceDistributionHelper::getTypeDistributionByAmount($advances ?? [], 'paid');
+$pendingRequestsDistribution = AdvanceDistributionHelper::getStatusDistribution($advances ?? []);
+?>
+
 <div class="dashboard-grid">
-    <div class="kpi-card">
-        <div class="kpi-card__header">
-            <div class="kpi-card__icon">💳</div>
-            <div class="kpi-card__trend">↗ +10%</div>
-        </div>
-        <div class="kpi-card__value"><?= count($advances ?? []) ?></div>
-        <div class="kpi-card__label">Total Requests</div>
-        <div class="kpi-card__status">Submitted</div>
-    </div>
+    <?php
+    // 1. Total Advances Requested
+    $title = 'Total Advances Requested';
+    $totalValue = $financeTotals['total_requested_amount'];
+    $distributionData = $totalRequestedDistribution;
+    $icon = '💳';
+    $cardClass = 'kpi-card--primary';
+    $valueFormat = 'currency';
+    $primaryLabel = 'Total requested amount';
+    include __DIR__ . '/../shared/distribution_stat_card.php';
+    ?>
     
-    <div class="kpi-card kpi-card--warning">
-        <div class="kpi-card__header">
-            <div class="kpi-card__icon">⏳</div>
-            <div class="kpi-card__trend kpi-card__trend--down">— 0%</div>
-        </div>
-        <div class="kpi-card__value"><?= count(array_filter($advances ?? [], fn($a) => ($a['status'] ?? 'pending') === 'pending')) ?></div>
-        <div class="kpi-card__label">Pending Review</div>
-        <div class="kpi-card__status kpi-card__status--pending">Under Review</div>
-    </div>
+    <?php
+    // 2. Pending Approval Amount
+    $title = 'Pending Approval Amount';
+    $totalValue = $financeTotals['pending_approval_amount'];
+    $distributionData = $pendingApprovalDistribution;
+    $icon = '⏳';
+    $cardClass = 'kpi-card--warning';
+    $valueFormat = 'currency';
+    $primaryLabel = 'Awaiting approval';
+    include __DIR__ . '/../shared/distribution_stat_card.php';
+    ?>
     
-    <div class="kpi-card kpi-card--success">
-        <div class="kpi-card__header">
-            <div class="kpi-card__icon">💸</div>
-            <div class="kpi-card__trend">↗ +12%</div>
-        </div>
-        <div class="kpi-card__value">₹<?= number_format(array_sum(array_map(fn($a) => $a['approved_amount'] ?? $a['amount'] ?? 0, array_filter($advances ?? [], fn($a) => ($a['status'] ?? 'pending') === 'paid'))), 2) ?></div>
-        <div class="kpi-card__label">Total Paid Amount</div>
-        <div class="kpi-card__status">Disbursed</div>
-    </div>
+    <?php
+    // 3. Approved – Yet to Pay
+    $title = 'Approved – Yet to Pay';
+    $totalValue = $financeTotals['approved_unpaid_amount'];
+    $distributionData = $approvedUnpaidDistribution;
+    $icon = '✅';
+    $cardClass = 'kpi-card--info';
+    $valueFormat = 'currency';
+    $primaryLabel = 'Approved but not disbursed';
+    include __DIR__ . '/../shared/distribution_stat_card.php';
+    ?>
     
-    <div class="kpi-card kpi-card--info">
-        <div class="kpi-card__header">
-            <div class="kpi-card__icon"><?php 
-                $advanceTypes = array_count_values(array_map(fn($a) => $a['type'] ?? 'General Advance', array_filter($advances ?? [], fn($a) => strtotime($a['created_at'] ?? 'now') >= strtotime('first day of this month'))));
-                $topAdvanceType = !empty($advanceTypes) ? array_key_first($advanceTypes) : 'General Advance';
-                echo match($topAdvanceType) {
-                    'Travel Advance' => '🚗',
-                    'Salary Advance' => '💰',
-                    'Project Advance' => '📁',
-                    'Emergency Advance' => '🆘',
-                    default => '💳'
-                };
-            ?></div>
-            <div class="kpi-card__trend">This Month</div>
-        </div>
-        <div class="kpi-card__value"><?= $topAdvanceType ?></div>
-        <div class="kpi-card__label">Top Advance Type</div>
-        <div class="kpi-card__status"><?= $advanceTypes[$topAdvanceType] ?? 0 ?> requests</div>
-    </div>
+    <?php
+    // 4. Total Paid Advances
+    $title = 'Total Paid Advances';
+    $totalValue = $financeTotals['total_paid_amount'];
+    $distributionData = $totalPaidDistribution;
+    $icon = '💸';
+    $cardClass = 'kpi-card--success';
+    $valueFormat = 'currency';
+    $primaryLabel = 'Successfully disbursed';
+    include __DIR__ . '/../shared/distribution_stat_card.php';
+    ?>
     
-    <div class="kpi-card kpi-card--chart">
-        <div class="kpi-card__header">
-            <div class="kpi-card__icon">📈</div>
-            <div class="kpi-card__trend">Distribution</div>
-        </div>
-        <div class="kpi-card__value" style="font-size: 14px;">Advance Types</div>
-        <div class="kpi-card__label">Category Breakdown</div>
-        <div class="kpi-card__chart" id="advanceTypeChart" style="height: 80px; margin-top: 8px;"></div>
-    </div>
+    <?php
+    // 5. Pending Requests (Count-based) - only show if there are pending requests
+    if ($financeTotals['pending_request_count'] > 0):
+        $title = 'Pending Requests';
+        $totalValue = $financeTotals['pending_request_count'];
+        $distributionData = $pendingRequestsDistribution;
+        $icon = '📋';
+        $cardClass = 'kpi-card--secondary';
+        $valueFormat = 'number';
+        $primaryLabel = 'Requests in pipeline';
+        include __DIR__ . '/../shared/distribution_stat_card.php';
+    endif;
+    ?>
 </div>
 
 <div class="card">
@@ -654,52 +669,7 @@ document.addEventListener('click', function(e) {
 });
 </script>
 
-<script>
-// Advance Type Distribution Chart
-document.addEventListener('DOMContentLoaded', function() {
-    const chartContainer = document.getElementById('advanceTypeChart');
-    if (!chartContainer) return;
-    
-    // Get advance type data from PHP
-    const advanceData = <?php 
-        $typeAmounts = [];
-        foreach ($advances ?? [] as $advance) {
-            $type = $advance['type'] ?? 'General Advance';
-            $amount = $advance['approved_amount'] ?? $advance['amount'] ?? 0;
-            if (in_array($advance['status'] ?? 'pending', ['approved', 'paid'])) {
-                $typeAmounts[$type] = ($typeAmounts[$type] ?? 0) + $amount;
-            }
-        }
-        echo json_encode($typeAmounts);
-    ?>;
-    
-    const total = Object.values(advanceData).reduce((sum, val) => sum + val, 0);
-    if (total === 0) {
-        chartContainer.innerHTML = '<div style="text-align: center; color: #666; font-size: 12px; padding: 20px;">No data available</div>';
-        return;
-    }
-    
-    // Create mini pie chart
-    const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
-    let html = '<div style="display: flex; flex-wrap: wrap; gap: 4px; justify-content: center;">';
-    
-    Object.entries(advanceData).forEach(([type, amount], index) => {
-        const percentage = ((amount / total) * 100).toFixed(1);
-        const color = colors[index % colors.length];
-        const shortType = type.replace(' Advance', '').substring(0, 8);
-        
-        html += `
-            <div style="display: flex; align-items: center; gap: 4px; font-size: 10px;">
-                <div style="width: 8px; height: 8px; background: ${color}; border-radius: 50%;"></div>
-                <span style="color: #666;">${shortType}: ${percentage}%</span>
-            </div>
-        `;
-    });
-    
-    html += '</div>';
-    chartContainer.innerHTML = html;
-});
-</script>
+
 
 <style>
 .advance-info {
@@ -725,21 +695,53 @@ document.addEventListener('DOMContentLoaded', function() {
     color: white;
 }
 
-.kpi-card--success {
-    border-left: 4px solid #10b981;
+/* Distribution Card Styles */
+.kpi-card {
+    min-height: 200px;
+    padding: 24px;
 }
 
-.kpi-card--info {
-    border-left: 4px solid #3b82f6;
+.kpi-card__value {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 6px;
+    color: #1f2937;
 }
 
-.kpi-card--chart {
-    border-left: 4px solid #8b5cf6;
+.kpi-card__label {
+    font-size: 12px;
+    color: #6b7280;
+    margin-bottom: 16px;
+    font-weight: 500;
 }
 
 .kpi-card__chart {
-    font-size: 10px;
-    color: #666;
+    height: 90px !important;
+    margin-top: 12px;
+}
+
+.kpi-card--highlight {
+    background: linear-gradient(135deg, #fef2f2 0%, #ffffff 100%);
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+@media (max-width: 1024px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
 }
 
 @keyframes slideInRight {

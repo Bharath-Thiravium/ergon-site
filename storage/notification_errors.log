@@ -6228,3 +6228,1251 @@
 [15-Dec-2025 13:56:09 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
 #1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
 #2 {main}
+[15-Dec-2025 13:56:27 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 13:56:27 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 13:56:33 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 13:56:33 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 13:56:39 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 13:56:39 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 13:56:57 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 13:56:57 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 13:57:03 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 13:57:03 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 13:57:09 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 13:57:09 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 13:57:27 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 13:57:27 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 13:57:33 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 13:57:33 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 13:57:57 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 13:57:57 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 13:58:02 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 13:58:02 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 13:58:03 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 13:58:03 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 13:58:07 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 13:58:07 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 13:58:08 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 13:58:08 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 13:58:08 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 13:58:08 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 13:58:08 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 13:58:08 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 13:58:09 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 13:58:09 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 13:58:09 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 13:58:09 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 13:58:09 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 13:58:09 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 13:58:09 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 13:58:09 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 13:58:09 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 13:58:09 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 13:58:09 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 13:58:09 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 13:58:21 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 13:58:21 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 13:58:27 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 13:58:27 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 13:58:33 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 13:58:33 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 13:58:43 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 13:58:43 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 13:58:57 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 13:58:57 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 13:59:03 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 13:59:03 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 13:59:13 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 13:59:13 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 13:59:28 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 13:59:28 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 13:59:33 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 13:59:33 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 13:59:42 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 13:59:42 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 13:59:43 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 13:59:43 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 13:59:43 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 13:59:43 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 13:59:43 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 13:59:43 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 13:59:58 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 13:59:58 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:00:03 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:00:03 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:00:14 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:00:14 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:00:28 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:00:28 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:00:33 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:00:33 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:00:42 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:00:42 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:00:42 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:00:42 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:00:43 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:00:43 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:00:43 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:00:43 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:00:43 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:00:43 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:00:43 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:00:43 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:00:58 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:00:58 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:01:03 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:01:03 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:01:13 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:01:13 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:01:28 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:01:28 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:01:33 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:01:33 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:01:42 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:01:42 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:01:58 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:01:58 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:02:03 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:02:03 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:02:12 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:02:12 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:02:29 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:02:29 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:02:33 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:02:33 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:02:42 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:02:42 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:02:59 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:02:59 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:03:03 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:03:03 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:03:12 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:03:12 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:03:29 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:03:29 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:03:33 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:03:33 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:03:42 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:03:42 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:03:59 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:03:59 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:04:03 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:04:03 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:04:13 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:04:13 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:04:29 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:04:29 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:04:33 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:04:33 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:04:43 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:04:43 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:04:59 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:04:59 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:05:03 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:05:03 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:05:30 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:05:30 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:05:30 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:05:30 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:05:33 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:05:33 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:05:43 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:05:43 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:06:00 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:06:00 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:06:03 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:06:03 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:06:13 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:06:13 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:06:30 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:06:30 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:07:00 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:07:00 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:07:02 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:07:02 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:07:02 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:07:02 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:07:30 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:07:30 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:07:39 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:07:39 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:07:39 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:07:39 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:07:42 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:07:42 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:08:00 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:08:00 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:08:03 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:08:03 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:08:30 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:08:30 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:08:33 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:08:33 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:08:57 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:08:57 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:09:01 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:09:01 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:09:03 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:09:03 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:09:27 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:09:27 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:09:31 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:09:31 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:09:33 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:09:33 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:09:57 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:09:57 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:10:01 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:10:01 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:10:27 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:10:27 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:10:31 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:10:31 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:10:34 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:10:34 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:10:57 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:10:57 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:11:01 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:11:01 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:11:27 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:11:27 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:11:32 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:11:32 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:11:35 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:11:35 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:11:57 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:11:57 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:12:02 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:12:02 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:12:27 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:12:27 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:12:32 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:12:32 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:12:36 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:12:36 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:12:57 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:12:57 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:13:02 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:13:02 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:13:27 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:13:27 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:13:32 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:13:32 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:13:37 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:13:37 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:13:57 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:13:57 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:14:02 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:14:02 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:14:27 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:14:27 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:14:32 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:14:32 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:14:38 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:14:38 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:14:57 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:14:57 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:15:02 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:15:02 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:15:27 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:15:27 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:15:33 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:15:33 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:15:39 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:15:39 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:15:57 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:15:57 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:16:03 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:16:03 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:16:27 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:16:27 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:16:33 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:16:33 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:16:40 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:16:40 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:16:57 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:16:57 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:17:03 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:17:03 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:17:27 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:17:27 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:17:33 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:17:33 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:17:41 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:17:41 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:17:57 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:17:57 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:18:03 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:18:03 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:18:27 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:18:27 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:18:33 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:18:33 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:18:42 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:18:42 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:18:57 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:18:57 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:19:03 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:19:03 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:19:27 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:19:27 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:19:34 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:19:34 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:19:43 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:19:43 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:19:57 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:19:57 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:20:04 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:20:04 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:20:27 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:20:27 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:20:34 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:20:34 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:20:44 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:20:44 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:20:57 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:20:57 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:21:04 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:21:04 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:21:27 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:21:27 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:21:34 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:21:34 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:21:45 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:21:45 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:21:57 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:21:57 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:22:05 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:22:05 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:22:27 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:22:27 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:22:35 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:22:35 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:22:46 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:22:46 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:22:57 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:22:57 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:23:05 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:23:05 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:23:27 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:23:27 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:23:35 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:23:35 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:23:47 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:23:47 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:23:57 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:23:57 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:24:05 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:24:05 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:24:27 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:24:27 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:24:35 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:24:35 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:24:48 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:24:48 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:24:57 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:24:57 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:25:06 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:25:06 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:25:27 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:25:27 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:25:36 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:25:36 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:25:49 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:25:49 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:25:57 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:25:57 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:26:06 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:26:06 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:26:27 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:26:27 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:26:36 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:26:36 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:26:50 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:26:50 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:26:57 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:26:57 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:27:06 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:27:06 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:27:22 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:27:22 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:27:27 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:27:27 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:27:33 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:27:33 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:27:36 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:27:36 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:27:57 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:27:57 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:28:03 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:28:03 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:28:07 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:28:07 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:28:27 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:28:27 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:28:33 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:28:33 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:28:34 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:28:34 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:28:35 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:28:35 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:28:36 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:28:36 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:28:36 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:28:36 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:28:36 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:28:36 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:28:37 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:28:37 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:28:37 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:28:37 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:28:37 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:28:37 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:29:03 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:29:03 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:29:07 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:29:07 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:29:07 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:29:07 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:29:33 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:29:33 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:29:37 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:29:37 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:29:37 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:29:37 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:30:03 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:30:03 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:30:07 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:30:07 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:30:07 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:30:07 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:30:24 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:30:24 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:30:33 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:30:33 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:30:37 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:30:37 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:30:55 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:30:55 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:31:03 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:31:03 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:31:08 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:31:08 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:31:25 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:31:25 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:31:33 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:31:33 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:31:38 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:31:38 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:31:55 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:31:55 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:32:08 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:32:08 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:32:25 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:32:25 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:32:34 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:32:34 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:32:38 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:32:38 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:32:55 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:32:55 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:33:08 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:33:08 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:33:18 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:33:18 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:33:25 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:33:25 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:33:33 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:33:33 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:33:38 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:33:38 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:33:55 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:33:55 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:34:03 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:34:03 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:34:09 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:34:09 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:34:39 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:34:39 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:35:02 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:35:02 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:35:02 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:35:02 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:35:09 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:35:09 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:35:16 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:35:16 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:35:33 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:35:33 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:35:39 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:35:39 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:35:47 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:35:47 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:36:03 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:36:03 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:36:09 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:36:09 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:36:17 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:36:17 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:36:33 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:36:33 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:36:39 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:36:39 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:36:47 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:36:47 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:37:09 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:37:09 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:37:17 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:37:17 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:37:30 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:37:30 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:37:32 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:37:32 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:37:33 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:37:33 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:37:39 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:37:39 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:38:03 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:38:03 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:38:03 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:38:03 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:38:09 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:38:09 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:38:33 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:38:33 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:38:33 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:38:33 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:38:40 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:38:40 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:39:03 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:39:03 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:39:10 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:39:10 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:39:33 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:39:33 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:39:34 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:39:34 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:39:40 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:39:40 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:39:51 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:39:51 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:39:51 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:39:51 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:39:51 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:39:51 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:40:03 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:40:03 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:40:10 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:40:10 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:40:22 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:40:22 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:40:33 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:40:33 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:40:40 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:40:40 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:40:52 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:40:52 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:41:03 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:41:03 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:41:10 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:41:10 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:41:22 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:41:22 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:41:26 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:41:26 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:41:33 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:41:33 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:41:40 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:41:40 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:41:56 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:41:56 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:42:03 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:42:03 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:42:10 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:42:10 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:42:22 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:42:22 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:42:33 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:42:33 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:42:41 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:42:41 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:42:52 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:42:52 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:43:03 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:43:03 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:43:11 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:43:11 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:43:23 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:43:23 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:43:33 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:43:33 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:43:41 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:43:41 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:43:52 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:43:52 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:44:03 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:44:03 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:44:11 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:44:11 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:44:22 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:44:22 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:44:33 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:44:33 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:44:41 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:44:41 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:44:52 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:44:52 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:44:53 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:44:53 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:45:03 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:45:03 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:45:11 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:45:11 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:45:23 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:45:23 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:45:33 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:45:33 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:45:41 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:45:41 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:45:51 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:45:51 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:45:53 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:45:53 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:46:03 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:46:03 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:46:04 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:46:04 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:46:06 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:46:06 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:46:11 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:46:11 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
+[15-Dec-2025 14:46:33 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:46:33 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(37, 10)
+#2 {main}
+[15-Dec-2025 14:46:36 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:46:36 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(1, 10)
+#2 {main}
+[15-Dec-2025 14:46:41 UTC] Notification API Error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'n.reference_type' in 'where clause' in C:\laragon\www\ergon-site\app\models\Notification.php:98
+[15-Dec-2025 14:46:41 UTC] Stack trace: #0 C:\laragon\www\ergon-site\app\models\Notification.php(98): PDO->prepare('\r\n            S...')
+#1 C:\laragon\www\ergon-site\api\notifications.php(63): Notification->getForDropdown(48, 10)
+#2 {main}
