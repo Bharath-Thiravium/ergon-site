@@ -257,6 +257,51 @@ class FollowupController extends Controller {
         }
     }
     
+    public function complete($id) {
+        header('Content-Type: application/json');
+        
+        if (!isset($_SESSION['user_id'])) {
+            echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+            exit;
+        }
+        
+        try {
+            require_once __DIR__ . '/../config/database.php';
+            $pdo = Database::connect();
+            
+            // Get followup details including task_id
+            $stmt = $pdo->prepare("SELECT id, contact_id, task_id, status FROM followups WHERE id = ?");
+            $stmt->execute([$id]);
+            $followup = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($followup) {
+                // Complete the followup
+                $stmt = $pdo->prepare("UPDATE followups SET status = 'completed', completed_at = NOW(), updated_at = NOW() WHERE id = ?");
+                $result = $stmt->execute([$id]);
+                
+                if ($result) {
+                    // Log history
+                    $this->logFollowupHistory($pdo, $id, 'completed', $followup['status'], 'Follow-up completed');
+                    
+                    // If this followup is linked to a task, update the task status and sync with Daily Planner
+                    if ($followup['task_id']) {
+                        $this->updateLinkedTaskWithPlannerSync($pdo, $followup['task_id'], 'completed');
+                    }
+                    
+                    echo json_encode(['success' => true, 'message' => 'Follow-up completed successfully']);
+                } else {
+                    echo json_encode(['success' => false, 'error' => 'Failed to complete follow-up']);
+                }
+            } else {
+                echo json_encode(['success' => false, 'error' => 'Follow-up not found']);
+            }
+        } catch (Exception $e) {
+            error_log('Followup complete error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to complete follow-up']);
+        }
+        exit;
+    }
+    
     public function delete($id) {
         header('Content-Type: application/json');
         
@@ -277,6 +322,73 @@ class FollowupController extends Controller {
             echo json_encode(['success' => false, 'error' => 'Database error occurred']);
         }
         exit;
+    }
+    
+    /**
+     * Update linked task status with Daily Planner sync
+     */
+    private function updateLinkedTaskWithPlannerSync($pdo, $taskId, $status) {
+        try {
+            $stmt = $pdo->prepare("SELECT status, progress FROM tasks WHERE id = ?");
+            $stmt->execute([$taskId]);
+            $task = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($task) {
+                $oldStatus = $task['status'];
+                $newProgress = ($status === 'completed') ? 100 : $task['progress'];
+                
+                // Update task status
+                $stmt = $pdo->prepare("UPDATE tasks SET status = ?, progress = ?, updated_at = NOW() WHERE id = ?");
+                $result = $stmt->execute([$status, $newProgress, $taskId]);
+                
+                if ($result) {
+                    error_log("Follow-up completion: Updated task {$taskId} status from {$oldStatus} to {$status}");
+                    
+                    // Sync with Daily Planner
+                    $this->syncTaskWithDailyPlanner($pdo, $taskId, $status, $newProgress);
+                }
+            }
+        } catch (Exception $e) {
+            error_log('Update linked task with planner sync error: ' . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Sync task changes with Daily Planner
+     */
+    private function syncTaskWithDailyPlanner($pdo, $taskId, $status, $progress) {
+        try {
+            // Update all daily_tasks entries that reference this task
+            $stmt = $pdo->prepare("
+                UPDATE daily_tasks 
+                SET status = ?, completed_percentage = ?, 
+                    completion_time = CASE WHEN ? = 'completed' THEN NOW() ELSE completion_time END,
+                    updated_at = NOW()
+                WHERE original_task_id = ? OR task_id = ?
+            ");
+            $result = $stmt->execute([$status, $progress, $status, $taskId, $taskId]);
+            
+            if ($result && $stmt->rowCount() > 0) {
+                error_log("Follow-up completion: Successfully synced task {$taskId} with Daily Planner - {$stmt->rowCount()} entries updated");
+            } else {
+                error_log("Follow-up completion: No Daily Planner entries found for task {$taskId}");
+            }
+        } catch (Exception $e) {
+            error_log('Sync task with Daily Planner error: ' . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Log followup history
+     */
+    private function logFollowupHistory($pdo, $followupId, $action, $oldValue = null, $notes = null) {
+        try {
+            $stmt = $pdo->prepare("INSERT INTO followup_history (followup_id, action, old_value, notes, created_by, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
+            return $stmt->execute([$followupId, $action, $oldValue, $notes, $_SESSION['user_id'] ?? null]);
+        } catch (Exception $e) {
+            error_log('Followup history log error: ' . $e->getMessage());
+            return false;
+        }
     }
     
     private function ensureTablesExist($pdo) {

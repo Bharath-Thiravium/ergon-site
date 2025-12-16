@@ -199,25 +199,63 @@ class Task {
     
     /**
      * Sync task status and progress changes with Daily Planner
+     * Enhanced to support follow-up completion scenarios
      */
     private function syncWithDailyPlanner($taskId, $status, $progress) {
         try {
-            // Update all daily_tasks entries that reference this task
-            $query = "
-                UPDATE daily_tasks 
-                SET status = ?, completed_percentage = ?, 
-                    completion_time = CASE WHEN ? = 'completed' THEN NOW() ELSE completion_time END,
-                    updated_at = NOW()
+            // Check if there are any daily_tasks entries for this task
+            $checkQuery = "
+                SELECT COUNT(*) as count, 
+                       GROUP_CONCAT(DISTINCT scheduled_date) as dates,
+                       GROUP_CONCAT(DISTINCT id) as daily_task_ids
+                FROM daily_tasks 
                 WHERE original_task_id = ? OR task_id = ?
             ";
-            $stmt = $this->conn->prepare($query);
-            $result = $stmt->execute([$status, $progress, $status, $taskId, $taskId]);
+            $checkStmt = $this->conn->prepare($checkQuery);
+            $checkStmt->execute([$taskId, $taskId]);
+            $plannerInfo = $checkStmt->fetch(PDO::FETCH_ASSOC);
             
-            if ($result && $stmt->rowCount() > 0) {
-                error_log("Successfully synced task {$taskId} with Daily Planner: {$stmt->rowCount()} entries updated");
+            if ($plannerInfo['count'] > 0) {
+                // Update all daily_tasks entries that reference this task
+                $query = "
+                    UPDATE daily_tasks 
+                    SET status = ?, completed_percentage = ?, 
+                        completion_time = CASE WHEN ? = 'completed' THEN NOW() ELSE completion_time END,
+                        updated_at = NOW()
+                    WHERE original_task_id = ? OR task_id = ?
+                ";
+                $stmt = $this->conn->prepare($query);
+                $result = $stmt->execute([$status, $progress, $status, $taskId, $taskId]);
+                
+                if ($result && $stmt->rowCount() > 0) {
+                    error_log("Task sync: Successfully updated {$stmt->rowCount()} Daily Planner entries for task {$taskId} on dates: {$plannerInfo['dates']}");
+                    
+                    // If task is completed, also sync with follow-ups
+                    if ($status === 'completed') {
+                        $this->syncWithFollowups($taskId, $status);
+                    }
+                } else {
+                    error_log("Task sync: No Daily Planner entries were updated for task {$taskId}");
+                }
+            } else {
+                error_log("Task sync: No Daily Planner entries found for task {$taskId} - task may not be scheduled in planner");
             }
         } catch (Exception $e) {
             error_log('Sync with Daily Planner error: ' . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Sync task completion with linked follow-ups
+     */
+    private function syncWithFollowups($taskId, $status) {
+        try {
+            // Check if ContactFollowupController class exists and call its static method
+            if (class_exists('ContactFollowupController')) {
+                ContactFollowupController::updateLinkedFollowupStatus($taskId, $status);
+            }
+        } catch (Exception $e) {
+            error_log('Sync with follow-ups error: ' . $e->getMessage());
         }
     }
 }
