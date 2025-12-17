@@ -39,10 +39,13 @@ try {
     switch ($action) {
         case 'start':
             try {
-                // Get task with current progress
+                // Get task with current progress and SLA info
                 $stmt = $db->prepare("
-                    SELECT id, status, completed_percentage FROM daily_tasks 
-                    WHERE id = ? AND user_id = ?
+                    SELECT dt.id, dt.status, dt.completed_percentage, dt.active_seconds, dt.pause_duration,
+                           COALESCE(t.sla_hours, 0.25) as sla_hours
+                    FROM daily_tasks dt
+                    LEFT JOIN tasks t ON dt.original_task_id = t.id
+                    WHERE dt.id = ? AND dt.user_id = ?
                 ");
                 $stmt->execute([$task_id, $userId]);
                 $task = $stmt->fetch();
@@ -53,21 +56,24 @@ try {
                     exit;
                 }
                 
-                if ($task['status'] !== 'not_started') {
+                if (!in_array($task['status'], ['not_started', 'assigned'])) {
                     http_response_code(400);
                     echo json_encode(['error' => 'Task cannot be started from current status: ' . $task['status']]);
                     exit;
                 }
                 
                 $now = date('Y-m-d H:i:s');
-                $slaEndTime = date('Y-m-d H:i:s', strtotime('+15 minutes')); // Default 15 min SLA
+                $slaHours = (float)$task['sla_hours'];
+                $slaEndTime = date('Y-m-d H:i:s', strtotime($now . ' +' . $slaHours . ' hours'));
                 
-                // Preserve existing progress when starting
+                // Start task with proper SLA tracking
                 $stmt = $db->prepare("
                     UPDATE daily_tasks 
                     SET status = 'in_progress', 
                         start_time = ?, 
                         sla_end_time = ?,
+                        resume_time = NULL,
+                        pause_start_time = NULL,
                         updated_at = NOW()
                     WHERE id = ? AND user_id = ?
                 ");
@@ -80,7 +86,11 @@ try {
                         'status' => 'in_progress',
                         'label' => 'Break',
                         'message' => 'Task started successfully',
-                        'progress' => (int)($task['completed_percentage'] ?? 0)
+                        'progress' => (int)($task['completed_percentage'] ?? 0),
+                        'start_time' => $now,
+                        'active_seconds' => (int)($task['active_seconds'] ?? 0),
+                        'total_pause_duration' => (int)($task['pause_duration'] ?? 0),
+                        'current_timestamp' => time()
                     ]);
                 } else {
                     http_response_code(400);
@@ -97,7 +107,7 @@ try {
         case 'pause':
             try {
                 $stmt = $db->prepare("
-                    SELECT id, status FROM daily_tasks 
+                    SELECT id, status, start_time, resume_time, active_seconds FROM daily_tasks 
                     WHERE id = ? AND user_id = ? AND status = 'in_progress'
                 ");
                 $stmt->execute([$task_id, $userId]);
@@ -110,21 +120,36 @@ try {
                 }
                 
                 $now = date('Y-m-d H:i:s');
+                
+                // Calculate and store session time when pausing
+                $sessionTime = 0;
+                $referenceTime = $task['resume_time'] ?: $task['start_time'];
+                if ($referenceTime) {
+                    $sessionTime = max(0, time() - strtotime($referenceTime));
+                }
+                
+                $newActiveSeconds = (int)$task['active_seconds'] + $sessionTime;
+                
                 $stmt = $db->prepare("
                     UPDATE daily_tasks 
                     SET status = 'on_break', 
                         pause_start_time = ?,
+                        active_seconds = ?,
+                        resume_time = NULL,
                         updated_at = NOW()
                     WHERE id = ? AND user_id = ?
                 ");
                 
-                $result = $stmt->execute([$now, $task_id, $userId]);
+                $result = $stmt->execute([$now, $newActiveSeconds, $task_id, $userId]);
                 
                 if ($result && $stmt->rowCount() > 0) {
                     echo json_encode([
                         'success' => true,
                         'status' => 'on_break',
-                        'label' => 'Resume'
+                        'label' => 'Resume',
+                        'pause_start_time' => $now,
+                        'active_seconds' => $newActiveSeconds,
+                        'current_timestamp' => time()
                     ]);
                 } else {
                     http_response_code(400);
@@ -141,7 +166,7 @@ try {
         case 'resume':
             try {
                 $stmt = $db->prepare("
-                    SELECT id, status FROM daily_tasks 
+                    SELECT id, status, pause_start_time, pause_duration FROM daily_tasks 
                     WHERE id = ? AND user_id = ? AND status = 'on_break'
                 ");
                 $stmt->execute([$task_id, $userId]);
@@ -154,22 +179,35 @@ try {
                 }
                 
                 $now = date('Y-m-d H:i:s');
+                
+                // Calculate and store pause session time when resuming
+                $pauseSessionTime = 0;
+                if ($task['pause_start_time']) {
+                    $pauseSessionTime = max(0, time() - strtotime($task['pause_start_time']));
+                }
+                
+                $newPauseDuration = (int)$task['pause_duration'] + $pauseSessionTime;
+                
                 $stmt = $db->prepare("
                     UPDATE daily_tasks 
                     SET status = 'in_progress', 
                         resume_time = ?,
                         pause_start_time = NULL,
+                        pause_duration = ?,
                         updated_at = NOW()
                     WHERE id = ? AND user_id = ?
                 ");
                 
-                $result = $stmt->execute([$now, $task_id, $userId]);
+                $result = $stmt->execute([$now, $newPauseDuration, $task_id, $userId]);
                 
                 if ($result && $stmt->rowCount() > 0) {
                     echo json_encode([
                         'success' => true,
                         'status' => 'in_progress',
-                        'label' => 'Break'
+                        'label' => 'Break',
+                        'resume_time' => $now,
+                        'total_pause_duration' => $newPauseDuration,
+                        'current_timestamp' => time()
                     ]);
                 } else {
                     http_response_code(400);

@@ -143,8 +143,8 @@ $content = ob_start();
                 <h3>👥 Assignment & Schedule</h3>
                 <div class="form-grid">
                     <div class="form-group">
-                        <label for="assigned_for">👤 Assignment Type <span class="field-help" title="Who will be responsible for this task?">ℹ️</span></label>
-                        <select id="assigned_for" name="assigned_for" onchange="handleAssignmentTypeChange()" required>
+                        <label for="assignment_type">👤 Assignment Type <span class="field-help" title="Who will be responsible for this task?">ℹ️</span></label>
+                        <select id="assignment_type" name="assigned_for" onchange="handleAssignmentTypeChange()" required>
                             <option value="self">For Myself (I will do this)</option>
                             <option value="other">For Others (Delegate to team member)</option>
                         </select>
@@ -586,7 +586,7 @@ function loadTaskCategories() {
 
 // Handle assignment type change
 function handleAssignmentTypeChange() {
-    const assignmentType = document.getElementById('assigned_for').value;
+    const assignmentType = document.getElementById('assignment_type').value;
     const assignedToSelect = document.getElementById('assigned_to');
     
     if (assignmentType === 'self') {
