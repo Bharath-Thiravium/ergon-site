@@ -761,10 +761,8 @@ document.addEventListener('keydown', function(e) {
     }
 });
 </script>
-<script src="/ergon-site/assets/js/sla-timer-fix.js"></script>
-<script src="/ergon-site/assets/js/task-timer.js"></script>
+<script src="/ergon-site/assets/js/live-sla-timer.js"></script>
 <script src="/ergon-site/assets/js/unified-daily-planner.js"></script>
-<script src="/ergon-site/assets/js/timer-init.js"></script>
 <script src="/ergon-site/assets/js/sla-dashboard-fix.js"></script>
 <script src="/ergon-site/assets/js/planner-access-control.js"></script>
 

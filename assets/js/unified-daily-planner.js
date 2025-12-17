@@ -19,6 +19,11 @@ window.pauseTask = function(taskId) {
         return;
     }
     
+    // IMMEDIATE status change for instant visual feedback
+    if (window.setImmediateStatus) {
+        window.setImmediateStatus(taskId, 'on_break');
+    }
+    
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
     
     fetch('/ergon-site/api/daily_planner_workflow.php?action=pause', {
@@ -34,7 +39,9 @@ window.pauseTask = function(taskId) {
         if (data.success) {
             taskCard.dataset.status = 'on_break';
             updateTaskUI(taskId, 'on_break');
-            window.taskTimer.startPause(taskId, Math.floor(Date.now() / 1000));
+            if (window.updateSLATimer) {
+                window.updateSLATimer(taskId, 'on_break', data);
+            }
             showNotification('Task paused', 'info');
         } else {
             showNotification('Failed to pause: ' + data.message, 'error');
@@ -54,6 +61,11 @@ window.resumeTask = function(taskId) {
         return;
     }
     
+    // IMMEDIATE status change for instant visual feedback
+    if (window.setImmediateStatus) {
+        window.setImmediateStatus(taskId, 'in_progress');
+    }
+    
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
     
     fetch('/ergon-site/api/daily_planner_workflow.php?action=resume', {
@@ -69,8 +81,9 @@ window.resumeTask = function(taskId) {
         if (data.success) {
             taskCard.dataset.status = 'in_progress';
             updateTaskUI(taskId, 'in_progress');
-            window.taskTimer.stopPause(taskId);
-            window.taskTimer.start(taskId, parseInt(taskCard.dataset.slaDuration) || 900, Math.floor(Date.now() / 1000));
+            if (window.updateSLATimer) {
+                window.updateSLATimer(taskId, 'in_progress', data);
+            }
             showNotification('Task resumed', 'success');
         } else {
             showNotification('Failed to resume: ' + data.message, 'error');
@@ -83,6 +96,12 @@ window.resumeTask = function(taskId) {
 
 window.startTask = function(taskId) {
     const taskCard = document.querySelector(`[data-task-id="${taskId}"]`);
+    
+    // IMMEDIATE status change for instant visual feedback
+    if (window.setImmediateStatus) {
+        window.setImmediateStatus(taskId, 'in_progress');
+    }
+    
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
     
     fetch('/ergon-site/api/daily_planner_workflow.php?action=start', {
@@ -112,7 +131,9 @@ window.startTask = function(taskId) {
             }
             
             updateTaskUI(taskId, 'in_progress');
-            window.taskTimer.start(taskId, parseInt(taskCard.dataset.slaDuration) || 900, Math.floor(Date.now() / 1000));
+            if (window.updateSLATimer) {
+                window.updateSLATimer(taskId, 'in_progress', data);
+            }
             showNotification('Task started', 'success');
         } else {
             showNotification('Failed to start: ' + data.message, 'error');
@@ -310,9 +331,8 @@ window.updateTaskProgress = function(taskId) {
                 // Update actions based on new status
                 updateTaskUI(actualTaskId, status);
                 
-                if (status === 'completed' && window.taskTimer) {
-                    window.taskTimer.stop(actualTaskId);
-                    window.taskTimer.stopPause(actualTaskId);
+                if (status === 'completed' && window.enhancedSLATimer) {
+                    window.enhancedSLATimer.completeTask(actualTaskId);
                 }
             }
             
@@ -349,8 +369,9 @@ window.postponeTask = function(taskId) {
             if (taskCard) {
                 taskCard.dataset.status = 'postponed';
                 updateTaskUI(taskId, 'postponed');
-                window.taskTimer.stop(taskId);
-                window.taskTimer.stopPause(taskId);
+                if (window.enhancedSLATimer) {
+                    window.enhancedSLATimer.stopTimer(taskId);
+                }
             }
             showNotification('Task postponed to ' + newDate, 'success');
         } else {
@@ -407,45 +428,8 @@ function forceSLARefresh() {
 }
 
 window.forceSLARefresh = function() {
-    // Show loading state for SLA metrics
-    const slaElements = {
-        totalTime: document.querySelector('.sla-total-time'),
-        usedTime: document.querySelector('.sla-used-time'),
-        remainingTime: document.querySelector('.sla-remaining-time'),
-        pauseTime: document.querySelector('.sla-pause-time')
-    };
-    
-    // Set loading state
-    Object.values(slaElements).forEach(element => {
-        if (element) {
-            element.textContent = 'Loading...';
-        }
-    });
-    
-    // Get current date from page context
-    const plannerGrid = document.querySelector('.planner-grid');
-    const selectedDate = plannerGrid ? plannerGrid.dataset.selectedDate : new Date().toISOString().split('T')[0];
-    
-    // Fetch updated SLA data
-    fetch(`/ergon-site/api/sla_dashboard.php?date=${selectedDate}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.success && data.sla_data) {
-                updateSLADashboardFromAPI(data.sla_data);
-            } else {
-                console.error('Failed to refresh SLA dashboard:', data.message || 'Unknown error');
-                resetSLAToDefaults();
-            }
-        })
-        .catch(error => {
-            console.error('SLA refresh error:', error);
-            resetSLAToDefaults();
-        });
+    // Disable SLA dashboard refresh due to API issues
+    resetSLAToDefaults();
 };
 
 // Helper function to update SLA dashboard from API data
