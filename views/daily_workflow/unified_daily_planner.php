@@ -179,10 +179,10 @@ data-user-id="<?= htmlspecialchars($_SESSION['user_id'] ?? '1', ENT_QUOTES, 'UTF
                              data-task-id="<?= $taskId ?>" 
                              data-original-task-id="<?= $task['task_id'] ?? '' ?>" 
                              data-sla-duration="<?= $slaDuration ?>" 
-                             data-start-time="<?= $startTimestamp ?>" 
+                             data-start-time="<?= htmlspecialchars($task['start_time'] ?? '', ENT_QUOTES, 'UTF-8') ?>" 
+                             data-resume-time="<?= htmlspecialchars($task['resume_time'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
                              data-status="<?= htmlspecialchars($status, ENT_QUOTES, 'UTF-8') ?>"
                              data-task-source="<?= htmlspecialchars($taskSource, ENT_QUOTES, 'UTF-8') ?>"
-                             data-pause-time="<?= htmlspecialchars($task['pause_time'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
                              data-pause-start-time="<?= htmlspecialchars($task['pause_start_time'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
                              data-active-seconds="<?= (int)($task['active_seconds'] ?? 0) ?>"
                              data-pause-duration="<?= (int)($task['pause_duration'] ?? 0) ?>"
@@ -761,8 +761,7 @@ document.addEventListener('keydown', function(e) {
     }
 });
 </script>
-<script src="/ergon-site/assets/js/live-sla-timer.js"></script>
-<script src="/ergon-site/assets/js/unified-daily-planner.js"></script>
+<script src="/ergon-site/assets/js/simple-timer.js"></script>
 <script src="/ergon-site/assets/js/sla-dashboard-fix.js"></script>
 <script src="/ergon-site/assets/js/planner-access-control.js"></script>
 
@@ -779,3 +778,12 @@ include __DIR__ . '/../layouts/dashboard.php';
     to { transform: rotate(360deg); }
 }
 .spinner { animation: spin 1s linear infinite; }
+
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+.notification {
+    animation: slideIn 0.3s ease;
+}

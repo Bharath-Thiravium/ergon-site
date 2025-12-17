@@ -63,22 +63,26 @@ try {
                 }
                 
                 $now = date('Y-m-d H:i:s');
+                $nowISO = date('c');
                 $slaHours = (float)$task['sla_hours'];
                 $slaEndTime = date('Y-m-d H:i:s', strtotime($now . ' +' . $slaHours . ' hours'));
                 
-                // Start task with proper SLA tracking
+                // Start task with proper SLA tracking - reset active_seconds for fresh start
                 $stmt = $db->prepare("
                     UPDATE daily_tasks 
                     SET status = 'in_progress', 
                         start_time = ?, 
                         sla_end_time = ?,
-                        resume_time = NULL,
+                        resume_time = ?,
                         pause_start_time = NULL,
+                        active_seconds = 0,
                         updated_at = NOW()
                     WHERE id = ? AND user_id = ?
                 ");
                 
-                $result = $stmt->execute([$now, $slaEndTime, $task_id, $userId]);
+                $result = $stmt->execute([$now, $slaEndTime, $now, $task_id, $userId]);
+                
+
                 
                 if ($result && $stmt->rowCount() > 0) {
                     echo json_encode([
@@ -88,9 +92,11 @@ try {
                         'message' => 'Task started successfully',
                         'progress' => (int)($task['completed_percentage'] ?? 0),
                         'start_time' => $now,
+                        'resume_time' => $now,
                         'active_seconds' => (int)($task['active_seconds'] ?? 0),
                         'total_pause_duration' => (int)($task['pause_duration'] ?? 0),
-                        'current_timestamp' => time()
+                        'current_timestamp' => time(),
+                        'server_time' => $nowISO
                     ]);
                 } else {
                     http_response_code(400);
@@ -108,16 +114,24 @@ try {
             try {
                 $stmt = $db->prepare("
                     SELECT id, status, start_time, resume_time, active_seconds FROM daily_tasks 
-                    WHERE id = ? AND user_id = ? AND status = 'in_progress'
+                    WHERE id = ? AND user_id = ?
                 ");
                 $stmt->execute([$task_id, $userId]);
                 $task = $stmt->fetch();
                 
                 if (!$task) {
-                    http_response_code(400);
-                    echo json_encode(['error' => 'Task not found or not in progress']);
+                    http_response_code(404);
+                    echo json_encode(['error' => 'Task not found']);
                     exit;
                 }
+                
+                if ($task['status'] !== 'in_progress') {
+                    http_response_code(400);
+                    echo json_encode(['error' => 'Task is not in progress. Current status: ' . $task['status']]);
+                    exit;
+                }
+                
+
                 
                 $now = date('Y-m-d H:i:s');
                 
@@ -167,16 +181,24 @@ try {
             try {
                 $stmt = $db->prepare("
                     SELECT id, status, pause_start_time, pause_duration FROM daily_tasks 
-                    WHERE id = ? AND user_id = ? AND status = 'on_break'
+                    WHERE id = ? AND user_id = ?
                 ");
                 $stmt->execute([$task_id, $userId]);
                 $task = $stmt->fetch();
                 
                 if (!$task) {
-                    http_response_code(400);
-                    echo json_encode(['error' => 'Task not found or not on break']);
+                    http_response_code(404);
+                    echo json_encode(['error' => 'Task not found']);
                     exit;
                 }
+                
+                if ($task['status'] !== 'on_break') {
+                    http_response_code(400);
+                    echo json_encode(['error' => 'Task is not on break. Current status: ' . $task['status']]);
+                    exit;
+                }
+                
+
                 
                 $now = date('Y-m-d H:i:s');
                 
