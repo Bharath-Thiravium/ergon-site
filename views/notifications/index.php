@@ -127,8 +127,11 @@ ob_start();
                                             $recordExists = $checkStmt->fetch() !== false;
                                             $viewUrl = $recordExists ? "/ergon-site/advances/view/{$referenceId}" : "/ergon-site/advances";
                                             break;
+                                        case 'system':
+                                            $viewUrl = "/ergon-site/dashboard";
+                                            break;
                                         default:
-                                            $viewUrl = "/ergon-site/{$referenceType}";
+                                            $viewUrl = "/ergon-site/dashboard";
                                     }
                                 } catch (Exception $e) {
                                     // If validation fails, redirect to module index
@@ -136,7 +139,8 @@ ob_start();
                                         'leave' => '/ergon-site/leaves',
                                         'expense' => '/ergon-site/expenses', 
                                         'advance' => '/ergon-site/advances',
-                                        'task' => '/ergon-site/tasks'
+                                        'task' => '/ergon-site/tasks',
+                                        'system' => '/ergon-site/dashboard'
                                     ];
                                     $viewUrl = $moduleUrls[$referenceType] ?? "/ergon-site/dashboard";
                                 }
@@ -145,9 +149,10 @@ ob_start();
                                     'leave' => '/ergon-site/leaves',
                                     'expense' => '/ergon-site/expenses', 
                                     'advance' => '/ergon-site/advances',
-                                    'task' => '/ergon-site/tasks'
+                                    'task' => '/ergon-site/tasks',
+                                    'system' => '/ergon-site/dashboard'
                                 ];
-                                $viewUrl = $moduleUrls[$referenceType] ?? "/ergon-site/{$referenceType}";
+                                $viewUrl = $moduleUrls[$referenceType] ?? "/ergon-site/dashboard";
                             }
                         ?>
                         <tr class="<?= $isUnread ? 'notification--unread' : '' ?>" data-notification-id="<?= (int)$notification['id'] ?>">
