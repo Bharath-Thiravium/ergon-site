@@ -1,6 +1,14 @@
 // Global timer storage
 const slaTimers = {};
 
+// Global modal close function
+function hideClosestModal(element) {
+    const modal = element.closest('.modal-overlay') || element.closest('.notification');
+    if (modal && modal.parentElement) {
+        modal.remove();
+    }
+}
+
 // Define pauseTask function globally
 window.pauseTask = function(taskId) {
     const taskCard = document.querySelector(`[data-task-id="${taskId}"]`);
@@ -89,6 +97,20 @@ window.startTask = function(taskId) {
     .then(data => {
         if (data.success) {
             taskCard.dataset.status = 'in_progress';
+            
+            // Update progress display if progress was returned
+            if (data.progress !== undefined && data.progress > 0) {
+                const progressBar = taskCard.querySelector('.progress-fill');
+                if (progressBar) {
+                    progressBar.style.width = data.progress + '%';
+                }
+                
+                const progressValue = taskCard.querySelector('.progress-value');
+                if (progressValue) {
+                    progressValue.textContent = data.progress + '%';
+                }
+            }
+            
             updateTaskUI(taskId, 'in_progress');
             window.taskTimer.start(taskId, parseInt(taskCard.dataset.slaDuration) || 900, Math.floor(Date.now() / 1000));
             showNotification('Task started', 'success');
@@ -142,6 +164,10 @@ function updateTaskUI(taskId, newStatus) {
             actionsDiv.innerHTML = `
                 <span class="badge badge--warning"><i class="bi bi-calendar-plus"></i> Postponed</span>
             `;
+        } else if (newStatus === 'completed') {
+            actionsDiv.innerHTML = `
+                <span class="badge badge--success"><i class="bi bi-check-circle"></i> Completed</span>
+            `;
         }
     }
     
@@ -167,100 +193,60 @@ window.openProgressModal = function(taskId, progress, status) {
         modalDebounce[taskId] = false;
     }, 1000);
     
-    console.log('Progress modal for task ' + taskId + ' (progress: ' + progress + '%, status: ' + status + ')');
+    currentTaskId = taskId;
     
-    // Create and show modal
-    const modal = document.createElement('div');
-    modal.className = 'modal-overlay';
-    modal.innerHTML = `
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Update Progress - Task ${taskId}</h3>
-                <button class="modal-close" onclick="hideClosestModal(this)">&times;</button>
-            </div>
-            <div class="modal-body">
-                <label>Progress Percentage: <span id="progress-display-${taskId}">${progress}%</span></label>
-                <input type="range" id="progress-slider-${taskId}" min="0" max="100" value="${progress}" class="form-slider" oninput="document.getElementById('progress-display-${taskId}').textContent = this.value + '%'; document.getElementById('progress-${taskId}').value = this.value;">
-                <input type="number" id="progress-${taskId}" min="0" max="100" value="${progress}" class="form-input" oninput="document.getElementById('progress-slider-${taskId}').value = this.value; document.getElementById('progress-display-${taskId}').textContent = this.value + '%';">
-                
-                <div class="progress-presets">
-                    <button type="button" class="preset-btn" onclick="setProgress(${taskId}, 25)">25%</button>
-                    <button type="button" class="preset-btn" onclick="setProgress(${taskId}, 50)">50%</button>
-                    <button type="button" class="preset-btn" onclick="setProgress(${taskId}, 75)">75%</button>
-                    <button type="button" class="preset-btn" onclick="setProgress(${taskId}, 100)">100%</button>
-                </div>
-                
-                <label>Status:</label>
-                <select id="status-${taskId}" class="form-input">
-                    <option value="not_started" ${status === 'not_started' ? 'selected' : ''}>Not Started</option>
-                    <option value="in_progress" ${status === 'in_progress' ? 'selected' : ''}>In Progress</option>
-                    <option value="on_break" ${status === 'on_break' ? 'selected' : ''}>On Break</option>
-                    <option value="completed" ${status === 'completed' ? 'selected' : ''}>Completed</option>
-                </select>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn--secondary" onclick="hideClosestModal(this)">Cancel</button>
-                <button class="btn btn--primary" onclick="updateTaskProgress(${taskId})">Update</button>
-            </div>
-        </div>
-    `;
+    var slider = document.getElementById('progressSlider');
+    var valueDisplay = document.getElementById('progressValue');
+    var description = document.getElementById('progressDescription');
+    var dialog = document.getElementById('progressDialog');
     
-    // Add modal styles if not exists
-    if (!document.getElementById('modal-styles')) {
-        const styles = document.createElement('style');
-        styles.id = 'modal-styles';
-        // Use individual CSS rules to avoid parsing errors
-        styles.textContent = '.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 10001; }' +
-        '.modal-content { background: white; border-radius: 8px; width: 400px; max-width: 90vw; }' +
-        '.modal-header { padding: 16px; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; }' +
-        '.modal-body { padding: 16px; }' +
-        '.modal-body label { display: block; margin-bottom: 4px; font-weight: 500; }' +
-        '.modal-body .form-input { width: 100%; margin-bottom: 12px; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px; }' +
-        '.modal-footer { padding: 16px; border-top: 1px solid #e5e7eb; display: flex; gap: 8px; justify-content: flex-end; }' +
-        '.modal-close { background: none; border: none; font-size: 24px; cursor: pointer; color: #6b7280; }' +
-        '.form-slider { width: 100%; margin-bottom: 12px; -webkit-appearance: none; height: 6px; border-radius: 3px; background: #e5e7eb; outline: none; }' +
-        '.form-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #3b82f6; cursor: pointer; }' +
-        '.form-slider::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: #3b82f6; cursor: pointer; border: none; }' +
-        '.progress-presets { display: flex; gap: 8px; margin-bottom: 12px; }' +
-        '.preset-btn { padding: 6px 12px; border: 1px solid #d1d5db; background: #f9fafb; border-radius: 4px; cursor: pointer; font-size: 12px; }' +
-        '.preset-btn:hover { background: #e5e7eb; }';
-        document.head.appendChild(styles);
+    if (!dialog) {
+        console.error('Progress modal not found');
+        return;
     }
     
-    document.body.appendChild(modal);
+    if (slider) slider.value = progress || 0;
+    if (valueDisplay) valueDisplay.textContent = (progress || 0) + '%';
+    if (description) description.value = '';
+    if (dialog) dialog.style.display = 'flex';
+    
+    // Focus on description field
+    setTimeout(() => {
+        if (description) description.focus();
+    }, 100);
 };
 
 // Helper function to set progress from preset buttons
 window.setProgress = function(taskId, value) {
-    const progressSlider = document.getElementById(`progress-slider-${taskId}`);
-    const progressInput = document.getElementById(`progress-${taskId}`);
-    const progressDisplay = document.getElementById(`progress-display-${taskId}`);
+    const modal = document.getElementById('updateProgressModal');
+    if (!modal) return;
     
-    if (progressSlider) progressSlider.value = value;
-    if (progressInput) progressInput.value = value;
-    if (progressDisplay) progressDisplay.textContent = value + '%';
-    
-    // Auto-update status based on progress
-    const statusSelect = document.getElementById(`status-${taskId}`);
-    if (statusSelect) {
-        if (value === 0) {
-            statusSelect.value = 'not_started';
-        } else if (value === 100) {
-            statusSelect.value = 'completed';
-        } else if (value > 0) {
-            statusSelect.value = 'in_progress';
-        }
+    const progressInput = modal.querySelector('#selectedProgressPercentage');
+    if (progressInput) {
+        progressInput.value = value;
     }
+    
+    // Update button states
+    const percentageBtns = modal.querySelectorAll('.percentage-btn');
+    percentageBtns.forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.percentage == value) {
+            btn.classList.add('active');
+        }
+    });
 };
 
 window.updateTaskProgress = function(taskId) {
-    const progressInput = document.getElementById(`progress-${taskId}`);
-    const statusSelect = document.getElementById(`status-${taskId}`);
+    const modal = document.getElementById('updateProgressModal');
+    if (!modal) return;
     
-    if (!progressInput || !statusSelect) return;
+    const taskIdInput = modal.querySelector('#updateTaskId');
+    const progressInput = modal.querySelector('#selectedProgressPercentage');
     
+    if (!taskIdInput || !progressInput) return;
+    
+    const actualTaskId = taskIdInput.value || taskId;
     const progress = parseInt(progressInput.value);
-    const status = statusSelect.value;
     
     // Validate progress
     if (isNaN(progress) || progress < 0 || progress > 100) {
@@ -268,35 +254,37 @@ window.updateTaskProgress = function(taskId) {
         return;
     }
     
-    // Get the original task ID from the task card
-    const taskCard = document.querySelector(`[data-task-id="${taskId}"]`);
-    const originalTaskId = taskCard?.dataset.originalTaskId || taskId;
+    // Determine status based on progress
+    let status = 'in_progress';
+    if (progress >= 100) {
+        status = 'completed';
+    } else if (progress === 0) {
+        status = 'not_started';
+    }
     
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
     
     // Close modal
-    const __existingModal = document.querySelector('.modal-overlay');
-    if(__existingModal && typeof hideClosestModal === 'function') hideClosestModal(__existingModal);
+    closeModal('updateProgressModal');
     
-    // Send update to server using the same endpoint as Task module with original task ID
-    fetch('/ergon-site/tasks/update-status', {
+    // Send update to daily planner API
+    fetch('/ergon-site/api/daily_planner_workflow.php?action=update-progress', {
         method: 'POST',
         headers: { 
             'Content-Type': 'application/json',
             'X-CSRF-Token': csrfToken
         },
         body: JSON.stringify({ 
-            task_id: parseInt(originalTaskId), 
+            task_id: parseInt(actualTaskId), 
             progress: progress,
-            status: status,
-            reason: 'Progress updated via daily planner'
+            status: status
         })
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
             // Update UI
-            const taskCard = document.querySelector(`[data-task-id="${taskId}"]`);
+            const taskCard = document.querySelector(`[data-task-id="${actualTaskId}"]`);
             if (taskCard) {
                 taskCard.dataset.status = status;
                 
@@ -313,23 +301,22 @@ window.updateTaskProgress = function(taskId) {
                 }
                 
                 // Update status badge
-                const statusBadge = taskCard.querySelector(`#status-${taskId}`);
+                const statusBadge = taskCard.querySelector(`#status-${actualTaskId}`);
                 if (statusBadge) {
                     statusBadge.textContent = status.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
                     statusBadge.className = `badge badge--${status}`;
                 }
                 
-                // If completed, update actions
-                if (progress >= 100 || status === 'completed') {
-                    updateTaskUI(taskId, 'completed', progress);
-                    window.taskTimer.stop(taskId);
-                    window.taskTimer.stopPause(taskId);
-                } else {
-                    updateTaskUI(taskId, status, progress);
+                // Update actions based on new status
+                updateTaskUI(actualTaskId, status);
+                
+                if (status === 'completed' && window.taskTimer) {
+                    window.taskTimer.stop(actualTaskId);
+                    window.taskTimer.stopPause(actualTaskId);
                 }
             }
             
-            showNotification(`Task updated: ${progress}% - ${status}`, 'success');
+            showNotification(`Task updated: ${progress}% - ${status.replace('_', ' ')}`, 'success');
         } else {
             showNotification('Failed to update progress: ' + (data.error || data.message), 'error');
         }
@@ -502,11 +489,38 @@ function updateSLADashboard(slaData) {
     }
 }
 
+
+
 // Compatibility functions
 function pauseTask(taskId) { return window.pauseTask(taskId); }
 function resumeTask(taskId) { return window.resumeTask(taskId); }
 function startTask(taskId) { return window.startTask(taskId); }
 function openProgressModal(taskId, progress, status) { return window.openProgressModal(taskId, progress, status); }
-function updateTaskProgress(taskId) { return window.updateTaskProgress(taskId); }
 function postponeTask(taskId) { return window.postponeTask(taskId); }
-function setProgress(taskId, value) { return window.setProgress(taskId, value); }
+
+// Add event listeners for percentage buttons
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('updateProgressModal');
+    if (modal) {
+        const percentageBtns = modal.querySelectorAll('.percentage-btn');
+        percentageBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const percentage = this.dataset.percentage;
+                setProgress(null, percentage);
+            });
+        });
+        
+        // Handle form submission
+        const form = modal.querySelector('#updateProgressForm');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const taskIdInput = modal.querySelector('#updateTaskId');
+                if (taskIdInput && taskIdInput.value) {
+                    updateTaskProgress(taskIdInput.value);
+                }
+            });
+        }
+    }
+});
+

@@ -1,6 +1,7 @@
 <?php
 $title = 'Expense Claims';
 $active_page = 'expenses';
+require_once __DIR__ . '/../../app/helpers/ExpenseDistributionHelper.php';
 ob_start();
 ?>
 
@@ -26,6 +27,81 @@ ob_start();
 .ab-btn--mark-paid {
     background: #10b981;
     color: white;
+}
+
+/* Distribution Card Styles */
+.kpi-card {
+    min-height: 200px;
+    padding: 24px;
+    border: 1px solid #e5e7eb;
+}
+
+.kpi-card__value {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 6px;
+    color: #1f2937;
+}
+
+.kpi-card__label {
+    font-size: 12px;
+    color: #6b7280;
+    margin-bottom: 16px;
+    font-weight: 500;
+}
+
+.kpi-card__chart {
+    height: 90px !important;
+    margin-top: 12px;
+}
+
+.kpi-card--primary {
+    border-left: 4px solid #3b82f6;
+}
+
+.kpi-card--success {
+    border-left: 4px solid #10b981;
+}
+
+.kpi-card--info {
+    border-left: 4px solid #06b6d4;
+}
+
+.kpi-card--warning {
+    border-left: 4px solid #f59e0b;
+}
+
+.kpi-card--secondary {
+    border-left: 4px solid #8b5cf6;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+@media (max-width: 1024px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+}
+
+.kpi-card {
+    transition: transform 0.2s ease;
+}
+
+.kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 </style>
 
@@ -53,36 +129,80 @@ ob_start();
 </div>
 <?php endif; ?>
 
+<?php
+// Calculate finance totals
+$financeTotals = ExpenseDistributionHelper::getFinanceTotals($expenses ?? []);
+
+// Calculate distributions for each card
+$totalSubmittedDistribution = ExpenseDistributionHelper::getStatusDistributionByAmount($expenses ?? []);
+$pendingReviewDistribution = ExpenseDistributionHelper::getCategoryDistributionByAmount($expenses ?? [], 'pending');
+$approvedUnreimbursedDistribution = ExpenseDistributionHelper::getCategoryDistributionByAmount($expenses ?? [], 'approved');
+$totalReimbursedDistribution = ExpenseDistributionHelper::getCategoryDistributionByAmount($expenses ?? [], 'paid');
+$expenseClaimsDistribution = ExpenseDistributionHelper::getStatusDistribution($expenses ?? []);
+?>
+
 <div class="dashboard-grid">
-    <div class="kpi-card">
-        <div class="kpi-card__header">
-            <div class="kpi-card__icon">💰</div>
-            <div class="kpi-card__trend">↗ +15%</div>
-        </div>
-        <div class="kpi-card__value"><?= count($expenses ?? []) ?></div>
-        <div class="kpi-card__label">Total Claims</div>
-        <div class="kpi-card__status">Submitted</div>
-    </div>
+    <?php
+    // 1. Total Expenses Submitted
+    $title = 'Total Expenses Submitted';
+    $totalValue = $financeTotals['total_submitted_amount'];
+    $distributionData = $totalSubmittedDistribution;
+    $icon = '💰';
+    $cardClass = 'kpi-card--primary';
+    $valueFormat = 'currency';
+    $primaryLabel = 'Total expense liability created';
+    include __DIR__ . '/../shared/distribution_stat_card.php';
+    ?>
     
-    <div class="kpi-card kpi-card--warning">
-        <div class="kpi-card__header">
-            <div class="kpi-card__icon">⏳</div>
-            <div class="kpi-card__trend kpi-card__trend--down">— 0%</div>
-        </div>
-        <div class="kpi-card__value"><?= count(array_filter($expenses ?? [], fn($e) => ($e['status'] ?? 'pending') === 'pending')) ?></div>
-        <div class="kpi-card__label">Pending Review</div>
-        <div class="kpi-card__status kpi-card__status--pending">Under Review</div>
-    </div>
+    <?php
+    // 2. Pending Review Amount
+    $title = 'Pending Review Amount';
+    $totalValue = $financeTotals['pending_review_amount'];
+    $distributionData = $pendingReviewDistribution;
+    $icon = '⏳';
+    $cardClass = 'kpi-card--warning';
+    $valueFormat = 'currency';
+    $primaryLabel = 'Expenses awaiting approval';
+    include __DIR__ . '/../shared/distribution_stat_card.php';
+    ?>
     
-    <div class="kpi-card">
-        <div class="kpi-card__header">
-            <div class="kpi-card__icon">✅</div>
-            <div class="kpi-card__trend">↗ +22%</div>
-        </div>
-        <div class="kpi-card__value">₹<?= number_format(array_sum(array_map(fn($e) => $e['amount'] ?? 0, array_filter($expenses ?? [], fn($e) => ($e['status'] ?? 'pending') === 'approved'))), 2) ?></div>
-        <div class="kpi-card__label">Approved Amount</div>
-        <div class="kpi-card__status">Processed</div>
-    </div>
+    <?php
+    // 3. Approved – Yet to Reimburse
+    $title = 'Approved – Yet to Reimburse';
+    $totalValue = $financeTotals['approved_unreimbursed_amount'];
+    $distributionData = $approvedUnreimbursedDistribution;
+    $icon = '✅';
+    $cardClass = 'kpi-card--info';
+    $valueFormat = 'currency';
+    $primaryLabel = 'Approved expenses not yet paid';
+    include __DIR__ . '/../shared/distribution_stat_card.php';
+    ?>
+    
+    <?php
+    // 4. Total Reimbursed
+    $title = 'Total Reimbursed';
+    $totalValue = $financeTotals['total_reimbursed_amount'];
+    $distributionData = $totalReimbursedDistribution;
+    $icon = '💸';
+    $cardClass = 'kpi-card--success';
+    $valueFormat = 'currency';
+    $primaryLabel = 'Actual cash outflow';
+    include __DIR__ . '/../shared/distribution_stat_card.php';
+    ?>
+    
+    <?php
+    // 5. Expense Claims (Count-based) - only show if there are claims
+    if ($financeTotals['total_claim_count'] > 0):
+        $title = 'Expense Claims';
+        $totalValue = $financeTotals['total_claim_count'];
+        $distributionData = $expenseClaimsDistribution;
+        $icon = '📋';
+        $cardClass = 'kpi-card--secondary';
+        $valueFormat = 'number';
+        $primaryLabel = 'Workload & processing health';
+        include __DIR__ . '/../shared/distribution_stat_card.php';
+    endif;
+    ?>
 </div>
 
 

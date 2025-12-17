@@ -15,10 +15,11 @@ class AdvanceController extends Controller {
             require_once __DIR__ . '/../config/database.php';
             $db = Database::connect();
             
-            // Ensure table exists with repayment_date column
+            // Ensure table exists with all required columns
             DatabaseHelper::safeExec($db, "CREATE TABLE IF NOT EXISTS advances (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 user_id INT NOT NULL,
+                project_id INT NULL,
                 type VARCHAR(50) DEFAULT 'General Advance',
                 amount DECIMAL(10,2) NOT NULL,
                 reason TEXT NOT NULL,
@@ -37,12 +38,9 @@ class AdvanceController extends Controller {
                 rejected_at TIMESTAMP NULL
             )", "Create table");
             
-            // Add repayment_date column if it doesn't exist
-            try {
-                DatabaseHelper::safeExec($db, "ALTER TABLE advances ADD COLUMN repayment_date DATE NULL", "Alter table");
-            } catch (Exception $e) {
-                // Column already exists, ignore error
-            }
+            // Add missing columns if they don't exist
+            try { DatabaseHelper::safeExec($db, "ALTER TABLE advances ADD COLUMN project_id INT NULL", "Alter table"); } catch (Exception $e) {}
+            try { DatabaseHelper::safeExec($db, "ALTER TABLE advances ADD COLUMN repayment_date DATE NULL", "Alter table"); } catch (Exception $e) {}
             // Ensure payment columns exist
             try { DatabaseHelper::safeExec($db, "ALTER TABLE advances ADD COLUMN payment_proof VARCHAR(255) NULL", "Alter table"); } catch (Exception $e) {}
             try { DatabaseHelper::safeExec($db, "ALTER TABLE advances ADD COLUMN paid_by INT NULL", "Alter table"); } catch (Exception $e) {}
@@ -50,10 +48,10 @@ class AdvanceController extends Controller {
             try { DatabaseHelper::safeExec($db, "ALTER TABLE advances ADD COLUMN approved_amount DECIMAL(10,2) NULL", "Alter table"); } catch (Exception $e) {}
             
             if ($role === 'user') {
-                $stmt = $db->prepare("SELECT a.*, u.name as user_name, u.role as user_role FROM advances a JOIN users u ON a.user_id = u.id WHERE a.user_id = ? ORDER BY a.created_at DESC");
+                $stmt = $db->prepare("SELECT a.*, u.name as user_name, u.role as user_role, p.name as project_name FROM advances a JOIN users u ON a.user_id = u.id LEFT JOIN projects p ON a.project_id = p.id WHERE a.user_id = ? ORDER BY a.created_at DESC");
                 $stmt->execute([$user_id]);
             } else {
-                $stmt = $db->query("SELECT a.*, u.name as user_name, u.role as user_role FROM advances a JOIN users u ON a.user_id = u.id ORDER BY a.created_at DESC");
+                $stmt = $db->query("SELECT a.*, u.name as user_name, u.role as user_role, p.name as project_name FROM advances a JOIN users u ON a.user_id = u.id LEFT JOIN projects p ON a.project_id = p.id ORDER BY a.created_at DESC");
             }
             $advances = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
