@@ -140,10 +140,11 @@ data-user-id="<?= htmlspecialchars($_SESSION['user_id'] ?? '1', ENT_QUOTES, 'UTF
                             $remainingTime = max(0, $slaDuration - $elapsed);
                         }
                         
+                        // Solution 2: Fix PHP Initial Display
                         $timeDisplay = sprintf('%02d:%02d:%02d', 
-                            (int)floor($remainingTime / 3600), 
-                            (int)floor(($remainingTime % 3600) / 60), 
-                            (int)floor($remainingTime % 60)
+                            floor($slaDuration / 3600), 
+                            floor(($slaDuration % 3600) / 60), 
+                            $slaDuration % 60
                         );
                         
                         $cssClass = '';
@@ -175,15 +176,21 @@ data-user-id="<?= htmlspecialchars($_SESSION['user_id'] ?? '1', ENT_QUOTES, 'UTF
                         elseif ($isFutureDate) $modeClass = 'planning-mode';
                         else $modeClass = 'execution-mode';
                         ?>
+                        <?php
+                        // Fix timestamp initialization with ISO format
+                        $currentStartTime = $task['start_time'] ? date('c', strtotime($task['start_time'])) : '';
+                        $currentResumeTime = $task['resume_time'] ? date('c', strtotime($task['resume_time'])) : '';
+                        $currentPauseTime = $task['pause_start_time'] ? date('c', strtotime($task['pause_start_time'])) : '';
+                        ?>
                         <div class="task-card <?= $cssClass ?> <?= $historicalClass ?> <?= $modeClass ?>" 
                              data-task-id="<?= $taskId ?>" 
                              data-original-task-id="<?= $task['task_id'] ?? '' ?>" 
                              data-sla-duration="<?= $slaDuration ?>" 
-                             data-start-time="<?= htmlspecialchars($task['start_time'] ?? '', ENT_QUOTES, 'UTF-8') ?>" 
-                             data-resume-time="<?= htmlspecialchars($task['resume_time'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
-                             data-status="<?= htmlspecialchars($status, ENT_QUOTES, 'UTF-8') ?>"
-                             data-task-source="<?= htmlspecialchars($taskSource, ENT_QUOTES, 'UTF-8') ?>"
-                             data-pause-start-time="<?= htmlspecialchars($task['pause_start_time'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
+                             data-start-time="<?= $currentStartTime ?>" 
+                             data-resume-time="<?= $currentResumeTime ?>"
+                             data-status="<?= $status ?>"
+                             data-task-source="<?= $taskSource ?>"
+                             data-pause-start-time="<?= $currentPauseTime ?>"
                              data-active-seconds="<?= (int)($task['active_seconds'] ?? 0) ?>"
                              data-pause-duration="<?= (int)($task['pause_duration'] ?? 0) ?>"
                              data-is-past="<?= $isPastDate ? 'true' : 'false' ?>">
@@ -232,19 +239,15 @@ data-user-id="<?= htmlspecialchars($_SESSION['user_id'] ?? '1', ENT_QUOTES, 'UTF
                                 $activeSeconds = $task['active_seconds'] ?? 0;
                                 $pauseSeconds = $task['pause_duration'] ?? 0;
                                 
-                                // Calculate current pause time if on break
-                                $currentPauseTime = 0;
-                                if ($status === 'on_break' && !empty($task['pause_start_time'])) {
-                                    $pauseStartTimestamp = strtotime($task['pause_start_time']);
-                                    $currentPauseTime = time() - $pauseStartTimestamp;
-                                }
-                                $totalPauseTime = $pauseSeconds + $currentPauseTime;
+                                // Static pause time only - no live calculation
+                                $totalPauseTime = (int)($task['pause_duration'] ?? 0);
                                 
                                 // Apply formula: Overdue = Duration Exceeding the SLA Time
                                 $isOverdue = $activeSeconds > $slaDuration;
                                 $overdueSeconds = $isOverdue ? $activeSeconds - $slaDuration : 0;
                                 // Apply formula: Time Used = Overdue + SLA Time (when overdue)
-                                $timeUsedSeconds = $isOverdue ? $overdueSeconds + $slaDuration : $activeSeconds;
+                                // Solution 2: Fix PHP Time Used Formula - Time Used = Active Time + Break Time
+                                $timeUsedSeconds = $activeSeconds + $totalPauseTime;
                                 $remainingSeconds = max(0, $slaDuration - $activeSeconds);
                                 
                                 $slaTimeDisplay = sprintf('%02d:%02d:%02d', 
@@ -324,22 +327,22 @@ data-user-id="<?= htmlspecialchars($_SESSION['user_id'] ?? '1', ENT_QUOTES, 'UTF
                                             $canStart = $isCurrentDate && $isPostponedToToday;
                                         ?>
                                             <?php if ($canStart): ?>
-                                                <button class="btn btn--sm btn--success" onclick="activatePostponedTask(<?= $taskId ?>)" title="Start this postponed task">
+                                                <button type="button" class="btn btn--sm btn--success" onclick="activatePostponedTask(<?= $taskId ?>, event)" title="Start this postponed task">
                                                     <i class="bi bi-play"></i> Start
                                                 </button>
                                             <?php else: ?>
                                                 <span class="badge badge--warning"><i class="bi bi-calendar-plus"></i> Postponed</span>
                                             <?php endif; ?>
                                             
-                                            <button class="btn btn--sm btn--secondary" onclick="postponeTask(<?= $taskId ?>)" title="Re-postpone to another date">
+                                            <button type="button" class="btn btn--sm btn--secondary" onclick="postponeTask(<?= $taskId ?>, event)" title="Re-postpone to another date">
                                                 <i class="bi bi-calendar-plus"></i> Re-postpone
                                             </button>
                                         <?php elseif ($status === 'not_started' || $status === 'assigned'): ?>
                                             <?php if ($isCurrentDate): ?>
-                                                <button class="btn btn--sm btn--success" onclick="startTask(<?= $taskId ?>)" title="Start working on this task">
+                                                <button type="button" class="btn btn--sm btn--success" onclick="startTask(<?= $taskId ?>, event)" title="Start working on this task">
                                                     <i class="bi bi-play"></i> Start
                                                 </button>
-                                                <button class="btn btn--sm btn--secondary" onclick="postponeTask(<?= $taskId ?>)" title="Postpone task to another date">
+                                                <button type="button" class="btn btn--sm btn--secondary" onclick="postponeTask(<?= $taskId ?>, event)" title="Postpone task to another date">
                                                     <i class="bi bi-calendar-plus"></i> Postpone
                                                 </button>
                                             <?php else: ?>
@@ -352,13 +355,13 @@ data-user-id="<?= htmlspecialchars($_SESSION['user_id'] ?? '1', ENT_QUOTES, 'UTF
                                             <?php endif; ?>
                                         <?php elseif ($status === 'in_progress'): ?>
                                             <?php if ($isCurrentDate): ?>
-                                                <button class="btn btn--sm btn--warning" onclick="pauseTask(<?= $taskId ?>)" title="Take a break from this task">
+                                                <button type="button" class="btn btn--sm btn--warning" onclick="pauseTask(<?= $taskId ?>, event)" title="Take a break from this task">
                                                     <i class="bi bi-pause"></i> Break
                                                 </button>
                                                 <button class="btn btn--sm btn--primary" onclick="openProgressModal(<?= $taskId ?>, <?= (int)($task['completed_percentage'] ?? 0) ?>, '<?= $status ?>')" title="Update task completion progress">
                                                     <i class="bi bi-percent"></i> Update Progress
                                                 </button>
-                                                <button class="btn btn--sm btn--secondary" onclick="postponeTask(<?= $taskId ?>)" title="Postpone task to another date">
+                                                <button type="button" class="btn btn--sm btn--secondary" onclick="postponeTask(<?= $taskId ?>, event)" title="Postpone task to another date">
                                                     <i class="bi bi-calendar-plus"></i> Postpone
                                                 </button>
                                             <?php else: ?>
@@ -374,13 +377,13 @@ data-user-id="<?= htmlspecialchars($_SESSION['user_id'] ?? '1', ENT_QUOTES, 'UTF
                                             <?php endif; ?>
                                         <?php elseif ($status === 'on_break'): ?>
                                             <?php if ($isCurrentDate): ?>
-                                                <button class="btn btn--sm btn--success" onclick="resumeTask(<?= $taskId ?>)" title="Resume working on this task">
+                                                <button type="button" class="btn btn--sm btn--success" onclick="resumeTask(<?= $taskId ?>, event)" title="Resume working on this task">
                                                     <i class="bi bi-play"></i> Resume
                                                 </button>
                                                 <button class="btn btn--sm btn--primary" onclick="openProgressModal(<?= $taskId ?>, <?= (int)($task['completed_percentage'] ?? 0) ?>, '<?= $status ?>')" title="Update task completion progress">
                                                     <i class="bi bi-percent"></i> Update Progress
                                                 </button>
-                                                <button class="btn btn--sm btn--secondary" onclick="postponeTask(<?= $taskId ?>)" title="Postpone task to another date">
+                                                <button type="button" class="btn btn--sm btn--secondary" onclick="postponeTask(<?= $taskId ?>, event)" title="Postpone task to another date">
                                                     <i class="bi bi-calendar-plus"></i> Postpone
                                                 </button>
                                             <?php else: ?>
@@ -584,18 +587,6 @@ renderModal('quickTaskModal', 'Quick Add Task', $quickTaskContent, $quickTaskFoo
 </div>
 <div id="postponeOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9998;" onclick="cancelPostpone()"></div>
 
-<div id="progressDialog" class="dialog" style="display: none;">
-    <div class="dialog-content">
-        <h4>Update Progress</h4>
-        <p>Progress: <span id="progressValue">0</span>%</p>
-        <input type="range" id="progressSlider" min="0" max="100" value="0">
-        <div class="dialog-buttons">
-            <button onclick="closeDialog()">Cancel</button>
-            <button onclick="saveProgress()">Save</button>
-        </div>
-    </div>
-</div>
-
 <?php renderModalJS(); ?>
 <script>
 // Global function for modal closing - must be defined before other scripts
@@ -761,9 +752,8 @@ document.addEventListener('keydown', function(e) {
     }
 });
 </script>
-<script src="/ergon-site/assets/js/simple-timer.js"></script>
+<script src="/ergon-site/assets/js/working-timer.js"></script>
 <script src="/ergon-site/assets/js/sla-dashboard-fix.js"></script>
-<script src="/ergon-site/assets/js/planner-access-control.js"></script>
 
 <?php
 $content = ob_get_clean();

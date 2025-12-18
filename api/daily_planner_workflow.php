@@ -91,8 +91,8 @@ try {
                         'label' => 'Break',
                         'message' => 'Task started successfully',
                         'progress' => (int)($task['completed_percentage'] ?? 0),
-                        'start_time' => $now,
-                        'resume_time' => $now,
+                        'start_time' => date('c', strtotime($now)),
+                        'resume_time' => date('c', strtotime($now)),
                         'active_seconds' => (int)($task['active_seconds'] ?? 0),
                         'total_pause_duration' => (int)($task['pause_duration'] ?? 0),
                         'current_timestamp' => time(),
@@ -113,7 +113,7 @@ try {
         case 'pause':
             try {
                 $stmt = $db->prepare("
-                    SELECT id, status, start_time, resume_time, active_seconds FROM daily_tasks 
+                    SELECT id, status, start_time, resume_time, active_seconds, pause_duration FROM daily_tasks 
                     WHERE id = ? AND user_id = ?
                 ");
                 $stmt->execute([$task_id, $userId]);
@@ -161,8 +161,10 @@ try {
                         'success' => true,
                         'status' => 'on_break',
                         'label' => 'Resume',
-                        'pause_start_time' => $now,
+                        'pause_start_time' => date('c', strtotime($now)),
+                        'resume_time' => null,
                         'active_seconds' => $newActiveSeconds,
+                        'pause_duration' => (int)$task['pause_duration'],
                         'current_timestamp' => time()
                     ]);
                 } else {
@@ -180,7 +182,7 @@ try {
         case 'resume':
             try {
                 $stmt = $db->prepare("
-                    SELECT id, status, pause_start_time, pause_duration FROM daily_tasks 
+                    SELECT id, status, pause_start_time, pause_duration, active_seconds FROM daily_tasks 
                     WHERE id = ? AND user_id = ?
                 ");
                 $stmt->execute([$task_id, $userId]);
@@ -227,8 +229,10 @@ try {
                         'success' => true,
                         'status' => 'in_progress',
                         'label' => 'Break',
-                        'resume_time' => $now,
-                        'total_pause_duration' => $newPauseDuration,
+                        'resume_time' => date('c', strtotime($now)),
+                        'pause_start_time' => null,
+                        'active_seconds' => (int)$task['active_seconds'],
+                        'pause_duration' => $newPauseDuration,
                         'current_timestamp' => time()
                     ]);
                 } else {
