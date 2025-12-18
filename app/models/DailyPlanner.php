@@ -724,6 +724,39 @@ class DailyPlanner {
                 $dailyStats['postponed_tasks'] = $postponedCount;
             }
             
+            // Calculate SLA totals with proper formatting
+            try {
+                $stmt = $this->db->prepare("
+                    SELECT 
+                        SUM(COALESCE(t.sla_hours, 0.25) * 3600) as total_sla_seconds,
+                        SUM(dt.active_seconds + dt.pause_duration) as total_used_seconds,
+                        SUM(dt.pause_duration) as total_pause_seconds,
+                        SUM(dt.active_seconds) as total_active_seconds
+                    FROM daily_tasks dt
+                    LEFT JOIN tasks t ON dt.original_task_id = t.id
+                    WHERE dt.user_id = ? AND dt.scheduled_date = ?
+                ");
+                $stmt->execute([$userId, $date]);
+                $slaData = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                $totalSlaSeconds = $slaData['total_sla_seconds'] ?? 0;
+                $totalUsedSeconds = $slaData['total_used_seconds'] ?? 0;
+                $totalPauseSeconds = $slaData['total_pause_seconds'] ?? 0;
+                $remainingSeconds = max(0, $totalSlaSeconds - ($totalUsedSeconds - $totalPauseSeconds));
+                
+                // Add formatted SLA metrics to stats
+                $dailyStats['sla_total_time'] = $this->formatTimeFromSeconds($totalSlaSeconds);
+                $dailyStats['sla_used_time'] = $this->formatTimeFromSeconds($totalUsedSeconds);
+                $dailyStats['sla_remaining_time'] = $this->formatTimeFromSeconds($remainingSeconds);
+                $dailyStats['sla_pause_time'] = $this->formatTimeFromSeconds($totalPauseSeconds);
+            } catch (Exception $e) {
+                error_log('SLA metrics calculation failed: ' . $e->getMessage());
+                $dailyStats['sla_total_time'] = '00:00:00';
+                $dailyStats['sla_used_time'] = '00:00:00';
+                $dailyStats['sla_remaining_time'] = '00:00:00';
+                $dailyStats['sla_pause_time'] = '00:00:00';
+            }
+            
             // If no daily tasks stats, get from regular tasks
             if (empty($dailyStats['total_tasks'])) {
                 try {
@@ -1239,6 +1272,14 @@ class DailyPlanner {
     public static function scheduleAutoRollover() {
         // This method can be called by a cron job daily at midnight
         return self::runDailyRollover();
+    }
+    
+    private function formatTimeFromSeconds($seconds) {
+        $seconds = (int)$seconds;
+        $h = (int)floor($seconds / 3600);
+        $m = (int)floor(($seconds % 3600) / 60);
+        $s = $seconds % 60;
+        return sprintf('%02d:%02d:%02d', $h, $m, $s);
     }
     
     public static function runDailyRollover() {

@@ -36,3 +36,11 @@ window.activatePostponedTask = function(taskId) {
 };
 
 // SLA dashboard functions only - no timer conflicts
+
+// Initialize SLA Dashboard on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize SLA Dashboard calculations
+    if (typeof calculateSLADashboardTotals === 'function') {
+        calculateSLADashboardTotals();
+    }
+});

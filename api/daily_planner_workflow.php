@@ -91,8 +91,8 @@ try {
                         'label' => 'Break',
                         'message' => 'Task started successfully',
                         'progress' => (int)($task['completed_percentage'] ?? 0),
-                        'start_time' => date('c', strtotime($now)),
-                        'resume_time' => date('c', strtotime($now)),
+                        'start_time' => date('Y-m-d H:i:s', strtotime($now)),
+                        'resume_time' => date('Y-m-d H:i:s', strtotime($now)),
                         'active_seconds' => (int)($task['active_seconds'] ?? 0),
                         'total_pause_duration' => (int)($task['pause_duration'] ?? 0),
                         'current_timestamp' => time(),
@@ -161,7 +161,7 @@ try {
                         'success' => true,
                         'status' => 'on_break',
                         'label' => 'Resume',
-                        'pause_start_time' => date('c', strtotime($now)),
+                        'pause_start_time' => date('Y-m-d H:i:s', strtotime($now)),
                         'resume_time' => null,
                         'active_seconds' => $newActiveSeconds,
                         'pause_duration' => (int)$task['pause_duration'],
@@ -229,7 +229,7 @@ try {
                         'success' => true,
                         'status' => 'in_progress',
                         'label' => 'Break',
-                        'resume_time' => date('c', strtotime($now)),
+                        'resume_time' => date('Y-m-d H:i:s', strtotime($now)),
                         'pause_start_time' => null,
                         'active_seconds' => (int)$task['active_seconds'],
                         'pause_duration' => $newPauseDuration,
@@ -358,6 +358,47 @@ try {
                 error_log('Postpone task error: ' . $e->getMessage());
                 http_response_code(500);
                 echo json_encode(['error' => 'Postpone task error: ' . $e->getMessage()]);
+            }
+            break;
+            
+        case 'sla-dashboard':
+            try {
+                $date = $_GET['date'] ?? date('Y-m-d');
+                $userId = $_GET['user_id'] ?? $userId;
+                
+                $stmt = $db->prepare("
+                    SELECT 
+                        SUM(COALESCE(t.sla_hours, 0.25) * 3600) as total_sla_seconds,
+                        SUM(dt.active_seconds + dt.pause_duration) as total_used_seconds,
+                        SUM(dt.pause_duration) as total_pause_seconds,
+                        SUM(dt.active_seconds) as total_active_seconds
+                    FROM daily_tasks dt
+                    LEFT JOIN tasks t ON dt.original_task_id = t.id
+                    WHERE dt.user_id = ? AND dt.scheduled_date = ?
+                ");
+                $stmt->execute([$userId, $date]);
+                $data = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                function formatTimeFromSeconds($seconds) {
+                    $seconds = (int)$seconds;
+                    $h = (int)floor($seconds / 3600);
+                    $m = (int)floor(($seconds % 3600) / 60);
+                    $s = $seconds % 60;
+                    return sprintf('%02d:%02d:%02d', $h, $m, $s);
+                }
+                
+                echo json_encode([
+                    'success' => true,
+                    'total_sla_seconds' => (int)($data['total_sla_seconds'] ?? 0),
+                    'total_used_seconds' => (int)($data['total_used_seconds'] ?? 0),
+                    'total_remaining_seconds' => max(0, ($data['total_sla_seconds'] ?? 0) - ($data['total_used_seconds'] ?? 0)),
+                    'total_pause_seconds' => (int)($data['total_pause_seconds'] ?? 0)
+                ]);
+                
+            } catch (Exception $e) {
+                error_log('SLA Dashboard error: ' . $e->getMessage());
+                http_response_code(500);
+                echo json_encode(['error' => 'SLA Dashboard error: ' . $e->getMessage()]);
             }
             break;
             
