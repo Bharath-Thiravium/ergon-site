@@ -256,16 +256,41 @@ window.pauseTask = function(taskId, event) {
         event.stopPropagation();
     }
     
+    // Add request validation
+    if (!taskId || isNaN(parseInt(taskId))) {
+        showNotification('Invalid task ID', 'error');
+        return false;
+    }
+    
+    const card = document.querySelector(`[data-task-id="${taskId}"]`);
+    if (!card || card.dataset.status !== 'in_progress') {
+        showNotification('Task must be in progress to pause', 'error');
+        return false;
+    }
+    
     const button = event?.target;
     if (button) button.disabled = true;
     
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+    // Fix CSRF token handling
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+    if (!csrfToken) {
+        console.error('CSRF token not found');
+        showNotification('Security token missing. Please refresh the page.', 'error');
+        if (button) button.disabled = false;
+        return false;
+    }
+    
     fetch('/ergon-site/api/daily_planner_workflow.php?action=pause', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ task_id: parseInt(taskId), csrf_token: csrfToken })
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        return response.json();
+    })
     .then(data => {
         console.log('Pause task response:', data);
         if (data.success) {
@@ -279,12 +304,16 @@ window.pauseTask = function(taskId, event) {
             updateTaskUI(taskId, 'on_break');
             showNotification('Task paused - break started', 'success');
         } else {
-            showNotification('Failed to pause task', 'error');
+            showNotification('Failed to pause task: ' + (data.error || 'Unknown error'), 'error');
         }
     })
     .catch(error => {
-        console.error('Error:', error);
-        showNotification('Action failed: ' + error.message, 'error');
+        console.error('Pause Error Details:', error);
+        if (error.message.includes('400')) {
+            showNotification('Task cannot be paused. Check task status.', 'error');
+        } else {
+            showNotification('Action failed: ' + error.message, 'error');
+        }
     })
     .finally(() => {
         if (button) button.disabled = false;
@@ -317,98 +346,6 @@ window.resumeTask = function(taskId, event) {
             if (card) {
                 card.dataset.status = 'in_progress';
                 card.dataset.resumeTime = data.resume_time;
-                console.log('Task resumed - updated card data:', card.dataset);
-            }
-            updateTaskUI(taskId, 'in_progress');
-            showNotification('Task resumed successfully', 'success');
-        } else {
-            showNotification('Failed to resume task', 'error');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showNotification('Action failed: ' + error.message, 'error');
-    })
-    .finally(() => {
-        if (button) button.disabled = false;
-    });
-    
-    return false;
-};ask = function(taskId, event) {
-    if (event) {
-        event.preventDefault();
-        event.stopPropagation();
-    }
-    
-    const button = event?.target;
-    if (button) button.disabled = true;
-    
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-    fetch('/ergon-site/api/daily_planner_workflow.php?action=pause', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ task_id: parseInt(taskId), csrf_token: csrfToken })
-    })
-    .then(response => {
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const contentType = response.headers.get('content-type');
-        if (!contentType?.includes('application/json')) throw new Error('Non-JSON response');
-        return response.json();
-    })
-    .then(data => {
-        console.log('Pause task response:', data);
-        if (data.success) {
-            syncTimestamps(taskId, data);
-            const card = document.querySelector(`[data-task-id="${taskId}"]`);
-            if (card) {
-                card.dataset.status = 'on_break';
-                console.log('Task paused - updated card data:', card.dataset);
-            }
-            updateTaskUI(taskId, 'on_break');
-            showNotification('Task paused successfully', 'success');
-        } else {
-            showNotification('Failed to pause task', 'error');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showNotification('Action failed: ' + error.message, 'error');
-    })
-    .finally(() => {
-        if (button) button.disabled = false;
-    });
-    
-    return false;
-};
-
-window.resumeTask = function(taskId, event) {
-    if (event) {
-        event.preventDefault();
-        event.stopPropagation();
-    }
-    
-    const button = event?.target;
-    if (button) button.disabled = true;
-    
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-    fetch('/ergon-site/api/daily_planner_workflow.php?action=resume', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ task_id: parseInt(taskId), csrf_token: csrfToken })
-    })
-    .then(response => {
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const contentType = response.headers.get('content-type');
-        if (!contentType?.includes('application/json')) throw new Error('Non-JSON response');
-        return response.json();
-    })
-    .then(data => {
-        console.log('Resume task response:', data);
-        if (data.success) {
-            syncTimestamps(taskId, data);
-            const card = document.querySelector(`[data-task-id="${taskId}"]`);
-            if (card) {
-                card.dataset.status = 'in_progress';
                 console.log('Task resumed - updated card data:', card.dataset);
             }
             updateTaskUI(taskId, 'in_progress');
