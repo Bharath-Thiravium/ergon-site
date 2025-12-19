@@ -129,7 +129,7 @@ data-user-id="<?= htmlspecialchars($_SESSION['user_id'] ?? '1', ENT_QUOTES, 'UTF
                         $taskId = $task['id'];
                         // BUSINESS CHANGE: Default SLA changed from 1.0 to 0.25 hours for better granularity
                         $slaHours = (float)($task['sla_hours'] ?? DEFAULT_SLA_HOURS);
-                        $slaDuration = max(900, (int)(($slaHours) * 3600)); // Minimum 15 minutes
+                        $slaDuration = (int)(max(0.25, $slaHours) * 3600);
                         $startTime = $task['start_time'] ?? null;
                         $startTimestamp = $startTime ? strtotime($startTime) : 0;
                         $postponeContext = $task['postpone_context'] ?? 'normal';
@@ -177,10 +177,10 @@ data-user-id="<?= htmlspecialchars($_SESSION['user_id'] ?? '1', ENT_QUOTES, 'UTF
                         else $modeClass = 'execution-mode';
                         ?>
                         <?php
-                        // Fix timestamp initialization with consistent MySQL datetime format
-                        $currentStartTime = $task['start_time'] ? date('Y-m-d H:i:s', strtotime($task['start_time'])) : '';
-                        $currentResumeTime = $task['resume_time'] ? date('Y-m-d H:i:s', strtotime($task['resume_time'])) : '';
-                        $currentPauseTime = $task['pause_start_time'] ? date('Y-m-d H:i:s', strtotime($task['pause_start_time'])) : '';
+                        // Fix timestamp initialization with ISO format
+                        $currentStartTime = $task['start_time'] ? date('c', strtotime($task['start_time'])) : '';
+                        $currentResumeTime = $task['resume_time'] ? date('c', strtotime($task['resume_time'])) : '';
+                        $currentPauseTime = $task['pause_start_time'] ? date('c', strtotime($task['pause_start_time'])) : '';
                         ?>
                         <div class="task-card <?= $cssClass ?> <?= $historicalClass ?> <?= $modeClass ?>" 
                              data-task-id="<?= $taskId ?>" 
@@ -191,8 +191,8 @@ data-user-id="<?= htmlspecialchars($_SESSION['user_id'] ?? '1', ENT_QUOTES, 'UTF
                              data-status="<?= $status ?>"
                              data-task-source="<?= $taskSource ?>"
                              data-pause-start-time="<?= $currentPauseTime ?>"
-                             data-active-seconds="<?= max(0, (int)($task['active_seconds'] ?? 0)) ?>"
-                             data-pause-duration="<?= max(0, (int)($task['pause_duration'] ?? 0)) ?>"
+                             data-active-seconds="<?= (int)($task['active_seconds'] ?? 0) ?>"
+                             data-pause-duration="<?= (int)($task['pause_duration'] ?? 0) ?>"
                              data-is-past="<?= $isPastDate ? 'true' : 'false' ?>">
                             
                             <div class="task-card__content">
@@ -468,19 +468,19 @@ data-user-id="<?= htmlspecialchars($_SESSION['user_id'] ?? '1', ENT_QUOTES, 'UTF
                 </div>
                 <div class="metric-row">
                     <span class="metric-label">SLA Time:</span>
-                    <span class="metric-value sla-total-time">00:00:00</span>
+                    <span class="metric-value sla-total-time">Loading...</span>
                 </div>
                 <div class="metric-row">
                     <span class="metric-label">Time Used:</span>
-                    <span class="metric-value sla-used-time">00:00:00</span>
+                    <span class="metric-value sla-used-time">Loading...</span>
                 </div>
                 <div class="metric-row">
                     <span class="metric-label">Remaining Time:</span>
-                    <span class="metric-value sla-remaining-time">00:00:00</span>
+                    <span class="metric-value sla-remaining-time">Loading...</span>
                 </div>
                 <div class="metric-row">
                     <span class="metric-label">Pause Duration:</span>
-                    <span class="metric-value sla-pause-time">00:00:00</span>
+                    <span class="metric-value sla-pause-time">Loading...</span>
                 </div>
             </div>
 
@@ -588,7 +588,6 @@ renderModal('quickTaskModal', 'Quick Add Task', $quickTaskContent, $quickTaskFoo
 <div id="postponeOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9998;" onclick="cancelPostpone()"></div>
 
 <?php renderModalJS(); ?>
-<script src="/ergon-site/assets/js/working-timer.js?v=<?= time() ?>&fix=<?= md5('timestamp-fix-' . time()) ?>"></script>
 <script>
 // Global function for modal closing - must be defined before other scripts
 function hideClosestModal(element) {
@@ -708,9 +707,9 @@ function saveProgress() {
                     // Update actions based on new status
                     updateTaskUI(currentTaskId, status);
                     
-                    // Stop timer for completed tasks
-                    if (status === 'completed') {
-                        stopTaskTimer(currentTaskId);
+                    if (status === 'completed' && window.taskTimer) {
+                        window.taskTimer.stop(currentTaskId);
+                        window.taskTimer.stopPause(currentTaskId);
                     }
                 }
                 
@@ -753,6 +752,8 @@ document.addEventListener('keydown', function(e) {
     }
 });
 </script>
+<script src="/ergon-site/assets/js/working-timer.js"></script>
+<script src="/ergon-site/assets/js/sla-dashboard-fix.js"></script>
 
 <?php
 $content = ob_get_clean();
