@@ -318,15 +318,18 @@ class SimpleAttendanceController extends Controller {
             DatabaseHelper::safeExec($db, "CREATE TABLE IF NOT EXISTS attendance (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 user_id INT NOT NULL,
+                project_id INT NULL,
                 check_in DATETIME NOT NULL,
                 check_out DATETIME NULL,
                 latitude DECIMAL(10, 8) NULL,
                 longitude DECIMAL(11, 8) NULL,
                 location_name VARCHAR(255) DEFAULT 'Office',
                 status VARCHAR(20) DEFAULT 'present',
+                manual_entry TINYINT(1) DEFAULT 0,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 INDEX idx_user_id (user_id),
+                INDEX idx_project_id (project_id),
                 INDEX idx_check_in_date (check_in)
             )", "Create table");
             
@@ -347,6 +350,26 @@ class SimpleAttendanceController extends Controller {
                 }
             } catch (Exception $e) {
                 error_log('Add longitude column error: ' . $e->getMessage());
+            }
+            
+            // Add project_id column if it doesn't exist
+            try {
+                $stmt = $db->query("SHOW COLUMNS FROM attendance LIKE 'project_id'");
+                if ($stmt->rowCount() == 0) {
+                    DatabaseHelper::safeExec($db, "ALTER TABLE attendance ADD COLUMN project_id INT NULL", "Add project_id column");
+                }
+            } catch (Exception $e) {
+                error_log('Add project_id column error: ' . $e->getMessage());
+            }
+            
+            // Add manual_entry column if it doesn't exist
+            try {
+                $stmt = $db->query("SHOW COLUMNS FROM attendance LIKE 'manual_entry'");
+                if ($stmt->rowCount() == 0) {
+                    DatabaseHelper::safeExec($db, "ALTER TABLE attendance ADD COLUMN manual_entry TINYINT(1) DEFAULT 0", "Add manual_entry column");
+                }
+            } catch (Exception $e) {
+                error_log('Add manual_entry column error: ' . $e->getMessage());
             }
             
         } catch (Exception $e) {

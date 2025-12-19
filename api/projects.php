@@ -1,19 +1,29 @@
 <?php
+// Ensure no output before headers
+ob_start();
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Set JSON header early
 header('Content-Type: application/json');
 
-if (!isset($_SESSION['user_id'])) {
-    http_response_code(401);
-    echo json_encode(['success' => false, 'error' => 'Not authenticated']);
+// Function to send JSON response and exit
+function sendJsonResponse($data, $statusCode = 200) {
+    http_response_code($statusCode);
+    ob_clean(); // Clear any previous output
+    echo json_encode($data);
     exit;
 }
 
-require_once __DIR__ . '/../app/config/database.php';
+if (!isset($_SESSION['user_id'])) {
+    sendJsonResponse(['success' => false, 'error' => 'Not authenticated'], 401);
+}
 
 try {
+    require_once __DIR__ . '/../app/config/database.php';
+    
     $db = Database::connect();
     
     // Check if projects table exists, create if not
@@ -49,10 +59,10 @@ try {
     
     $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
-    echo json_encode(['success' => true, 'projects' => $projects]);
+    sendJsonResponse(['success' => true, 'projects' => $projects]);
     
 } catch (Exception $e) {
     error_log('Projects API error: ' . $e->getMessage());
-    http_response_code(500);
-    echo json_encode(['success' => false, 'error' => 'Database error: ' . $e->getMessage()]);
+    sendJsonResponse(['success' => false, 'error' => 'Database error: ' . $e->getMessage()], 500);
 }
+?>

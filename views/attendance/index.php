@@ -109,6 +109,16 @@ ob_start();
             </th>
                         <th class="table-header__cell">
                 <div class="table-header__content">
+                    <span class="table-header__text">Location</span>
+                </div>
+            </th>
+                        <th class="table-header__cell">
+                <div class="table-header__content">
+                    <span class="table-header__text">Project</span>
+                </div>
+            </th>
+                        <th class="table-header__cell">
+                <div class="table-header__content">
                     <span class="table-header__text">Working Hours</span>
                 </div>
             </th>
@@ -139,7 +149,7 @@ ob_start();
                     ?>
                     <?php if (empty($adminPersonalAttendance)): ?>
                                             <tr>
-                        <td colspan="5" class="text-center">
+                        <td colspan="7" class="text-center">
                             <div class="empty-state">
                                 <div class="empty-icon">📍</div>
                                 <h3>No Personal Records</h3>
@@ -160,6 +170,16 @@ ob_start();
                                     <div class="priority-badge">
                                         <span class="badge badge--<?= ($record['status'] ?? 'Present') === 'Present' ? 'success' : 'danger' ?>"><?= $record['status'] ?? 'Present' ?></span>
                                     </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="cell-meta">
+                                    <div class="cell-primary"><?= htmlspecialchars($record['location_display'] ?? '---') ?></div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="cell-meta">
+                                    <div class="cell-primary"><?= htmlspecialchars($record['project_name'] ?? '----') ?></div>
                                 </div>
                             </td>
                             <td>

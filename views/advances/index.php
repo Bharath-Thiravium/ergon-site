@@ -331,8 +331,25 @@ function showApprovalModal(advanceId) {
     currentAdvanceId = advanceId;
     
     // Fetch advance details
-    fetch(`/ergon-site/advances/approve/${advanceId}`)
-        .then(r => r.json())
+    fetch(`/ergon-site/advances/approve/${advanceId}`, {
+        method: 'GET',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        credentials: 'same-origin'
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                throw new Error('Server returned non-JSON response');
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.success && data.advance) {
                 const a = data.advance;
@@ -366,11 +383,12 @@ function showApprovalModal(advanceId) {
                 document.getElementById('approvalModal').setAttribute('data-visible', 'true');
                 document.getElementById('approvalModal').style.display = 'flex';
             } else {
-                alert('Error loading advance details: ' + (data.error || 'Unknown error'));
+                showError('Error loading advance details: ' + (data.error || 'Unknown error'));
             }
         })
         .catch(err => {
-            alert('Error: ' + err.message);
+            console.error('Approval modal error:', err);
+            showError('Failed to load advance details: ' + err.message);
         });
 }
 
@@ -421,9 +439,23 @@ document.getElementById('approvalForm').addEventListener('submit', function(e) {
     
     fetch(`/ergon-site/advances/approve/${currentAdvanceId}`, {
         method: 'POST',
-        body: formData
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json'
+        },
+        body: formData,
+        credentials: 'same-origin'
     })
-    .then(r => r.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            throw new Error('Server returned non-JSON response');
+        }
+        return response.json();
+    })
     .then(data => {
         if (data.success) {
             showSuccess('Advance approved successfully!');
@@ -436,7 +468,8 @@ document.getElementById('approvalForm').addEventListener('submit', function(e) {
         }
     })
     .catch(err => {
-        showError('Network error: ' + err.message);
+        console.error('Approval submission error:', err);
+        showError('Approval failed: ' + err.message);
         btn.disabled = false;
         btn.textContent = '✅ Approve Advance';
     });
@@ -550,18 +583,23 @@ function editAdvance(id) {
     document.getElementById('advanceModal').setAttribute('data-visible', 'true');
     document.getElementById('advanceModal').style.display = 'flex';
     
-    fetch(`/ergon-site/api/advance.php?id=${id}`)
-        .then(r => {
-            if (!r.ok) throw new Error('Network response was not ok');
-            return r.text();
-        })
-        .then(text => {
-            try {
-                return JSON.parse(text);
-            } catch (e) {
-                console.error('Invalid JSON response:', text);
-                throw new Error('Invalid JSON response');
+    fetch(`/ergon-site/api/advance.php?id=${id}`, {
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        credentials: 'same-origin'
+    })
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                return response.text().then(text => {
+                    console.error('Non-JSON response:', text);
+                    throw new Error('Server returned non-JSON response');
+                });
             }
+            return response.json();
         })
         .then(data => {
             if (data.success) {
@@ -573,7 +611,13 @@ function editAdvance(id) {
                 document.getElementById('reason').value = a.reason;
                 document.getElementById('repayment_date').value = a.repayment_date || '';
                 loadAdvanceProjects('adv_project_id', a.project_id);
+            } else {
+                showError('Failed to load advance details: ' + (data.error || 'Unknown error'));
             }
+        })
+        .catch(err => {
+            console.error('Edit advance error:', err);
+            showError('Failed to load advance details: ' + err.message);
         });
 }
 
@@ -583,18 +627,23 @@ function closeAdvanceModal() {
 }
 
 function loadAdvanceProjects(selectId, selectedId = null) {
-    fetch('/ergon-site/api/projects.php')
-        .then(r => {
-            if (!r.ok) throw new Error('Network response was not ok');
-            return r.text();
-        })
-        .then(text => {
-            try {
-                return JSON.parse(text);
-            } catch (e) {
-                console.error('Invalid JSON response:', text);
-                throw new Error('Invalid JSON response');
+    fetch('/ergon-site/api/projects.php', {
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        credentials: 'same-origin'
+    })
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                return response.text().then(text => {
+                    console.error('Non-JSON response:', text);
+                    throw new Error('Server returned non-JSON response');
+                });
             }
+            return response.json();
         })
         .then(data => {
             const select = document.getElementById(selectId);
@@ -611,6 +660,10 @@ function loadAdvanceProjects(selectId, selectedId = null) {
                     select.appendChild(opt);
                 });
             }
+        })
+        .catch(err => {
+            console.error('Load projects error:', err);
+            showError('Failed to load projects: ' + err.message);
         });
 }
 

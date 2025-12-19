@@ -154,8 +154,8 @@ ob_end_clean();
     @keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.1)}100%{transform:scale(1)}}
     .control-btn{position:relative}
     
-    /* Hide any alert popups */
-    .alert, .alert--error, .alert--success, .alert--warning, .alert--info {
+    /* Alert visibility - Allow alerts to be shown when needed */
+    .alert.d-none, .alert--error.d-none, .alert--success.d-none, .alert--warning.d-none, .alert--info.d-none {
         display: none !important;
         visibility: hidden !important;
         opacity: 0 !important;
@@ -207,6 +207,8 @@ ob_end_clean();
     <link href="/ergon-site/assets/_archive_legacy/css/management-mobile-fix.css?v=1.0" rel="stylesheet">
     <!-- Mobile Dark Theme Fixes - Critical for visibility -->
     <link href="/ergon-site/assets/css/mobile-dark-theme-fixes.css?v=<?= time() ?>" rel="stylesheet">
+    <!-- Dark Mode Alert & Notification Fixes - Critical for visibility -->
+    <link href="/ergon-site/assets/css/dark-mode-alerts-fix.css?v=<?= time() ?>" rel="stylesheet">
     <!-- New Simplified Modal CSS -->
     <link href="/ergon-site/assets/css/modal.css?v=<?= time() ?>" rel="stylesheet">
     <!-- Dashboard overrides loaded last to ensure overrides on compiled CSS in deployments -->
@@ -230,6 +232,8 @@ ob_end_clean();
     <script src="/ergon-site/assets/js/table-utils.js?v=1.0" defer></script>
     <script src="/ergon-site/assets/js/user-status-check.js?v=1.0" defer></script>
     <script src="/ergon-site/assets/js/premium-navigation.js?v=1.0" defer></script>
+    <!-- Dark Mode Alert Enhancements -->
+    <script src="/ergon-site/assets/js/dark-mode-alerts.js?v=<?= time() ?>" defer></script>
 
     <?php if (isset($_GET['validate']) && $_GET['validate'] === 'mobile'): ?>
     <script src="/ergon-site/assets/js/mobile-validation.js?v=<?= time() ?>" defer></script>
