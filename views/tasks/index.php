@@ -161,6 +161,7 @@ $highPriorityTasks = count(array_filter($tasks, fn($t) => ($t['priority'] ?? '')
                         </td>
                         <td>
                             <div class="ab-container">
+                                <!-- View Details - Always available -->
                                 <a class="ab-btn ab-btn--view" data-action="view" data-module="tasks" data-id="<?= $task['id'] ?>" title="View Details">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -169,42 +170,66 @@ $highPriorityTasks = count(array_filter($tasks, fn($t) => ($t['priority'] ?? '')
                                         <line x1="16" y1="17" x2="8" y2="17"/>
                                     </svg>
                                 </a>
+                                
                                 <?php 
-                                // Show actions for assigned tasks or admin/owner roles
-                                $canEdit = (($_SESSION['role'] ?? 'user') === 'admin') || 
-                                          (($_SESSION['role'] ?? 'user') === 'owner') || 
-                                          (($task['assigned_to'] ?? 0) == ($_SESSION['user_id'] ?? 0));
-                                if ($canEdit): 
+                                // Enhanced permission logic for different actions
+                                $currentUserId = $_SESSION['user_id'] ?? 0;
+                                $currentUserRole = $_SESSION['role'] ?? 'user';
+                                $isAssignedUser = ($task['assigned_to'] ?? 0) == $currentUserId;
+                                $isTaskCreator = ($task['assigned_by'] ?? 0) == $currentUserId;
+                                $isAdmin = in_array($currentUserRole, ['admin', 'owner', 'system_admin']);
+                                
+                                // Update Progress - Available for assigned users and admins
+                                $canUpdateProgress = $isAssignedUser || $isAdmin;
+                                // View History - Available for assigned users, creators, and admins
+                                $canViewHistory = $isAssignedUser || $isTaskCreator || $isAdmin;
+                                // Edit Task - Available for assigned users, creators, and admins
+                                $canEdit = $isAssignedUser || $isTaskCreator || $isAdmin;
+                                // Delete Task - Available for creators and admins only
+                                $canDelete = $isTaskCreator || $isAdmin;
                                 ?>
-                                    <?php if ($task['status'] !== 'completed'): ?>
-                                    <button class="ab-btn ab-btn--progress" onclick="openProgressModal(<?= $task['id'] ?>, <?= $task['progress'] ?? 0 ?>, 'assigned')" title="Update Progress">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                            <polyline points="22,7 13.5,15.5 8.5,10.5 2,17"/>
-                                            <polyline points="16,7 22,7 22,13"/>
-                                        </svg>
-                                    </button>
-                                    <?php endif; ?>
-                                    <button class="ab-btn history-btn" onclick="showProgressHistory(<?= $task['id'] ?>)" title="View Progress History">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                            <circle cx="12" cy="12" r="10"/>
-                                            <polyline points="12,6 12,12 16,14"/>
-                                        </svg>
-                                    </button>
-                                    <a class="ab-btn ab-btn--edit" data-action="edit" data-module="tasks" data-id="<?= $task['id'] ?>" title="Edit Task">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                            <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
-                                            <path d="M15 5l4 4"/>
-                                        </svg>
-                                    </a>
-                                    <button class="ab-btn ab-btn--delete" data-action="delete" data-module="tasks" data-id="<?= $task['id'] ?>" data-name="<?= htmlspecialchars($task['title'], ENT_QUOTES) ?>" title="Delete Task">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                            <path d="M3 6h18"/>
-                                            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
-                                            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
-                                            <line x1="10" y1="11" x2="10" y2="17"/>
-                                            <line x1="14" y1="11" x2="14" y2="17"/>
-                                        </svg>
-                                    </button>
+                                
+                                <!-- Update Progress Button -->
+                                <?php if ($canUpdateProgress && $task['status'] !== 'completed'): ?>
+                                <button class="ab-btn ab-btn--progress" onclick="openProgressModal(<?= $task['id'] ?>, <?= $task['progress'] ?? 0 ?>, 'assigned')" title="Update Progress">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <polyline points="22,7 13.5,15.5 8.5,10.5 2,17"/>
+                                        <polyline points="16,7 22,7 22,13"/>
+                                    </svg>
+                                </button>
+                                <?php endif; ?>
+                                
+                                <!-- View Progress History Button -->
+                                <?php if ($canViewHistory): ?>
+                                <button class="ab-btn history-btn" onclick="showProgressHistory(<?= $task['id'] ?>)" title="View Progress History">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <polyline points="12,6 12,12 16,14"/>
+                                    </svg>
+                                </button>
+                                <?php endif; ?>
+                                
+                                <!-- Edit Task Button -->
+                                <?php if ($canEdit): ?>
+                                <a class="ab-btn ab-btn--edit" data-action="edit" data-module="tasks" data-id="<?= $task['id'] ?>" title="Edit Task">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+                                        <path d="M15 5l4 4"/>
+                                    </svg>
+                                </a>
+                                <?php endif; ?>
+                                
+                                <!-- Delete Task Button -->
+                                <?php if ($canDelete): ?>
+                                <button class="ab-btn ab-btn--delete" data-action="delete" data-module="tasks" data-id="<?= $task['id'] ?>" data-name="<?= htmlspecialchars($task['title'], ENT_QUOTES) ?>" title="Delete Task">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <path d="M3 6h18"/>
+                                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+                                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                                        <line x1="10" y1="11" x2="10" y2="17"/>
+                                        <line x1="14" y1="11" x2="14" y2="17"/>
+                                    </svg>
+                                </button>
                                 <?php endif; ?>
                             </div>
                         </td>
