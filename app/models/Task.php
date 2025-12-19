@@ -175,9 +175,26 @@ class Task {
     
     public function delete($id) {
         try {
+            $this->conn->beginTransaction();
+            
+            // Delete from followups table first (cascade delete for linked followups)
+            $stmt = $this->conn->prepare("DELETE FROM followups WHERE task_id = ?");
+            $stmt->execute([$id]);
+            
+            // Delete from daily_tasks (cascade delete for planner entries)
+            $stmt = $this->conn->prepare("DELETE FROM daily_tasks WHERE task_id = ? OR original_task_id = ?");
+            $stmt->execute([$id, $id]);
+            
+            // Delete from tasks table (main task record)
             $stmt = $this->conn->prepare("DELETE FROM tasks WHERE id = ?");
-            return $stmt->execute([$id]);
+            $result = $stmt->execute([$id]);
+            
+            $this->conn->commit();
+            return $result;
         } catch (Exception $e) {
+            if ($this->conn->inTransaction()) {
+                $this->conn->rollback();
+            }
             error_log('Task delete error: ' . $e->getMessage());
             return false;
         }

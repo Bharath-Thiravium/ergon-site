@@ -229,6 +229,37 @@ class TasksController extends Controller {
     public function edit($id) {
         AuthMiddleware::requireAuth();
         
+        // Check permissions before allowing edit
+        try {
+            require_once __DIR__ . '/../config/database.php';
+            $db = Database::connect();
+            
+            $stmt = $db->prepare("SELECT assigned_to, assigned_by FROM tasks WHERE id = ?");
+            $stmt->execute([$id]);
+            $task = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if (!$task) {
+                header('Location: /ergon-site/tasks?error=Task not found');
+                exit;
+            }
+            
+            // Check permissions for editing
+            $currentUserId = $_SESSION['user_id'] ?? 0;
+            $currentUserRole = $_SESSION['role'] ?? 'user';
+            $isAssignedUser = ($task['assigned_to'] ?? 0) == $currentUserId;
+            $isTaskCreator = ($task['assigned_by'] ?? 0) == $currentUserId;
+            $isAdmin = in_array($currentUserRole, ['admin', 'owner', 'system_admin']);
+            
+            if (!$isAssignedUser && !$isTaskCreator && !$isAdmin) {
+                header('Location: /ergon-site/tasks?error=Permission denied: You can only edit tasks you are involved with');
+                exit;
+            }
+        } catch (Exception $e) {
+            error_log('Edit permission check error: ' . $e->getMessage());
+            header('Location: /ergon-site/tasks?error=Permission check failed');
+            exit;
+        }
+        
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $taskData = [
                 'title' => trim($_POST['title'] ?? ''),
@@ -737,10 +768,26 @@ class TasksController extends Controller {
             require_once __DIR__ . '/../config/database.php';
             $db = Database::connect();
             
-            // Get current task data before update
-            $stmt = $db->prepare("SELECT progress, status, title FROM tasks WHERE id = ?");
+            // Get current task data and check permissions
+            $stmt = $db->prepare("SELECT progress, status, title, assigned_to, assigned_by FROM tasks WHERE id = ?");
             $stmt->execute([$taskId]);
             $currentTask = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if (!$currentTask) {
+                echo json_encode(['success' => false, 'message' => 'Task not found']);
+                exit;
+            }
+            
+            // Check permissions for progress updates
+            $currentUserId = $_SESSION['user_id'] ?? 0;
+            $currentUserRole = $_SESSION['role'] ?? 'user';
+            $isAssignedUser = ($currentTask['assigned_to'] ?? 0) == $currentUserId;
+            $isAdmin = in_array($currentUserRole, ['admin', 'owner', 'system_admin']);
+            
+            if (!$isAssignedUser && !$isAdmin) {
+                echo json_encode(['success' => false, 'message' => 'Permission denied: You can only update progress for tasks assigned to you']);
+                exit;
+            }
             
             $result = $this->taskModel->updateProgress($taskId, $_SESSION['user_id'], $progress, $description);
             
@@ -769,6 +816,31 @@ class TasksController extends Controller {
         AuthMiddleware::requireAuth();
         
         try {
+            require_once __DIR__ . '/../config/database.php';
+            $db = Database::connect();
+            
+            // Get task data and check permissions
+            $stmt = $db->prepare("SELECT assigned_to, assigned_by FROM tasks WHERE id = ?");
+            $stmt->execute([$id]);
+            $task = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if (!$task) {
+                echo json_encode(['success' => false, 'error' => 'Task not found']);
+                exit;
+            }
+            
+            // Check permissions for viewing history
+            $currentUserId = $_SESSION['user_id'] ?? 0;
+            $currentUserRole = $_SESSION['role'] ?? 'user';
+            $isAssignedUser = ($task['assigned_to'] ?? 0) == $currentUserId;
+            $isTaskCreator = ($task['assigned_by'] ?? 0) == $currentUserId;
+            $isAdmin = in_array($currentUserRole, ['admin', 'owner', 'system_admin']);
+            
+            if (!$isAssignedUser && !$isTaskCreator && !$isAdmin) {
+                echo json_encode(['success' => false, 'error' => 'Permission denied: You can only view history for tasks you are involved with']);
+                exit;
+            }
+            
             $history = $this->taskModel->getProgressHistory($id);
             
             $html = empty($history) ? '<p>No progress history available.</p>' : $this->renderProgressHistory($history);
@@ -826,6 +898,28 @@ class TasksController extends Controller {
             require_once __DIR__ . '/../config/database.php';
             $db = Database::connect();
             $this->ensureTaskHistoryTable($db);
+            
+            // Get task data and check permissions
+            $stmt = $db->prepare("SELECT assigned_to, assigned_by FROM tasks WHERE id = ?");
+            $stmt->execute([$id]);
+            $task = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if (!$task) {
+                echo json_encode(['success' => false, 'error' => 'Task not found']);
+                exit;
+            }
+            
+            // Check permissions for viewing task history
+            $currentUserId = $_SESSION['user_id'] ?? 0;
+            $currentUserRole = $_SESSION['role'] ?? 'user';
+            $isAssignedUser = ($task['assigned_to'] ?? 0) == $currentUserId;
+            $isTaskCreator = ($task['assigned_by'] ?? 0) == $currentUserId;
+            $isAdmin = in_array($currentUserRole, ['admin', 'owner', 'system_admin']);
+            
+            if (!$isAssignedUser && !$isTaskCreator && !$isAdmin) {
+                echo json_encode(['success' => false, 'error' => 'Permission denied: You can only view history for tasks you are involved with']);
+                exit;
+            }
             
             // Get comprehensive task history including progress updates
             $stmt = $db->prepare("
@@ -1167,13 +1261,29 @@ class TasksController extends Controller {
             
             $db->beginTransaction();
             
-            // Delete from daily_tasks first (cascade delete)
+            // Get task info for logging before deletion
+            $stmt = $db->prepare("SELECT title, assigned_to, assigned_by FROM tasks WHERE id = ?");
+            $stmt->execute([$id]);
+            $taskInfo = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            // Delete from followups table first (cascade delete for linked followups)
+            $stmt = $db->prepare("DELETE FROM followups WHERE task_id = ?");
+            $stmt->execute([$id]);
+            $followupsDeleted = $stmt->rowCount();
+            
+            // Delete from daily_tasks (cascade delete for planner entries)
             $stmt = $db->prepare("DELETE FROM daily_tasks WHERE task_id = ? OR original_task_id = ?");
             $stmt->execute([$id, $id]);
+            $plannerEntriesDeleted = $stmt->rowCount();
             
-            // Delete from tasks table
+            // Delete from tasks table (main task record)
             $stmt = $db->prepare("DELETE FROM tasks WHERE id = ?");
             $result = $stmt->execute([$id]);
+            
+            // Log cascade deletion for audit trail
+            if ($result && $taskInfo) {
+                error_log("Task cascade deletion completed - Task ID: {$id}, Title: '{$taskInfo['title']}', Followups deleted: {$followupsDeleted}, Planner entries deleted: {$plannerEntriesDeleted}");
+            }
             
             $db->commit();
             
