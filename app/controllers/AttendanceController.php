@@ -410,10 +410,10 @@ class AttendanceController extends Controller {
             return;
         }
         
-        // Check location for checkout
-        $locationValidation = $this->validateProjectBasedLocation($db, $userLat, $userLng);
+        // Check location for checkout using same radius as clock-in
+        $locationValidation = $this->validateClockOutLocation($db, $userLat, $userLng, $attendance);
         if (!$locationValidation['allowed']) {
-            echo json_encode(['success' => false, 'error' => 'Please move within the allowed area to continue.']);
+            echo json_encode(['success' => false, 'error' => 'Please move within the same area where you clocked in.']);
             return;
         }
         
@@ -425,6 +425,32 @@ class AttendanceController extends Controller {
         } else {
             echo json_encode(['success' => false, 'error' => 'Failed to clock out']);
         }
+    }
+    
+    private function validateClockOutLocation($db, $userLat, $userLng, $attendance) {
+        // If clocked in with a project, validate against that project's radius
+        if ($attendance['project_id']) {
+            $stmt = $db->prepare("SELECT latitude, longitude, checkin_radius FROM projects WHERE id = ?");
+            $stmt->execute([$attendance['project_id']]);
+            $project = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($project) {
+                $distance = $this->calculateDistance($userLat, $userLng, $project['latitude'], $project['longitude']);
+                return ['allowed' => $distance <= $project['checkin_radius']];
+            }
+        }
+        
+        // If clocked in without project, validate against settings location
+        $stmt = $db->prepare("SELECT base_location_lat, base_location_lng, attendance_radius FROM settings LIMIT 1");
+        $stmt->execute();
+        $settings = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($settings && $settings['base_location_lat'] != 0 && $settings['base_location_lng'] != 0) {
+            $distance = $this->calculateDistance($userLat, $userLng, $settings['base_location_lat'], $settings['base_location_lng']);
+            return ['allowed' => $distance <= $settings['attendance_radius']];
+        }
+        
+        return ['allowed' => false];
     }
     
     private function showClockPage() {

@@ -249,12 +249,24 @@ class SimpleAttendanceController extends Controller {
                     $currentTime = date('Y-m-d H:i:s');
                     $currentDate = TimezoneHelper::getCurrentDate();
                     
-                    $stmt = $this->db->prepare("SELECT id FROM attendance WHERE user_id = ? AND DATE(check_in) = ? AND check_out IS NULL");
+                    $stmt = $this->db->prepare("SELECT * FROM attendance WHERE user_id = ? AND DATE(check_in) = ? AND check_out IS NULL");
                     $stmt->execute([$userId, $currentDate]);
-                    $attendance = $stmt->fetch();
+                    $attendance = $stmt->fetch(PDO::FETCH_ASSOC);
                     
                     if (!$attendance) {
                         echo json_encode(['success' => false, 'error' => 'No clock in record found for today']);
+                        exit;
+                    }
+                    
+                    // Validate GPS for clock-out using same radius as clock-in
+                    if (!$latitude || !$longitude) {
+                        echo json_encode(['success' => false, 'error' => 'GPS location is required for clock-out']);
+                        exit;
+                    }
+                    
+                    $locationValid = $this->validateClockOutLocation($attendance, $latitude, $longitude);
+                    if (!$locationValid) {
+                        echo json_encode(['success' => false, 'error' => 'Please move within the same area where you clocked in']);
                         exit;
                     }
                     
@@ -454,6 +466,36 @@ class SimpleAttendanceController extends Controller {
         $c = 2 * atan2(sqrt($a), sqrt(1-$a));
         
         return $earthRadius * $c; // Distance in meters
+    }
+    
+    private function validateClockOutLocation($attendance, $userLat, $userLng) {
+        try {
+            // If clocked in with a project, validate against that project's radius
+            if ($attendance['project_id']) {
+                $stmt = $this->db->prepare("SELECT latitude, longitude, checkin_radius FROM projects WHERE id = ?");
+                $stmt->execute([$attendance['project_id']]);
+                $project = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                if ($project) {
+                    $distance = $this->calculateDistance($userLat, $userLng, $project['latitude'], $project['longitude']);
+                    return $distance <= $project['checkin_radius'];
+                }
+            }
+            
+            // If clocked in without project, validate against settings location
+            $stmt = $this->db->prepare("SELECT base_location_lat, base_location_lng, attendance_radius FROM settings LIMIT 1");
+            $stmt->execute();
+            $settings = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($settings && $settings['base_location_lat'] != 0 && $settings['base_location_lng'] != 0) {
+                $distance = $this->calculateDistance($userLat, $userLng, $settings['base_location_lat'], $settings['base_location_lng']);
+                return $distance <= $settings['attendance_radius'];
+            }
+        } catch (Exception $e) {
+            error_log('Clock-out validation error: ' . $e->getMessage());
+        }
+        
+        return false;
     }
     
     private function calculateUserStats($attendance) {
