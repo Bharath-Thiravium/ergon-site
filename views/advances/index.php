@@ -2,6 +2,7 @@
 $title = 'Advance Requests';
 $active_page = 'advances';
 include __DIR__ . '/../shared/modal_component.php';
+require_once __DIR__ . '/../../app/helpers/AdvanceDistributionHelper.php';
 ob_start();
 ?>
 
@@ -31,26 +32,80 @@ ob_start();
 
 
 
+<?php
+// Calculate finance totals
+$financeTotals = AdvanceDistributionHelper::getFinanceTotals($advances ?? []);
+
+// Calculate distributions for each card
+$totalRequestedDistribution = AdvanceDistributionHelper::getStatusDistributionByAmount($advances ?? []);
+$pendingApprovalDistribution = AdvanceDistributionHelper::getTypeDistributionByAmount($advances ?? [], 'pending');
+$approvedUnpaidDistribution = AdvanceDistributionHelper::getTypeDistributionByAmount($advances ?? [], 'approved');
+$totalPaidDistribution = AdvanceDistributionHelper::getTypeDistributionByAmount($advances ?? [], 'paid');
+$pendingRequestsDistribution = AdvanceDistributionHelper::getStatusDistribution($advances ?? []);
+?>
+
 <div class="dashboard-grid">
-    <div class="kpi-card">
-        <div class="kpi-card__header">
-            <div class="kpi-card__icon">💳</div>
-            <div class="kpi-card__trend">↗ +10%</div>
-        </div>
-        <div class="kpi-card__value"><?= count($advances ?? []) ?></div>
-        <div class="kpi-card__label">Total Requests</div>
-        <div class="kpi-card__status">Submitted</div>
-    </div>
+    <?php
+    // 1. Total Advances Requested
+    $title = 'Total Advances Requested';
+    $totalValue = $financeTotals['total_requested_amount'];
+    $distributionData = $totalRequestedDistribution;
+    $icon = '💳';
+    $cardClass = 'kpi-card--primary';
+    $valueFormat = 'currency';
+    $primaryLabel = 'Total requested amount';
+    include __DIR__ . '/../shared/distribution_stat_card.php';
+    ?>
     
-    <div class="kpi-card kpi-card--warning">
-        <div class="kpi-card__header">
-            <div class="kpi-card__icon">⏳</div>
-            <div class="kpi-card__trend kpi-card__trend--down">— 0%</div>
-        </div>
-        <div class="kpi-card__value"><?= count(array_filter($advances ?? [], fn($a) => ($a['status'] ?? 'pending') === 'pending')) ?></div>
-        <div class="kpi-card__label">Pending Review</div>
-        <div class="kpi-card__status kpi-card__status--pending">Under Review</div>
-    </div>
+    <?php
+    // 2. Pending Approval Amount
+    $title = 'Pending Approval Amount';
+    $totalValue = $financeTotals['pending_approval_amount'];
+    $distributionData = $pendingApprovalDistribution;
+    $icon = '⏳';
+    $cardClass = 'kpi-card--warning';
+    $valueFormat = 'currency';
+    $primaryLabel = 'Awaiting approval';
+    include __DIR__ . '/../shared/distribution_stat_card.php';
+    ?>
+    
+    <?php
+    // 3. Approved – Yet to Pay
+    $title = 'Approved – Yet to Pay';
+    $totalValue = $financeTotals['approved_unpaid_amount'];
+    $distributionData = $approvedUnpaidDistribution;
+    $icon = '✅';
+    $cardClass = 'kpi-card--info';
+    $valueFormat = 'currency';
+    $primaryLabel = 'Approved but not disbursed';
+    include __DIR__ . '/../shared/distribution_stat_card.php';
+    ?>
+    
+    <?php
+    // 4. Total Paid Advances
+    $title = 'Total Paid Advances';
+    $totalValue = $financeTotals['total_paid_amount'];
+    $distributionData = $totalPaidDistribution;
+    $icon = '💸';
+    $cardClass = 'kpi-card--success';
+    $valueFormat = 'currency';
+    $primaryLabel = 'Successfully disbursed';
+    include __DIR__ . '/../shared/distribution_stat_card.php';
+    ?>
+    
+    <?php
+    // 5. Pending Requests (Count-based) - only show if there are pending requests
+    if ($financeTotals['pending_request_count'] > 0):
+        $title = 'Pending Requests';
+        $totalValue = $financeTotals['pending_request_count'];
+        $distributionData = $pendingRequestsDistribution;
+        $icon = '📋';
+        $cardClass = 'kpi-card--secondary';
+        $valueFormat = 'number';
+        $primaryLabel = 'Requests in pipeline';
+        include __DIR__ . '/../shared/distribution_stat_card.php';
+    endif;
+    ?>
 </div>
 
 <div class="card">
@@ -276,8 +331,25 @@ function showApprovalModal(advanceId) {
     currentAdvanceId = advanceId;
     
     // Fetch advance details
-    fetch(`/ergon-site/advances/approve/${advanceId}`)
-        .then(r => r.json())
+    fetch(`/ergon-site/advances/approve/${advanceId}`, {
+        method: 'GET',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        credentials: 'same-origin'
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                throw new Error('Server returned non-JSON response');
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.success && data.advance) {
                 const a = data.advance;
@@ -311,11 +383,12 @@ function showApprovalModal(advanceId) {
                 document.getElementById('approvalModal').setAttribute('data-visible', 'true');
                 document.getElementById('approvalModal').style.display = 'flex';
             } else {
-                alert('Error loading advance details: ' + (data.error || 'Unknown error'));
+                showError('Error loading advance details: ' + (data.error || 'Unknown error'));
             }
         })
         .catch(err => {
-            alert('Error: ' + err.message);
+            console.error('Approval modal error:', err);
+            showError('Failed to load advance details: ' + err.message);
         });
 }
 
@@ -366,9 +439,23 @@ document.getElementById('approvalForm').addEventListener('submit', function(e) {
     
     fetch(`/ergon-site/advances/approve/${currentAdvanceId}`, {
         method: 'POST',
-        body: formData
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json'
+        },
+        body: formData,
+        credentials: 'same-origin'
     })
-    .then(r => r.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            throw new Error('Server returned non-JSON response');
+        }
+        return response.json();
+    })
     .then(data => {
         if (data.success) {
             showSuccess('Advance approved successfully!');
@@ -381,7 +468,8 @@ document.getElementById('approvalForm').addEventListener('submit', function(e) {
         }
     })
     .catch(err => {
-        showError('Network error: ' + err.message);
+        console.error('Approval submission error:', err);
+        showError('Approval failed: ' + err.message);
         btn.disabled = false;
         btn.textContent = '✅ Approve Advance';
     });
@@ -495,18 +583,23 @@ function editAdvance(id) {
     document.getElementById('advanceModal').setAttribute('data-visible', 'true');
     document.getElementById('advanceModal').style.display = 'flex';
     
-    fetch(`/ergon-site/api/advance.php?id=${id}`)
-        .then(r => {
-            if (!r.ok) throw new Error('Network response was not ok');
-            return r.text();
-        })
-        .then(text => {
-            try {
-                return JSON.parse(text);
-            } catch (e) {
-                console.error('Invalid JSON response:', text);
-                throw new Error('Invalid JSON response');
+    fetch(`/ergon-site/api/advance.php?id=${id}`, {
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        credentials: 'same-origin'
+    })
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                return response.text().then(text => {
+                    console.error('Non-JSON response:', text);
+                    throw new Error('Server returned non-JSON response');
+                });
             }
+            return response.json();
         })
         .then(data => {
             if (data.success) {
@@ -518,7 +611,13 @@ function editAdvance(id) {
                 document.getElementById('reason').value = a.reason;
                 document.getElementById('repayment_date').value = a.repayment_date || '';
                 loadAdvanceProjects('adv_project_id', a.project_id);
+            } else {
+                showError('Failed to load advance details: ' + (data.error || 'Unknown error'));
             }
+        })
+        .catch(err => {
+            console.error('Edit advance error:', err);
+            showError('Failed to load advance details: ' + err.message);
         });
 }
 
@@ -528,18 +627,23 @@ function closeAdvanceModal() {
 }
 
 function loadAdvanceProjects(selectId, selectedId = null) {
-    fetch('/ergon-site/api/projects.php')
-        .then(r => {
-            if (!r.ok) throw new Error('Network response was not ok');
-            return r.text();
-        })
-        .then(text => {
-            try {
-                return JSON.parse(text);
-            } catch (e) {
-                console.error('Invalid JSON response:', text);
-                throw new Error('Invalid JSON response');
+    fetch('/ergon-site/api/projects.php', {
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        credentials: 'same-origin'
+    })
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                return response.text().then(text => {
+                    console.error('Non-JSON response:', text);
+                    throw new Error('Server returned non-JSON response');
+                });
             }
+            return response.json();
         })
         .then(data => {
             const select = document.getElementById(selectId);
@@ -556,6 +660,10 @@ function loadAdvanceProjects(selectId, selectedId = null) {
                     select.appendChild(opt);
                 });
             }
+        })
+        .catch(err => {
+            console.error('Load projects error:', err);
+            showError('Failed to load projects: ' + err.message);
         });
 }
 
@@ -614,6 +722,8 @@ document.addEventListener('click', function(e) {
 });
 </script>
 
+
+
 <style>
 .advance-info {
     background: #f8f9fa;
@@ -637,6 +747,56 @@ document.addEventListener('click', function(e) {
     background: #10b981;
     color: white;
 }
+
+/* Distribution Card Styles */
+.kpi-card {
+    min-height: 200px;
+    padding: 24px;
+}
+
+.kpi-card__value {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 6px;
+    color: #1f2937;
+}
+
+.kpi-card__label {
+    font-size: 12px;
+    color: #6b7280;
+    margin-bottom: 16px;
+    font-weight: 500;
+}
+
+.kpi-card__chart {
+    height: 90px !important;
+    margin-top: 12px;
+}
+
+.kpi-card--highlight {
+    background: linear-gradient(135deg, #fef2f2 0%, #ffffff 100%);
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+@media (max-width: 1024px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+}
+
 @keyframes slideInRight {
     from { transform: translateX(100%); opacity: 0; }
     to { transform: translateX(0); opacity: 1; }

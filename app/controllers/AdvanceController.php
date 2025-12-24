@@ -3,6 +3,15 @@ require_once __DIR__ . '/../core/Controller.php';
 require_once __DIR__ . '/../helpers/DatabaseHelper.php';
 require_once __DIR__ . '/../config/environment.php';
 
+// Enhanced error logging for advance operations
+function logAdvanceError($message, $context = []) {
+    $logFile = __DIR__ . '/../../storage/advance_errors.log';
+    $timestamp = date('Y-m-d H:i:s');
+    $contextStr = !empty($context) ? ' Context: ' . json_encode($context) : '';
+    $logMessage = "[$timestamp] $message$contextStr" . PHP_EOL;
+    file_put_contents($logFile, $logMessage, FILE_APPEND | LOCK_EX);
+}
+
 class AdvanceController extends Controller {
     
     public function index() {
@@ -15,10 +24,11 @@ class AdvanceController extends Controller {
             require_once __DIR__ . '/../config/database.php';
             $db = Database::connect();
             
-            // Ensure table exists with repayment_date column
+            // Ensure table exists with all required columns
             DatabaseHelper::safeExec($db, "CREATE TABLE IF NOT EXISTS advances (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 user_id INT NOT NULL,
+                project_id INT NULL,
                 type VARCHAR(50) DEFAULT 'General Advance',
                 amount DECIMAL(10,2) NOT NULL,
                 reason TEXT NOT NULL,
@@ -37,12 +47,9 @@ class AdvanceController extends Controller {
                 rejected_at TIMESTAMP NULL
             )", "Create table");
             
-            // Add repayment_date column if it doesn't exist
-            try {
-                DatabaseHelper::safeExec($db, "ALTER TABLE advances ADD COLUMN repayment_date DATE NULL", "Alter table");
-            } catch (Exception $e) {
-                // Column already exists, ignore error
-            }
+            // Add missing columns if they don't exist
+            try { DatabaseHelper::safeExec($db, "ALTER TABLE advances ADD COLUMN project_id INT NULL", "Alter table"); } catch (Exception $e) {}
+            try { DatabaseHelper::safeExec($db, "ALTER TABLE advances ADD COLUMN repayment_date DATE NULL", "Alter table"); } catch (Exception $e) {}
             // Ensure payment columns exist
             try { DatabaseHelper::safeExec($db, "ALTER TABLE advances ADD COLUMN payment_proof VARCHAR(255) NULL", "Alter table"); } catch (Exception $e) {}
             try { DatabaseHelper::safeExec($db, "ALTER TABLE advances ADD COLUMN paid_by INT NULL", "Alter table"); } catch (Exception $e) {}
@@ -50,10 +57,10 @@ class AdvanceController extends Controller {
             try { DatabaseHelper::safeExec($db, "ALTER TABLE advances ADD COLUMN approved_amount DECIMAL(10,2) NULL", "Alter table"); } catch (Exception $e) {}
             
             if ($role === 'user') {
-                $stmt = $db->prepare("SELECT a.*, u.name as user_name, u.role as user_role FROM advances a JOIN users u ON a.user_id = u.id WHERE a.user_id = ? ORDER BY a.created_at DESC");
+                $stmt = $db->prepare("SELECT a.*, u.name as user_name, u.role as user_role, p.name as project_name FROM advances a JOIN users u ON a.user_id = u.id LEFT JOIN projects p ON a.project_id = p.id WHERE a.user_id = ? ORDER BY a.created_at DESC");
                 $stmt->execute([$user_id]);
             } else {
-                $stmt = $db->query("SELECT a.*, u.name as user_name, u.role as user_role FROM advances a JOIN users u ON a.user_id = u.id ORDER BY a.created_at DESC");
+                $stmt = $db->query("SELECT a.*, u.name as user_name, u.role as user_role, p.name as project_name FROM advances a JOIN users u ON a.user_id = u.id LEFT JOIN projects p ON a.project_id = p.id ORDER BY a.created_at DESC");
             }
             $advances = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
@@ -201,10 +208,36 @@ class AdvanceController extends Controller {
             session_start();
         }
         
-        $this->requireAuth();
+        // Check authentication first
+        if (!isset($_SESSION['user_id'])) {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' || $this->isAjaxRequest()) {
+                header('Content-Type: application/json');
+                http_response_code(401);
+                echo json_encode(['success' => false, 'error' => 'Authentication required']);
+                exit;
+            } else {
+                header('Location: ' . Environment::getBaseUrl() . '/login');
+                exit;
+            }
+        }
+        
+        // Check authorization - only admin/owner can approve
+        $currentUserRole = $_SESSION['role'] ?? 'user';
+        if (!in_array($currentUserRole, ['admin', 'owner'])) {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' || $this->isAjaxRequest()) {
+                header('Content-Type: application/json');
+                http_response_code(403);
+                echo json_encode(['success' => false, 'error' => 'Unauthorized access']);
+                exit;
+            } else {
+                header('Location: ' . Environment::getBaseUrl() . '/advances?error=Unauthorized access');
+                exit;
+            }
+        }
         
         if (!$id) {
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' || $this->isAjaxRequest()) {
+                header('Content-Type: application/json');
                 echo json_encode(['success' => false, 'error' => 'Invalid advance ID']);
             } else {
                 header('Location: ' . Environment::getBaseUrl() . '/advances?error=Invalid advance ID');
@@ -222,7 +255,8 @@ class AdvanceController extends Controller {
             $advance = $stmt->fetch(PDO::FETCH_ASSOC);
             
             if (!$advance) {
-                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                if ($_SERVER['REQUEST_METHOD'] === 'POST' || $this->isAjaxRequest()) {
+                    header('Content-Type: application/json');
                     echo json_encode(['success' => false, 'error' => 'Advance not found or already processed']);
                 } else {
                     header('Location: ' . Environment::getBaseUrl() . '/advances?error=Advance not found or already processed');
@@ -261,7 +295,7 @@ class AdvanceController extends Controller {
             }
             
             // GET request - check if it's an AJAX request or direct browser access
-            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+            if ($this->isAjaxRequest()) {
                 // AJAX request - return JSON for modal
                 header('Content-Type: application/json');
                 echo json_encode([
@@ -276,9 +310,16 @@ class AdvanceController extends Controller {
             }
             
         } catch (Exception $e) {
-            error_log('Advance approval error: ' . $e->getMessage());
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                echo json_encode(['success' => false, 'error' => 'Approval failed']);
+            logAdvanceError('Advance approval error: ' . $e->getMessage(), [
+                'advance_id' => $id,
+                'user_id' => $_SESSION['user_id'] ?? null,
+                'request_method' => $_SERVER['REQUEST_METHOD'],
+                'is_ajax' => $this->isAjaxRequest(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' || $this->isAjaxRequest()) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'error' => 'Approval failed: ' . $e->getMessage()]);
             } else {
                 header('Location: ' . Environment::getBaseUrl() . '/advances?error=Approval failed');
             }

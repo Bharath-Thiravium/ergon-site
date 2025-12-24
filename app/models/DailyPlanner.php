@@ -225,9 +225,14 @@ class DailyPlanner {
                     $insertStmt = $this->db->prepare("
                         INSERT INTO daily_tasks 
                         (user_id, task_id, original_task_id, title, description, scheduled_date, 
-                         priority, status, planned_duration, source_field, created_at)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+                         priority, status, planned_duration, completed_percentage, source_field, created_at)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
                     ");
+                    
+                    // Get progress from original task
+                    $progressStmt = $this->db->prepare("SELECT progress FROM tasks WHERE id = ?");
+                    $progressStmt->execute([$task['id']]);
+                    $originalProgress = (int)($progressStmt->fetchColumn() ?: 0);
                     
                     $result = $insertStmt->execute([
                         $userId,
@@ -239,6 +244,7 @@ class DailyPlanner {
                         $task['priority'],
                         $initialStatus,
                         $task['estimated_duration'] ?: 60,
+                        $originalProgress,
                         $task['source_field']
                     ]);
                     
@@ -594,6 +600,14 @@ class DailyPlanner {
             if (!$currentTask) {
                 throw new Exception('Task not found');
             }
+            
+            // Remove any existing postponed entries for this task on other dates
+            $stmt = $this->db->prepare("
+                DELETE FROM daily_tasks 
+                WHERE original_task_id = ? AND user_id = ? AND status = 'not_started' 
+                AND postponed_from_date IS NOT NULL AND scheduled_date != ?
+            ");
+            $stmt->execute([$currentTask['original_task_id'] ?: $currentTask['task_id'], $userId, $currentTask['scheduled_date']]);
             
             // Check if task already exists on target date (excluding postponed tasks)
             $stmt = $this->db->prepare("

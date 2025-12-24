@@ -156,29 +156,41 @@ class TasksController extends Controller {
             if ($result) {
                 $taskId = $db->lastInsertId();
                 
+                // Get assigned user details for comprehensive logging
+                $stmt = $db->prepare("SELECT name FROM users WHERE id = ?");
+                $stmt->execute([$taskData['assigned_to']]);
+                $assignedUser = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                $stmt = $db->prepare("SELECT name FROM users WHERE id = ?");
+                $stmt->execute([$taskData['assigned_by']]);
+                $assignedByUser = $stmt->fetch(PDO::FETCH_ASSOC);
+                
                 // Log comprehensive task creation history
                 $creationNotes = sprintf(
-                    'Task created: %s | Assigned to: %s | Priority: %s | Type: %s | SLA: %.2fh%s%s',
+                    'Task "%s" created | Assigned to: %s | Priority: %s | Type: %s | SLA: %.2fh%s%s%s',
                     $taskData['title'],
                     $assignedUser['name'] ?? 'Unknown',
                     ucfirst($taskData['priority']),
                     ucfirst(str_replace('-', ' ', $taskData['task_type'])),
                     $taskData['sla_hours'],
                     $taskData['deadline'] ? ' | Deadline: ' . date('M d, Y H:i', strtotime($taskData['deadline'])) : '',
-                    $taskData['planned_date'] ? ' | Planned: ' . date('M d, Y', strtotime($taskData['planned_date'])) : ''
+                    $taskData['planned_date'] ? ' | Planned: ' . date('M d, Y', strtotime($taskData['planned_date'])) : '',
+                    $taskData['description'] ? ' | Description: ' . substr($taskData['description'], 0, 100) . (strlen($taskData['description']) > 100 ? '...' : '') : ''
                 );
                 $this->logTaskHistory($db, $taskId, 'created', '', 'Task created', $creationNotes);
                 
                 // Log assignment if different from creator
                 if ($taskData['assigned_by'] != $taskData['assigned_to']) {
-                    $this->logTaskHistory($db, $taskId, 'assigned', '', $assignedUser['name'] ?? 'Unknown', 'Task assigned to user');
+                    $assignmentNotes = sprintf(
+                        'Task assigned by %s to %s',
+                        $assignedByUser['name'] ?? 'System',
+                        $assignedUser['name'] ?? 'Unknown'
+                    );
+                    $this->logTaskHistory($db, $taskId, 'assigned', $assignedByUser['name'] ?? 'System', $assignedUser['name'] ?? 'Unknown', $assignmentNotes);
                 }
                 
                 // Create notifications for task assignment
                 require_once __DIR__ . '/../helpers/NotificationHelper.php';
-                $stmt = $db->prepare("SELECT name FROM users WHERE id = ?");
-                $stmt->execute([$taskData['assigned_to']]);
-                $assignedUser = $stmt->fetch(PDO::FETCH_ASSOC);
                 
                 if ($assignedUser && $taskData['assigned_by'] != $taskData['assigned_to']) {
                     // Notify assigned user (only if not self-assignment)
@@ -217,6 +229,37 @@ class TasksController extends Controller {
     public function edit($id) {
         AuthMiddleware::requireAuth();
         
+        // Check permissions before allowing edit
+        try {
+            require_once __DIR__ . '/../config/database.php';
+            $db = Database::connect();
+            
+            $stmt = $db->prepare("SELECT assigned_to, assigned_by FROM tasks WHERE id = ?");
+            $stmt->execute([$id]);
+            $task = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if (!$task) {
+                header('Location: /ergon-site/tasks?error=Task not found');
+                exit;
+            }
+            
+            // Check permissions for editing
+            $currentUserId = $_SESSION['user_id'] ?? 0;
+            $currentUserRole = $_SESSION['role'] ?? 'user';
+            $isAssignedUser = ($task['assigned_to'] ?? 0) == $currentUserId;
+            $isTaskCreator = ($task['assigned_by'] ?? 0) == $currentUserId;
+            $isAdmin = in_array($currentUserRole, ['admin', 'owner', 'system_admin']);
+            
+            if (!$isAssignedUser && !$isTaskCreator && !$isAdmin) {
+                header('Location: /ergon-site/tasks?error=Permission denied: You can only edit tasks you are involved with');
+                exit;
+            }
+        } catch (Exception $e) {
+            error_log('Edit permission check error: ' . $e->getMessage());
+            header('Location: /ergon-site/tasks?error=Permission check failed');
+            exit;
+        }
+        
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $taskData = [
                 'title' => trim($_POST['title'] ?? ''),
@@ -251,12 +294,10 @@ class TasksController extends Controller {
                 $db = Database::connect();
                 $this->ensureTasksTable($db);
                 
-                // Get current task data before update for comparison
-                $stmt = $db->prepare("SELECT status, assigned_to FROM tasks WHERE id = ?");
+                // Get complete current task data before update for comparison
+                $stmt = $db->prepare("SELECT t.*, u1.name as assigned_to_name, u2.name as assigned_by_name FROM tasks t LEFT JOIN users u1 ON t.assigned_to = u1.id LEFT JOIN users u2 ON t.assigned_by = u2.id WHERE t.id = ?");
                 $stmt->execute([$id]);
-                $oldTask = $stmt->fetch(PDO::FETCH_ASSOC);
-                $oldStatus = $oldTask ? $oldTask['status'] : null;
-                $oldAssignedTo = $oldTask ? $oldTask['assigned_to'] : null;
+                $oldTaskFull = $stmt->fetch(PDO::FETCH_ASSOC);
                 
                 $stmt = $db->prepare("UPDATE tasks SET title=?, description=?, assigned_to=?, task_type=?, priority=?, deadline=?, planned_date=?, status=?, progress=?, sla_hours=?, department_id=?, task_category=?, project_id=?, followup_required=?, updated_at=NOW() WHERE id=?");
                 $result = $stmt->execute([
@@ -283,45 +324,74 @@ class TasksController extends Controller {
                 }
                 
                 if ($result) {
-                    // Log detailed task update history
+                    // Get new user name for comparison
+                    $stmt = $db->prepare("SELECT name FROM users WHERE id = ?");
+                    $stmt->execute([$taskData['assigned_to']]);
+                    $newUser = $stmt->fetch(PDO::FETCH_ASSOC);
+                    
                     $changes = [];
                     
-                    // Get old task data for comparison
-                    $stmt = $db->prepare("SELECT * FROM tasks WHERE id = ?");
-                    $stmt->execute([$id]);
-                    $newTask = $stmt->fetch(PDO::FETCH_ASSOC);
-                    
-                    // Compare and log specific changes
-                    if ($oldStatus !== $taskData['status']) {
-                        $changes[] = 'Status: ' . ucfirst($oldStatus) . ' → ' . ucfirst($taskData['status']);
-                        $this->logTaskHistory($db, $id, 'status_changed', ucfirst($oldStatus), ucfirst($taskData['status']), 'Task status updated');
+                    // Compare all fields and log changes
+                    if (($oldTaskFull['title'] ?? '') !== $taskData['title']) {
+                        $changes[] = 'Title';
+                        $this->logTaskHistory($db, $id, 'title_changed', $oldTaskFull['title'] ?? '', $taskData['title'], sprintf('Title changed from "%s" to "%s"', $oldTaskFull['title'] ?? '', $taskData['title']));
                     }
                     
-                    if ($oldAssignedTo !== $taskData['assigned_to']) {
-                        $oldUserStmt = $db->prepare("SELECT name FROM users WHERE id = ?");
-                        $oldUserStmt->execute([$oldAssignedTo]);
-                        $oldUser = $oldUserStmt->fetch(PDO::FETCH_ASSOC);
-                        
-                        $newUserStmt = $db->prepare("SELECT name FROM users WHERE id = ?");
-                        $newUserStmt->execute([$taskData['assigned_to']]);
-                        $newUser = $newUserStmt->fetch(PDO::FETCH_ASSOC);
-                        
-                        $changes[] = 'Assigned: ' . ($oldUser['name'] ?? 'Unknown') . ' → ' . ($newUser['name'] ?? 'Unknown');
-                        $this->logTaskHistory($db, $id, 'reassigned', $oldUser['name'] ?? 'Unknown', $newUser['name'] ?? 'Unknown', 'Task reassigned to different user');
+                    if (($oldTaskFull['description'] ?? '') !== ($taskData['description'] ?? '')) {
+                        $changes[] = 'Description';
+                        $this->logTaskHistory($db, $id, 'description_changed', 'Description updated', 'Description updated', 'Task description was modified');
                     }
                     
-                    // Log general update with summary of changes
-                    $updateNotes = empty($changes) ? 'Task details modified' : 'Changes: ' . implode(', ', $changes);
-                    $this->logTaskHistory($db, $id, 'updated', 'Task details', 'Task updated', $updateNotes);
+                    if (($oldTaskFull['status'] ?? '') !== $taskData['status']) {
+                        $changes[] = 'Status';
+                        $this->logTaskHistory($db, $id, 'status_changed', ucfirst($oldTaskFull['status'] ?? ''), ucfirst($taskData['status']), sprintf('Status changed from "%s" to "%s"', ucfirst($oldTaskFull['status'] ?? ''), ucfirst($taskData['status'])));
+                    }
+                    
+                    if (($oldTaskFull['assigned_to'] ?? 0) !== $taskData['assigned_to']) {
+                        $changes[] = 'Assignment';
+                        $this->logTaskHistory($db, $id, 'reassigned', $oldTaskFull['assigned_to_name'] ?? 'Unknown', $newUser['name'] ?? 'Unknown', sprintf('Task reassigned from "%s" to "%s"', $oldTaskFull['assigned_to_name'] ?? 'Unknown', $newUser['name'] ?? 'Unknown'));
+                    }
+                    
+                    if (($oldTaskFull['priority'] ?? 'medium') !== $taskData['priority']) {
+                        $changes[] = 'Priority';
+                        $this->logTaskHistory($db, $id, 'priority_changed', ucfirst($oldTaskFull['priority'] ?? 'medium'), ucfirst($taskData['priority']), sprintf('Priority changed from "%s" to "%s"', ucfirst($oldTaskFull['priority'] ?? 'medium'), ucfirst($taskData['priority'])));
+                    }
+                    
+                    if (($oldTaskFull['deadline'] ?? '') !== ($taskData['deadline'] ?? '')) {
+                        $changes[] = 'Deadline';
+                        $oldDeadline = $oldTaskFull['deadline'] ? date('M d, Y H:i', strtotime($oldTaskFull['deadline'])) : 'None';
+                        $newDeadline = $taskData['deadline'] ? date('M d, Y H:i', strtotime($taskData['deadline'])) : 'None';
+                        $this->logTaskHistory($db, $id, 'deadline_changed', $oldDeadline, $newDeadline, sprintf('Deadline changed from "%s" to "%s"', $oldDeadline, $newDeadline));
+                    }
+                    
+                    if (($oldTaskFull['task_type'] ?? 'ad-hoc') !== $taskData['task_type']) {
+                        $changes[] = 'Type';
+                        $this->logTaskHistory($db, $id, 'type_changed', ucfirst($oldTaskFull['task_type'] ?? 'ad-hoc'), ucfirst($taskData['task_type']), sprintf('Task type changed from "%s" to "%s"', ucfirst($oldTaskFull['task_type'] ?? 'ad-hoc'), ucfirst($taskData['task_type'])));
+                    }
+                    
+                    if (($oldTaskFull['sla_hours'] ?? 0.25) != $taskData['sla_hours']) {
+                        $changes[] = 'SLA';
+                        $this->logTaskHistory($db, $id, 'sla_changed', $oldTaskFull['sla_hours'] ?? 0.25, $taskData['sla_hours'], sprintf('SLA changed from "%s hours" to "%s hours"', $oldTaskFull['sla_hours'] ?? 0.25, $taskData['sla_hours']));
+                    }
+                    
+                    if (($oldTaskFull['progress'] ?? 0) !== $taskData['progress']) {
+                        $changes[] = 'Progress';
+                        $this->logTaskHistory($db, $id, 'progress_changed', ($oldTaskFull['progress'] ?? 0) . '%', $taskData['progress'] . '%', sprintf('Progress changed from "%d%%" to "%d%%"', $oldTaskFull['progress'] ?? 0, $taskData['progress']));
+                    }
+                    
+                    // Log summary if changes were made
+                    if (!empty($changes)) {
+                        $this->logTaskHistory($db, $id, 'updated', 'Task details', 'Task updated', 'Updated: ' . implode(', ', $changes));
+                    }
                     
                     // Update linked followups if status changed
-                    if ($oldStatus && $oldStatus !== $taskData['status']) {
+                    if (($oldTaskFull['status'] ?? '') !== $taskData['status']) {
                         require_once __DIR__ . '/ContactFollowupController.php';
                         ContactFollowupController::updateLinkedFollowupStatus($id, $taskData['status']);
                     }
                     
                     // Sync with planner (daily_tasks table)
-                    $taskData['old_assigned_to'] = $oldAssignedTo;
+                    $taskData['old_assigned_to'] = $oldTaskFull['assigned_to'] ?? null;
                     $this->syncWithPlanner($db, $id, $taskData);
                     
                     error_log('Task updated with ID: ' . $id . ', progress: ' . $taskData['progress'] . '%, planned_date: ' . ($taskData['planned_date'] ?? 'null'));
@@ -698,10 +768,26 @@ class TasksController extends Controller {
             require_once __DIR__ . '/../config/database.php';
             $db = Database::connect();
             
-            // Get current task data before update
-            $stmt = $db->prepare("SELECT progress, status, title FROM tasks WHERE id = ?");
+            // Get current task data and check permissions
+            $stmt = $db->prepare("SELECT progress, status, title, assigned_to, assigned_by FROM tasks WHERE id = ?");
             $stmt->execute([$taskId]);
             $currentTask = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if (!$currentTask) {
+                echo json_encode(['success' => false, 'message' => 'Task not found']);
+                exit;
+            }
+            
+            // Check permissions for progress updates
+            $currentUserId = $_SESSION['user_id'] ?? 0;
+            $currentUserRole = $_SESSION['role'] ?? 'user';
+            $isAssignedUser = ($currentTask['assigned_to'] ?? 0) == $currentUserId;
+            $isAdmin = in_array($currentUserRole, ['admin', 'owner', 'system_admin']);
+            
+            if (!$isAssignedUser && !$isAdmin) {
+                echo json_encode(['success' => false, 'message' => 'Permission denied: You can only update progress for tasks assigned to you']);
+                exit;
+            }
             
             $result = $this->taskModel->updateProgress($taskId, $_SESSION['user_id'], $progress, $description);
             
@@ -730,6 +816,31 @@ class TasksController extends Controller {
         AuthMiddleware::requireAuth();
         
         try {
+            require_once __DIR__ . '/../config/database.php';
+            $db = Database::connect();
+            
+            // Get task data and check permissions
+            $stmt = $db->prepare("SELECT assigned_to, assigned_by FROM tasks WHERE id = ?");
+            $stmt->execute([$id]);
+            $task = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if (!$task) {
+                echo json_encode(['success' => false, 'error' => 'Task not found']);
+                exit;
+            }
+            
+            // Check permissions for viewing history
+            $currentUserId = $_SESSION['user_id'] ?? 0;
+            $currentUserRole = $_SESSION['role'] ?? 'user';
+            $isAssignedUser = ($task['assigned_to'] ?? 0) == $currentUserId;
+            $isTaskCreator = ($task['assigned_by'] ?? 0) == $currentUserId;
+            $isAdmin = in_array($currentUserRole, ['admin', 'owner', 'system_admin']);
+            
+            if (!$isAssignedUser && !$isTaskCreator && !$isAdmin) {
+                echo json_encode(['success' => false, 'error' => 'Permission denied: You can only view history for tasks you are involved with']);
+                exit;
+            }
+            
             $history = $this->taskModel->getProgressHistory($id);
             
             $html = empty($history) ? '<p>No progress history available.</p>' : $this->renderProgressHistory($history);
@@ -788,11 +899,74 @@ class TasksController extends Controller {
             $db = Database::connect();
             $this->ensureTaskHistoryTable($db);
             
-            $stmt = $db->prepare("SELECT h.*, u.name as user_name FROM task_history h LEFT JOIN users u ON h.created_by = u.id WHERE h.task_id = ? ORDER BY h.created_at DESC");
+            // Get task data and check permissions
+            $stmt = $db->prepare("SELECT assigned_to, assigned_by FROM tasks WHERE id = ?");
             $stmt->execute([$id]);
+            $task = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if (!$task) {
+                echo json_encode(['success' => false, 'error' => 'Task not found']);
+                exit;
+            }
+            
+            // Check permissions for viewing task history
+            $currentUserId = $_SESSION['user_id'] ?? 0;
+            $currentUserRole = $_SESSION['role'] ?? 'user';
+            $isAssignedUser = ($task['assigned_to'] ?? 0) == $currentUserId;
+            $isTaskCreator = ($task['assigned_by'] ?? 0) == $currentUserId;
+            $isAdmin = in_array($currentUserRole, ['admin', 'owner', 'system_admin']);
+            
+            if (!$isAssignedUser && !$isTaskCreator && !$isAdmin) {
+                echo json_encode(['success' => false, 'error' => 'Permission denied: You can only view history for tasks you are involved with']);
+                exit;
+            }
+            
+            // Get comprehensive task history including progress updates
+            $stmt = $db->prepare("
+                SELECT 
+                    'history' as source_type,
+                    h.id,
+                    h.task_id,
+                    h.action,
+                    h.old_value,
+                    h.new_value,
+                    h.notes,
+                    h.created_by,
+                    h.created_at,
+                    u.name as user_name,
+                    NULL as progress_from,
+                    NULL as progress_to,
+                    NULL as description
+                FROM task_history h 
+                LEFT JOIN users u ON h.created_by = u.id 
+                WHERE h.task_id = ?
+                
+                UNION ALL
+                
+                SELECT 
+                    'progress' as source_type,
+                    p.id,
+                    p.task_id,
+                    'progress_updated' as action,
+                    CONCAT(p.progress_from, '%') as old_value,
+                    CONCAT(p.progress_to, '%') as new_value,
+                    p.description as notes,
+                    p.user_id as created_by,
+                    p.created_at,
+                    u.name as user_name,
+                    p.progress_from,
+                    p.progress_to,
+                    p.description
+                FROM task_progress_history p 
+                LEFT JOIN users u ON p.user_id = u.id 
+                WHERE p.task_id = ?
+                
+                ORDER BY created_at DESC
+            ");
+            $stmt->execute([$id, $id]);
             $history = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
-            $html = empty($history) ? '<p>No history available for this task.</p>' : $this->renderTaskHistory($history);
+            $html = empty($history) ? '<p>No history available for this task.</p>' : $this->renderEnhancedTaskHistory($history);
             echo json_encode(['success' => true, 'html' => $html]);
         } catch (Exception $e) {
             error_log('Task history error: ' . $e->getMessage());
@@ -801,7 +975,7 @@ class TasksController extends Controller {
         exit;
     }
     
-    private function renderTaskHistory($history) {
+    private function renderEnhancedTaskHistory($history) {
         if (empty($history)) {
             return '<div class="no-history"><p>📝 No history available for this task.</p></div>';
         }
@@ -819,23 +993,136 @@ class TasksController extends Controller {
             $html .= '<span class="history-time">' . $this->formatTimeAgo($entry['created_at']) . '</span>';
             $html .= '</div>';
             
-            if ($entry['old_value'] && $entry['new_value']) {
-                $html .= '<div class="history-change">';
-                $html .= '<span class="change-from">From: ' . htmlspecialchars($entry['old_value']) . '</span>';
-                $html .= '<span class="change-arrow">→</span>';
-                $html .= '<span class="change-to">To: ' . htmlspecialchars($entry['new_value']) . '</span>';
+            // Enhanced display for different entry types
+            if ($entry['source_type'] === 'progress') {
+                // Progress update entry - show detailed progress information
+                $progressChange = $entry['progress_to'] - $entry['progress_from'];
+                $changeDirection = $progressChange > 0 ? '↗️' : ($progressChange < 0 ? '↘️' : '➡️');
+                
+                $html .= '<div class="history-change progress-change">';
+                $html .= '<div class="progress-details">';
+                $html .= '<span class="change-label">Progress Update:</span>';
+                $html .= '<span class="progress-from">' . $entry['progress_from'] . '%</span>';
+                $html .= '<span class="change-arrow">' . $changeDirection . '</span>';
+                $html .= '<span class="progress-to">' . $entry['progress_to'] . '%</span>';
+                $html .= '<span class="progress-delta">(' . ($progressChange > 0 ? '+' : '') . $progressChange . '%)</span>';
                 $html .= '</div>';
-            }
-            
-            if ($entry['notes']) {
-                $html .= '<div class="history-notes">💬 ' . htmlspecialchars($entry['notes']) . '</div>';
+                $html .= '</div>';
+                
+                if ($entry['description']) {
+                    $html .= '<div class="history-notes progress-notes">💬 ' . htmlspecialchars($entry['description']) . '</div>';
+                }
+            } else {
+                // Regular history entry - show old/new values if available
+                if ($entry['old_value'] && $entry['new_value'] && $entry['old_value'] !== $entry['new_value']) {
+                    $html .= '<div class="history-change">';
+                    $html .= '<span class="change-from">From: ' . htmlspecialchars($entry['old_value']) . '</span>';
+                    $html .= '<span class="change-arrow">→</span>';
+                    $html .= '<span class="change-to">To: ' . htmlspecialchars($entry['new_value']) . '</span>';
+                    $html .= '</div>';
+                } elseif ($entry['new_value'] && !$entry['old_value']) {
+                    $html .= '<div class="history-change">';
+                    $html .= '<span class="change-to">Set to: ' . htmlspecialchars($entry['new_value']) . '</span>';
+                    $html .= '</div>';
+                }
+                
+                if ($entry['notes']) {
+                    $html .= '<div class="history-notes">💬 ' . htmlspecialchars($entry['notes']) . '</div>';
+                }
             }
             
             $html .= '<div class="history-user">👤 ' . htmlspecialchars($entry['user_name'] ?? 'System') . '</div>';
             $html .= '</div></div>';
         }
         $html .= '</div>';
+        
+        // Add enhanced CSS for better styling
+        $html .= '<style>
+        .progress-change {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border: 1px solid #0ea5e9;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 8px 0;
+        }
+        .progress-details {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .change-label {
+            font-weight: 600;
+            color: #0369a1;
+            font-size: 0.9rem;
+        }
+        .progress-from {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+        .progress-to {
+            background: #d1fae5;
+            color: #065f46;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+        .progress-delta {
+            background: #e0e7ff;
+            color: #3730a3;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        .progress-notes {
+            background: #f8fafc;
+            border-left: 4px solid #0ea5e9;
+            padding: 8px 12px;
+            margin: 8px 0;
+            border-radius: 0 6px 6px 0;
+            font-style: italic;
+        }
+        .history-change {
+            margin: 6px 0;
+            padding: 8px;
+            background: var(--bg-tertiary, #f8fafc);
+            border-radius: 6px;
+            border-left: 3px solid var(--primary, #3b82f6);
+        }
+        .change-from {
+            background: #fef2f2;
+            color: #991b1b;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-decoration: line-through;
+            opacity: 0.8;
+        }
+        .change-to {
+            background: #f0fdf4;
+            color: #166534;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        .change-arrow {
+            color: var(--primary, #3b82f6);
+            font-weight: bold;
+            margin: 0 4px;
+        }
+        </style>';
+        
         return $html;
+    }
+    
+    private function renderTaskHistory($history) {
+        // Keep the old method for backward compatibility
+        return $this->renderEnhancedTaskHistory($history);
     }
     
     private function getActionIcon($action) {
@@ -860,6 +1147,13 @@ class TasksController extends Controller {
             'followup_rescheduled' => '📅',
             'followup_cancelled' => '❌',
             'followup_updated' => '✏️',
+            'priority_changed' => '🔥',
+            'deadline_changed' => '📅',
+            'title_changed' => '✏️',
+            'description_changed' => '📝',
+            'type_changed' => '🏷️',
+            'sla_changed' => '⏱️',
+            'progress_changed' => '📊',
             default => '📝'
         };
     }
@@ -886,6 +1180,13 @@ class TasksController extends Controller {
             'followup_rescheduled' => '#3b82f6',
             'followup_cancelled' => '#ef4444',
             'followup_updated' => '#6b7280',
+            'priority_changed' => '#f59e0b',
+            'deadline_changed' => '#8b5cf6',
+            'title_changed' => '#06b6d4',
+            'description_changed' => '#6b7280',
+            'type_changed' => '#10b981',
+            'sla_changed' => '#f59e0b',
+            'progress_changed' => '#8b5cf6',
             default => '#9ca3af'
         };
     }
@@ -912,21 +1213,35 @@ class TasksController extends Controller {
             'followup_rescheduled' => 'Follow-up Rescheduled',
             'followup_cancelled' => 'Follow-up Cancelled',
             'followup_updated' => 'Follow-up Updated',
+            'priority_changed' => 'Priority Changed',
+            'deadline_changed' => 'Deadline Changed',
+            'title_changed' => 'Title Changed',
+            'description_changed' => 'Description Changed',
+            'type_changed' => 'Type Changed',
+            'sla_changed' => 'SLA Changed',
+            'progress_changed' => 'Progress Changed',
             default => ucfirst(str_replace('_', ' ', $action))
         };
     }
     
     private function formatTimeAgo($datetime) {
-        $timestamp = strtotime($datetime);
-        $time = time() - $timestamp;
+        // Convert to DateTime object for better timezone handling
+        $date = new DateTime($datetime);
+        $now = new DateTime();
         
-        // Always show full date and time for history entries
-        $fullDateTime = date('M d, Y \a\t H:i:s', $timestamp);
+        // Calculate the difference
+        $interval = $now->diff($date);
         
-        if ($time < 60) return 'Just now (' . $fullDateTime . ')';
-        if ($time < 3600) return floor($time/60) . 'm ago (' . $fullDateTime . ')';
-        if ($time < 86400) return floor($time/3600) . 'h ago (' . $fullDateTime . ')';
-        if ($time < 2592000) return floor($time/86400) . 'd ago (' . $fullDateTime . ')';
+        // Format the actual date and time in local timezone
+        $fullDateTime = $date->format('M d, Y \a\t H:i:s');
+        
+        // Calculate total seconds difference
+        $totalSeconds = ($now->getTimestamp() - $date->getTimestamp());
+        
+        if ($totalSeconds < 60) return 'Just now (' . $fullDateTime . ')';
+        if ($totalSeconds < 3600) return floor($totalSeconds/60) . 'm ago (' . $fullDateTime . ')';
+        if ($totalSeconds < 86400) return floor($totalSeconds/3600) . 'h ago (' . $fullDateTime . ')';
+        if ($totalSeconds < 2592000) return $interval->days . 'd ago (' . $fullDateTime . ')';
         
         return $fullDateTime;
     }
@@ -946,13 +1261,29 @@ class TasksController extends Controller {
             
             $db->beginTransaction();
             
-            // Delete from daily_tasks first (cascade delete)
+            // Get task info for logging before deletion
+            $stmt = $db->prepare("SELECT title, assigned_to, assigned_by FROM tasks WHERE id = ?");
+            $stmt->execute([$id]);
+            $taskInfo = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            // Delete from followups table first (cascade delete for linked followups)
+            $stmt = $db->prepare("DELETE FROM followups WHERE task_id = ?");
+            $stmt->execute([$id]);
+            $followupsDeleted = $stmt->rowCount();
+            
+            // Delete from daily_tasks (cascade delete for planner entries)
             $stmt = $db->prepare("DELETE FROM daily_tasks WHERE task_id = ? OR original_task_id = ?");
             $stmt->execute([$id, $id]);
+            $plannerEntriesDeleted = $stmt->rowCount();
             
-            // Delete from tasks table
+            // Delete from tasks table (main task record)
             $stmt = $db->prepare("DELETE FROM tasks WHERE id = ?");
             $result = $stmt->execute([$id]);
+            
+            // Log cascade deletion for audit trail
+            if ($result && $taskInfo) {
+                error_log("Task cascade deletion completed - Task ID: {$id}, Title: '{$taskInfo['title']}', Followups deleted: {$followupsDeleted}, Planner entries deleted: {$plannerEntriesDeleted}");
+            }
             
             $db->commit();
             

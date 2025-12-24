@@ -384,6 +384,7 @@ $router->post('/followups/create', 'FollowupController', 'create');
 $router->get('/followups/view/{id}', 'FollowupController', 'view');
 $router->get('/followups/edit/{id}', 'FollowupController', 'edit');
 $router->post('/followups/edit/{id}', 'FollowupController', 'edit');
+$router->post('/followups/complete/{id}', 'FollowupController', 'complete');
 $router->post('/followups/delete/{id}', 'FollowupController', 'delete');
 
 // Legacy followup routes removed - use /contacts/followups instead

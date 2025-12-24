@@ -490,15 +490,40 @@ class UnifiedWorkflowController extends Controller {
             $this->ensureDailyTasksTable($db);
             $status = $this->validateStatus('completed');
             
+            // Get the original task ID for syncing
+            $stmt = $db->prepare("SELECT original_task_id, task_id FROM daily_tasks WHERE id = ? AND user_id = ?");
+            $stmt->execute([$taskId, $_SESSION['user_id']]);
+            $dailyTask = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if (!$dailyTask) {
+                echo json_encode(['success' => false, 'message' => 'Task not found']);
+                return;
+            }
+            
+            $db->beginTransaction();
+            
+            // Update daily task
             $stmt = $db->prepare("UPDATE daily_tasks SET status = ?, completed_percentage = ?, completion_time = NOW() WHERE id = ? AND user_id = ?");
             $result = $stmt->execute([$status, $percentage, $taskId, $_SESSION['user_id']]);
             
             if ($result) {
+                // Sync with main tasks table if linked
+                $originalTaskId = $dailyTask['original_task_id'] ?: $dailyTask['task_id'];
+                if ($originalTaskId) {
+                    $stmt = $db->prepare("UPDATE tasks SET status = ?, progress = ?, updated_at = NOW() WHERE id = ?");
+                    $stmt->execute([$status, $percentage, $originalTaskId]);
+                }
+                
+                $db->commit();
                 echo json_encode(['success' => true, 'message' => 'Task completed successfully']);
             } else {
+                $db->rollback();
                 echo json_encode(['success' => false, 'message' => 'Failed to complete task']);
             }
         } catch (Exception $e) {
+            if ($db && $db->inTransaction()) {
+                $db->rollback();
+            }
             error_log('Complete task error: ' . $e->getMessage());
             echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
         }
@@ -610,6 +635,18 @@ class UnifiedWorkflowController extends Controller {
                     
                     $this->ensureDailyTasksTable($db);
                     
+                    // Get the original task ID for syncing
+                    $stmt = $db->prepare("SELECT original_task_id, task_id FROM daily_tasks WHERE id = ? AND user_id = ?");
+                    $stmt->execute([$taskId, $_SESSION['user_id']]);
+                    $dailyTask = $stmt->fetch(PDO::FETCH_ASSOC);
+                    
+                    if (!$dailyTask) {
+                        echo json_encode(['success' => false, 'message' => 'Task not found']);
+                        return;
+                    }
+                    
+                    $db->beginTransaction();
+                    
                     if ($percentage < 100) {
                         // Partial completion - defer to next working day
                         $nextWorkingDay = $this->getNextWorkingDay();
@@ -617,6 +654,13 @@ class UnifiedWorkflowController extends Controller {
                         
                         $stmt = $db->prepare("UPDATE daily_tasks SET status = ?, completed_percentage = ?, scheduled_date = ?, postponed_from_date = scheduled_date WHERE id = ? AND user_id = ?");
                         $result = $stmt->execute([$status, $percentage, $nextWorkingDay, $taskId, $_SESSION['user_id']]);
+                        
+                        // Sync with main tasks table
+                        $originalTaskId = $dailyTask['original_task_id'] ?: $dailyTask['task_id'];
+                        if ($originalTaskId) {
+                            $stmt = $db->prepare("UPDATE tasks SET status = ?, progress = ?, updated_at = NOW() WHERE id = ?");
+                            $stmt->execute([$status, $percentage, $originalTaskId]);
+                        }
                         
                         $message = "Task {$percentage}% complete - deferred to {$nextWorkingDay}";
                     } else {
@@ -626,15 +670,27 @@ class UnifiedWorkflowController extends Controller {
                         $stmt = $db->prepare("UPDATE daily_tasks SET status = ?, completed_percentage = ?, completion_time = NOW() WHERE id = ? AND user_id = ?");
                         $result = $stmt->execute([$status, $percentage, $taskId, $_SESSION['user_id']]);
                         
+                        // Sync with main tasks table
+                        $originalTaskId = $dailyTask['original_task_id'] ?: $dailyTask['task_id'];
+                        if ($originalTaskId) {
+                            $stmt = $db->prepare("UPDATE tasks SET status = ?, progress = ?, updated_at = NOW() WHERE id = ?");
+                            $stmt->execute([$status, $percentage, $originalTaskId]);
+                        }
+                        
                         $message = 'Task completed successfully';
                     }
                     
                     if ($result && $stmt->rowCount() > 0) {
+                        $db->commit();
                         echo json_encode(['success' => true, 'message' => $message, 'percentage' => $percentage]);
                     } else {
+                        $db->rollback();
                         echo json_encode(['success' => false, 'message' => 'Task not found']);
                     }
                 } catch (Exception $e) {
+                    if ($db && $db->inTransaction()) {
+                        $db->rollback();
+                    }
                     error_log('Complete task error: ' . $e->getMessage());
                     echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
                 }

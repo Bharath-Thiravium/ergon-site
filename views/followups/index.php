@@ -338,8 +338,8 @@ ob_start();
 
 <script>
 function completeFollowup(id) {
-    if (confirm('Mark this follow-up as completed?')) {
-        fetch(`/ergon-site/contacts/followups/complete/${id}`, {
+    if (confirm('Mark this follow-up as completed? This will also update the linked task status in the Planner if applicable.')) {
+        fetch(`/ergon-site/followups/complete/${id}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -349,6 +349,7 @@ function completeFollowup(id) {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
+                alert(data.message || 'Follow-up completed successfully!');
                 location.reload();
             } else {
                 alert('Error: ' + (data.error || 'Failed to complete follow-up'));

@@ -15,18 +15,37 @@ ob_start();
         <p>View task information and progress</p>
     </div>
     <div class="page-actions">
-        <?php if ($task['status'] !== 'completed'): ?>
+        <?php 
+        // Enhanced permission logic for task view actions
+        $currentUserId = $_SESSION['user_id'] ?? 0;
+        $currentUserRole = $_SESSION['role'] ?? 'user';
+        $isAssignedUser = ($task['assigned_to'] ?? 0) == $currentUserId;
+        $isTaskCreator = ($task['assigned_by'] ?? 0) == $currentUserId;
+        $isAdmin = in_array($currentUserRole, ['admin', 'owner', 'system_admin']);
+        
+        $canUpdateProgress = $isAssignedUser || $isAdmin;
+        $canViewHistory = $isAssignedUser || $isTaskCreator || $isAdmin;
+        $canEdit = $isAssignedUser || $isTaskCreator || $isAdmin;
+        ?>
+        
+        <?php if ($canUpdateProgress && $task['status'] !== 'completed'): ?>
         <button onclick="openProgressModal(<?= $task['id'] ?>, <?= $task['progress'] ?? 0 ?>, '<?= $task['status'] ?? 'assigned' ?>')" class="btn btn--primary">
             <span>📊</span> Update Progress
         </button>
         <?php endif; ?>
 
+        <?php if ($canViewHistory): ?>
         <button onclick="showTaskHistory(<?= $task['id'] ?>)" class="btn btn--info">
             <span>📋</span> Task History
         </button>
+        <?php endif; ?>
+        
+        <?php if ($canEdit): ?>
         <a href="/ergon-site/tasks/edit/<?= $task['id'] ?? '' ?>" class="btn btn--secondary">
             <span>✏️</span> Edit Task
         </a>
+        <?php endif; ?>
+        
         <a href="/ergon-site/tasks" class="btn btn--secondary">
             <span>←</span> Back to Tasks
         </a>
