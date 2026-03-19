@@ -1,7 +1,7 @@
 <?php
 /**
  * Route Configuration
- * ergon - Employee Tracker & Task Manager
+ * Ergon-Site - Employee Tracker & Task Manager
  */
 
 // Project Management Routes (Priority - placed first to avoid conflicts)
@@ -325,6 +325,12 @@ $router->get('/admin/reports', 'AdminController', 'reports');
 $router->get('/admin/system-settings', 'AdminController', 'systemSettings');
 $router->post('/admin/system-settings', 'AdminController', 'systemSettings');
 $router->get('/admin/manage-departments', 'AdminController', 'manageDepartments');
+
+// Admin Direct Entry (no approval needed)
+$router->get('/admin/entry', 'AdminController', 'adminEntry');
+$router->post('/admin/entry', 'AdminController', 'adminEntry');
+$router->post('/admin/bulk-upload', 'AdminController', 'adminBulkUpload');
+$router->get('/admin/sample-csv/{type}', 'AdminController', 'sampleCsv');
 
 // Legacy Admin Management Routes
 $router->get('/admin/management', 'AdminManagementController', 'index');

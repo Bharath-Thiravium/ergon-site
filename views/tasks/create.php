@@ -321,12 +321,34 @@ $content = ob_start();
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="recurrence_type">Repeat Frequency *</label>
-                        <select id="recurrence_type" name="recurrence_type">
+                        <select id="recurrence_type" name="recurrence_type" onchange="updateIntervalLabel()">
+                            <option value="daily">📅 Daily</option>
                             <option value="weekly">📅 Weekly</option>
                             <option value="monthly">📆 Monthly</option>
                             <option value="quarterly">📅 Quarterly (3 months)</option>
                             <option value="half_yearly">📆 Half Yearly (6 months)</option>
                             <option value="annually">📅 Annually (12 months)</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="weeklyOptions" style="display: none;">
+                        <label for="weekly_day">Day of Week</label>
+                        <select id="weekly_day" name="weekly_day">
+                            <option value="1">Monday</option>
+                            <option value="2">Tuesday</option>
+                            <option value="3">Wednesday</option>
+                            <option value="4">Thursday</option>
+                            <option value="5">Friday</option>
+                            <option value="6">Saturday</option>
+                            <option value="0">Sunday</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="monthlyOptions" style="display: none;">
+                        <label for="monthly_date">Date of Month</label>
+                        <select id="monthly_date" name="monthly_date">
+                            <?php for($i = 1; $i <= 31; $i++): ?>
+                                <option value="<?= $i ?>"><?= $i ?><?= $i == 1 ? 'st' : ($i == 2 ? 'nd' : ($i == 3 ? 'rd' : 'th')) ?></option>
+                            <?php endfor; ?>
+                            <option value="last">Last day of month</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -679,8 +701,15 @@ function updateIntervalLabel() {
     const type = document.getElementById('recurrence_type').value;
     const label = document.getElementById('interval_label');
     const intervalInput = document.getElementById('recurrence_interval');
+    const weeklyOptions = document.getElementById('weeklyOptions');
+    const monthlyOptions = document.getElementById('monthlyOptions');
+    
+    // Hide all specific options first
+    weeklyOptions.style.display = 'none';
+    monthlyOptions.style.display = 'none';
     
     const labels = {
+        'daily': 'day(s)',
         'weekly': 'week(s)',
         'monthly': 'month(s)',
         'quarterly': 'quarter(s)',
@@ -689,6 +718,7 @@ function updateIntervalLabel() {
     };
     
     const maxValues = {
+        'daily': 365,
         'weekly': 52,
         'monthly': 12,
         'quarterly': 4,
@@ -698,6 +728,13 @@ function updateIntervalLabel() {
     
     label.textContent = labels[type] || 'period(s)';
     intervalInput.max = maxValues[type] || 12;
+    
+    // Show specific options based on type
+    if (type === 'weekly') {
+        weeklyOptions.style.display = 'block';
+    } else if (type === 'monthly') {
+        monthlyOptions.style.display = 'block';
+    }
     
     if (parseInt(intervalInput.value) > maxValues[type]) {
         intervalInput.value = 1;

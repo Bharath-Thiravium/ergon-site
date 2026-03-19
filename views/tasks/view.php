@@ -176,6 +176,38 @@ ob_start();
                         </span>
                     </div>
                 </div>
+                
+                <?php if ($task['is_recurring'] ?? 0): ?>
+                <div class="detail-group">
+                    <h4>🔄 Recurring Schedule</h4>
+                    <div class="detail-items">
+                        <span><strong>Frequency:</strong> 
+                            <span class="badge badge--success">🔄 <?= ucfirst($task['recurrence_type'] ?? 'weekly') ?></span>
+                        </span>
+                        <span><strong>Interval:</strong> 
+                            Every <?= $task['recurrence_interval'] ?? 1 ?> <?= ($task['recurrence_type'] ?? 'weekly') === 'daily' ? 'day(s)' : (($task['recurrence_type'] ?? 'weekly') === 'weekly' ? 'week(s)' : 'month(s)') ?>
+                        </span>
+                        <?php if (($task['recurrence_type'] ?? '') === 'weekly' && $task['weekly_day']): ?>
+                        <span><strong>Day:</strong> 
+                            <?php 
+                            $days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                            echo $days[$task['weekly_day']] ?? 'Unknown';
+                            ?>
+                        </span>
+                        <?php endif; ?>
+                        <?php if (($task['recurrence_type'] ?? '') === 'monthly' && $task['monthly_date']): ?>
+                        <span><strong>Date:</strong> 
+                            <?= $task['monthly_date'] === 'last' ? 'Last day of month' : ($task['monthly_date'] . ($task['monthly_date'] == 1 ? 'st' : ($task['monthly_date'] == 2 ? 'nd' : ($task['monthly_date'] == 3 ? 'rd' : 'th')))) ?>
+                        </span>
+                        <?php endif; ?>
+                        <?php if ($task['recurrence_end_date']): ?>
+                        <span><strong>Ends:</strong> 
+                            📅 <?= date('M d, Y', strtotime($task['recurrence_end_date'])) ?>
+                        </span>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>

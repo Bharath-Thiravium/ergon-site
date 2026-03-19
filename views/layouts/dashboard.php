@@ -81,7 +81,7 @@ ob_end_clean();
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <meta name="csrf-token" content="<?= Security::escape(Security::generateCSRFToken()) ?>">
-    <title><?= $title ?? 'Dashboard' ?> - ergon</title>
+    <title><?= $title ?? 'Dashboard' ?> - ergon-site</title>
     <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,">
     
     <script src="/ergon-site/assets/js/theme-preload.js?v=<?= time() ?>"></script>
@@ -195,7 +195,7 @@ ob_end_clean();
     </style>
     
     <link href="/ergon-site/assets/css/bootstrap-icons.min.css?v=1.0" rel="stylesheet">
-    <link href="/ergon-site/assets/css/ergon.css?v=<?= time() ?>" rel="stylesheet">
+    <link href="/ergon-site/assets/css/ergon-site.css?v=<?= time() ?>" rel="stylesheet">
     <link href="/ergon-site/assets/css/theme-enhanced.css?v=1.0" rel="stylesheet">
     <link href="/ergon-site/assets/css/utilities-new.css?v=1.0" rel="stylesheet">
     <link href="/ergon-site/assets/css/instant-theme.css?v=1.0" rel="stylesheet">
@@ -212,7 +212,7 @@ ob_end_clean();
     <!-- New Simplified Modal CSS -->
     <link href="/ergon-site/assets/css/modal.css?v=<?= time() ?>" rel="stylesheet">
     <!-- Dashboard overrides loaded last to ensure overrides on compiled CSS in deployments -->
-    <link href="/ergon-site/assets/css/ergon-overrides.css?v=<?= time() ?>" rel="stylesheet">
+    <link href="/ergon-site/assets/css/ergon-site-overrides.css?v=<?= time() ?>" rel="stylesheet">
     <link href="/ergon-site/assets/css/access-denied.css?v=1.0" rel="stylesheet">
     <link href="/ergon-site/assets/css/premium-navigation.css?v=1.0" rel="stylesheet">
     <?php if (isset($active_page) && $active_page === 'dashboard' && isset($_SESSION['role']) && $_SESSION['role'] === 'owner'): ?>
@@ -223,7 +223,7 @@ ob_end_clean();
     <?php endif; ?>
 
     <script src="/ergon-site/assets/js/theme-switcher.js?v=1.0" defer></script>
-    <script src="/ergon-site/assets/js/ergon-core.min.js?v=1.0" defer></script>
+    <script src="/ergon-site/assets/js/ergon-site-core.min.js?v=1.0" defer></script>
     <!-- New Simplified Modal JS -->
     <script src="/ergon-site/assets/js/modal.js?v=1.0" defer></script>
     <script src="/ergon-site/assets/_archive_legacy/js/action-button-clean.js?v=1.0" defer></script>
@@ -247,7 +247,7 @@ ob_end_clean();
                     <i class="bi bi-list"></i>
                 </button>
                 <span class="brand-icon"><i class="bi bi-compass-fill"></i></span>
-                <span class="brand-text">Ergon</span>
+                <span class="brand-text">ergon-site</span>
                 <span class="role-badge"><?= htmlspecialchars(ucfirst($_SESSION['role'] ?? 'User'), ENT_QUOTES, 'UTF-8') ?></span>
             </div>
             
@@ -584,6 +584,10 @@ ob_end_clean();
                                 <span class="nav-icon">📍</span>
                                 Attendance
                             </a>
+                            <a href="/ergon-site/admin/entry" class="nav-dropdown-item <?= ($active_page ?? '') === 'admin-entry' ? 'nav-dropdown-item--active' : '' ?>">
+                                <span class="nav-icon">📝</span>
+                                Direct Entry
+                            </a>
                             <a href="/ergon-site/reports/activity" class="nav-dropdown-item <?= ($active_page ?? '') === 'activity' ? 'nav-dropdown-item--active' : '' ?> <?= $reportsDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
                                 <span class="nav-icon">⏱️</span>
                                 Reports
@@ -677,7 +681,7 @@ ob_end_clean();
         <div class="sidebar__header">
             <div class="sidebar__brand">
                 <span class="brand-icon"><i class="bi bi-compass-fill"></i></span>
-                <span>Ergon</span>
+                <span>ergon-site</span>
             </div>
         </div>
         <nav class="sidebar__menu">
@@ -844,6 +848,10 @@ ob_end_clean();
                 <a href="/ergon-site/attendance" class="sidebar__link <?= ($active_page ?? '') === 'attendance' ? 'sidebar__link--active' : '' ?>">
                     <span class="sidebar__icon">📍</span>
                     Attendance
+                </a>
+                <a href="/ergon-site/admin/entry" class="sidebar__link <?= ($active_page ?? '') === 'admin-entry' ? 'sidebar__link--active' : '' ?>">
+                    <span class="sidebar__icon">📝</span>
+                    Direct Entry
                 </a>
                 <a href="/ergon-site/reports/activity" class="sidebar__link <?= ($active_page ?? '') === 'activity' ? 'sidebar__link--active' : '' ?> <?= $reportsDisabled ? 'sidebar__link--disabled' : '' ?>">
                     <span class="sidebar__icon">⏱️</span>

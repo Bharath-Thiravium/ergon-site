@@ -12,20 +12,37 @@ class AuthController extends Controller {
     }
     
     public function index() {
-        Session::init();
-        if (Session::isLoggedIn()) {
-            $this->redirect('/dashboard');
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        
+        if (isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])) {
+            require_once __DIR__ . '/../config/environment.php';
+            $baseUrl = Environment::getBaseUrl();
+            $role = $_SESSION['role'] ?? 'user';
+            $redirectUrl = $this->getRedirectUrl($role);
+            header('Location: ' . $redirectUrl);
+            exit;
         } else {
-            $this->redirect('/login');
+            require_once __DIR__ . '/../config/environment.php';
+            $baseUrl = Environment::getBaseUrl();
+            header('Location: ' . $baseUrl . '/login');
+            exit;
         }
     }
     
     public function showLogin() {
-        Session::init();
-        if (Session::isLoggedIn()) {
-            $this->redirect('/dashboard');
-            return;
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
         }
+        
+        if (isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])) {
+            require_once __DIR__ . '/../config/environment.php';
+            $baseUrl = Environment::getBaseUrl();
+            header('Location: ' . $baseUrl . '/dashboard');
+            exit;
+        }
+        
         $this->view('auth/login');
     }
     
@@ -300,13 +317,13 @@ class AuthController extends Controller {
         switch ($role) {
             case ROLE_OWNER:
             case 'company_owner':
-                return $baseUrl . '/dashboard';
+                return $baseUrl . '/owner/dashboard';
             case ROLE_ADMIN:
-                return $baseUrl . '/dashboard';
+                return $baseUrl . '/admin/dashboard';
             case ROLE_USER:
-                return $baseUrl . '/dashboard';
+                return $baseUrl . '/user/dashboard';
             default:
-                return $baseUrl . '/dashboard';
+                return $baseUrl . '/user/dashboard';
         }
     }
 }
