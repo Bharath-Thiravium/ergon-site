@@ -89,7 +89,6 @@ ob_start();
                         <tr class="ledger-entry ledger-entry--<?= $entry['direction'] ?>">
                             <td class="ledger-date">
                                 <strong><?= date('M d, Y', strtotime($entry['created_at'])) ?></strong>
-                                <small class="text-muted"><?= date('H:i', strtotime($entry['created_at'])) ?></small>
                             </td>
                             <td>
                                 <span class="badge badge--<?= $entry['reference_type'] === 'advance' ? 'success' : 'warning' ?>">
@@ -207,11 +206,6 @@ ob_start();
 
 .ledger-date {
     white-space: nowrap;
-}
-
-.ledger-date small {
-    display: block;
-    font-size: 0.75rem;
 }
 
 .ledger-reference strong {

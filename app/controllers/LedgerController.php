@@ -25,7 +25,7 @@ class LedgerController extends Controller {
                 exit;
             }
 
-            // Get ledger entries with enhanced details
+            // Get ledger entries with enhanced details - ordered chronologically for balance calculation
             $stmt = $db->prepare("
                 SELECT 
                     ul.*,
@@ -44,10 +44,29 @@ class LedgerController extends Controller {
                 LEFT JOIN expenses e ON ul.reference_type = 'expense' AND ul.reference_id = e.id
                 LEFT JOIN advances a ON ul.reference_type = 'advance' AND ul.reference_id = a.id
                 WHERE ul.user_id = ? 
-                ORDER BY ul.created_at DESC
+                ORDER BY ul.created_at ASC, ul.id ASC
             ");
             $stmt->execute([$id]);
-            $entries = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $rawEntries = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Recalculate running balance in chronological order
+            $runningBalance = 0;
+            $entries = [];
+            
+            foreach ($rawEntries as $entry) {
+                if ($entry['direction'] === 'credit') {
+                    $runningBalance += $entry['amount'];
+                } else {
+                    $runningBalance -= $entry['amount'];
+                }
+                
+                // Update the balance_after to the correct running balance
+                $entry['balance_after'] = $runningBalance;
+                $entries[] = $entry;
+            }
+            
+            // Reverse the array to show most recent first for display
+            $entries = array_reverse($entries);
 
             // Calculate summary statistics
             $totalCredits = 0;
@@ -65,7 +84,7 @@ class LedgerController extends Controller {
                 }
             }
 
-            $balance = LedgerHelper::getUserBalance($id);
+            $balance = $runningBalance; // Use the calculated running balance
             $netActivity = $totalCredits - $totalDebits;
 
             $data = [
