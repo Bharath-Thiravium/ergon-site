@@ -1,7 +1,7 @@
 <?php
 /**
  * Route Configuration
- * Ergon-Site - Employee Tracker & Task Manager
+ * ergon - Employee Tracker & Task Manager
  */
 
 // Project Management Routes (Priority - placed first to avoid conflicts)
@@ -329,6 +329,7 @@ $router->get('/admin/manage-departments', 'AdminController', 'manageDepartments'
 // Admin Direct Entry (no approval needed)
 $router->get('/admin/entry', 'AdminController', 'adminEntry');
 $router->post('/admin/entry', 'AdminController', 'adminEntry');
+$router->post('/admin/validate-csv', 'AdminController', 'validateCsv');
 $router->post('/admin/bulk-upload', 'AdminController', 'adminBulkUpload');
 $router->get('/admin/sample-csv/{type}', 'AdminController', 'sampleCsv');
 

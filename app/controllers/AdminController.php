@@ -419,6 +419,42 @@ class AdminController extends Controller {
         exit;
     }
 
+    public function validateCsv() {
+        AuthMiddleware::requireRole('admin');
+        header('Content-Type: application/json');
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            echo json_encode(['success' => false, 'error' => 'Invalid request']); exit;
+        }
+
+        $type = $_POST['bulk_type'] ?? '';
+        if (!in_array($type, ['advance', 'expense'])) {
+            echo json_encode(['success' => false, 'error' => 'Invalid type']); exit;
+        }
+
+        if (!isset($_FILES['csv_file']) || $_FILES['csv_file']['error'] !== UPLOAD_ERR_OK) {
+            echo json_encode(['success' => false, 'error' => 'No file uploaded or upload error']); exit;
+        }
+
+        $ext = strtolower(pathinfo($_FILES['csv_file']['name'], PATHINFO_EXTENSION));
+        if (!in_array($ext, ['csv', 'txt'])) {
+            echo json_encode(['success' => false, 'error' => 'Only CSV files are accepted']); exit;
+        }
+
+        try {
+            require_once __DIR__ . '/../helpers/CsvValidator.php';
+            $db = Database::connect();
+            $validator = new CsvValidator($db);
+            $result = $validator->validate($_FILES['csv_file']['tmp_name'], $type);
+            $result['success'] = true;
+            echo json_encode($result);
+        } catch (Exception $e) {
+            error_log('CSV validation error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Validation error: ' . $e->getMessage()]);
+        }
+        exit;
+    }
+
     public function adminBulkUpload() {
         AuthMiddleware::requireRole('admin');
         header('Content-Type: application/json');
@@ -442,53 +478,63 @@ class AdminController extends Controller {
         }
 
         try {
+            require_once __DIR__ . '/../helpers/CsvValidator.php';
             require_once __DIR__ . '/../helpers/LedgerHelper.php';
             $db = Database::connect();
 
-            // Build name→id maps
-            $userMap = [];
-            foreach ($db->query("SELECT id, name FROM users WHERE status='active'")->fetchAll(PDO::FETCH_ASSOC) as $u) {
-                $userMap[strtolower(trim($u['name']))] = $u['id'];
-            }
-            $projectMap = [];
-            foreach ($db->query("SELECT id, name FROM projects WHERE status='active'")->fetchAll(PDO::FETCH_ASSOC) as $p) {
-                $projectMap[strtolower(trim($p['name']))] = $p['id'];
-            }
+            // Run validation first — reject if any hard errors exist
+            $validator  = new CsvValidator($db);
+            $validation = $validator->validate($_FILES['csv_file']['tmp_name'], $type);
 
-            $handle = fopen($_FILES['csv_file']['tmp_name'], 'r');
-            $headers = array_map(fn($h) => strtolower(trim($h)), fgetcsv($handle));
+            if (isset($validation['fatal'])) {
+                echo json_encode(['success' => false, 'error' => $validation['fatal']]); exit;
+            }
 
             $results = ['inserted' => 0, 'failed' => 0, 'rows' => []];
+
+            // Re-parse file for insertion (validator already confirmed structure is valid)
+            $handle  = fopen($_FILES['csv_file']['tmp_name'], 'r');
+            $rawHdr  = fgetcsv($handle);
+            $headers = array_map(fn($h) => strtolower(trim(ltrim($h, "\xEF\xBB\xBF"))), $rawHdr);
             $rowNum  = 1;
+
+            // Index validation results by row number for quick lookup
+            $validationByRow = [];
+            foreach ($validation['rows'] as $vr) {
+                $validationByRow[$vr['row']] = $vr;
+            }
 
             while (($row = fgetcsv($handle)) !== false) {
                 $rowNum++;
-                if (count(array_filter($row)) === 0) continue; // skip blank lines
+                if (isset($raw[0]) && str_starts_with(trim($raw[0] ?? ''), '#')) continue;
+                if (count(array_filter(array_map('trim', $row))) === 0) continue;
+
                 $data = array_combine($headers, array_pad($row, count($headers), ''));
 
-                $empName  = strtolower(trim($data['employee_name'] ?? ''));
-                $amount   = floatval($data['amount'] ?? 0);
-                $userId   = $userMap[$empName] ?? null;
-                $projName = strtolower(trim($data['project_name'] ?? ''));
-                $projectId = $projName ? ($projectMap[$projName] ?? null) : null;
+                // Skip rows that had hard errors during validation
+                $vRow = $validationByRow[$rowNum] ?? null;
+                if ($vRow && $vRow['status'] === 'error') {
+                    $results['failed']++;
+                    $results['rows'][] = [
+                        'row'      => $rowNum,
+                        'status'   => 'failed',
+                        'employee' => $data['employee_name'] ?? '',
+                        'amount'   => $data['amount'] ?? '',
+                        'reason'   => implode('; ', $vRow['errors']),
+                    ];
+                    continue;
+                }
 
-                if (!$userId) {
-                    $results['failed']++;
-                    $results['rows'][] = ['row' => $rowNum, 'status' => 'failed', 'reason' => "Employee '" . ($data['employee_name'] ?? '') . "' not found"];
-                    continue;
-                }
-                if ($amount <= 0) {
-                    $results['failed']++;
-                    $results['rows'][] = ['row' => $rowNum, 'status' => 'failed', 'reason' => 'Invalid amount'];
-                    continue;
-                }
+                $userId    = $validator->getUserId($data['employee_name'] ?? '');
+                $projectId = $validator->getProjectId($data['project_name'] ?? '');
+                $amount    = floatval($data['amount'] ?? 0);
 
                 try {
                     if ($type === 'advance') {
-                        $advType  = trim($data['advance_type'] ?? 'General Advance') ?: 'General Advance';
-                        $reason   = trim($data['reason'] ?? '') ?: 'Bulk entry by admin';
-                        $advDate  = !empty($data['advance_date']) ? $data['advance_date'] : date('Y-m-d');
-                        $repDate  = !empty($data['repayment_date']) ? $data['repayment_date'] : null;
+                        $advType = trim($data['advance_type'] ?? 'General Advance') ?: 'General Advance';
+                        $reason  = trim($data['reason'] ?? '') ?: 'Bulk entry by admin';
+                        $advDate = !empty($data['advance_date']) ? $data['advance_date'] : date('Y-m-d');
+                        $repDate = !empty($data['repayment_date']) ? $data['repayment_date'] : null;
                         $stmt = $db->prepare("INSERT INTO advances (user_id,project_id,type,amount,reason,requested_date,repayment_date,status,approved_by,approved_at,approved_amount,paid_by,paid_at,created_at) VALUES (?,?,?,?,?,?,?,'paid',?,NOW(),?,?,NOW(),NOW())");
                         $stmt->execute([$userId,$projectId,$advType,$amount,$reason,$advDate,$repDate,$_SESSION['user_id'],$amount,$_SESSION['user_id']]);
                         $id = $db->lastInsertId();
@@ -503,10 +549,21 @@ class AdminController extends Controller {
                         LedgerHelper::recordEntry($userId,'expense','expense',$id,$amount,'debit');
                     }
                     $results['inserted']++;
-                    $results['rows'][] = ['row' => $rowNum, 'status' => 'success', 'employee' => $data['employee_name'], 'amount' => $amount];
+                    $results['rows'][] = [
+                        'row'      => $rowNum,
+                        'status'   => 'success',
+                        'employee' => $data['employee_name'] ?? '',
+                        'amount'   => $amount,
+                    ];
                 } catch (Exception $re) {
                     $results['failed']++;
-                    $results['rows'][] = ['row' => $rowNum, 'status' => 'failed', 'reason' => $re->getMessage()];
+                    $results['rows'][] = [
+                        'row'      => $rowNum,
+                        'status'   => 'failed',
+                        'employee' => $data['employee_name'] ?? '',
+                        'amount'   => $data['amount'] ?? '',
+                        'reason'   => $re->getMessage(),
+                    ];
                 }
             }
             fclose($handle);
