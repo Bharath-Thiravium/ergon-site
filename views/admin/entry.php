@@ -668,8 +668,8 @@ ob_start();
             <p>Record advances or expenses on behalf of employees — saved as paid instantly</p>
         </div>
         <div class="page-actions">
-            <a href="/ergon/advances" class="btn btn--secondary"><span>💳</span> View Advances</a>
-            <a href="/ergon/expenses" class="btn btn--secondary"><span>💰</span> View Expenses</a>
+            <a href="/ergon-site/advances" class="btn btn--secondary"><span>💳</span> View Advances</a>
+            <a href="/ergon-site/expenses" class="btn btn--secondary"><span>💰</span> View Expenses</a>
         </div>
     </div>
 
@@ -879,10 +879,10 @@ ob_start();
             <div class="sample-strip">
                 <span class="sample-strip-label">📄 Download sample files to fill and upload:</span>
                 <div style="display: flex; gap: var(--space-3); flex-wrap: wrap;">
-                    <a href="/ergon/admin/sample-csv/advances" class="btn btn--primary" download>
+                    <a href="/ergon-site/admin/sample-csv/advances" class="btn btn--primary" download>
                         <span>⬇️</span> Advances Sample CSV
                     </a>
-                    <a href="/ergon/admin/sample-csv/expenses" class="btn btn--primary" download>
+                    <a href="/ergon-site/admin/sample-csv/expenses" class="btn btn--primary" download>
                         <span>⬇️</span> Expenses Sample CSV
                     </a>
                 </div>
@@ -901,13 +901,13 @@ ob_start();
             <div id="colRef-advance" class="column-ref">
                 <div class="column-ref-title">Required columns for Advances:</div>
                 <div class="column-code">
-                    employee_name &nbsp;|&nbsp; advance_type &nbsp;|&nbsp; amount &nbsp;|&nbsp; reason &nbsp;|&nbsp; advance_date &nbsp;|&nbsp; repayment_date <em>(optional)</em> &nbsp;|&nbsp; project_name <em>(optional)</em>
+                    employee_name &nbsp;|&nbsp; advance_type &nbsp;|&nbsp; amount &nbsp;|&nbsp; reason &nbsp;|&nbsp; advance_date <em>(DD-MM-YYYY)</em> &nbsp;|&nbsp; repayment_date <em>(DD-MM-YYYY, optional)</em> &nbsp;|&nbsp; project_name <em>(optional)</em>
                 </div>
             </div>
             <div id="colRef-expense" class="column-ref" style="display:none;">
                 <div class="column-ref-title">Required columns for Expenses:</div>
                 <div class="column-code">
-                    employee_name &nbsp;|&nbsp; category &nbsp;|&nbsp; amount &nbsp;|&nbsp; description &nbsp;|&nbsp; expense_date &nbsp;|&nbsp; project_name <em>(optional)</em>
+                    employee_name &nbsp;|&nbsp; category &nbsp;|&nbsp; amount &nbsp;|&nbsp; description &nbsp;|&nbsp; expense_date <em>(DD-MM-YYYY)</em> &nbsp;|&nbsp; project_name <em>(optional)</em>
                 </div>
             </div>
 
@@ -1013,7 +1013,7 @@ function submitEntry(form, btnId) {
     btn.classList.add('btn--loading');
     btn.innerHTML = '<span>⏳</span> Saving…';
 
-    fetch('/ergon/admin/entry', {
+    fetch('/ergon-site/admin/entry', {
         method: 'POST',
         body: new FormData(form),
         credentials: 'same-origin'
@@ -1127,7 +1127,7 @@ function validateCsv() {
     fd.append('csv_file', fileInput.files[0]);
     fd.append('bulk_type', document.getElementById('bulk_type').value);
 
-    fetch('/ergon/admin/validate-csv', { method:'POST', body: fd, credentials:'same-origin' })
+    fetch('/ergon-site/admin/validate-csv', { method:'POST', body: fd, credentials:'same-origin' })
         .then(r => r.json())
         .then(data => {
             if (!data.success) { showError(data.error || 'Validation failed'); return; }
@@ -1222,7 +1222,7 @@ function submitBulkUpload() {
     fd.append('csv_file', fileInput.files[0]);
     fd.append('bulk_type', document.getElementById('bulk_type').value);
 
-    fetch('/ergon/admin/bulk-upload', {
+    fetch('/ergon-site/admin/bulk-upload', {
         method: 'POST',
         body: fd,
         credentials: 'same-origin'
