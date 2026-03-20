@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../core/Controller.php';
+require_once __DIR__ . '/../config/url_helper.php';
 
 class LedgerController extends Controller {
     public function userLedger($id = null) {

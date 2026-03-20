@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../core/Controller.php';
+require_once __DIR__ . '/../config/url_helper.php';
 require_once __DIR__ . '/../helpers/TimezoneHelper.php';
 require_once __DIR__ . '/../helpers/LocationHelper.php';
 require_once __DIR__ . '/../helpers/DatabaseHelper.php';

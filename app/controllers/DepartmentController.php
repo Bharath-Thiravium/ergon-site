@@ -3,6 +3,7 @@ require_once __DIR__ . '/../models/Department.php';
 require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../helpers/Security.php';
 require_once __DIR__ . '/../core/Controller.php';
+require_once __DIR__ . '/../config/url_helper.php';
 require_once __DIR__ . '/../config/database.php';
 
 class DepartmentController extends Controller {

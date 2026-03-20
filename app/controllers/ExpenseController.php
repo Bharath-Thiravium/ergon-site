@@ -3,6 +3,7 @@ require_once __DIR__ . '/../models/Expense.php';
 require_once __DIR__ . '/../helpers/Security.php';
 require_once __DIR__ . '/../middlewares/AuthMiddleware.php';
 require_once __DIR__ . '/../core/Controller.php';
+require_once __DIR__ . '/../config/url_helper.php';
 require_once __DIR__ . '/../helpers/DatabaseHelper.php';
 require_once __DIR__ . '/../config/environment.php';
 
