@@ -25,6 +25,33 @@ class LedgerController extends Controller {
                 exit;
             }
 
+            // Get filter parameters
+            $fromDate = $_GET['from_date'] ?? null;
+            $toDate = $_GET['to_date'] ?? null;
+            $transactionType = $_GET['transaction_type'] ?? null;
+            $download = $_GET['download'] ?? null;
+
+            // Build WHERE clause for filtering
+            $whereConditions = ['ul.user_id = ?'];
+            $params = [$id];
+            
+            if ($fromDate) {
+                $whereConditions[] = 'DATE(ul.created_at) >= ?';
+                $params[] = $fromDate;
+            }
+            
+            if ($toDate) {
+                $whereConditions[] = 'DATE(ul.created_at) <= ?';
+                $params[] = $toDate;
+            }
+            
+            if ($transactionType && $transactionType !== 'all') {
+                $whereConditions[] = 'ul.reference_type = ?';
+                $params[] = $transactionType;
+            }
+            
+            $whereClause = implode(' AND ', $whereConditions);
+
             // Get ledger entries with enhanced details - ordered chronologically for balance calculation
             $stmt = $db->prepare("
                 SELECT 
@@ -43,15 +70,27 @@ class LedgerController extends Controller {
                 FROM user_ledgers ul
                 LEFT JOIN expenses e ON ul.reference_type = 'expense' AND ul.reference_id = e.id
                 LEFT JOIN advances a ON ul.reference_type = 'advance' AND ul.reference_id = a.id
-                WHERE ul.user_id = ? 
+                WHERE $whereClause
                 ORDER BY ul.created_at ASC, ul.id ASC
             ");
-            $stmt->execute([$id]);
+            $stmt->execute($params);
             $rawEntries = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            // Recalculate running balance in chronological order
+            // Recalculate running balance in chronological order for filtered entries
             $runningBalance = 0;
             $entries = [];
+            
+            // If we have date filters, we need to get the starting balance
+            if ($fromDate) {
+                $stmt = $db->prepare("
+                    SELECT COALESCE(SUM(CASE WHEN direction='credit' THEN amount ELSE -amount END), 0) as starting_balance
+                    FROM user_ledgers 
+                    WHERE user_id = ? AND DATE(created_at) < ?
+                ");
+                $stmt->execute([$id, $fromDate]);
+                $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                $runningBalance = floatval($result['starting_balance']);
+            }
             
             foreach ($rawEntries as $entry) {
                 if ($entry['direction'] === 'credit') {
@@ -63,6 +102,12 @@ class LedgerController extends Controller {
                 // Update the balance_after to the correct running balance
                 $entry['balance_after'] = $runningBalance;
                 $entries[] = $entry;
+            }
+            
+            // Handle CSV download
+            if ($download === 'csv') {
+                $this->downloadLedgerCSV($user, $entries, $fromDate, $toDate, $transactionType);
+                return;
             }
             
             // Reverse the array to show most recent first for display
@@ -90,6 +135,7 @@ class LedgerController extends Controller {
             $data = [
                 'user' => $user,
                 'entries' => $entries,
+                'filteredEntries' => $entries, // For template compatibility
                 'balance' => $balance,
                 'totalCredits' => $totalCredits,
                 'totalDebits' => $totalDebits,
@@ -97,6 +143,9 @@ class LedgerController extends Controller {
                 'expenseCount' => $expenseCount,
                 'advanceCount' => $advanceCount,
                 'user_id' => $id,
+                'fromDate' => $fromDate,
+                'toDate' => $toDate,
+                'transactionType' => $transactionType,
                 'active_page' => 'ledgers'
             ];
 
@@ -106,6 +155,81 @@ class LedgerController extends Controller {
             header('Location: /ergon-site/users?error=ledger_failed');
             exit;
         }
+    }
+    
+    private function downloadLedgerCSV($user, $entries, $fromDate, $toDate, $transactionType) {
+        $filename = 'ledger_' . strtolower(str_replace(' ', '_', $user['name'])) . '_' . date('Y-m-d') . '.csv';
+        
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Expires: 0');
+        
+        $output = fopen('php://output', 'w');
+        
+        // Add header information
+        fputcsv($output, ['User Ledger Report']);
+        fputcsv($output, ['User:', $user['name']]);
+        fputcsv($output, ['Role:', $user['role']]);
+        fputcsv($output, ['Generated:', date('Y-m-d H:i:s')]);
+        
+        if ($fromDate || $toDate) {
+            $dateRange = '';
+            if ($fromDate) $dateRange .= 'From: ' . $fromDate;
+            if ($toDate) $dateRange .= ($fromDate ? ' ' : '') . 'To: ' . $toDate;
+            fputcsv($output, ['Date Range:', $dateRange]);
+        }
+        
+        if ($transactionType && $transactionType !== 'all') {
+            fputcsv($output, ['Transaction Type:', ucfirst($transactionType)]);
+        }
+        
+        fputcsv($output, []); // Empty row
+        
+        // CSV headers
+        fputcsv($output, [
+            'Date',
+            'Type',
+            'Reference',
+            'Description',
+            'Category',
+            'Direction',
+            'Amount',
+            'Balance After',
+            'Status'
+        ]);
+        
+        // Reverse entries to show chronological order in CSV
+        $csvEntries = array_reverse($entries);
+        
+        foreach ($csvEntries as $entry) {
+            fputcsv($output, [
+                date('Y-m-d', strtotime($entry['created_at'])),
+                ucfirst($entry['reference_type']),
+                strtoupper($entry['reference_type']) . ' #' . $entry['reference_id'],
+                $entry['description'],
+                $entry['category'],
+                ucfirst($entry['direction']),
+                number_format($entry['amount'], 2),
+                number_format($entry['balance_after'], 2),
+                ucfirst($entry['status'])
+            ]);
+        }
+        
+        // Add summary
+        fputcsv($output, []); // Empty row
+        fputcsv($output, ['Summary']);
+        
+        $totalCredits = array_sum(array_column(array_filter($entries, fn($e) => $e['direction'] === 'credit'), 'amount'));
+        $totalDebits = array_sum(array_column(array_filter($entries, fn($e) => $e['direction'] === 'debit'), 'amount'));
+        $finalBalance = end($csvEntries)['balance_after'] ?? 0;
+        
+        fputcsv($output, ['Total Credits:', number_format($totalCredits, 2)]);
+        fputcsv($output, ['Total Debits:', number_format($totalDebits, 2)]);
+        fputcsv($output, ['Final Balance:', number_format($finalBalance, 2)]);
+        
+        fclose($output);
+        exit;
     }
 
     public function projectLedger() {

@@ -75,5 +75,27 @@ class Database {
     public function getEnvironment() {
         return Environment::isDevelopment() ? 'development' : 'production';
     }
+    
+    public static function getPostgreSQLConfig() {
+        // Load environment variables
+        $envFile = __DIR__ . '/../../.env';
+        if (file_exists($envFile)) {
+            $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            foreach ($lines as $line) {
+                if (strpos($line, '=') !== false && strpos($line, '#') !== 0) {
+                    list($key, $value) = explode('=', $line, 2);
+                    $_ENV[trim($key)] = trim($value);
+                }
+            }
+        }
+        
+        return [
+            'host' => $_ENV['SAP_PG_HOST'] ?? '127.0.0.1',
+            'port' => $_ENV['SAP_PG_PORT'] ?? '5432',
+            'database' => $_ENV['SAP_PG_DB'] ?? 'modernsap',
+            'username' => $_ENV['SAP_PG_USER'] ?? 'postgres',
+            'password' => $_ENV['SAP_PG_PASS'] ?? 'mango'
+        ];
+    }
 }
 ?>
