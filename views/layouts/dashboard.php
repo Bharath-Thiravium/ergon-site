@@ -1,7 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/url_helper.php';
 ob_start();
-header('Content-Type: text/html; charset=UTF-8');
 require_once __DIR__ . '/../../app/helpers/Security.php';
 require_once __DIR__ . '/../../app/helpers/SecurityHeaders.php';
 require_once __DIR__ . '/../../app/helpers/ModuleManager.php';
@@ -74,6 +73,7 @@ $_SESSION['last_activity'] = time();
 $content = $content ?? '';
 $userPrefs = ['theme' => 'light', 'dashboard_layout' => 'default', 'language' => 'en'];
 ob_end_clean();
+header('Content-Type: text/html; charset=UTF-8');
 ?>
 <!DOCTYPE html>
 <html lang="en">
