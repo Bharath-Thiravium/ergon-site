@@ -5,27 +5,31 @@ class DataSyncService {
     private $mysqlConnection;
     
     public function __construct() {
-        $this->pgConnection = $this->getPostgreSQLConnection();
-        $this->mysqlConnection = $this->getMySQLConnection();
+        $this->mysqlConnection = Database::connect();
+        if (extension_loaded('pdo_pgsql')) {
+            $this->pgConnection = $this->getPostgreSQLConnection();
+        }
+    }
+    
+    public function isPostgreSQLAvailable(): bool {
+        return $this->pgConnection !== null;
     }
     
     private function getPostgreSQLConnection() {
-        $config = require_once __DIR__ . '/../config/database.php';
+        $config = Database::getPostgreSQLConfig();
         $pg = $config['postgresql'];
-        
         try {
-            $pdo = new PDO(
+            return new PDO(
                 "pgsql:host={$pg['host']};port={$pg['port']};dbname={$pg['database']}",
                 $pg['username'],
                 $pg['password'],
-                [
-                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-                ]
+                [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                 PDO::ATTR_TIMEOUT => 30]
             );
-            return $pdo;
         } catch (PDOException $e) {
-            throw new Exception("PostgreSQL connection failed: " . $e->getMessage());
+            error_log("PostgreSQL connection failed: " . $e->getMessage());
+            return null;
         }
     }
     
@@ -50,6 +54,10 @@ class DataSyncService {
     }
     
     public function syncAllTables() {
+        if (!$this->isPostgreSQLAvailable()) {
+            return ['error' => 'PostgreSQL connection not available'];
+        }
+        
         $results = [];
         
         $results['customers'] = $this->syncCustomers();

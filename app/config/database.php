@@ -77,10 +77,13 @@ class Database {
     }
     
     public static function getPostgreSQLConfig() {
-        // Load environment variables
-        $envFile = __DIR__ . '/../../.env';
-        if (file_exists($envFile)) {
-            $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        // Load .env.production first, then fallback to .env
+        $_envFile = file_exists(__DIR__ . '/../../.env.production')
+            ? __DIR__ . '/../../.env.production'
+            : __DIR__ . '/../../.env';
+            
+        if (file_exists($_envFile)) {
+            $lines = file($_envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
             foreach ($lines as $line) {
                 if (strpos($line, '=') !== false && strpos($line, '#') !== 0) {
                     list($key, $value) = explode('=', $line, 2);
@@ -90,11 +93,13 @@ class Database {
         }
         
         return [
-            'host' => $_ENV['SAP_PG_HOST'] ?? '127.0.0.1',
-            'port' => $_ENV['SAP_PG_PORT'] ?? '5432',
-            'database' => $_ENV['SAP_PG_DB'] ?? 'modernsap',
-            'username' => $_ENV['SAP_PG_USER'] ?? 'postgres',
-            'password' => $_ENV['SAP_PG_PASS'] ?? 'mango'
+            'postgresql' => [
+                'host' => $_ENV['SAP_PG_HOST'] ?? '72.60.218.167',
+                'port' => $_ENV['SAP_PG_PORT'] ?? '5432',
+                'database' => $_ENV['SAP_PG_DB'] ?? 'modernsap',
+                'username' => $_ENV['SAP_PG_USER'] ?? 'postgres',
+                'password' => $_ENV['SAP_PG_PASS'] ?? 'mango'
+            ]
         ];
     }
 }
