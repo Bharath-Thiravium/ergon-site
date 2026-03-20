@@ -83,7 +83,7 @@ ob_end_clean();
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <meta name="csrf-token" content="<?= Security::escape(Security::generateCSRFToken()) ?>">
     <title><?= $title ?? 'Dashboard' ?> - ergon-site</title>
-    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,">
+    <link rel="icon" type="image/x-icon" href="<?= url('/public/favicon.ico') ?>">
     
     <script src="/ergon-site/assets/js/theme-preload.js?v=<?= time() ?>"></script>
     <script>
