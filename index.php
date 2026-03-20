@@ -27,6 +27,7 @@ date_default_timezone_set('Asia/Kolkata');
 
 // Include autoloader and core files
 require_once __DIR__ . '/app/config/environment.php';
+require_once __DIR__ . '/app/config/url_helper.php';
 require_once __DIR__ . '/app/config/database.php';
 require_once __DIR__ . '/app/core/Router.php';
 require_once __DIR__ . '/app/core/Controller.php';
@@ -45,8 +46,7 @@ try {
         echo 'Error: ' . $e->getMessage();
     } else {
         error_log('Application error: ' . $e->getMessage());
-        header('Location: /ergon-site/login');
-        exit;
+        redirectToLogin();
     }
 }
 ?>

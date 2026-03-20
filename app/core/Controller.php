@@ -26,11 +26,8 @@ class Controller {
     }
     
     protected function redirect($url) {
-        if (strpos($url, 'http') !== 0 && strpos($url, '/ergon-site/') !== 0) {
-            $url = '/ergon-site' . $url;
-        }
-        header("Location: {$url}");
-        exit;
+        // Use the global URL helper function
+        redirect($url);
     }
     
     protected function isPost() {
@@ -42,7 +39,7 @@ class Controller {
             session_start();
         }
         if (!isset($_SESSION['user_id'])) {
-            $this->redirect('/login');
+            redirectToLogin();
         }
     }
     

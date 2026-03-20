@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../config/url_helper.php';
 require_once __DIR__ . '/../helpers/RoleManager.php';
 
 class RoleMiddleware {
@@ -8,7 +9,7 @@ class RoleMiddleware {
         
         if (!isset($_SESSION['user_id'])) {
             http_response_code(401);
-            header('Location: /ergon-site/login');
+            redirectToLogin();
             exit;
         }
         
@@ -28,7 +29,7 @@ class RoleMiddleware {
         
         if (!isset($_SESSION['user_id'])) {
             http_response_code(401);
-            header('Location: /ergon-site/login');
+            redirectToLogin();
             exit;
         }
         

@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../config/url_helper.php';
 ob_start();
 header('Content-Type: text/html; charset=UTF-8');
 require_once __DIR__ . '/../../app/helpers/Security.php';
@@ -34,7 +35,7 @@ try {
 
 SecurityHeaders::apply();
 if (session_status() === PHP_SESSION_NONE) session_start();
-if (empty($_SESSION['user_id']) || empty($_SESSION['role'])) { header('Location: /ergon-site/login'); exit; }
+if (empty($_SESSION['user_id']) || empty($_SESSION['role'])) { redirectToLogin(); exit; }
 if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > 28800)) { session_unset(); session_destroy(); header('Location: /ergon-site/login?timeout=1'); exit; }
 
 // Note: Success/error messages are now handled by individual pages
@@ -215,12 +216,16 @@ ob_end_clean();
     <link href="/ergon-site/assets/css/ergon-site-overrides.css?v=<?= time() ?>" rel="stylesheet">
     <link href="/ergon-site/assets/css/access-denied.css?v=1.0" rel="stylesheet">
     <link href="/ergon-site/assets/css/premium-navigation.css?v=1.0" rel="stylesheet">
-    <?php if (isset($active_page) && $active_page === 'dashboard' && isset($_SESSION['role']) && $_SESSION['role'] === 'owner'): ?>
+    <?php
+require_once __DIR__ . '/../config/url_helper.php'; if (isset($active_page) && $active_page === 'dashboard' && isset($_SESSION['role']) && $_SESSION['role'] === 'owner'): ?>
     <link href="/ergon-site/assets/css/dashboard-owner.css?v=1.0" rel="stylesheet">
-    <?php endif; ?>
-    <?php if (isset($additional_css)): ?>
+    <?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
+    <?php
+require_once __DIR__ . '/../config/url_helper.php'; if (isset($additional_css)): ?>
     <?= $additional_css ?>
-    <?php endif; ?>
+    <?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
 
     <script src="/ergon-site/assets/js/theme-switcher.js?v=1.0" defer></script>
     <script src="/ergon-site/assets/js/ergon-site-core.min.js?v=1.0" defer></script>
@@ -235,9 +240,11 @@ ob_end_clean();
     <!-- Dark Mode Alert Enhancements -->
     <script src="/ergon-site/assets/js/dark-mode-alerts.js?v=<?= time() ?>" defer></script>
 
-    <?php if (isset($_GET['validate']) && $_GET['validate'] === 'mobile'): ?>
+    <?php
+require_once __DIR__ . '/../config/url_helper.php'; if (isset($_GET['validate']) && $_GET['validate'] === 'mobile'): ?>
     <script src="/ergon-site/assets/js/mobile-validation.js?v=<?= time() ?>" defer></script>
-    <?php endif; ?>
+    <?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
 </head>
 <body data-layout="<?= isset($userPrefs['dashboard_layout']) ? $userPrefs['dashboard_layout'] : 'default' ?>" data-lang="<?= isset($userPrefs['language']) ? $userPrefs['language'] : 'en' ?>" data-page="<?= isset($active_page) ? $active_page : '' ?>" data-user-role="<?= $_SESSION['role'] ?? 'user' ?>" data-theme="<?= isset($userPrefs['theme']) ? $userPrefs['theme'] : 'light' ?>">
     <header class="main-header">
@@ -264,7 +271,8 @@ ob_end_clean();
                 <button class="control-btn" id="theme-toggle" title="Toggle Theme">
                     <i class="bi bi-<?= (isset($userPrefs['theme']) && $userPrefs['theme'] === 'dark') ? 'sun-fill' : 'moon-fill' ?>"></i>
                 </button>
-                <?php 
+                <?php
+require_once __DIR__ . '/../config/url_helper.php'; 
                 $notificationsDisabled = false;
                 try {
                     $notificationsDisabled = ModuleManager::isModuleDisabled('notifications');
@@ -272,16 +280,19 @@ ob_end_clean();
                     // Silently fail - notifications will appear enabled
                 }
                 ?>
-                <?php if (!$notificationsDisabled): ?>
+                <?php
+require_once __DIR__ . '/../config/url_helper.php'; if (!$notificationsDisabled): ?>
                 <button class="control-btn notification-btn" id="notificationBtn" onclick="toggleNotifications(event)" title="Notifications">
                     <i class="bi bi-bell-fill"></i>
                     <span class="notification-badge" id="notificationBadge" style="display:none;">0</span>
                 </button>
-                <?php else: ?>
+                <?php
+require_once __DIR__ . '/../config/url_helper.php'; else: ?>
                 <button class="control-btn" style="opacity: 0.5; cursor: not-allowed;" title="Notifications (Disabled)" onclick="return false;">
                     <i class="bi bi-bell-slash"></i>
                 </button>
-                <?php endif; ?>
+                <?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
                 <button class="profile-btn" id="profileButton" type="button">
                     <span class="profile-avatar"><?= htmlspecialchars(strtoupper(substr($_SESSION['user_name'] ?? 'U', 0, 1)), ENT_QUOTES, 'UTF-8') ?></span>
                     <span class="profile-name"><?= htmlspecialchars($_SESSION['user_name'] ?? 'User', ENT_QUOTES, 'UTF-8') ?></span>
@@ -298,12 +309,14 @@ ob_end_clean();
                         Change Password
                     </a>
                     <div class="profile-menu-divider"></div>
-                    <?php if (isset($_SESSION['role']) && in_array($_SESSION['role'], ['owner', 'admin']) && !$systemAdminDisabled): ?>
+                    <?php
+require_once __DIR__ . '/../config/url_helper.php'; if (isset($_SESSION['role']) && in_array($_SESSION['role'], ['owner', 'admin']) && !$systemAdminDisabled): ?>
                     <a href="/ergon-site/settings" class="profile-menu-item">
                         <span class="menu-icon"><i class="bi bi-gear-fill"></i></span>
                         System Settings
                     </a>
-                    <?php endif; ?>
+                    <?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
                     <div class="profile-menu-divider"></div>
                     <a href="/ergon-site/logout" class="profile-menu-item profile-menu-item--danger">
                         <span class="menu-icon"><i class="bi bi-box-arrow-right"></i></span>
@@ -325,8 +338,10 @@ ob_end_clean();
         
         <div class="header__nav-container">
             <nav class="header__nav">
-                <?php if (isset($_SESSION['role']) && in_array($_SESSION['role'], ['owner', 'company_owner'])): ?>
-                    <?php if ($_SESSION['role'] === 'owner'): ?>
+                <?php
+require_once __DIR__ . '/../config/url_helper.php'; if (isset($_SESSION['role']) && in_array($_SESSION['role'], ['owner', 'company_owner'])): ?>
+                    <?php
+require_once __DIR__ . '/../config/url_helper.php'; if ($_SESSION['role'] === 'owner'): ?>
                     <div class="nav-dropdown">
                         <button class="nav-dropdown-btn" onclick="toggleDropdown('overview')">
                             <span class="nav-icon"><i class="bi bi-graph-up"></i></span>
@@ -354,22 +369,30 @@ ob_end_clean();
                             <a href="/ergon-site/system-admin" class="nav-dropdown-item <?= ($active_page ?? '') === 'system-admin' ? 'nav-dropdown-item--active' : '' ?> <?= $systemAdminDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
                                 <span class="nav-icon">🔧</span>
                                 System
-                                <?php if ($systemAdminDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
+                                <?php
+require_once __DIR__ . '/../config/url_helper.php'; if ($systemAdminDisabled): ?><span class="premium-icon">🔒</span><?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
                             </a>
                             <a href="/ergon-site/admin/management" class="nav-dropdown-item <?= ($active_page ?? '') === 'admin' ? 'nav-dropdown-item--active' : '' ?> <?= $usersDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
                                 <span class="nav-icon">👥</span>
                                 Users
-                                <?php if ($usersDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
+                                <?php
+require_once __DIR__ . '/../config/url_helper.php'; if ($usersDisabled): ?><span class="premium-icon">🔒</span><?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
                             </a>
                             <a href="/ergon-site/departments" class="nav-dropdown-item <?= ($active_page ?? '') === 'departments' ? 'nav-dropdown-item--active' : '' ?> <?= $departmentsDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
                                 <span class="nav-icon">🏢</span>
                                 Departments
-                                <?php if ($departmentsDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
+                                <?php
+require_once __DIR__ . '/../config/url_helper.php'; if ($departmentsDisabled): ?><span class="premium-icon">🔒</span><?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
                             </a>
                             <a href="/ergon-site/project-management" class="nav-dropdown-item <?= ($active_page ?? '') === 'project-management' ? 'nav-dropdown-item--active' : '' ?> <?= $projectsDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
                                 <span class="nav-icon">📁</span>
                                 Projects
-                                <?php if ($projectsDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
+                                <?php
+require_once __DIR__ . '/../config/url_helper.php'; if ($projectsDisabled): ?><span class="premium-icon">🔒</span><?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
                             </a>
                             <a href="/ergon-site/modules" class="nav-dropdown-item <?= ($active_page ?? '') === 'modules' ? 'nav-dropdown-item--active' : '' ?>">
                                 <span class="nav-icon">🔧</span>
@@ -387,12 +410,16 @@ ob_end_clean();
                             <a href="/ergon-site/tasks" class="nav-dropdown-item <?= ($active_page ?? '') === 'tasks' ? 'nav-dropdown-item--active' : '' ?> <?= $tasksDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
                                 <span class="nav-icon">✅</span>
                                 Tasks
-                                <?php if ($tasksDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
+                                <?php
+require_once __DIR__ . '/../config/url_helper.php'; if ($tasksDisabled): ?><span class="premium-icon">🔒</span><?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
                             </a>
                             <a href="/ergon-site/contacts/followups" class="nav-dropdown-item <?= ($active_page ?? '') === 'contact_followups' ? 'nav-dropdown-item--active' : '' ?> <?= $followupsDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
                                 <span class="nav-icon">📞</span>
                                 Follow-ups
-                                <?php if ($followupsDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
+                                <?php
+require_once __DIR__ . '/../config/url_helper.php'; if ($followupsDisabled): ?><span class="premium-icon">🔒</span><?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
                             </a>
                         </div>
                     </div>
@@ -435,28 +462,36 @@ ob_end_clean();
                             <a href="/ergon-site/finance" class="nav-dropdown-item <?= ($active_page ?? '') === 'finance' ? 'nav-dropdown-item--active' : '' ?> <?= $financeDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
                                 <span class="nav-icon">💰</span>
                                 Finance
-                                <?php if ($financeDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
+                                <?php
+require_once __DIR__ . '/../config/url_helper.php'; if ($financeDisabled): ?><span class="premium-icon">🔒</span><?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
                             </a>
                             <a href="/ergon-site/reports" class="nav-dropdown-item <?= ($active_page ?? '') === 'reports' ? 'nav-dropdown-item--active' : '' ?> <?= $reportsDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
                                 <span class="nav-icon">📈</span>
                                 Reports
-                                <?php if ($reportsDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
+                                <?php
+require_once __DIR__ . '/../config/url_helper.php'; if ($reportsDisabled): ?><span class="premium-icon">🔒</span><?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
                             </a>
-                            <?php if (!$systemAdminDisabled): ?>
+                            <?php
+require_once __DIR__ . '/../config/url_helper.php'; if (!$systemAdminDisabled): ?>
                             <a href="/ergon-site/settings" class="nav-dropdown-item <?= ($active_page ?? '') === 'settings' ? 'nav-dropdown-item--active' : '' ?>">
                                 <span class="nav-icon">⚙️</span>
                                 Settings
                             </a>
-                            <?php else: ?>
+                            <?php
+require_once __DIR__ . '/../config/url_helper.php'; else: ?>
                             <span class="nav-dropdown-item nav-dropdown-item--disabled" style="opacity: 0.5; cursor: not-allowed;">
                                 <span class="nav-icon">⚙️</span>
                                 Settings
                                 <span class="premium-icon">🔒</span>
                             </span>
-                            <?php endif; ?>
+                            <?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
                         </div>
                     </div>
-                    <?php else: // company_owner ?>
+                    <?php
+require_once __DIR__ . '/../config/url_helper.php'; else: // company_owner ?>
                     <div class="nav-dropdown">
                         <button class="nav-dropdown-btn" onclick="toggleDropdown('overview')">
                             <span class="nav-icon"><i class="bi bi-graph-up"></i></span>
@@ -499,8 +534,10 @@ ob_end_clean();
                             </a>
                         </div>
                     </div>
-                    <?php endif; ?>
-                <?php elseif (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+                    <?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
+                <?php
+require_once __DIR__ . '/../config/url_helper.php'; elseif (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
                     <div class="nav-dropdown">
                         <button class="nav-dropdown-btn" onclick="toggleDropdown('overview')">
                             <span class="nav-icon">📊</span>
@@ -528,12 +565,16 @@ ob_end_clean();
                             <a href="/ergon-site/users" class="nav-dropdown-item <?= ($active_page ?? '') === 'users' ? 'nav-dropdown-item--active' : '' ?> <?= $usersDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
                                 <span class="nav-icon">👥</span>
                                 Members
-                                <?php if ($usersDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
+                                <?php
+require_once __DIR__ . '/../config/url_helper.php'; if ($usersDisabled): ?><span class="premium-icon">🔒</span><?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
                             </a>
                             <a href="/ergon-site/departments" class="nav-dropdown-item <?= ($active_page ?? '') === 'departments' ? 'nav-dropdown-item--active' : '' ?> <?= $departmentsDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
                                 <span class="nav-icon">🏢</span>
                                 Departments
-                                <?php if ($departmentsDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
+                                <?php
+require_once __DIR__ . '/../config/url_helper.php'; if ($departmentsDisabled): ?><span class="premium-icon">🔒</span><?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
                             </a>
                         </div>
                     </div>
@@ -547,17 +588,23 @@ ob_end_clean();
                             <a href="/ergon-site/tasks" class="nav-dropdown-item <?= ($active_page ?? '') === 'tasks' ? 'nav-dropdown-item--active' : '' ?> <?= $tasksDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
                                 <span class="nav-icon">✅</span>
                                 Overall Tasks
-                                <?php if ($tasksDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
+                                <?php
+require_once __DIR__ . '/../config/url_helper.php'; if ($tasksDisabled): ?><span class="premium-icon">🔒</span><?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
                             </a>
                             <a href="/ergon-site/workflow/daily-planner" class="nav-dropdown-item <?= ($active_page ?? '') === 'daily-planner' ? 'nav-dropdown-item--active' : '' ?> <?= $dailyPlannerDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
                                 <span class="nav-icon">🌅</span>
                                 Daily Planner
-                                <?php if ($dailyPlannerDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
+                                <?php
+require_once __DIR__ . '/../config/url_helper.php'; if ($dailyPlannerDisabled): ?><span class="premium-icon">🔒</span><?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
                             </a>
                             <a href="/ergon-site/contacts/followups" class="nav-dropdown-item <?= ($active_page ?? '') === 'contact_followups' ? 'nav-dropdown-item--active' : '' ?> <?= $followupsDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
                                 <span class="nav-icon">📞</span>
                                 Follow-ups
-                                <?php if ($followupsDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
+                                <?php
+require_once __DIR__ . '/../config/url_helper.php'; if ($followupsDisabled): ?><span class="premium-icon">🔒</span><?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
                             </a>
                         </div>
                     </div>
@@ -591,11 +638,14 @@ ob_end_clean();
                             <a href="/ergon-site/reports/activity" class="nav-dropdown-item <?= ($active_page ?? '') === 'activity' ? 'nav-dropdown-item--active' : '' ?> <?= $reportsDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
                                 <span class="nav-icon">⏱️</span>
                                 Reports
-                                <?php if ($reportsDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
+                                <?php
+require_once __DIR__ . '/../config/url_helper.php'; if ($reportsDisabled): ?><span class="premium-icon">🔒</span><?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
                             </a>
                         </div>
                     </div>
-                <?php else: ?>
+                <?php
+require_once __DIR__ . '/../config/url_helper.php'; else: ?>
                     <div class="nav-dropdown">
                         <button class="nav-dropdown-btn" onclick="toggleDropdown('overview')">
                             <span class="nav-icon">🏠</span>
@@ -627,17 +677,23 @@ ob_end_clean();
                             <a href="/ergon-site/tasks" class="nav-dropdown-item <?= ($active_page ?? '') === 'tasks' ? 'nav-dropdown-item--active' : '' ?> <?= $tasksDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
                                 <span class="nav-icon">✅</span>
                                 Tasks
-                                <?php if ($tasksDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
+                                <?php
+require_once __DIR__ . '/../config/url_helper.php'; if ($tasksDisabled): ?><span class="premium-icon">🔒</span><?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
                             </a>
                             <a href="/ergon-site/workflow/daily-planner" class="nav-dropdown-item <?= ($active_page ?? '') === 'daily-planner' ? 'nav-dropdown-item--active' : '' ?> <?= $dailyPlannerDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
                                 <span class="nav-icon">📅</span>
                                 Daily Planner
-                                <?php if ($dailyPlannerDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
+                                <?php
+require_once __DIR__ . '/../config/url_helper.php'; if ($dailyPlannerDisabled): ?><span class="premium-icon">🔒</span><?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
                             </a>
                             <a href="/ergon-site/contacts/followups" class="nav-dropdown-item <?= ($active_page ?? '') === 'contact_followups' ? 'nav-dropdown-item--active' : '' ?> <?= $followupsDisabled ? 'nav-dropdown-item--disabled' : '' ?>">
                                 <span class="nav-icon">📞</span>
                                 Follow-ups
-                                <?php if ($followupsDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
+                                <?php
+require_once __DIR__ . '/../config/url_helper.php'; if ($followupsDisabled): ?><span class="premium-icon">🔒</span><?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
                             </a>
                         </div>
                     </div>
@@ -670,7 +726,8 @@ ob_end_clean();
                             </a>
                         </div>
                     </div>
-                <?php endif; ?>
+                <?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
             </nav>
         </div>
     </header>
@@ -685,8 +742,10 @@ ob_end_clean();
             </div>
         </div>
         <nav class="sidebar__menu">
-            <?php if (isset($_SESSION['role']) && in_array($_SESSION['role'], ['owner', 'company_owner'])): ?>
-                <?php if ($_SESSION['role'] === 'owner'): ?>
+            <?php
+require_once __DIR__ . '/../config/url_helper.php'; if (isset($_SESSION['role']) && in_array($_SESSION['role'], ['owner', 'company_owner'])): ?>
+                <?php
+require_once __DIR__ . '/../config/url_helper.php'; if ($_SESSION['role'] === 'owner'): ?>
                 <div class="sidebar__divider">Overview</div>
                 <a href="/ergon-site/dashboard" class="sidebar__link <?= ($active_page ?? '') === 'dashboard' ? 'sidebar__link--active' : '' ?>">
                     <span class="sidebar__icon"><i class="bi bi-speedometer2"></i></span>
@@ -701,22 +760,30 @@ ob_end_clean();
                 <a href="/ergon-site/system-admin" class="sidebar__link <?= ($active_page ?? '') === 'system-admin' ? 'sidebar__link--active' : '' ?> <?= $systemAdminDisabled ? 'sidebar__link--disabled' : '' ?>">
                     <span class="sidebar__icon">🔧</span>
                     System
-                    <?php if ($systemAdminDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
+                    <?php
+require_once __DIR__ . '/../config/url_helper.php'; if ($systemAdminDisabled): ?><span class="premium-icon">🔒</span><?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
                 </a>
                 <a href="/ergon-site/admin/management" class="sidebar__link <?= ($active_page ?? '') === 'admin' ? 'sidebar__link--active' : '' ?> <?= $usersDisabled ? 'sidebar__link--disabled' : '' ?>">
                     <span class="sidebar__icon">👥</span>
                     Users
-                    <?php if ($usersDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
+                    <?php
+require_once __DIR__ . '/../config/url_helper.php'; if ($usersDisabled): ?><span class="premium-icon">🔒</span><?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
                 </a>
                 <a href="/ergon-site/departments" class="sidebar__link <?= ($active_page ?? '') === 'departments' ? 'sidebar__link--active' : '' ?> <?= $departmentsDisabled ? 'sidebar__link--disabled' : '' ?>">
                     <span class="sidebar__icon">🏢</span>
                     Departments
-                    <?php if ($departmentsDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
+                    <?php
+require_once __DIR__ . '/../config/url_helper.php'; if ($departmentsDisabled): ?><span class="premium-icon">🔒</span><?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
                 </a>
                 <a href="/ergon-site/project-management" class="sidebar__link <?= ($active_page ?? '') === 'project-management' ? 'sidebar__link--active' : '' ?> <?= $projectsDisabled ? 'sidebar__link--disabled' : '' ?>">
                     <span class="sidebar__icon">📁</span>
                     Projects
-                    <?php if ($projectsDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
+                    <?php
+require_once __DIR__ . '/../config/url_helper.php'; if ($projectsDisabled): ?><span class="premium-icon">🔒</span><?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
                 </a>
                 <a href="/ergon-site/modules" class="sidebar__link <?= ($active_page ?? '') === 'modules' ? 'sidebar__link--active' : '' ?>">
                     <span class="sidebar__icon">🔧</span>
@@ -727,12 +794,16 @@ ob_end_clean();
                 <a href="/ergon-site/tasks" class="sidebar__link <?= ($active_page ?? '') === 'tasks' ? 'sidebar__link--active' : '' ?> <?= $tasksDisabled ? 'sidebar__link--disabled' : '' ?>">
                     <span class="sidebar__icon">✅</span>
                     Tasks
-                    <?php if ($tasksDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
+                    <?php
+require_once __DIR__ . '/../config/url_helper.php'; if ($tasksDisabled): ?><span class="premium-icon">🔒</span><?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
                 </a>
                 <a href="/ergon-site/contacts/followups" class="sidebar__link <?= ($active_page ?? '') === 'contact_followups' ? 'sidebar__link--active' : '' ?> <?= $followupsDisabled ? 'sidebar__link--disabled' : '' ?>">
                     <span class="sidebar__icon">📞</span>
                     Follow-ups
-                    <?php if ($followupsDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
+                    <?php
+require_once __DIR__ . '/../config/url_helper.php'; if ($followupsDisabled): ?><span class="premium-icon">🔒</span><?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
                 </a>
                 
                 <div class="sidebar__divider">HR & Finance</div>
@@ -761,9 +832,12 @@ ob_end_clean();
                 <a href="/ergon-site/finance" class="sidebar__link <?= ($active_page ?? '') === 'finance' ? 'sidebar__link--active' : '' ?> <?= $financeDisabled ? 'sidebar__link--disabled' : '' ?>">
                     <span class="sidebar__icon">💰</span>
                     Finance
-                    <?php if ($financeDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
+                    <?php
+require_once __DIR__ . '/../config/url_helper.php'; if ($financeDisabled): ?><span class="premium-icon">🔒</span><?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
                 </a>
-                <?php else: // company_owner ?>
+                <?php
+require_once __DIR__ . '/../config/url_helper.php'; else: // company_owner ?>
                 <div class="sidebar__divider">Overview</div>
                 <a href="/ergon-site/dashboard" class="sidebar__link <?= ($active_page ?? '') === 'dashboard' ? 'sidebar__link--active' : '' ?>">
                     <span class="sidebar__icon"><i class="bi bi-speedometer2"></i></span>
@@ -791,8 +865,10 @@ ob_end_clean();
                     <span class="sidebar__icon">📍</span>
                     Attendance
                 </a>
-                <?php endif; ?>
-            <?php elseif (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+                <?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
+            <?php
+require_once __DIR__ . '/../config/url_helper.php'; elseif (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
                 <div class="sidebar__divider">Overview</div>
                 <a href="/ergon-site/dashboard" class="sidebar__link <?= ($active_page ?? '') === 'dashboard' ? 'sidebar__link--active' : '' ?>">
                     <span class="sidebar__icon">📊</span>
@@ -807,29 +883,39 @@ ob_end_clean();
                 <a href="/ergon-site/users" class="sidebar__link <?= ($active_page ?? '') === 'users' ? 'sidebar__link--active' : '' ?> <?= $usersDisabled ? 'sidebar__link--disabled' : '' ?>">
                     <span class="sidebar__icon">👥</span>
                     Members
-                    <?php if ($usersDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
+                    <?php
+require_once __DIR__ . '/../config/url_helper.php'; if ($usersDisabled): ?><span class="premium-icon">🔒</span><?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
                 </a>
                 <a href="/ergon-site/departments" class="sidebar__link <?= ($active_page ?? '') === 'departments' ? 'sidebar__link--active' : '' ?> <?= $departmentsDisabled ? 'sidebar__link--disabled' : '' ?>">
                     <span class="sidebar__icon">🏢</span>
                     Departments
-                    <?php if ($departmentsDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
+                    <?php
+require_once __DIR__ . '/../config/url_helper.php'; if ($departmentsDisabled): ?><span class="premium-icon">🔒</span><?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
                 </a>
                 
                 <div class="sidebar__divider">Tasks</div>
                 <a href="/ergon-site/tasks" class="sidebar__link <?= ($active_page ?? '') === 'tasks' ? 'sidebar__link--active' : '' ?> <?= $tasksDisabled ? 'sidebar__link--disabled' : '' ?>">
                     <span class="sidebar__icon">✅</span>
                     Overall Tasks
-                    <?php if ($tasksDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
+                    <?php
+require_once __DIR__ . '/../config/url_helper.php'; if ($tasksDisabled): ?><span class="premium-icon">🔒</span><?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
                 </a>
                 <a href="/ergon-site/workflow/daily-planner" class="sidebar__link <?= ($active_page ?? '') === 'daily-planner' ? 'sidebar__link--active' : '' ?> <?= $dailyPlannerDisabled ? 'sidebar__link--disabled' : '' ?>">
                     <span class="sidebar__icon">🌅</span>
                     Daily Planner
-                    <?php if ($dailyPlannerDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
+                    <?php
+require_once __DIR__ . '/../config/url_helper.php'; if ($dailyPlannerDisabled): ?><span class="premium-icon">🔒</span><?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
                 </a>
                 <a href="/ergon-site/contacts/followups" class="sidebar__link <?= ($active_page ?? '') === 'contact_followups' ? 'sidebar__link--active' : '' ?> <?= $followupsDisabled ? 'sidebar__link--disabled' : '' ?>">
                     <span class="sidebar__icon">📞</span>
                     Follow-ups
-                    <?php if ($followupsDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
+                    <?php
+require_once __DIR__ . '/../config/url_helper.php'; if ($followupsDisabled): ?><span class="premium-icon">🔒</span><?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
                 </a>
                 
                 <div class="sidebar__divider">Approvals</div>
@@ -856,9 +942,12 @@ ob_end_clean();
                 <a href="/ergon-site/reports/activity" class="sidebar__link <?= ($active_page ?? '') === 'activity' ? 'sidebar__link--active' : '' ?> <?= $reportsDisabled ? 'sidebar__link--disabled' : '' ?>">
                     <span class="sidebar__icon">⏱️</span>
                     Reports
-                    <?php if ($reportsDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
+                    <?php
+require_once __DIR__ . '/../config/url_helper.php'; if ($reportsDisabled): ?><span class="premium-icon">🔒</span><?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
                 </a>
-            <?php else: ?>
+            <?php
+require_once __DIR__ . '/../config/url_helper.php'; else: ?>
                 <div class="sidebar__divider">Overview</div>
                 <a href="/ergon-site/dashboard" class="sidebar__link <?= ($active_page ?? '') === 'dashboard' ? 'sidebar__link--active' : '' ?>">
                     <span class="sidebar__icon">🏠</span>
@@ -877,17 +966,23 @@ ob_end_clean();
                 <a href="/ergon-site/tasks" class="sidebar__link <?= ($active_page ?? '') === 'tasks' ? 'sidebar__link--active' : '' ?> <?= $tasksDisabled ? 'sidebar__link--disabled' : '' ?>">
                     <span class="sidebar__icon">✅</span>
                     Tasks
-                    <?php if ($tasksDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
+                    <?php
+require_once __DIR__ . '/../config/url_helper.php'; if ($tasksDisabled): ?><span class="premium-icon">🔒</span><?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
                 </a>
                 <a href="/ergon-site/workflow/daily-planner" class="sidebar__link <?= ($active_page ?? '') === 'daily-planner' ? 'sidebar__link--active' : '' ?> <?= $dailyPlannerDisabled ? 'sidebar__link--disabled' : '' ?>">
                     <span class="sidebar__icon">📅</span>
                     Daily Planner
-                    <?php if ($dailyPlannerDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
+                    <?php
+require_once __DIR__ . '/../config/url_helper.php'; if ($dailyPlannerDisabled): ?><span class="premium-icon">🔒</span><?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
                 </a>
                 <a href="/ergon-site/contacts/followups" class="sidebar__link <?= ($active_page ?? '') === 'contact_followups' ? 'sidebar__link--active' : '' ?> <?= $followupsDisabled ? 'sidebar__link--disabled' : '' ?>">
                     <span class="sidebar__icon">📞</span>
                     Follow-ups
-                    <?php if ($followupsDisabled): ?><span class="premium-icon">🔒</span><?php endif; ?>
+                    <?php
+require_once __DIR__ . '/../config/url_helper.php'; if ($followupsDisabled): ?><span class="premium-icon">🔒</span><?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
                 </a>
                 
                 <div class="sidebar__divider">Personal</div>
@@ -907,16 +1002,19 @@ ob_end_clean();
                     <span class="sidebar__icon">📍</span>
                     Attendance
                 </a>
-            <?php endif; ?>
+            <?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
         </nav>
     </aside>
     
     <div class="notification-dropdown" id="notificationDropdown">
         <div class="notification-header">
             <h3>Notifications</h3>
-            <?php if (!$notificationsDisabled): ?>
+            <?php
+require_once __DIR__ . '/../config/url_helper.php'; if (!$notificationsDisabled): ?>
             <button type="button" class="view-all-link" id="viewAllNotificationsBtn" onclick="window.location.href='/ergon-site/notifications'">View All</button>
-            <?php endif; ?>
+            <?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
         </div>
         <div class="notification-list" id="notificationList">
             <div class="notification-loading">Loading notifications...</div>
@@ -934,18 +1032,22 @@ ob_end_clean();
                 <path d="M5 12h14M12 5l7 7-7 7"/>
             </svg>
         </button>
-        <?php if (isset($title) && in_array($title, ['Executive Dashboard', 'Team Competition Dashboard', 'Follow-ups Management', 'System Settings', 'IT Activity Reports', 'Notifications'])): ?>
+        <?php
+require_once __DIR__ . '/../config/url_helper.php'; if (isset($title) && in_array($title, ['Executive Dashboard', 'Team Competition Dashboard', 'Follow-ups Management', 'System Settings', 'IT Activity Reports', 'Notifications'])): ?>
         <div class="page-header">
             <div class="page-title">
                 <h1><?= htmlspecialchars($title, ENT_QUOTES, 'UTF-8') ?></h1>
             </div>
-            <?php if ($title === 'Notifications'): ?>
+            <?php
+require_once __DIR__ . '/../config/url_helper.php'; if ($title === 'Notifications'): ?>
             <div class="page-actions">
                 <!-- Buttons are now handled by the view file itself -->
             </div>
-            <?php endif; ?>
+            <?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
         </div>
-        <?php endif; ?>
+        <?php
+require_once __DIR__ . '/../config/url_helper.php'; endif; ?>
         <?= $content ?>
     </main>
 

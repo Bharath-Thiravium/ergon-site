@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../config/url_helper.php';
 require_once __DIR__ . '/../helpers/SessionManager.php';
 
 class AuthMiddleware {
@@ -58,7 +59,7 @@ class AuthMiddleware {
         
         if ($userRole !== $requiredRole) {
             if (!headers_sent()) {
-                header('Location: /ergon-site/dashboard');
+                redirect('/dashboard');
             }
             exit;
         }

@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../config/url_helper.php';
 
 class SessionValidationMiddleware {
     
@@ -53,7 +54,7 @@ class SessionValidationMiddleware {
         $_SESSION['logout_message'] = $message;
         
         // Redirect to login
-        header('Location: /ergon-site/login');
+        redirectToLogin();
         exit;
     }
 }
