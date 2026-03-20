@@ -4,8 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Ergon</title>
-    <link rel="stylesheet" href="/ergon-site/assets/css/ergon.css">
-    <link rel="stylesheet" href="/ergon-site/assets/css/mobile-login-fixes.css">
+    <?php
+    require_once __DIR__ . '/../../app/config/environment.php';
+    $baseUrl = Environment::getBaseUrl();
+    ?>
+    <link rel="stylesheet" href="<?= $baseUrl ?>/assets/css/ergon.css">
+    <link rel="stylesheet" href="<?= $baseUrl ?>/assets/css/mobile-login-fixes.css">
     <style>
         * {
             margin: 0;
@@ -369,7 +373,11 @@
                 </div>
                 <?php unset($_SESSION['login_error']); endif; ?>
                 
-                <form id="loginForm" action="/ergon-site/login" method="POST">
+                <?php
+                require_once __DIR__ . '/../../app/config/environment.php';
+                $baseUrl = Environment::getBaseUrl();
+                ?>
+                <form id="loginForm" action="<?= $baseUrl ?>/login" method="POST">
                     <div class="form-group">
                         <label for="email" class="form-label">Email Address</label>
                         <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" autocomplete="username" required>

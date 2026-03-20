@@ -68,7 +68,7 @@ class AuthController extends Controller {
                 echo json_encode(['error' => 'Email and password are required']);
             } else {
                 $_SESSION['login_error'] = 'Email and password are required';
-                header('Location: /ergon-site/login');
+                header('Location: ' . $baseUrl . '/login');
             }
             exit;
         }
@@ -84,7 +84,7 @@ class AuthController extends Controller {
                 echo json_encode(['error' => 'Too many login attempts. Please try again later.']);
             } else {
                 $_SESSION['login_error'] = 'Too many login attempts. Please try again later.';
-                header('Location: /ergon-site/login');
+                header('Location: ' . $baseUrl . '/login');
             }
             exit;
         }
@@ -98,7 +98,7 @@ class AuthController extends Controller {
                 echo json_encode(['error' => $lockoutStatus['message']]);
             } else {
                 $_SESSION['login_error'] = $lockoutStatus['message'];
-                header('Location: /ergon-site/login');
+                header('Location: ' . $baseUrl . '/login');
             }
             exit;
         }
@@ -166,7 +166,7 @@ class AuthController extends Controller {
                 } else {
                     // Regular form submission - redirect back to login with error
                     $_SESSION['login_error'] = $message;
-                    header('Location: /ergon-site/login');
+                    header('Location: ' . $baseUrl . '/login');
                 }
                 exit;
             }
@@ -180,7 +180,7 @@ class AuthController extends Controller {
                 echo json_encode(['error' => 'Login failed. Please try again.']);
             } else {
                 $_SESSION['login_error'] = 'Login failed. Please try again.';
-                header('Location: /ergon-site/login');
+                header('Location: ' . $baseUrl . '/login');
             }
             exit;
         }

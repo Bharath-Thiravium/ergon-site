@@ -67,8 +67,10 @@ class Environment {
         if (strpos($host, 'bkgreenenergy.com') !== false) {
             return 'https://bkgreenenergy.com/ergon-site';
         } elseif (strpos($host, 'athenas.co.in') !== false) {
-            return 'https://athenas.co.in/ergon-site';
+            // Handle both main domain and subdomains of athenas.co.in
+            return $protocol . '://' . $host . '/ergon-site';
         } else {
+            // For localhost and other development environments
             return $protocol . '://' . $host . '/ergon-site';
         }
     }
