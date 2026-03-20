@@ -1,10 +1,18 @@
 <?php
+echo "=== Creating Temporary Database Fix ===\n\n";
+
+// Create a backup of the current database config
+copy('app/config/database.php', 'app/config/database.php.backup');
+echo "✅ Backup created: database.php.backup\n";
+
+// Create a temporary database configuration with better error handling
+$tempConfig = '<?php
 /**
  * Database Configuration - Temporary Fix for Subdomain
  * ergon - Employee Tracker & Task Manager
  */
 
-require_once __DIR__ . '/environment.php';
+require_once __DIR__ . \'/environment.php\';
 
 class Database {
     private $host;
@@ -20,51 +28,51 @@ class Database {
             $this->loadEnvironmentVariables();
             
             if (Environment::isDevelopment()) {
-                $this->host = $_ENV['DB_HOST'] ?? 'localhost';
-                $this->db_name = $_ENV['DB_NAME'] ?? 'ergon-site_db';
-                $this->username = $_ENV['DB_USER'] ?? 'root';
-                $this->password = $_ENV['DB_PASS'] ?? '';
+                $this->host = $_ENV[\'DB_HOST\'] ?? \'localhost\';
+                $this->db_name = $_ENV[\'DB_NAME\'] ?? \'ergon-site_db\';
+                $this->username = $_ENV[\'DB_USER\'] ?? \'root\';
+                $this->password = $_ENV[\'DB_PASS\'] ?? \'\';
             } else {
                 // Production environment with fallback options
-                $this->host = $_ENV['DB_HOST'] ?? 'localhost';
-                $this->db_name = $_ENV['DB_NAME'] ?? 'u494785662_ergon_site';
-                $this->username = $_ENV['DB_USER'] ?? 'u494785662_ergon_site';
-                $this->password = $_ENV['DB_PASS'] ?? '@Admin@2025@';
+                $this->host = $_ENV[\'DB_HOST\'] ?? \'localhost\';
+                $this->db_name = $_ENV[\'DB_NAME\'] ?? \'u494785662_ergon_site\';
+                $this->username = $_ENV[\'DB_USER\'] ?? \'u494785662_ergon_site\';
+                $this->password = $_ENV[\'DB_PASS\'] ?? \'@Admin@2025@\';
                 
                 // If subdomain, try alternative credentials
-                if (isset($_SERVER['HTTP_HOST']) && strpos($_SERVER['HTTP_HOST'], 'aes.athenas.co.in') !== false) {
+                if (isset($_SERVER[\'HTTP_HOST\']) && strpos($_SERVER[\'HTTP_HOST\'], \'aes.athenas.co.in\') !== false) {
                     // Try main domain database first
                     $this->tryAlternativeCredentials();
                 }
             }
         } catch (Exception $e) {
-            error_log('Database configuration error: ' . $e->getMessage());
-            throw new Exception('Database configuration failed');
+            error_log(\'Database configuration error: \' . $e->getMessage());
+            throw new Exception(\'Database configuration failed\');
         }
     }
     
     private function tryAlternativeCredentials() {
         // Alternative credentials for subdomain
         $alternatives = [
-            ['host' => 'localhost', 'db' => 'u494785662_ergon_site', 'user' => 'u494785662_ergon_site', 'pass' => 'mango123'],
-            ['host' => 'localhost', 'db' => 'u494785662_ergon_site', 'user' => 'u494785662_ergon_site', 'pass' => 'admin123'],
-            ['host' => 'localhost', 'db' => 'ergon_site', 'user' => 'root', 'pass' => ''],
+            [\'host\' => \'localhost\', \'db\' => \'u494785662_ergon_site\', \'user\' => \'u494785662_ergon_site\', \'pass\' => \'mango123\'],
+            [\'host\' => \'localhost\', \'db\' => \'u494785662_ergon_site\', \'user\' => \'u494785662_ergon_site\', \'pass\' => \'admin123\'],
+            [\'host\' => \'localhost\', \'db\' => \'ergon_site\', \'user\' => \'root\', \'pass\' => \'\'],
         ];
         
         foreach ($alternatives as $alt) {
             try {
                 $testConn = new PDO(
-                    "mysql:host={$alt['host']};dbname={$alt['db']};charset=utf8mb4",
-                    $alt['user'],
-                    $alt['pass'],
+                    "mysql:host={$alt[\'host\']};dbname={$alt[\'db\']};charset=utf8mb4",
+                    $alt[\'user\'],
+                    $alt[\'pass\'],
                     [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
                 );
                 
                 // If successful, use these credentials
-                $this->host = $alt['host'];
-                $this->db_name = $alt['db'];
-                $this->username = $alt['user'];
-                $this->password = $alt['pass'];
+                $this->host = $alt[\'host\'];
+                $this->db_name = $alt[\'db\'];
+                $this->username = $alt[\'user\'];
+                $this->password = $alt[\'pass\'];
                 
                 error_log("Using alternative database credentials for subdomain");
                 return;
@@ -78,18 +86,18 @@ class Database {
     
     private function loadEnvironmentVariables() {
         // Load .env.production first if it exists, then .env
-        $envFiles = ['.env.production', '.env'];
+        $envFiles = [\'.env.production\', \'.env\'];
         
         foreach ($envFiles as $envFile) {
-            $envPath = __DIR__ . '/../../' . $envFile;
+            $envPath = __DIR__ . \'/../../\' . $envFile;
             if (file_exists($envPath)) {
                 $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
                 foreach ($lines as $line) {
-                    if (strpos($line, '=') !== false && strpos($line, '#') !== 0) {
-                        list($key, $value) = explode('=', $line, 2);
+                    if (strpos($line, \'=\') !== false && strpos($line, \'#\') !== 0) {
+                        list($key, $value) = explode(\'=\', $line, 2);
                         $key = trim($key);
                         $value = trim($value);
-                        if (!isset($_ENV[$key])) { // Don't override already set values
+                        if (!isset($_ENV[$key])) { // Don\'t override already set values
                             $_ENV[$key] = $value;
                         }
                     }
@@ -126,7 +134,7 @@ class Database {
             error_log("Connection error: " . $e->getMessage());
             
             // For subdomain, provide a more user-friendly error
-            if (isset($_SERVER['HTTP_HOST']) && strpos($_SERVER['HTTP_HOST'], 'aes.athenas.co.in') !== false) {
+            if (isset($_SERVER[\'HTTP_HOST\']) && strpos($_SERVER[\'HTTP_HOST\'], \'aes.athenas.co.in\') !== false) {
                 throw new Exception("Subdomain database configuration needed. Please contact administrator.");
             }
             
@@ -144,34 +152,46 @@ class Database {
     }
     
     public function getEnvironment() {
-        return Environment::isDevelopment() ? 'development' : 'production';
+        return Environment::isDevelopment() ? \'development\' : \'production\';
     }
     
     public static function getPostgreSQLConfig() {
         // Load .env.production first, then fallback to .env
-        $_envFile = file_exists(__DIR__ . '/../../.env.production')
-            ? __DIR__ . '/../../.env.production'
-            : __DIR__ . '/../../.env';
+        $_envFile = file_exists(__DIR__ . \'/../../.env.production\')
+            ? __DIR__ . \'/../../.env.production\'
+            : __DIR__ . \'/../../.env\';
             
         if (file_exists($_envFile)) {
             $lines = file($_envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
             foreach ($lines as $line) {
-                if (strpos($line, '=') !== false && strpos($line, '#') !== 0) {
-                    list($key, $value) = explode('=', $line, 2);
+                if (strpos($line, \'=\') !== false && strpos($line, \'#\') !== 0) {
+                    list($key, $value) = explode(\'=\', $line, 2);
                     $_ENV[trim($key)] = trim($value);
                 }
             }
         }
         
         return [
-            'postgresql' => [
-                'host' => $_ENV['SAP_PG_HOST'] ?? '72.60.218.167',
-                'port' => $_ENV['SAP_PG_PORT'] ?? '5432',
-                'database' => $_ENV['SAP_PG_DB'] ?? 'modernsap',
-                'username' => $_ENV['SAP_PG_USER'] ?? 'postgres',
-                'password' => $_ENV['SAP_PG_PASS'] ?? 'mango'
+            \'postgresql\' => [
+                \'host\' => $_ENV[\'SAP_PG_HOST\'] ?? \'72.60.218.167\',
+                \'port\' => $_ENV[\'SAP_PG_PORT\'] ?? \'5432\',
+                \'database\' => $_ENV[\'SAP_PG_DB\'] ?? \'modernsap\',
+                \'username\' => $_ENV[\'SAP_PG_USER\'] ?? \'postgres\',
+                \'password\' => $_ENV[\'SAP_PG_PASS\'] ?? \'mango\'
             ]
         ];
     }
 }
+?>';
+
+file_put_contents('app/config/database.php', $tempConfig);
+echo "✅ Temporary database configuration created\n";
+
+echo "\nThis temporary fix:\n";
+echo "1. Tries alternative database credentials for subdomains\n";
+echo "2. Provides better error messages\n";
+echo "3. Disables persistent connections that might cause issues\n";
+echo "4. Has fallback options for different hosting scenarios\n\n";
+
+echo "To restore original: mv app/config/database.php.backup app/config/database.php\n";
 ?>
